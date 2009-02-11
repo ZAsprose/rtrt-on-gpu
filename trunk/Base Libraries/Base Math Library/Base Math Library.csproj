@@ -1,0 +1,70 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectGuid>{32BE5E1A-A16A-4AA5-ACA6-448A3C38C705}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <BaseIntermediateOutputPath>Bin\Obj\</BaseIntermediateOutputPath>
+    <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\Denis Bogolepov\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <AssemblyName>Base.Math</AssemblyName>
+    <OutputPath>Bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>false</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Matrix\Matrix2.cs" />
+    <Compile Include="Matrix\Matrix3.cs" />
+    <Compile Include="Matrix\Matrix4.cs" />
+    <Compile Include="Parser\Function.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Transform\Transform.cs" />
+    <Compile Include="Scalar\Scalar.cs" />
+    <Compile Include="Vector\Vector2.cs" />
+    <Compile Include="Vector\Vector3.cs" />
+    <Compile Include="Vector\Vector4.cs" />
+  </ItemGroup>
+</Project>

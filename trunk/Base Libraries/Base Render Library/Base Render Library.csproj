@@ -1,0 +1,87 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectGuid>{6B20AB31-0C91-4B2F-9F13-A8706AF3DF94}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <BaseIntermediateOutputPath>Bin\Obj\</BaseIntermediateOutputPath>
+    <SourceAnalysisOverrideSettingsFile>C:\Documents and Settings\Denis Bogolepov\Application Data\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+    <AssemblyName>Base.Render</AssemblyName>
+    <OutputPath>Bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>false</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <StartAction>Program</StartAction>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+  <ItemGroup>
+    <Compile Include="Camera Control\Camera\Camera.cs" />
+    <Compile Include="Camera Control\Input\Keyboard.cs" />
+    <Compile Include="Camera Control\Input\Mouse.cs" />
+    <Compile Include="Render To Texture\FrameBuffer.cs" />
+    <Compile Include="Render To Texture\RenderBuffer.cs" />
+    <Compile Include="Shader Support\ShaderProgram.cs" />
+    <Compile Include="Texture Support\Texture Data\SingleData.cs">
+    </Compile>
+    <Compile Include="Texture Support\Texture Data\TextureData.cs">
+    </Compile>
+    <Compile Include="Texture Support\Texture Data\IntegerData.cs">
+    </Compile>
+    <Compile Include="Texture Support\Parameters\Parameters.cs" />
+    <Compile Include="Texture Support\Textures\Texture1D.cs" />
+    <Compile Include="Texture Support\Textures\Texture2D.cs" />
+    <Compile Include="Texture Support\Textures\Texture3D.cs" />
+    <Compile Include="Util\Frame Meter\FrameCounter.cs" />
+    <Compile Include="Util\Raster\Raster.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef">
+      <HintPath>..\..\Dependencies\Tao.OpenGl.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Base Math Library\Base Math Library.csproj">
+      <Project>{32BE5E1A-A16A-4AA5-ACA6-448A3C38C705}</Project>
+      <Name>Base Math Library</Name>
+    </ProjectReference>
+    <Folder Include="Texture Support\Parameters" />
+  </ItemGroup>
+</Project>
