@@ -15,6 +15,10 @@ int main()
 
 	cout << b;
 
+	int aa = 1, bb = 2, cc = 0;
+
+	cc = aa += bb;
+
 	getchar();
 
     return 0;
