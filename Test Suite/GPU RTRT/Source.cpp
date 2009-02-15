@@ -9,9 +9,11 @@ using namespace std;
 int main()
 {
     double a = 7.4;
-    int b = 99;
+    float b = 99;
 
-	b = Util::Clamp(b, 0, 1);
+	float fff = EPSILON;
+
+	b = Math::Clamp(b, 0, 1);
 
 	cout << b;
 
