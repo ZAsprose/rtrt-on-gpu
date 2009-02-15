@@ -1,9 +1,477 @@
+#include <math.h>
+
+#include <stdio.h>
+
 #include "Vector4D.h"
 
-Vector4D::Vector4D(void)
-{
-}
+#include "Util.h"
 
-Vector4D::~Vector4D(void)
+namespace Math
 {
+	//-------------------------------------- Public Constants -------------------------------------
+
+	Vector4D Vector4D :: Zero ( 0.0F, 0.0F, 0.0F, 0.0F );
+
+	Vector4D Vector4D :: Unit ( 1.0F, 1.0F, 1.0F, 1.0F );
+
+	Vector4D Vector4D :: AxisX ( 1.0F, 0.0F, 0.0F, 0.0F );
+
+	Vector4D Vector4D :: AxisY ( 0.0F, 1.0F, 0.0F, 0.0F );
+
+	Vector4D Vector4D :: AxisZ ( 0.0F, 0.0F, 1.0F, 0.0F );
+
+	Vector4D Vector4D :: AxisW ( 0.0F, 0.0F, 0.0F, 1.0F );
+
+	//------------------------------------ Arithmetic Operators -----------------------------------
+
+	Vector4D operator + ( const Vector4D& source )
+	{
+		return Vector4D ( source.X, source.Y, source.Z, source.W );
+	}
+
+	Vector4D operator - ( const Vector4D& source )
+	{
+		return Vector4D ( -source.X, -source.Y, -source.Z, -source.W );
+	}
+
+	Vector4D operator + ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X + right.X, left.Y + right.Y,
+			              left.Z + right.Z, left.W + right.W );
+	}
+
+	Vector4D operator - ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X - right.X, left.Y - right.Y,
+			              left.Z - right.Z, left.W - right.W );
+	}
+
+	Vector4D operator + ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X + right, left.Y + right,
+			              left.Z + right, left.W + right );
+	}
+
+	Vector4D operator - ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X - right, left.Y - right,
+			              left.Z - right, left.W - right );
+	}
+
+	Vector4D operator + ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left + right.X, left + right.Y,
+			              left + right.Z, left + right.W );
+	}
+
+	Vector4D operator - ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left - right.X, left - right.Y,
+			              left - right.Z, left - right.W );
+	}
+
+	Vector4D operator * ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X * right.X, left.Y * right.Y,
+			              left.Z * right.Z, left.W * right.W );
+	}
+
+	Vector4D operator / ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X / right.X, left.Y / right.Y,
+			              left.Z / right.Z, left.W / right.W );
+	}
+
+	Vector4D operator * ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X * right, left.Y * right,
+			              left.Z / right, left.W / right );
+	}
+
+	Vector4D operator / ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X / right, left.Y / right,
+			              left.Z / right, left.W / right );
+	}
+
+	Vector4D operator * ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left * right.X, left * right.Y,
+			              left * right.Z, left * right.W );
+	}
+
+	Vector4D operator / ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left / right.X, left / right.Y,
+			              left / right.Z, left / right.W );
+	}
+
+	Vector4D operator += ( Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X += right.X, left.Y += right.Y,
+			              left.Z += right.Z, left.W += right.W );
+	}
+
+	Vector4D operator -= ( Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X -= right.X, left.Y -= right.X,
+			              left.Z -= right.Z, left.W -= right.W );
+	}
+
+	Vector4D operator += ( Vector4D& left, float right )
+	{
+		return Vector4D ( left.X += right, left.Y += right,
+			              left.Z += right, left.W += right );
+	}
+
+	Vector4D operator -= ( Vector4D& left, float right )
+	{
+		return Vector4D ( left.X -= right, left.Y -= right,
+			              left.Z -= right, left.W -= right );
+	}
+
+	Vector4D operator *= ( Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X *= right.X, left.Y *= right.Y,
+			              left.Z *= right.Z, left.W *= right.W );
+	}
+
+	Vector4D operator /= ( Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X /= right.X, left.Y /= right.X,
+			              left.Z /= right.Z, left.W /= right.W );
+	}
+
+	Vector4D operator *= ( Vector4D& left, float right )
+	{
+		return Vector4D ( left.X *= right, left.Y *= right,
+			              left.Z *= right, left.W *= right );
+	}
+
+	Vector4D operator /= ( Vector4D& left, float right )
+	{
+		return Vector4D ( left.X /= right, left.Y /= right,
+			              left.Z /= right, left.W /= right );
+	}
+
+	//-------------------------------------- Logic Operators --------------------------------------
+
+	bool operator < ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X < right.X && left.Y < right.Y && left.Z < right.Z && left.W < right.W;
+	}
+
+	bool operator > ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X > right.X && left.Y > right.Y && left.Z > right.Z && left.W > right.W;
+	}
+
+	bool operator < ( const Vector4D& left, float right )
+	{
+		return left.X < right && left.Y < right && left.Z < right && left.W < right;
+	}
+
+	bool operator > ( const Vector4D& left, float right )
+	{
+		return left.X > right && left.Y > right && left.Z > right && left.W > right;
+	}
+
+	bool operator < ( float left, const Vector4D& right )
+	{
+		return left < right.X && left < right.Y && left < right.Z && left < right.W;
+	}
+
+	bool operator > ( float left, const Vector4D& right )
+	{
+		return left > right.X && left > right.Y && left > right.Z && left > right.W;
+	}
+
+	bool operator <= ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X <= right.X && left.Y <= right.Y && left.Z <= right.Z && left.W <= right.W;
+	}
+
+	bool operator >= ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X >= right.X && left.Y >= right.Y && left.Z >= right.Z && left.W >= right.W;
+	}
+
+	bool operator <= ( const Vector4D& left, float right )
+	{
+		return left.X <= right && left.Y <= right && left.Z <= right && left.W <= right;
+	}
+
+	bool operator >= ( const Vector4D& left, float right )
+	{
+		return left.X >= right && left.Y >= right && left.Z >= right && left.W >= right;
+	}
+
+	bool operator <= ( float left, const Vector4D& right )
+	{
+		return left <= right.X && left <= right.Y && left <= right.Z && left <= right.W;
+	}
+
+	bool operator >= ( float left, const Vector4D& right )
+	{
+		return left >= right.X && left >= right.Y && left >= right.Z && left >= right.W;
+	}
+
+	bool operator == ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X == right.X && left.Y == right.Y && left.Z == right.Z && left.W == right.W;
+	}
+
+	bool operator != ( const Vector4D& left, const Vector4D& right )
+	{
+		return left.X != right.X || left.Y != right.Y || left.Z != right.Z || left.W != right.W;
+	}
+
+	bool operator == ( const Vector4D& left, float right )
+	{
+		return left.X == right && left.Y == right && left.Z == right && left.W == right;
+	}
+
+	bool operator != ( const Vector4D& left, float right )
+	{
+		return left.X != right || left.Y != right || left.Z != right || left.W != right;
+	}
+
+	bool operator == ( float left, const Vector4D& right )
+	{
+		return left == right.X && left == right.Y && left == right.Z && left == right.W;
+	}
+
+	bool operator != ( float left, const Vector4D& right )
+	{
+		return left != right.X || left != right.Y || left != right.Z || left != right.W;
+	}
+
+	//------------------------------------- Common Functions --------------------------------------
+
+	Vector4D Abs ( const Vector4D& source )
+	{
+		return Vector4D ( fabsf ( source.X ), fabsf ( source.Y ),
+			              fabsf ( source.Z ), fabsf ( source.W ) );
+	}
+
+	Vector4D Sign ( const Vector4D& source )
+	{
+		return Vector4D ( Sign ( source.X ), Sign ( source.Y ),
+			              Sign ( source.Z ), Sign ( source.W ) );
+	}
+
+	Vector4D Floor ( const Vector4D& source )
+	{
+		return Vector4D ( floorf ( source.X ), floorf ( source.Y ),
+			              floorf ( source.Z ), floorf ( source.W ) );
+	}
+
+	Vector4D Fract ( const Vector4D& source )
+	{
+		return Vector4D ( Fract ( source.X ), Fract ( source.Y ),
+			              Fract ( source.Z ), Fract ( source.W ) );
+	}
+
+	Vector4D Ceil ( const Vector4D& source )
+	{
+		return Vector4D ( ceilf ( source.X ), ceilf ( source.Y ),
+			              ceilf ( source.Z ), ceilf ( source.W ) );
+	}
+
+	Vector4D Mod ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( Mod ( left.X, right.X ), Mod ( left.Y, right.Y ),
+			              Mod ( left.Z, right.Z ), Mod ( left.W, right.W ) );
+	}
+
+	Vector4D Mod ( const Vector4D& left, float right )
+	{
+		return Vector4D ( Mod ( left.X, right ), Mod ( left.Y, right ),
+			              Mod ( left.Z, right ), Mod ( left.W, right ) );
+	}
+
+	Vector4D Mod ( float left, const Vector4D& right )
+	{
+		return Vector4D ( Mod ( left, right.X ), Mod ( left, right.Y ),
+			              Mod ( left, right.Z ), Mod ( left, right.W ) );
+	}
+
+	Vector4D Min ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X < right.X ? left.X : right.X,
+						  left.Y < right.Y ? left.Y : right.Y,
+						  left.Z < right.Z ? left.Z : right.Z,
+						  left.W < right.W ? left.W : right.W );
+	}
+
+	Vector4D Min ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X < right ? left.X : right,
+						  left.Y < right ? left.Y : right,
+						  left.Z < right ? left.Z : right,
+						  left.W < right ? left.W : right );
+	}
+
+	Vector4D Min ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left < right.X ? left : right.X,
+						  left < right.Y ? left : right.Y,
+						  left < right.Z ? left : right.Z,
+						  left < right.W ? left : right.W );
+	}
+
+	Vector4D Max ( const Vector4D& left, const Vector4D& right )
+	{
+		return Vector4D ( left.X > right.X ? left.X : right.X,
+						  left.Y > right.Y ? left.Y : right.Y,
+						  left.Z > right.Z ? left.Z : right.Z,
+						  left.W > right.W ? left.W : right.W );
+	}
+
+	Vector4D Max ( const Vector4D& left, float right )
+	{
+		return Vector4D ( left.X > right ? left.X : right,
+						  left.Y > right ? left.Y : right,
+						  left.Z > right ? left.Z : right,
+						  left.W > right ? left.W : right );
+	}
+
+	Vector4D Max ( float left, const Vector4D& right )
+	{
+		return Vector4D ( left > right.X ? left : right.X,
+						  left > right.Y ? left : right.Y,
+						  left > right.Z ? left : right.Z,
+						  left > right.W ? left : right.W );
+	}
+
+	Vector4D Clamp ( const Vector4D& source, const Vector4D& min, const Vector4D& max )
+	{
+		return Vector4D ( Clamp ( source.X, min.X, max.X ), Clamp ( source.Y, min.Y, max.Y ),
+						  Clamp ( source.Z, min.Z, max.Z ), Clamp ( source.W, min.W, max.W ) );
+	}
+
+	Vector4D Clamp ( const Vector4D& source, float min, float max )
+	{
+		return Vector4D ( Clamp ( source.X, min, max ), Clamp ( source.Y, min, max ),
+						  Clamp ( source.Z, min, max ), Clamp ( source.W, min, max ) );
+	}
+
+	Vector4D Mix ( const Vector4D& left, const Vector4D& right, const Vector4D& alpha )
+	{
+		return Vector4D ( Mix ( left.X, right.X, alpha.X ), Mix ( left.Y, right.Y, alpha.Y ),
+						  Mix ( left.Z, right.Z, alpha.Z ), Mix ( left.W, right.W, alpha.W ) );
+	}
+
+	Vector4D Mix ( const Vector4D& left, const Vector4D& right, float alpha )
+	{
+		return Vector4D ( Mix ( left.X, right.X, alpha ), Mix ( left.Y, right.Y, alpha ),
+						  Mix ( left.Z, right.Z, alpha ), Mix ( left.W, right.W, alpha ) );
+	}
+
+	Vector4D Step ( const Vector4D& source, const Vector4D& value )
+	{
+		return Vector4D ( Step ( source.X, value.X ), Step ( source.Y, value.Y ),
+						  Step ( source.Z, value.Z ), Step ( source.W, value.W ) );
+	}
+
+	Vector4D Step ( const Vector4D& source, float value )
+	{
+		return Vector4D ( Step ( source.X, value ), Step ( source.Y, value ),
+						  Step ( source.Z, value ), Step ( source.W, value ) );
+	}
+
+	Vector4D Smooth ( const Vector4D& source, const Vector4D& min, const Vector4D& max )
+	{
+		return Vector4D ( Smooth ( source.X, min.X, max.X ), Smooth ( source.Y, min.Y, max.Y ),
+						  Smooth ( source.Z, min.Z, max.Z ), Smooth ( source.W, min.W, max.W  ) );
+	}
+
+	Vector4D Smooth ( const Vector4D& source, float min, float max )
+	{
+		return Vector4D ( Smooth ( source.X, min, max ), Smooth ( source.Y, min, max ),
+						  Smooth ( source.Z, min, max ), Smooth ( source.W, min, max ) );
+	}
+
+	//------------------------------------ Geometric Functions ------------------------------------
+
+	float Length ( Vector4D& source )
+	{
+		return sqrtf ( source.X * source.X + source.Y * source.Y +
+			           source.Z * source.Z + source.W * source.W );
+	}
+
+	float Square ( Vector4D& source )
+	{
+		return source.X * source.X + source.Y * source.Y +
+			   source.Z * source.Z + source.W * source.W;
+	}
+
+	float Distance ( Vector4D& left, Vector4D& right )
+	{
+		return Length ( left - right );
+	}
+
+	float Dot ( Vector4D& left, Vector4D& right )
+	{
+		return left.X * right.X + left.Y * right.Y +
+			   left.Z * right.Z + left.W * right.W;
+	}        
+
+	Vector4D Normalize ( Vector4D& source )
+	{
+		return source / Length ( source );
+	}
+
+	Vector4D Reflect ( Vector4D& incident, Vector4D& normal )
+	{
+		return incident - 2.0F * Dot ( normal, incident ) * normal;
+	}
+
+	Vector4D Refract ( Vector4D& incident, Vector4D& normal, float index )
+	{
+		float dot = Dot( incident, normal );
+
+		float square = 1.0F - index * index * ( 1.0F - dot * dot );
+
+		if ( square < 0.0F )
+		{
+			return Reflect ( incident, normal );
+		}
+		else
+		{
+			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
+		}
+	}
+
+	//----------------------------------- Exponential Functions -----------------------------------
+
+    Vector4D Pow ( Vector4D& left, Vector4D& right )
+    {
+		return Vector4D ( powf ( left.X, right.X ), powf ( left.Y, right.Y ),
+						  powf ( left.Z, right.Z ), powf ( left.W, right.W ) );
+	}
+
+    Vector4D Pow ( Vector4D& left, float right )
+    {
+		return Vector4D ( powf ( left.X, right ), powf ( left.Y, right ),
+						  powf ( left.Z, right ), powf ( left.W, right ) );
+    }
+
+    Vector4D Exp ( Vector4D& source )
+    {
+		return Vector4D ( expf ( source.X ), expf ( source.Y ),
+						  expf ( source.Z ), expf ( source.W ) );
+    }
+
+    Vector4D Log ( Vector4D& source )
+    {
+		return Vector4D ( logf ( source.X ), logf ( source.Y ),
+						  logf ( source.Z ), logf ( source.W ) );
+    }
+
+    Vector4D Sqrt ( Vector4D& source )
+    {
+		return Vector4D ( sqrtf ( source.X ), sqrtf ( source.Y ),
+						  sqrtf ( source.Z ), sqrtf ( source.W ) );
+    }
 }

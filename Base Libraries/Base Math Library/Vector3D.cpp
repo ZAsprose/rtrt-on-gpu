@@ -18,7 +18,7 @@ namespace Math
 
 	Vector3D Vector3D :: AxisY ( 0.0F, 1.0F, 0.0F );
 
-	Vector3D Vector3D :: AxisZ ( 0.0F, 1.0F, 1.0F );
+	Vector3D Vector3D :: AxisZ ( 0.0F, 0.0F, 1.0F );
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
