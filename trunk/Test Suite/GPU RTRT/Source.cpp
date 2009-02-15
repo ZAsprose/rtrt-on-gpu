@@ -21,6 +21,10 @@ int main()
 
 	cc = aa += bb;
 
+	Math::Vector2D v = Math::Vector2D(1,1);
+
+	Math::Vector2D vvv = v + v;
+
 	getchar();
 
     return 0;
