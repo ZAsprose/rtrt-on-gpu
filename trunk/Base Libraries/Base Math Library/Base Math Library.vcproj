@@ -188,14 +188,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="Util"
-				>
-				<File
-					RelativePath=".\Util.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
