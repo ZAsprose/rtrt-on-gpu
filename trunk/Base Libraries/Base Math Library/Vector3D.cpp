@@ -99,7 +99,7 @@ namespace Math
 
 	Vector3D operator -= ( Vector3D& left, const Vector3D& right )
 	{
-		return Vector3D ( left.X -= right.X, left.Y -= right.X, left.Z -= right.Z );
+		return Vector3D ( left.X -= right.X, left.Y -= right.Y, left.Z -= right.Z );
 	}
 
 	Vector3D operator += ( Vector3D& left, float right )
@@ -119,7 +119,7 @@ namespace Math
 
 	Vector3D operator /= ( Vector3D& left, const Vector3D& right )
 	{
-		return Vector3D ( left.X /= right.X, left.Y /= right.X, left.Z /= right.Z );
+		return Vector3D ( left.X /= right.X, left.Y /= right.Y, left.Z /= right.Z );
 	}
 
 	Vector3D operator *= ( Vector3D& left, float right )
@@ -366,37 +366,37 @@ namespace Math
 
 	//------------------------------------ Geometric Functions ------------------------------------
 
-	float Length ( Vector3D& source )
+	float Length ( const Vector3D& source )
 	{
 		return sqrtf ( source.X * source.X + source.Y * source.Y + source.Z * source.Z );
 	}
 
-	float Square ( Vector3D& source )
+	float Square ( const Vector3D& source )
 	{
 		return source.X * source.X + source.Y * source.Y + source.Z * source.Z;
 	}
 
-	float Distance ( Vector3D& left, Vector3D& right )
+	float Distance ( const Vector3D& left, const Vector3D& right )
 	{
 		return Length ( left - right );
 	}
 
-	float Dot ( Vector3D& left, Vector3D& right )
+	float Dot ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X * right.X + left.Y * right.Y + left.Z * right.Z;
 	}        
 
-	Vector3D Normalize ( Vector3D& source )
+	Vector3D Normalize ( const Vector3D& source )
 	{
 		return source / Length ( source );
 	}
 
-	Vector3D Reflect ( Vector3D& incident, Vector3D& normal )
+	Vector3D Reflect ( const Vector3D& incident, const Vector3D& normal )
 	{
 		return incident - 2.0F * Dot ( normal, incident ) * normal;
 	}
 
-	Vector3D Refract ( Vector3D& incident, Vector3D& normal, float index )
+	Vector3D Refract ( const Vector3D& incident, const Vector3D& normal, float index )
 	{
 		float dot = Dot( incident, normal );
 
@@ -414,35 +414,35 @@ namespace Math
 
 	//----------------------------------- Exponential Functions -----------------------------------
 
-    Vector3D Pow ( Vector3D& left, Vector3D& right )
+    Vector3D Pow ( const Vector3D& left, const Vector3D& right )
     {
 		return Vector3D ( powf ( left.X, right.X ),
 			              powf ( left.Y, right.Y ),
 						  powf ( left.Z, right.Z ) );
 	}
 
-    Vector3D Pow ( Vector3D& left, float right )
+    Vector3D Pow ( const Vector3D& left, float right )
     {
 		return Vector3D ( powf ( left.X, right ),
 			              powf ( left.Y, right ),
 						  powf ( left.Z, right ) );
     }
 
-    Vector3D Exp ( Vector3D& source )
+    Vector3D Exp ( const Vector3D& source )
     {
 		return Vector3D ( expf ( source.X ),
 			              expf ( source.Y ),
 						  expf ( source.Z ) );
     }
 
-    Vector3D Log ( Vector3D& source )
+    Vector3D Log ( const Vector3D& source )
     {
 		return Vector3D ( logf ( source.X ),
 			              logf ( source.Y ),
 						  logf ( source.Z ) );
     }
 
-    Vector3D Sqrt ( Vector3D& source )
+    Vector3D Sqrt ( const Vector3D& source )
     {
 		return Vector3D ( sqrtf ( source.X ),
 			              sqrtf ( source.Y ),

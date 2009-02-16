@@ -114,7 +114,7 @@ namespace Math
 
 	Vector4D operator -= ( Vector4D& left, const Vector4D& right )
 	{
-		return Vector4D ( left.X -= right.X, left.Y -= right.X,
+		return Vector4D ( left.X -= right.X, left.Y -= right.Y,
 			              left.Z -= right.Z, left.W -= right.W );
 	}
 
@@ -138,7 +138,7 @@ namespace Math
 
 	Vector4D operator /= ( Vector4D& left, const Vector4D& right )
 	{
-		return Vector4D ( left.X /= right.X, left.Y /= right.X,
+		return Vector4D ( left.X /= right.X, left.Y /= right.Y,
 			              left.Z /= right.Z, left.W /= right.W );
 	}
 
@@ -394,40 +394,40 @@ namespace Math
 
 	//------------------------------------ Geometric Functions ------------------------------------
 
-	float Length ( Vector4D& source )
+	float Length ( const Vector4D& source )
 	{
 		return sqrtf ( source.X * source.X + source.Y * source.Y +
 			           source.Z * source.Z + source.W * source.W );
 	}
 
-	float Square ( Vector4D& source )
+	float Square ( const Vector4D& source )
 	{
 		return source.X * source.X + source.Y * source.Y +
 			   source.Z * source.Z + source.W * source.W;
 	}
 
-	float Distance ( Vector4D& left, Vector4D& right )
+	float Distance ( const Vector4D& left, const Vector4D& right )
 	{
 		return Length ( left - right );
 	}
 
-	float Dot ( Vector4D& left, Vector4D& right )
+	float Dot ( const Vector4D& left, const Vector4D& right )
 	{
 		return left.X * right.X + left.Y * right.Y +
 			   left.Z * right.Z + left.W * right.W;
 	}        
 
-	Vector4D Normalize ( Vector4D& source )
+	Vector4D Normalize ( const Vector4D& source )
 	{
 		return source / Length ( source );
 	}
 
-	Vector4D Reflect ( Vector4D& incident, Vector4D& normal )
+	Vector4D Reflect ( const Vector4D& incident, const Vector4D& normal )
 	{
 		return incident - 2.0F * Dot ( normal, incident ) * normal;
 	}
 
-	Vector4D Refract ( Vector4D& incident, Vector4D& normal, float index )
+	Vector4D Refract ( const Vector4D& incident, const Vector4D& normal, float index )
 	{
 		float dot = Dot( incident, normal );
 
@@ -445,31 +445,31 @@ namespace Math
 
 	//----------------------------------- Exponential Functions -----------------------------------
 
-    Vector4D Pow ( Vector4D& left, Vector4D& right )
+    Vector4D Pow ( const Vector4D& left, const Vector4D& right )
     {
 		return Vector4D ( powf ( left.X, right.X ), powf ( left.Y, right.Y ),
 						  powf ( left.Z, right.Z ), powf ( left.W, right.W ) );
 	}
 
-    Vector4D Pow ( Vector4D& left, float right )
+    Vector4D Pow ( const Vector4D& left, float right )
     {
 		return Vector4D ( powf ( left.X, right ), powf ( left.Y, right ),
 						  powf ( left.Z, right ), powf ( left.W, right ) );
     }
 
-    Vector4D Exp ( Vector4D& source )
+    Vector4D Exp ( const Vector4D& source )
     {
 		return Vector4D ( expf ( source.X ), expf ( source.Y ),
 						  expf ( source.Z ), expf ( source.W ) );
     }
 
-    Vector4D Log ( Vector4D& source )
+    Vector4D Log ( const Vector4D& source )
     {
 		return Vector4D ( logf ( source.X ), logf ( source.Y ),
 						  logf ( source.Z ), logf ( source.W ) );
     }
 
-    Vector4D Sqrt ( Vector4D& source )
+    Vector4D Sqrt ( const Vector4D& source )
     {
 		return Vector4D ( sqrtf ( source.X ), sqrtf ( source.Y ),
 						  sqrtf ( source.Z ), sqrtf ( source.W ) );

@@ -175,30 +175,30 @@ namespace Math
 
 			//-------------------------------- Geometric Functions --------------------------------
 
-			friend float Length ( Vector2D& );
+			friend float Length ( const Vector2D& );
 
-			friend float Square ( Vector2D& );
+			friend float Square ( const Vector2D& );
 
-			friend float Distance ( Vector2D&, Vector2D& );
+			friend float Distance ( const Vector2D&, const Vector2D& );
 	        
-			friend float Dot ( Vector2D&, Vector2D& );    
+			friend float Dot ( const Vector2D&, const Vector2D& );    
 	        
-			friend Vector2D Normalize ( Vector2D& );
+			friend Vector2D Normalize ( const Vector2D& );
 
-			friend Vector2D Reflect ( Vector2D&, Vector2D& );
+			friend Vector2D Reflect ( const Vector2D&, const Vector2D& );
 
-			friend Vector2D Refract ( Vector2D&, Vector2D&, float );
+			friend Vector2D Refract ( const Vector2D&, const Vector2D&, float );
 
 			//------------------------------- Exponential Functions -------------------------------
 
-			friend  Vector2D Pow ( Vector2D&, Vector2D& );
+			friend  Vector2D Pow ( const Vector2D&, const Vector2D& );
 
-			friend  Vector2D Pow ( Vector2D&, float );
+			friend  Vector2D Pow ( const Vector2D&, float );
 
-			friend  Vector2D Exp ( Vector2D& );
+			friend  Vector2D Exp ( const Vector2D& );
 
-			friend  Vector2D Log ( Vector2D& );
+			friend  Vector2D Log ( const Vector2D& );
 
-			friend  Vector2D Sqrt ( Vector2D& );
+			friend  Vector2D Sqrt ( const Vector2D& );
 	};
 }

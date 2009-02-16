@@ -187,30 +187,30 @@ namespace Math
 
 			//-------------------------------- Geometric Functions --------------------------------
 
-			friend float Length ( Vector4D& );
+			friend float Length ( const Vector4D& );
 
-			friend float Square ( Vector4D& );
+			friend float Square ( const Vector4D& );
 
-			friend float Distance ( Vector4D&, Vector4D& );
+			friend float Distance ( const Vector4D&, const Vector4D& );
 	        
-			friend float Dot ( Vector4D&, Vector4D& );    
+			friend float Dot ( const Vector4D&, const Vector4D& );    
 	        
-			friend Vector4D Normalize ( Vector4D& );
+			friend Vector4D Normalize ( const Vector4D& );
 
-			friend Vector4D Reflect ( Vector4D&, Vector4D& );
+			friend Vector4D Reflect ( const Vector4D&, const Vector4D& );
 
-			friend Vector4D Refract ( Vector4D&, Vector4D&, float );
+			friend Vector4D Refract ( const Vector4D&, const Vector4D&, float );
 
 			//------------------------------- Exponential Functions -------------------------------
 
-			friend  Vector4D Pow ( Vector4D&, Vector4D& );
+			friend  Vector4D Pow ( const Vector4D&, const Vector4D& );
 
-			friend  Vector4D Pow ( Vector4D&, float );
+			friend  Vector4D Pow ( const Vector4D&, float );
 
-			friend  Vector4D Exp ( Vector4D& );
+			friend  Vector4D Exp ( const Vector4D& );
 
-			friend  Vector4D Log ( Vector4D& );
+			friend  Vector4D Log ( const Vector4D& );
 
-			friend  Vector4D Sqrt ( Vector4D& );
+			friend  Vector4D Sqrt ( const Vector4D& );
 	};
 }
