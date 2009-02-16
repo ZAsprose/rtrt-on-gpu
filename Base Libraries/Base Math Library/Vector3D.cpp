@@ -1,10 +1,10 @@
-#include <math.h>
-
 #include <stdio.h>
 
-#include "Vector3D.h"
+#include <math.h>
 
 #include "Util.h"
+
+#include "Vector3D.h"
 
 namespace Math
 {
@@ -223,6 +223,18 @@ namespace Math
 	{
 		return left != right.X || left != right.Y || left != right.Z;
 	}
+	
+	//-------------------------------- Input and Output Operators ---------------------------------
+
+	istream& operator >> ( istream& is, Vector3D& source )
+	{
+		return is >> source.X >> source.Y >> source.Z;
+	}
+
+	ostream& operator << ( ostream& os, const Vector3D& source )
+	{
+		return os << source.X << " " << source.Y << " " << source.Z;
+	}
 
 	//------------------------------------- Common Functions --------------------------------------
 
@@ -412,6 +424,52 @@ namespace Math
 		}
 	}
 
+	//----------------------------- Angle and Trigonometry Functions ------------------------------
+
+	Vector3D Radians ( const Vector3D& source )
+	{
+		return Vector3D ( Radians ( source.X ),
+			              Radians ( source.Y ),
+						  Radians ( source.Z ) );
+	}
+
+	Vector3D Degrees ( const Vector3D& source )
+	{
+		return Vector3D ( Degrees ( source.X ),
+			              Degrees ( source.Y ),
+						  Degrees ( source.Z ) );
+	}
+
+	Vector3D Sin ( const Vector3D& source )
+	{
+		return Vector3D ( sinf ( source.X ), sinf ( source.Y ), sinf ( source.Z ) );
+	}
+
+	Vector3D Cos ( const Vector3D& source )
+	{
+		return Vector3D ( cosf ( source.X ), cosf ( source.Y ), cosf ( source.Z ) );
+	}
+
+	Vector3D Tan ( const Vector3D& source )
+	{
+		return Vector3D ( tanf ( source.X ), tanf ( source.Y ), tanf ( source.Z ) );
+	}
+
+	Vector3D Asin ( const Vector3D& source )
+	{
+		return Vector3D ( asinf ( source.X ), asinf ( source.Y ), asinf ( source.Z ) );
+	}
+
+	Vector3D Acos ( const Vector3D& source )
+	{
+		return Vector3D ( acosf ( source.X ), acosf ( source.Y ), acosf ( source.Z ) );
+	}
+
+	Vector3D Atan ( const Vector3D& source )
+	{
+		return Vector3D ( atanf ( source.X ), atanf ( source.Y ), atanf ( source.Z ) );
+	}
+
 	//----------------------------------- Exponential Functions -----------------------------------
 
     Vector3D Pow ( const Vector3D& left, const Vector3D& right )
@@ -430,22 +488,16 @@ namespace Math
 
     Vector3D Exp ( const Vector3D& source )
     {
-		return Vector3D ( expf ( source.X ),
-			              expf ( source.Y ),
-						  expf ( source.Z ) );
+		return Vector3D ( expf ( source.X ), expf ( source.Y ), expf ( source.Z ) );
     }
 
     Vector3D Log ( const Vector3D& source )
     {
-		return Vector3D ( logf ( source.X ),
-			              logf ( source.Y ),
-						  logf ( source.Z ) );
+		return Vector3D ( logf ( source.X ), logf ( source.Y ), logf ( source.Z ) );
     }
 
     Vector3D Sqrt ( const Vector3D& source )
     {
-		return Vector3D ( sqrtf ( source.X ),
-			              sqrtf ( source.Y ),
-						  sqrtf ( source.Z ) );
+		return Vector3D ( sqrtf ( source.X ), sqrtf ( source.Y ), sqrtf ( source.Z ) );
     }
 }

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+using namespace std;
+
 namespace Math
 {
 	class Vector3D
@@ -121,6 +125,12 @@ namespace Math
 
 			friend bool operator != ( float, const Vector3D& );
 
+			//----------------------------- Input and Output Operators ----------------------------
+
+			friend istream& operator >> ( istream& is, Vector3D& );
+
+			friend ostream& operator << ( ostream& os, const Vector3D& );
+
 			//-------------------------------- Auxiliary Operators --------------------------------
 
 			operator float * ( )
@@ -187,13 +197,38 @@ namespace Math
 
 			friend float Distance ( const Vector3D&, const Vector3D& );
 	        
-			friend float Dot ( const Vector3D&, const Vector3D& );    
+			friend float Dot ( const Vector3D&, const Vector3D& );
+
+			friend Vector3D Cross ( const Vector3D& left, const Vector3D& right )
+			{
+				return Vector3D ( left.Y * right.Z - left.Z * right.Y,
+					              left.Z * right.X - left.X * right.Z,
+								  left.X * right.Y - left.Y * right.X );
+			} 
 	        
 			friend Vector3D Normalize ( const Vector3D& );
 
 			friend Vector3D Reflect ( const Vector3D&, const Vector3D& );
 
 			friend Vector3D Refract ( const Vector3D&, const Vector3D&, float );
+
+			//-------------------------- Angle and Trigonometry Functions -------------------------
+
+			friend Vector3D Radians ( const Vector3D& );
+
+			friend Vector3D Degrees ( const Vector3D& );
+
+			friend Vector3D Sin ( const Vector3D& );
+
+			friend Vector3D Cos ( const Vector3D& );
+
+			friend Vector3D Tan ( const Vector3D& );
+
+			friend Vector3D Asin ( const Vector3D& );
+
+			friend Vector3D Acos ( const Vector3D& );
+
+			friend Vector3D Atan ( const Vector3D& );
 
 			//------------------------------- Exponential Functions -------------------------------
 

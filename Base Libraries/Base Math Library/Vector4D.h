@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+using namespace std;
+
 namespace Math
 {
 	class Vector4D
@@ -127,6 +131,12 @@ namespace Math
 
 			friend bool operator != ( float, const Vector4D& );
 
+			//----------------------------- Input and Output Operators ----------------------------
+
+			friend istream& operator >> ( istream& is, Vector4D& );
+
+			friend ostream& operator << ( ostream& os, const Vector4D& );
+
 			//-------------------------------- Auxiliary Operators --------------------------------
 
 			operator float * ( )
@@ -200,6 +210,24 @@ namespace Math
 			friend Vector4D Reflect ( const Vector4D&, const Vector4D& );
 
 			friend Vector4D Refract ( const Vector4D&, const Vector4D&, float );
+
+			//-------------------------- Angle and Trigonometry Functions -------------------------
+
+			friend Vector4D Radians ( const Vector4D& );
+
+			friend Vector4D Degrees ( const Vector4D& );
+
+			friend Vector4D Sin ( const Vector4D& );
+
+			friend Vector4D Cos ( const Vector4D& );
+
+			friend Vector4D Tan ( const Vector4D& );
+
+			friend Vector4D Asin ( const Vector4D& );
+
+			friend Vector4D Acos ( const Vector4D& );
+
+			friend Vector4D Atan ( const Vector4D& );
 
 			//------------------------------- Exponential Functions -------------------------------
 

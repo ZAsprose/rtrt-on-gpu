@@ -1,10 +1,10 @@
-#include <math.h>
-
 #include <stdio.h>
 
-#include "Vector2D.h"
+#include <math.h>
 
 #include "Util.h"
+
+#include "Vector2D.h"
 
 namespace Math
 {
@@ -222,6 +222,18 @@ namespace Math
 		return left != right.X || left != right.Y;
 	}
 
+	//-------------------------------- Input and Output Operators ---------------------------------
+
+	istream& operator >> ( istream& is, Vector2D& source )
+	{
+		return is >> source.X >> source.Y;
+	}
+
+	ostream& operator << ( ostream& os, const Vector2D& source )
+	{
+		return os << source.X << " " << source.Y;
+	}
+
 	//------------------------------------- Common Functions --------------------------------------
 
 	Vector2D Abs ( const Vector2D& source )
@@ -386,6 +398,48 @@ namespace Math
 		{
 			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
 		}
+	}
+
+	//----------------------------- Angle and Trigonometry Functions ------------------------------
+
+	Vector2D Radians ( const Vector2D& source )
+	{
+		return Vector2D ( Radians ( source.X ), Radians ( source.Y ) );
+	}
+
+	Vector2D Degrees ( const Vector2D& source )
+	{
+		return Vector2D ( Degrees ( source.X ), Degrees ( source.Y ) );
+	}
+
+	Vector2D Sin ( const Vector2D& source )
+	{
+		return Vector2D ( sinf ( source.X ), sinf ( source.Y ) );
+	}
+
+	Vector2D Cos ( const Vector2D& source )
+	{
+		return Vector2D ( cosf ( source.X ), cosf ( source.Y ) );
+	}
+
+	Vector2D Tan ( const Vector2D& source )
+	{
+		return Vector2D ( tanf ( source.X ), tanf ( source.Y ) );
+	}
+
+	Vector2D Asin ( const Vector2D& source )
+	{
+		return Vector2D ( asinf ( source.X ), asinf ( source.Y ) );
+	}
+
+	Vector2D Acos ( const Vector2D& source )
+	{
+		return Vector2D ( acosf ( source.X ), acosf ( source.Y ) );
+	}
+
+	Vector2D Atan ( const Vector2D& source )
+	{
+		return Vector2D ( atanf ( source.X ), atanf ( source.Y ) );
 	}
 
 	//----------------------------------- Exponential Functions -----------------------------------
