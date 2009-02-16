@@ -18,6 +18,16 @@
 
 namespace Math
 {
+    inline float Degrees ( float radian )
+	{
+		return 180.0F * radian / ONE_PI;
+	}
+    	
+	inline float Radians ( float degree )
+	{
+		return ONE_PI * degree / 180.0F;
+	}  
+
 	inline float Sign ( float source )
 	{
 		if ( source < 0.0F )

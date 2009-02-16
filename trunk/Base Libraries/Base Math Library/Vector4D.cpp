@@ -1,10 +1,10 @@
-#include <math.h>
-
 #include <stdio.h>
 
-#include "Vector4D.h"
+#include <math.h>
 
 #include "Util.h"
+
+#include "Vector4D.h"
 
 namespace Math
 {
@@ -246,8 +246,19 @@ namespace Math
 		return left != right.X || left != right.Y || left != right.Z || left != right.W;
 	}
 
-	//------------------------------------- Common Functions --------------------------------------
+	//-------------------------------- Input and Output Operators ---------------------------------
 
+	istream& operator >> ( istream& is, Vector4D& source )
+	{
+		return is >> source.X >> source.Y >> source.Z >> source.W;
+	}
+
+	ostream& operator << ( ostream& os, const Vector4D& source )
+	{
+		return os << source.X << " " << source.Y << " " << source.Z << " " << source.W;
+	}
+
+	//------------------------------------- Common Functions --------------------------------------
 	Vector4D Abs ( const Vector4D& source )
 	{
 		return Vector4D ( fabsf ( source.X ), fabsf ( source.Y ),
@@ -441,6 +452,56 @@ namespace Math
 		{
 			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
 		}
+	}
+
+	//----------------------------- Angle and Trigonometry Functions ------------------------------
+
+	Vector4D Radians ( const Vector4D& source )
+	{
+		return Vector4D ( Radians ( source.X ), Radians ( source.Y ),
+						  Radians ( source.Z ), Radians ( source.W ) );
+	}
+
+	Vector4D Degrees ( const Vector4D& source )
+	{
+		return Vector4D ( Degrees ( source.X ), Degrees ( source.Y ),
+						  Degrees ( source.Z ), Degrees ( source.W ) );
+	}
+
+	Vector4D Sin ( const Vector4D& source )
+	{
+		return Vector4D ( sinf ( source.X ), sinf ( source.Y ),
+			              sinf ( source.Z ), sinf ( source.W ) );
+	}
+
+	Vector4D Cos ( const Vector4D& source )
+	{
+		return Vector4D ( cosf ( source.X ), cosf ( source.Y ),
+			              cosf ( source.Z ), cosf ( source.W ) );
+	}
+
+	Vector4D Tan ( const Vector4D& source )
+	{
+		return Vector4D ( tanf ( source.X ), tanf ( source.Y ),
+			              tanf ( source.Z ), tanf ( source.W ) );
+	}
+
+	Vector4D Asin ( const Vector4D& source )
+	{
+		return Vector4D ( asinf ( source.X ), asinf ( source.Y ),
+			              asinf ( source.Z ), asinf ( source.W ) );
+	}
+
+	Vector4D Acos ( const Vector4D& source )
+	{
+		return Vector4D ( acosf ( source.X ), acosf ( source.Y ),
+			              acosf ( source.Z ), acosf ( source.W ) );
+	}
+
+	Vector4D Atan ( const Vector4D& source )
+	{
+		return Vector4D ( atanf ( source.X ), atanf ( source.Y ),
+			              atanf ( source.Z ), atanf ( source.W ) );
 	}
 
 	//----------------------------------- Exponential Functions -----------------------------------

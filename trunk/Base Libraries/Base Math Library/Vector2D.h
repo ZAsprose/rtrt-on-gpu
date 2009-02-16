@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+using namespace std;
+
 namespace Math
 {
 	class Vector2D
@@ -115,6 +119,12 @@ namespace Math
 
 			friend bool operator != ( float, const Vector2D& );
 
+			//----------------------------- Input and Output Operators ----------------------------
+
+			friend istream& operator >> ( istream& is, Vector2D& );
+
+			friend ostream& operator << ( ostream& os, const Vector2D& );
+
 			//-------------------------------- Auxiliary Operators --------------------------------
 
 			operator float * ( )
@@ -188,6 +198,24 @@ namespace Math
 			friend Vector2D Reflect ( const Vector2D&, const Vector2D& );
 
 			friend Vector2D Refract ( const Vector2D&, const Vector2D&, float );
+
+			//-------------------------- Angle and Trigonometry Functions -------------------------
+
+			friend Vector2D Radians ( const Vector2D& );
+
+			friend Vector2D Degrees ( const Vector2D& );
+
+			friend Vector2D Sin ( const Vector2D& );
+
+			friend Vector2D Cos ( const Vector2D& );
+
+			friend Vector2D Tan ( const Vector2D& );
+
+			friend Vector2D Asin ( const Vector2D& );
+
+			friend Vector2D Acos ( const Vector2D& );
+
+			friend Vector2D Atan ( const Vector2D& );
 
 			//------------------------------- Exponential Functions -------------------------------
 
