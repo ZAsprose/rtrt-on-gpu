@@ -181,30 +181,30 @@ namespace Math
 
 			//-------------------------------- Geometric Functions --------------------------------
 
-			friend float Length ( Vector3D& );
+			friend float Length ( const Vector3D& );
 
-			friend float Square ( Vector3D& );
+			friend float Square ( const Vector3D& );
 
-			friend float Distance ( Vector3D&, Vector3D& );
+			friend float Distance ( const Vector3D&, const Vector3D& );
 	        
-			friend float Dot ( Vector3D&, Vector3D& );    
+			friend float Dot ( const Vector3D&, const Vector3D& );    
 	        
-			friend Vector3D Normalize ( Vector3D& );
+			friend Vector3D Normalize ( const Vector3D& );
 
-			friend Vector3D Reflect ( Vector3D&, Vector3D& );
+			friend Vector3D Reflect ( const Vector3D&, const Vector3D& );
 
-			friend Vector3D Refract ( Vector3D&, Vector3D&, float );
+			friend Vector3D Refract ( const Vector3D&, const Vector3D&, float );
 
 			//------------------------------- Exponential Functions -------------------------------
 
-			friend  Vector3D Pow ( Vector3D&, Vector3D& );
+			friend  Vector3D Pow ( const Vector3D&, const Vector3D& );
 
-			friend  Vector3D Pow ( Vector3D&, float );
+			friend  Vector3D Pow ( const Vector3D&, float );
 
-			friend  Vector3D Exp ( Vector3D& );
+			friend  Vector3D Exp ( const Vector3D& );
 
-			friend  Vector3D Log ( Vector3D& );
+			friend  Vector3D Log ( const Vector3D& );
 
-			friend  Vector3D Sqrt ( Vector3D& );
+			friend  Vector3D Sqrt ( const Vector3D& );
 	};
 }

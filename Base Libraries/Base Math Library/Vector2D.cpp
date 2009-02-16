@@ -97,7 +97,7 @@ namespace Math
 
 	Vector2D operator -= ( Vector2D& left, const Vector2D& right )
 	{
-		return Vector2D ( left.X -= right.X, left.Y -= right.X );
+		return Vector2D ( left.X -= right.X, left.Y -= right.Y );
 	}
 
 	Vector2D operator += ( Vector2D& left, float right )
@@ -117,7 +117,7 @@ namespace Math
 
 	Vector2D operator /= ( Vector2D& left, const Vector2D& right )
 	{
-		return Vector2D ( left.X /= right.X, left.Y /= right.X );
+		return Vector2D ( left.X /= right.X, left.Y /= right.Y );
 	}
 
 	Vector2D operator *= ( Vector2D& left, float right )
@@ -342,37 +342,37 @@ namespace Math
 
 	//------------------------------------ Geometric Functions ------------------------------------
 
-	float Length ( Vector2D& source )
+	float Length ( const Vector2D& source )
 	{
 		return sqrtf ( source.X * source.X + source.Y * source.Y );
 	}
 
-	float Square ( Vector2D& source )
+	float Square ( const Vector2D& source )
 	{
 		return source.X * source.X + source.Y * source.Y;
 	}
 
-	float Distance ( Vector2D& left, Vector2D& right )
+	float Distance ( const Vector2D& left, const Vector2D& right )
 	{
 		return Length ( left - right );
 	}
 
-	float Dot ( Vector2D& left, Vector2D& right )
+	float Dot ( const Vector2D& left, const Vector2D& right )
 	{
 		return left.X * right.X + left.Y * right.Y;
 	}        
 
-	Vector2D Normalize ( Vector2D& source )
+	Vector2D Normalize ( const Vector2D& source )
 	{
 		return source / Length ( source );
 	}
 
-	Vector2D Reflect ( Vector2D& incident, Vector2D& normal )
+	Vector2D Reflect ( const Vector2D& incident, const Vector2D& normal )
 	{
 		return incident - 2.0F * Dot ( normal, incident ) * normal;
 	}
 
-	Vector2D Refract ( Vector2D& incident, Vector2D& normal, float index )
+	Vector2D Refract ( const Vector2D& incident, const Vector2D& normal, float index )
 	{
 		float dot = Dot( incident, normal );
 
@@ -390,27 +390,27 @@ namespace Math
 
 	//----------------------------------- Exponential Functions -----------------------------------
 
-    Vector2D Pow ( Vector2D& left, Vector2D& right )
+    Vector2D Pow ( const Vector2D& left, const Vector2D& right )
     {
 		return Vector2D ( powf ( left.X, right.X ), powf ( left.Y, right.Y ) );
 	}
 
-    Vector2D Pow ( Vector2D& left, float right )
+    Vector2D Pow ( const Vector2D& left, float right )
     {
 		return Vector2D ( powf ( left.X, right ), powf ( left.Y, right ) );
     }
 
-    Vector2D Exp ( Vector2D& source )
+    Vector2D Exp ( const Vector2D& source )
     {
 		return Vector2D ( expf ( source.X ), expf ( source.Y ) );
     }
 
-    Vector2D Log ( Vector2D& source )
+    Vector2D Log ( const Vector2D& source )
     {
 		return Vector2D ( logf ( source.X ), logf ( source.Y ) );
     }
 
-    Vector2D Sqrt ( Vector2D& source )
+    Vector2D Sqrt ( const Vector2D& source )
     {
 		return Vector2D ( sqrtf ( source.X ), sqrtf ( source.Y ) );
     }
