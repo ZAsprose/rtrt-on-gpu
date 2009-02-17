@@ -168,6 +168,10 @@
 				Name="Matrix"
 				>
 				<File
+					RelativePath=".\matrices.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Matrix2D.cpp"
 					>
 				</File>
@@ -213,6 +217,10 @@
 			<Filter
 				Name="Matrix"
 				>
+				<File
+					RelativePath=".\matrices.h"
+					>
+				</File>
 				<File
 					RelativePath=".\Matrix2D.h"
 					>

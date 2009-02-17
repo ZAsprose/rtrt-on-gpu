@@ -1,11 +1,13 @@
 #include <iostream>
 
-#include "Util.h"
+//#include "Util.h"
 
-#include "Vector2D.h"
+//#include "Vector2D.h"
+#include "Matrix2D.h"
 
 using namespace std;
 
+/*
 int main()
 {
     double a = 7.4;
@@ -28,4 +30,13 @@ int main()
 	getchar();
 
     return 0;
+}*/
+
+void main( void )
+{
+	Matrix2D a = Matrix2D::Unit;
+	Matrix2D b = Matrix2D::Unit;
+
+	Matrix2D c = a + b;
+	Matrix2D d = a - b;
 }
