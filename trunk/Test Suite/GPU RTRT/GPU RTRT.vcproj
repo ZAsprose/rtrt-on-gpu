@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;E:\Projects\rtrt-on-gpu\XXX&quot;;&quot;E:\Projects\rtrt-on-gpu\Base Libraries\Base Math Library&quot;"
+				AdditionalIncludeDirectories="&quot;D:\projects\rtrt_step2\Base Libraries\Base Math Library&quot;;&quot;E:\Projects\rtrt-on-gpu\XXX&quot;;&quot;E:\Projects\rtrt-on-gpu\Base Libraries\Base Math Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="&quot;Base Math Library.lib&quot;"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories=""
+				AdditionalLibraryDirectories="&quot;D:\projects\rtrt_step2\Base Libraries\Base Math Library\Debug&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
