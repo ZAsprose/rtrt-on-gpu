@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,6 +61,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				AdditionalDependencies="GLee.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -141,6 +144,10 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F1AE1E13-6A0F-40F0-955A-D5B2ACFDFE31}"
+			RelativePathToProject=".\Base Libraries\Base Math Library\Base Math Library.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -148,12 +155,28 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\ShaderManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ShaderObject.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\ShaderManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ShaderObject.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
