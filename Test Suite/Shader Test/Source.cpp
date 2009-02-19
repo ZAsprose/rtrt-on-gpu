@@ -7,8 +7,14 @@
 //========================================================================
 
 #include <stdio.h>
+
+#include <GLee.h>
+
 #include <GL/glfw.h>
 
+#include "ShaderManager.h"
+
+using namespace Render;
 
 //========================================================================
 // main()
@@ -28,7 +34,21 @@ int main( void )
     {
         glfwTerminate();
         return 0;
-    }
+	}
+
+	//----------------------------------------------------
+
+	ShaderManager manager ( Both );
+
+	manager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
+
+	manager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
+
+	manager.BuildProgram ( );
+
+	manager.Bind ( );
+
+	//----------------------------------------------------
 
     // Enable sticky keys
     glfwEnable( GLFW_STICKY_KEYS );
@@ -83,7 +103,7 @@ int main( void )
 
         // Draw a rotating colorful triangle
         glTranslatef( 0.0f, 14.0f, 0.0f );
-        glRotatef( 0.3*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 0.0f, 1.0f );
+        glRotatef( 0.3f*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 0.0f, 1.0f );
         glBegin( GL_TRIANGLES );
           glColor3f( 1.0f, 0.0f, 0.0f );
           glVertex3f( -5.0f, 0.0f, -4.0f );

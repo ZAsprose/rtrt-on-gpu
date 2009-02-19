@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GLee.h"
-
 namespace Render
 {
 	enum Components
@@ -47,5 +45,9 @@ namespace Render
 			bool LoadFragmentShader ( const char **, int );
 
 			bool BuildProgram ( void );
+
+			void Bind ( void );
+			
+			void Unbind ( void );
 	};
 }
