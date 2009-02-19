@@ -128,7 +128,7 @@ namespace Render
 
 		cout << "SUCCESS!" << endl;
 		
-		return true;
+		return Compile ( shader );
 	}
 
 	bool ShaderManager :: Compile ( int shader )
@@ -253,5 +253,15 @@ namespace Render
 
 			return true;
 		}
+	}
+
+	void ShaderManager :: Bind ( void )
+	{
+		glUseProgram ( program );
+	}
+			
+	void ShaderManager :: Unbind ( void )
+	{
+		glUseProgram ( 0 );
 	}
 }
