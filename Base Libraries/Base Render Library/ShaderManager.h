@@ -2,20 +2,11 @@
 
 namespace Render
 {
-	enum Components
-	{
-		Vertex,
-
-		Fragment,
-
-		Both
-	};
-	
 	class ShaderManager
 	{
 		private:
 
-			//----------------------------------- Public Fields -----------------------------------
+			//---------------------------------- Private Fields -----------------------------------
 
 			int vertex;
 
@@ -29,12 +20,17 @@ namespace Render
 
 			bool Compile ( int );
 
+			bool Attach ( int );
+
 		public:
 
-			ShaderManager( int = Both );
+			//----------------------------- Constructor and Destructor ----------------------------
+
+			ShaderManager( void );
 			
 			~ShaderManager( void );
 
+			//--------------------------------- Shaders Management --------------------------------
 
 			bool LoadVertexShader ( const char * );
 
@@ -49,5 +45,7 @@ namespace Render
 			void Bind ( void );
 			
 			void Unbind ( void );
+
+			//------------------------------------ Input Data -------------------------------------
 	};
 }

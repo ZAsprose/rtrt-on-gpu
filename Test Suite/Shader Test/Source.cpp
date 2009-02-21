@@ -38,15 +38,15 @@ int main( void )
 
 	//----------------------------------------------------
 
-	ShaderManager manager ( Both );
+	ShaderManager smanager;
 
-	manager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
+	smanager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
 
-	manager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
+	smanager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
 
-	manager.BuildProgram ( );
+	smanager.BuildProgram ( );
 
-	manager.Bind ( );
+	smanager.Bind ( );
 
 	//----------------------------------------------------
 

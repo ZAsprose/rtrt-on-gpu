@@ -14,56 +14,33 @@ using namespace std;
 
 namespace Render
 {
-	ShaderManager :: ShaderManager( int components )
+	//--------------------------------- Constructor and Destructor --------------------------------
+
+	ShaderManager :: ShaderManager ( void )
 	{
-		cout << "Creating programm..." << endl;
+		vertex = glCreateShader ( GL_VERTEX_SHADER );
+		
+		fragment = glCreateShader ( GL_FRAGMENT_SHADER );
 
 		program = glCreateProgram ( );
-
-		cout << "Attaching shaders to program..." << endl;
-
-		switch ( components )
-		{
-			case Vertex:
-
-				vertex = glCreateShader ( GL_VERTEX_SHADER );
-
-				glAttachShader ( program, vertex );
-				
-				break;
-
-			case Fragment:
-
-				fragment = glCreateShader ( GL_FRAGMENT_SHADER );
-
-				glAttachShader ( program, fragment );
-				
-				break;
-
-			case Both:
-
-				vertex = glCreateShader ( GL_VERTEX_SHADER );
-
-				fragment = glCreateShader ( GL_FRAGMENT_SHADER );
-
-				glAttachShader ( program, vertex );
-
-				glAttachShader ( program, fragment );
-				
-				break;
-		}
 	}
 
-	ShaderManager :: ~ShaderManager( void )
+	ShaderManager :: ~ShaderManager ( void )
 	{
-	
+		glDeleteShader ( vertex );
+                
+		glDeleteShader ( fragment );
+		
+		glDeleteProgram ( program );
 	}
+
+	//-------------------------------------- Private Methods --------------------------------------
 
 	bool ShaderManager :: Load ( int shader, const char ** filenames, int count )
 	{
 		cout << "Loading shader source..." << endl;
 
-		char ** lines = new char * [count];		
+		char ** lines = new char *[count];		
 
 		//---------------------------------------------------------------------
 
@@ -71,15 +48,19 @@ namespace Render
 
 		for ( int index = 0; index < count; index++ )
 		{
-			cout << filenames [index] << "..." << endl;
+			cout << filenames[index] << "..." << endl;
 
-			ifstream file ( filenames [index] );
+			ifstream file ( filenames[index] );
 
 			//-----------------------------------------------------------------
 			
 			if ( !file )
 			{
 				cout << "ERROR: Could not open file" << endl;
+
+				loaded = false;
+
+				break;
 			}
 
 			//-----------------------------------------------------------------
@@ -99,20 +80,20 @@ namespace Render
 
 			//-----------------------------------------------------------------
 
-			char * source = new char [length + 1];
+			char * source = new char[length + 1];
 
 			unsigned long i = 0;
 			
 			while ( file )
 			{
-				source [i++] = file.get ( );
+				source[i++] = file.get ( );
 			}
 			
-			source [i - 1] = 0;
+			source[i - 1] = 0;
 
 			//-----------------------------------------------------------------
 
-			lines [index] = source;
+			lines[index] = source;
 			
 			file.close();
 		}
@@ -130,7 +111,7 @@ namespace Render
 
 		for ( int index = 0; index < count; index++ )
 		{
-			delete [] lines [index];
+			delete [] lines[index];
 		}
 
 		delete [] lines;
@@ -140,8 +121,6 @@ namespace Render
 
 	bool ShaderManager :: Compile ( int shader )
 	{
-		//---------------------------------------------------------------------
-
     	cout << "Compiling shader..." << endl;            		
 
 		glCompileShader ( shader );
@@ -167,6 +146,8 @@ namespace Render
 			cout << info << endl;
 		}
 
+		delete [] info;
+
 		//---------------------------------------------------------------------
     	
     	int status = 0;
@@ -175,7 +156,7 @@ namespace Render
 
 		if ( 0 == status )
 		{
-			cout << "ERROR! Could not compile shader" << endl;
+			cout << "ERROR: Could not compile shader" << endl;
 
 			return false;
 		}
@@ -187,6 +168,17 @@ namespace Render
 		}           
 	}
 
+	bool ShaderManager :: Attach ( int shader )
+	{
+		cout << "Attaching shader to program..." << endl;
+
+		glAttachShader ( program, shader );
+
+		return true;
+	}
+
+	//------------------------------------ Shaders Management -------------------------------------
+	
 	bool ShaderManager :: LoadVertexShader ( const char * filename )
 	{        
 		return LoadVertexShader ( &filename, 1 );
@@ -199,33 +191,33 @@ namespace Render
 
     bool ShaderManager :: LoadVertexShader ( const char ** filenames, int count )
 	{
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-		cout << "+++                     VERTEX SHADER                     +++" << endl;
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                           VERTEX SHADER                          +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( vertex, filenames, count ) && Compile ( vertex );
+		return Load ( vertex, filenames, count ) && Compile ( vertex ) && Attach ( vertex );
 	}
 
 	bool ShaderManager :: LoadFragmentShader ( const char ** filenames, int count )
 	{
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-		cout << "+++                    FRAGMENT SHADER                    +++" << endl;
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                          FRAGMENT SHADER                         +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( fragment, filenames, count ) && Compile ( fragment );
+		return Load ( fragment, filenames, count ) && Compile ( fragment ) && Attach ( fragment );
 	}
 
 	bool ShaderManager :: BuildProgram ( void )
 	{
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-		cout << "+++                     PROGRAM OBJECT                    +++" << endl;
-		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                          PROGRAM OBJECT                          +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
 		cout << "Linking program..." << endl;
 	            
 		glLinkProgram ( program );
 
-		//------------------------------------ Getting Info Log -----------------------------------
+		//---------------------------------------------------------------------
 
     	int capacity = 0;
 
@@ -246,7 +238,9 @@ namespace Render
 			cout << info << endl;
 		}
 
-		//---------------------------------- Checking Link Status ---------------------------------
+		delete [] info;
+
+		//---------------------------------------------------------------------
 		
 		int status = 0;
 		
@@ -254,7 +248,7 @@ namespace Render
 	
 		if ( 0 == status )
 		{
-			cout << "ERROR! Could not link program" << endl;
+			cout << "ERROR: Could not link program" << endl;
 
 			return false;
 		}
@@ -275,4 +269,6 @@ namespace Render
 	{
 		glUseProgram ( 0 );
 	}
+
+	//---------------------------------------- Input Data -----------------------------------------
 }
