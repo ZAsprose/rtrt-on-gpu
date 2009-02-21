@@ -61,104 +61,113 @@ namespace Render
 
 	bool ShaderManager :: Load ( int shader, const char ** filenames, int count )
 	{
-		//------------------------------------- Loading Files -------------------------------------
-
 		cout << "Loading shader source..." << endl;
 
-		char ** lines = new char * [count];
+		char ** lines = new char * [count];		
+
+		//---------------------------------------------------------------------
+
+		bool loaded = true;
 
 		for ( int index = 0; index < count; index++ )
 		{
-			//----------------------------------- Opening File ------------------------------------
+			cout << filenames [index] << "..." << endl;
 
-			cout << "File: " << filenames[index] << "..." << endl;
+			ifstream file ( filenames [index] );
 
-			ifstream file ( filenames[index] );
+			//-----------------------------------------------------------------
 			
-			if ( !file.is_open ( ) )
+			if ( !file )
 			{
-				cout << "ERROR! Could not open file" << endl;
-
-				return false;
+				cout << "ERROR: Could not open file" << endl;
 			}
 
-			//-------------------------------- Getting File Length --------------------------------
-		    
+			//-----------------------------------------------------------------
+
 			file.seekg ( 0, ios :: end );
 			
 			unsigned long length = file.tellg ( );
 			
 			file.seekg ( 0, ios :: beg );
-		    
+
+			//-----------------------------------------------------------------
+
 			if ( 0 == length )
 			{
-				cout << "ERROR! File is empty" << endl;
-
-				file.close();
-
-				return false;
+				cout << "WARNING: File is empty" << endl;
 			}
 
-			//---------------------------------- Loading Source -----------------------------------
+			//-----------------------------------------------------------------
 
-			char * source = new char[length + 1];
+			char * source = new char [length + 1];
 
 			unsigned long i = 0;
 			
-			while ( file.good ( ) )
+			while ( file )
 			{
-				source[i] = file.get ( );
-				
-				if ( !file.eof ( ) )
-				{
-					i++;
-				}
+				source [i++] = file.get ( );
 			}
 			
-			source[i] = 0;
+			source [i - 1] = 0;
 
+			//-----------------------------------------------------------------
+
+			lines [index] = source;
+			
 			file.close();
-
-			lines[index] = source;			
 		}
 
-		//------------------------------------- Setting Source ------------------------------------
+		//---------------------------------------------------------------------
 
-		glShaderSource ( shader, count, ( const char ** ) lines, NULL );
+		if ( loaded )
+		{
+			glShaderSource ( shader, count, ( const char ** ) lines, NULL );
 
-		cout << "SUCCESS!" << endl;
-		
-		return Compile ( shader );
+			cout << "SUCCESS!" << endl;
+		}
+
+		//---------------------------------------------------------------------
+
+		for ( int index = 0; index < count; index++ )
+		{
+			delete [] lines [index];
+		}
+
+		delete [] lines;
+
+		return loaded;
 	}
 
 	bool ShaderManager :: Compile ( int shader )
 	{
-		//------------------------------------ Compiling Shader -----------------------------------
+		//---------------------------------------------------------------------
 
     	cout << "Compiling shader..." << endl;            		
 
 		glCompileShader ( shader );
 
-		//------------------------------------ Getting Info Log -----------------------------------
+		//---------------------------------------------------------------------
 
     	int capacity = 0;
 
         glGetShaderiv ( shader, GL_INFO_LOG_LENGTH, &capacity );
 
-		char * info = new char[capacity];
+		char * info = new char [capacity];
+
+		memset ( info, 0, capacity );
 
 		glGetShaderInfoLog ( shader, UINT_MAX, NULL, info );
 
 		if ( 0 == strlen ( info ) )
 		{
-			cout << "Information log is emty..." << endl;
+			cout << "Information log is empty..." << endl;
 		}
 		else
 		{
 			cout << info << endl;
 		}
 
-		//-------------------------------- Checking Compile Status --------------------------------
+		//---------------------------------------------------------------------
     	
     	int status = 0;
     	
@@ -194,7 +203,7 @@ namespace Render
 		cout << "+++                     VERTEX SHADER                     +++" << endl;
 		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( vertex, filenames, count );
+		return Load ( vertex, filenames, count ) && Compile ( vertex );
 	}
 
 	bool ShaderManager :: LoadFragmentShader ( const char ** filenames, int count )
@@ -203,7 +212,7 @@ namespace Render
 		cout << "+++                    FRAGMENT SHADER                    +++" << endl;
 		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( fragment, filenames, count );
+		return Load ( fragment, filenames, count ) && Compile ( fragment );
 	}
 
 	bool ShaderManager :: BuildProgram ( void )
@@ -224,11 +233,13 @@ namespace Render
 
 		char * info = new char[capacity];
 
+		memset ( info, 0, capacity );
+
 		glGetProgramInfoLog ( program, UINT_MAX, NULL, info );
 
 		if ( 0 == strlen ( info ) )
 		{
-			cout << "Information log is emty..." << endl;
+			cout << "Information log is empty..." << endl;
 		}
 		else
 		{
