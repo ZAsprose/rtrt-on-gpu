@@ -12,7 +12,7 @@
 
 using namespace std;
 
-namespace Render
+namespace RenderTools
 {
 	//--------------------------------- Constructor and Destructor --------------------------------
 
@@ -270,5 +270,183 @@ namespace Render
 		glUseProgram ( 0 );
 	}
 
-	//---------------------------------------- Input Data -----------------------------------------
+	//----------------------------------- Input and Output Data -----------------------------------
+
+	bool ShaderManager :: SetUniformInteger ( const char * name, int value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniform1i ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformInteger ( int location, int value )
+	{
+		glUniform1i ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformFloat ( const char * name, float value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniform1f ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformFloat ( int location, float value )
+	{
+		glUniform1f ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( const char * name, const Vector2D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniform2fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( int location, const Vector2D& value )
+	{
+		glUniform2fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( const char * name, const Vector3D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniform3fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( int location, const Vector3D& value )
+	{
+		glUniform3fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( const char * name, const Vector4D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniform4fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformVector ( int location, const Vector4D& value )
+	{
+		glUniform4fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeName ( int location, const char * name )
+	{
+		glBindAttribLocation ( program, location, name );
+		
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeFloat ( const char * name, float value )
+	{
+		int location = glGetAttribLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glVertexAttrib1f ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeFloat ( int location, float value )
+	{
+		glVertexAttrib1f ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector2D& value )
+	{
+		int location = glGetAttribLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glVertexAttrib2fv ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeVector ( int location, const Vector2D& value )
+	{
+		glVertexAttrib2fv ( location, value );
+
+		return true;
+	}
+	
+	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector3D& value )
+	{
+		int location = glGetAttribLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glVertexAttrib3fv ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeVector ( int location, const Vector3D& value )
+	{
+		glVertexAttrib3fv ( location, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector4D& value )
+	{
+		int location = glGetAttribLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glVertexAttrib4fv ( location, value );
+
+		return true;
+	}
+	
+	bool ShaderManager :: SetAttributeVector ( int location, const Vector4D& value )
+	{
+		glVertexAttrib4fv ( location, value );
+
+		return true;
+	}
 }

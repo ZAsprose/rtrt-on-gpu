@@ -144,6 +144,11 @@ namespace Math
 				return &X;
 			}
 
+			operator const float * ( ) const
+			{
+				return &X;
+			}
+
 			float& operator [] ( int index )
 			{
 				return * ( index + &X );
