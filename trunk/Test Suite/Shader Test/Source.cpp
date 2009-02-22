@@ -14,7 +14,7 @@
 
 #include "ShaderManager.h"
 
-using namespace Render;
+using namespace RenderTools;
 
 //========================================================================
 // main()
