@@ -35,6 +35,13 @@ namespace Math
 				Y = y;
 			}
 
+			Vector2D ( float v[2] )
+			{
+				X = v[0];
+
+				Y = v[1];
+			}
+
 			//------------------------------- Arithmetic Operators --------------------------------
 
 			friend Vector2D operator + ( const Vector2D& );
