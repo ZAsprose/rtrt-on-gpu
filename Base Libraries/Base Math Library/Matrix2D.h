@@ -1,26 +1,68 @@
 #pragma once
 
-#include "matrices.h"
+#include "Vector2D.h"
 
-class Matrix2D
+#define SIZE2D 2
+
+namespace Math
 {
-public:
+	class Matrix2D
+	{
+		private:
 
-	//---------------------------------- Public Fields ------------------------------------
+			//---------------------------------- Private Fields -----------------------------------
 
-	mat2 matrix;
-	
-	//--------------------------------- Public Constants ----------------------------------
+			float values[SIZE2D][SIZE2D];
 
-	static Matrix2D Zero;
-	static Matrix2D Unit;
+		public:
+
+			//--------------------------------- Public Constants ----------------------------------
+
+			static Matrix2D Zero;
+
+			static Matrix2D Unit;
+
+			//---------------------------------- Constructors -------------------------------------
+
+			Matrix2D ( float matrix[SIZE2D][SIZE2D] );
+
+			//------------------------------- Arithmetic Operators --------------------------------
+
+			friend Matrix2D operator + ( const Matrix2D& );
+			
+			friend Matrix2D operator - ( const Matrix2D& );
+
+			friend Matrix2D operator + ( const Matrix2D&, const Matrix2D& );
+			
+			friend Matrix2D operator - ( const Matrix2D&, const Matrix2D& );
+
+			friend Matrix2D operator * ( const Matrix2D&, const Matrix2D& );
+			
+			friend Vector2D operator * ( const Matrix2D&, const Vector2D& );
+
+			friend Matrix2D operator * ( const Matrix2D&, float );
+
+			friend Matrix2D operator / ( const Matrix2D&, float );
+			
+			friend Matrix2D operator * ( float, const Matrix2D& );
+
+			friend Matrix2D operator / ( float, const Matrix2D& );
 
 
-	Matrix2D( void );
-	~Matrix2D( void );
+			//-------------------------------- Auxiliary Operators --------------------------------
 
-	Matrix2D( const mat2 in_matrix );
+			float * operator [] ( int index )
+			{
+				return &values[index][0];
+			}
 
-	Matrix2D operator + ( Matrix2D in_matrix );
-	Matrix2D operator - ( Matrix2D in_matrix );
-};
+			const float * operator [] ( int index ) const
+			{
+				return &values[index][0];
+			}
+
+			//--------------------------------- Common Functions ----------------------------------
+			
+			friend Matrix2D Inverse ( const Matrix2D& );
+	};
+}
