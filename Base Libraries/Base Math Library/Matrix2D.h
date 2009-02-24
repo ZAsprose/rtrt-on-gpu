@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "Util.h"
 
 #include "Vector2D.h"
@@ -56,6 +58,11 @@ namespace Math
 
 			friend Matrix2D operator / ( float, const Matrix2D& );
 
+			//----------------------------- Input and Output Operators ----------------------------
+
+			friend istream& operator >> ( istream&, Matrix2D& );
+
+			friend ostream& operator << ( ostream&, const Matrix2D& );
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 
@@ -71,8 +78,12 @@ namespace Math
 
 			//--------------------------------- Common Functions ----------------------------------
 			
-			friend Matrix2D Inverse ( const Matrix2D& );
+			friend float Determinant ( const Matrix2D& );
 
 			friend Matrix2D Transpose ( const Matrix2D& );
+
+			friend Matrix2D Adjugate ( const Matrix2D& );
+
+			friend Matrix2D Inverse ( const Matrix2D& );
 	};
 }

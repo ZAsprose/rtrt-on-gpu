@@ -127,9 +127,9 @@ namespace Math
 
 			//----------------------------- Input and Output Operators ----------------------------
 
-			friend istream& operator >> ( istream& is, Vector3D& );
+			friend istream& operator >> ( istream&, Vector3D& );
 
-			friend ostream& operator << ( ostream& os, const Vector3D& );
+			friend ostream& operator << ( ostream&, const Vector3D& );
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 

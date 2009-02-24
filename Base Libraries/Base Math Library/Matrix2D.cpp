@@ -212,17 +212,42 @@ namespace Math
 
 		return Matrix2D ( result );
 	}
+	
+	//-------------------------------- Input and Output Operators ---------------------------------
+	
+	istream& operator >> ( istream& is, Matrix2D& source )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			for ( int j = 0; j < SIZE2D; j++ )
+			{
+				is >> source[i][j];
+			}
+		}
+		return is;
+	}	
+	
+	ostream& operator << ( ostream& os, const Matrix2D& source )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			for ( int j = 0; j < SIZE2D; j++ )
+			{
+				os << source[i][j] << " ";
+			}
+
+			os << endl;
+		}
+		return os;
+	}
 
 	//------------------------------------- Common Functions --------------------------------------
-			
-	Matrix2D Inverse ( const Matrix2D& source )
+
+	float Determinant ( const Matrix2D& source )
 	{
-		float result[SIZE2D][SIZE2D] = { {  source[1][1], -source[0][1] },
-		                                 { -source[1][0],  source[0][0] } };
-		
-		return Matrix2D ( result );
+		return source[A][A] * source[B][B] - source[A][B] * source[B][A];
 	}
-	
+
 	Matrix2D Transpose ( const Matrix2D& source )
 	{
 		float result[SIZE2D][SIZE2D];
@@ -237,4 +262,24 @@ namespace Math
 
 		return Matrix2D ( result );
 	} 
+
+	Matrix2D Adjugate ( const Matrix2D& source )
+	{
+		float result[SIZE2D][SIZE2D];
+		
+		result[A][A] = source[B][B];
+
+		result[A][B] = -source[A][B];
+
+		result[B][A] = -source[B][A];
+
+		result[B][B] = source[A][A];
+		
+		return Matrix2D ( result );
+	}
+
+	Matrix2D Inverse ( const Matrix2D& source )
+	{
+		return Adjugate ( source ) / Determinant ( source );
+	}
 }
