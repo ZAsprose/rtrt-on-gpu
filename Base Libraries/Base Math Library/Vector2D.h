@@ -48,8 +48,10 @@ namespace Math
 			
 			friend Vector2D operator - ( const Vector2D& );
 
+			// TODO: Denis do we need this operator
 			friend Vector2D operator + ( const Vector2D&, const Vector2D& );
 			
+			// TODO: Denis do we need this operator
 			friend Vector2D operator - ( const Vector2D&, const Vector2D& );
 
 			friend Vector2D operator + ( const Vector2D&, float );
@@ -72,21 +74,21 @@ namespace Math
 
 			friend Vector2D operator / ( float, const Vector2D& );
 
-			friend Vector2D operator += ( const Vector2D&, const Vector2D& );
+			friend Vector2D operator += ( Vector2D&, const Vector2D& );
 			
-			friend Vector2D operator -= ( const Vector2D&, const Vector2D& );
+			friend Vector2D operator -= ( Vector2D&, const Vector2D& );
 
-			friend Vector2D operator += ( const Vector2D&, float );
+			friend Vector2D operator += ( Vector2D&, float );
 
-			friend Vector2D operator -= ( const Vector2D&, float );	
+			friend Vector2D operator -= ( Vector2D&, float );	
 
-			friend Vector2D operator *= ( const Vector2D&, const Vector2D& );
+			friend Vector2D operator *= ( Vector2D&, const Vector2D& );
 			
-			friend Vector2D operator /= ( const Vector2D&, const Vector2D& );
+			friend Vector2D operator /= ( Vector2D&, const Vector2D& );
 
-			friend Vector2D operator *= ( const Vector2D&, float );
+			friend Vector2D operator *= ( Vector2D&, float );
 
-			friend Vector2D operator /= ( const Vector2D&, float );
+			friend Vector2D operator /= ( Vector2D&, float );
 
 			//---------------------------------- Logic Operators ----------------------------------
 
@@ -134,6 +136,8 @@ namespace Math
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 
+			// TODO: denis do we need the following two operators?
+
 			operator float * ( )
 			{
 				return &X;
@@ -144,6 +148,9 @@ namespace Math
 				return &X;
 			}
 
+			// TODO: Denis I suppose that this is a dengerous thing and it depends of a compiler how it will 
+			// store class variable. Also there can be different выравнивание (i don't know the English version) 
+			// on the different platforms 
 			float& operator [] ( int index )
 			{
 				return * ( index + &X );
