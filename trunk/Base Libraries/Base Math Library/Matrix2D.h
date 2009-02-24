@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Vector2D.h"
+#include "Util.h"
 
-#define SIZE2D 2
+#include "Vector2D.h"
 
 namespace Math
 {
@@ -24,7 +24,15 @@ namespace Math
 
 			//---------------------------------- Constructors -------------------------------------
 
-			Matrix2D ( float matrix[SIZE2D][SIZE2D] );
+			Matrix2D ( float );
+
+			Matrix2D ( const float[SIZE2D] );
+
+			Matrix2D ( const Vector2D& );
+
+			Matrix2D ( const float[SIZE2D][SIZE2D] );
+
+			Matrix2D ( const Matrix2D& );
 
 			//------------------------------- Arithmetic Operators --------------------------------
 
@@ -64,5 +72,7 @@ namespace Math
 			//--------------------------------- Common Functions ----------------------------------
 			
 			friend Matrix2D Inverse ( const Matrix2D& );
+
+			friend Matrix2D Transpose ( const Matrix2D& );
 	};
 }

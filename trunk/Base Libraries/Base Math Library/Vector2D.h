@@ -48,10 +48,8 @@ namespace Math
 			
 			friend Vector2D operator - ( const Vector2D& );
 
-			// TODO: Denis do we need this operator
 			friend Vector2D operator + ( const Vector2D&, const Vector2D& );
 			
-			// TODO: Denis do we need this operator
 			friend Vector2D operator - ( const Vector2D&, const Vector2D& );
 
 			friend Vector2D operator + ( const Vector2D&, float );
