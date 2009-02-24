@@ -133,9 +133,9 @@ namespace Math
 
 			//----------------------------- Input and Output Operators ----------------------------
 
-			friend istream& operator >> ( istream& is, Vector4D& );
+			friend istream& operator >> ( istream&, Vector4D& );
 
-			friend ostream& operator << ( ostream& os, const Vector4D& );
+			friend ostream& operator << ( ostream&, const Vector4D& );
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 
