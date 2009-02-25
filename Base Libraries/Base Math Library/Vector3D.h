@@ -20,7 +20,7 @@ namespace Math
 	{
 		public:
 
-			//---------------------------------- Public Fields ------------------------------------
+			//----------------------------------- Public Fields -----------------------------------
 
 			float X;
 
@@ -28,7 +28,7 @@ namespace Math
 
 			float Z;
 
-			//--------------------------------- Public Constants ----------------------------------
+			//---------------------------------- Public Constants ---------------------------------
 
 			static Vector3D Zero;
 
@@ -40,7 +40,7 @@ namespace Math
 
 			static Vector3D AxisZ;
 
-			//---------------------------------- Constructors -------------------------------------
+			//------------------------------------ Constructors -----------------------------------
 
 			Vector3D ( float = 0, float = 0, float = 0 );
 
@@ -52,7 +52,7 @@ namespace Math
 
 			Vector3D ( const Vector4D& );
 
-			//------------------------------- Arithmetic Operators --------------------------------
+			//-------------------------------- Arithmetic Operators -------------------------------
 
 			friend Vector3D operator + ( const Vector3D& );
 			
@@ -215,12 +215,7 @@ namespace Math
 	        
 			friend float Dot ( const Vector3D&, const Vector3D& );
 
-			friend Vector3D Cross ( const Vector3D& left, const Vector3D& right )
-			{
-				return Vector3D ( left.Y * right.Z - left.Z * right.Y,
-					              left.Z * right.X - left.X * right.Z,
-								  left.X * right.Y - left.Y * right.X );
-			} 
+			friend Vector3D Cross ( const Vector3D&, const Vector3D& );
 	        
 			friend Vector3D Normalize ( const Vector3D& );
 

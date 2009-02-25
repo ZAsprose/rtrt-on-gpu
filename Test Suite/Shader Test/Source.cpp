@@ -67,6 +67,12 @@ int main( void )
 
 	cout << "ccc = " << endl << ccc;
 
+	Vector3D v1 ( 1, 2, 3 );
+
+	float fa[3] = { 4, 5, 6 };
+
+	v1 = fa;
+
 	getchar ( );
 
 	//----------------------------------------------------

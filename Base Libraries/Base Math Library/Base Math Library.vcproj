@@ -222,10 +222,6 @@
 				Name="Matrix"
 				>
 				<File
-					RelativePath=".\matrices.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Matrix2D.h"
 					>
 				</File>

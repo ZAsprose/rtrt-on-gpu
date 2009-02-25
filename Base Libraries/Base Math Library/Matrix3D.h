@@ -88,22 +88,26 @@ namespace Math
 
 			//--------------------------------- Specific Functions --------------------------------
 
-			static Matrix3D Scale ( const Vector3D& );
+			static Matrix3D	MirrorX ( void );
 			
+			static Matrix3D	MirrorY ( void );
+			
+			static Matrix3D	MirrorZ ( void );
+
 			static Matrix3D RotateX ( float );
 			
 			static Matrix3D	RotateY ( float );
 			
 			static Matrix3D	RotateZ ( float );
 			
-			static Matrix3D	Rotate ( const Vector3D&, float );
-			
 			static Matrix3D	Rotate ( const Vector3D& );
+
+			static Matrix3D ScaleX ( float );
 			
-			static Matrix3D	MirrorX ( );
+			static Matrix3D	ScaleY ( float );
 			
-			static Matrix3D	MirrorY ( );
+			static Matrix3D ScaleZ ( float );
 			
-			static Matrix3D	MirrorZ ( );
+			static Matrix3D Scale ( const Vector3D& );
 	};
 }

@@ -20,13 +20,13 @@ namespace Math
 	{
 		public:
 
-			//---------------------------------- Public Fields ------------------------------------
+			//----------------------------------- Public Fields -----------------------------------
 
 			float X;
 
 			float Y;
 
-			//--------------------------------- Public Constants ----------------------------------
+			//---------------------------------- Public Constants ---------------------------------
 
 			static Vector2D Zero;
 
@@ -36,7 +36,7 @@ namespace Math
 
 			static Vector2D AxisY;
 
-			//---------------------------------- Constructors -------------------------------------
+			//------------------------------------ Constructors -----------------------------------
 
 			Vector2D ( float = 0, float = 0 );
 
@@ -48,7 +48,7 @@ namespace Math
 
 			Vector2D ( const Vector4D& );
 
-			//------------------------------- Arithmetic Operators --------------------------------
+			//-------------------------------- Arithmetic Operators -------------------------------
 
 			friend Vector2D operator + ( const Vector2D& );
 			

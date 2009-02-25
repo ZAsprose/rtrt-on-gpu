@@ -24,7 +24,7 @@ namespace Math
 
 			static const Matrix4D Unit;
 
-			//---------------------------------- Constructors -------------------------------------
+			//----------------------------------- Constructors ------------------------------------
 
 			Matrix4D ( float );
 
@@ -36,7 +36,7 @@ namespace Math
 
 			Matrix4D ( const Matrix4D& );
 
-			//------------------------------- Arithmetic Operators --------------------------------
+			//-------------------------------- Arithmetic Operators -------------------------------
 
 			friend Matrix4D operator + ( const Matrix4D& );
 			
