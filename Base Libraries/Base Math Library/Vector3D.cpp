@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-#include "Util.h"
-
 #include "Vector3D.h"
 
 namespace Math
@@ -19,6 +17,49 @@ namespace Math
 	Vector3D Vector3D :: AxisY ( 0.0F, 1.0F, 0.0F );
 
 	Vector3D Vector3D :: AxisZ ( 0.0F, 0.0F, 1.0F );
+
+	//--------------------------------------- Constructors ----------------------------------------
+
+	Vector3D :: Vector3D ( float x, float y, float z )
+	{
+		X = x;
+
+		Y = y;
+
+		Z = z;
+	}
+
+	Vector3D :: Vector3D ( const float vector[SIZE3D] )
+	{
+		for ( int i = 0; i < SIZE3D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector3D :: Vector3D ( const Vector2D& vector )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector3D :: Vector3D ( const Vector3D& vector )
+	{
+		for ( int i = 0; i < SIZE3D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector3D :: Vector3D ( const Vector4D& vector )
+	{
+		for ( int i = 0; i < SIZE3D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 

@@ -20,9 +20,9 @@ namespace Math
 
 			//--------------------------------- Public Constants ----------------------------------
 
-			static Matrix2D Zero;
+			static const Matrix2D Zero;
 
-			static Matrix2D Unit;
+			static const Matrix2D Unit;
 
 			//---------------------------------- Constructors -------------------------------------
 
