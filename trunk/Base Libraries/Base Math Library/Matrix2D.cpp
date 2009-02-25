@@ -1,9 +1,13 @@
 #include "Matrix2D.h"
 
-#include <memory.h>
-
 namespace Math
 {
+	//-------------------------------------- Public Constants -------------------------------------
+
+	const Matrix2D Matrix2D :: Zero ( 0.0F );
+
+	const Matrix2D Matrix2D :: Unit ( 1.0F );
+
 	//--------------------------------------- Constructors ----------------------------------------
 	
 	Matrix2D :: Matrix2D ( float diagonal )
@@ -52,17 +56,11 @@ namespace Math
 		}
 	}
 
-	//-------------------------------------- Public Constants -------------------------------------
-
-	Matrix2D Matrix2D :: Zero ( 0.0F );
-
-	Matrix2D Matrix2D :: Unit ( 1.0F );
-
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
 	Matrix2D operator + ( const Matrix2D& source )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -72,12 +70,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator - ( const Matrix2D& source )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -87,12 +85,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator + ( const Matrix2D& left, const Matrix2D& right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -102,12 +100,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator - ( const Matrix2D& left, const Matrix2D& right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -117,12 +115,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator * ( const Matrix2D& left, const Matrix2D& right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -135,12 +133,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 			
 	Vector2D operator * ( const Matrix2D& left, const Vector2D& right )
 	{
-		float result[SIZE2D];
+		Vector2D result = Vector2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -150,12 +148,12 @@ namespace Math
 			}
 		}
 		
-		return Vector2D ( result );
+		return result;
 	}
 
 	Matrix2D operator * ( const Matrix2D& left, float right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -165,12 +163,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator / ( const Matrix2D& left, float right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -180,12 +178,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 			
 	Matrix2D operator * ( float left, const Matrix2D& right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -195,12 +193,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D operator / ( float left, const Matrix2D& right )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -210,7 +208,7 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	}
 	
 	//-------------------------------- Input and Output Operators ---------------------------------
@@ -250,7 +248,7 @@ namespace Math
 
 	Matrix2D Transpose ( const Matrix2D& source )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
@@ -260,12 +258,12 @@ namespace Math
 			}
 		}
 
-		return Matrix2D ( result );
+		return result;
 	} 
 
 	Matrix2D Adjugate ( const Matrix2D& source )
 	{
-		float result[SIZE2D][SIZE2D];
+		Matrix2D result = Matrix2D :: Zero;
 		
 		result[A][A] = source[B][B];
 
@@ -275,7 +273,7 @@ namespace Math
 
 		result[B][B] = source[A][A];
 		
-		return Matrix2D ( result );
+		return result;
 	}
 
 	Matrix2D Inverse ( const Matrix2D& source )

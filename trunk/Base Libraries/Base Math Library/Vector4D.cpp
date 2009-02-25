@@ -22,6 +22,51 @@ namespace Math
 
 	Vector4D Vector4D :: AxisW ( 0.0F, 0.0F, 0.0F, 1.0F );
 
+	//--------------------------------------- Constructors ----------------------------------------
+
+	Vector4D :: Vector4D ( float x, float y, float z, float w )
+	{
+		X = x;
+
+		Y = y;
+
+		Z = z;
+
+		W = w;
+	}
+
+	Vector4D :: Vector4D ( const float vector[SIZE4D] )
+	{
+		for ( int i = 0; i < SIZE4D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector4D :: Vector4D ( const Vector2D& vector )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector4D :: Vector4D ( const Vector3D& vector )
+	{
+		for ( int i = 0; i < SIZE3D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector4D :: Vector4D ( const Vector4D& vector )
+	{
+		for ( int i = 0; i < SIZE4D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
 	Vector4D operator + ( const Vector4D& source )

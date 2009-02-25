@@ -2,10 +2,20 @@
 
 #include <iostream>
 
+#include "Util.h"
+
+#include "Vector3D.h"
+
+#include "Vector4D.h"
+
 using namespace std;
 
 namespace Math
 {
+	class Vector3D;
+
+	class Vector4D;
+
 	class Vector2D
 	{
 		public:
@@ -28,19 +38,15 @@ namespace Math
 
 			//---------------------------------- Constructors -------------------------------------
 
-			Vector2D ( float x, float y )
-			{
-				X = x;
+			Vector2D ( float = 0, float = 0 );
 
-				Y = y;
-			}
+			Vector2D ( const float[SIZE2D] );
 
-			Vector2D ( float v[2] )
-			{
-				X = v[0];
+			Vector2D ( const Vector2D& );
 
-				Y = v[1];
-			}
+			Vector2D ( const Vector3D& );
+
+			Vector2D ( const Vector4D& );
 
 			//------------------------------- Arithmetic Operators --------------------------------
 

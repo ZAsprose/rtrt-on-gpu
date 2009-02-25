@@ -2,8 +2,6 @@
 
 #include <math.h>
 
-#include "Util.h"
-
 #include "Vector2D.h"
 
 namespace Math
@@ -17,6 +15,47 @@ namespace Math
 	Vector2D Vector2D :: AxisX ( 1.0F, 0.0F );
 
 	Vector2D Vector2D :: AxisY ( 0.0F, 1.0F );
+
+	//--------------------------------------- Constructors ----------------------------------------
+
+	Vector2D :: Vector2D ( float x, float y )
+	{
+		X = x;
+
+		Y = y;
+	}
+
+	Vector2D :: Vector2D ( const float vector[SIZE2D] )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector2D :: Vector2D ( const Vector2D& vector )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector2D :: Vector2D ( const Vector3D& vector )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
+
+	Vector2D :: Vector2D ( const Vector4D& vector )
+	{
+		for ( int i = 0; i < SIZE2D; i++ )
+		{
+			this[i] = vector[i];
+		}
+	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 

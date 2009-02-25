@@ -14,7 +14,13 @@
 
 #include "ShaderManager.h"
 
+#include "Vector3D.h"
+
+#include "Matrix3D.h"
+
 using namespace RenderTools;
+
+using namespace Math;
 
 //========================================================================
 // main()
@@ -25,6 +31,45 @@ int main( void )
     int     width, height, running, frames, x, y;
     double  t, t0, fps;
     char    titlestr[ 200 ];
+
+	//----------------------------------------------------
+
+	Vector3D a (1, 2, 3);
+	Vector3D b (1, 2);
+	Vector3D c (1);
+	Vector3D ddd;
+
+	ddd = a + b;
+
+	float fff[SIZE3D][SIZE3D] = { {1,2,3}, {4,1,8}, {7,3,2} };
+
+	Matrix3D aaa ( fff );
+
+	cout << "aaa = " << endl << aaa;
+
+	float d = Determinant ( aaa );
+
+	cout << "d = " << d << endl;
+
+	Matrix3D bbb = Adjugate ( aaa );
+
+	cout << "bbb = " << endl << bbb;
+
+	Matrix3D ccc = aaa * bbb;
+
+	cout << "ccc = " << endl << ccc;
+
+	bbb = Inverse ( aaa );
+
+	cout << "bbb = " << endl << bbb;
+
+	ccc = aaa * bbb;
+
+	cout << "ccc = " << endl << ccc;
+
+	getchar ( );
+
+	//----------------------------------------------------
 
     // Initialise GLFW
     glfwInit();
