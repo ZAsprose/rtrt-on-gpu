@@ -66,6 +66,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
+				//TODO: fix me
 				result[i][j] = source[i][j];
 			}
 		}
