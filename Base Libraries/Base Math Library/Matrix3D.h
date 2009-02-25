@@ -76,7 +76,7 @@ namespace Math
 				return &values[index][0];
 			}
 
-			//--------------------------------- Common Functions ----------------------------------
+			//---------------------------------- Common Functions ---------------------------------
 			
 			friend float Determinant ( const Matrix3D& );
 
@@ -85,5 +85,25 @@ namespace Math
 			friend Matrix3D Adjugate ( const Matrix3D& );
 
 			friend Matrix3D Inverse ( const Matrix3D& );
+
+			//--------------------------------- Specific Functions --------------------------------
+
+			static Matrix3D Scale ( const Vector3D& );
+			
+			static Matrix3D RotateX ( float );
+			
+			static Matrix3D	RotateY ( float );
+			
+			static Matrix3D	RotateZ ( float );
+			
+			static Matrix3D	Rotate ( const Vector3D&, float );
+			
+			static Matrix3D	Rotate ( const Vector3D& );
+			
+			static Matrix3D	MirrorX ( );
+			
+			static Matrix3D	MirrorY ( );
+			
+			static Matrix3D	MirrorZ ( );
 	};
 }

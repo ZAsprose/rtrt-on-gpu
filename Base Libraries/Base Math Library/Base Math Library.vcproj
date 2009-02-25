@@ -168,10 +168,6 @@
 				Name="Matrix"
 				>
 				<File
-					RelativePath=".\matrices.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\Matrix2D.cpp"
 					>
 				</File>

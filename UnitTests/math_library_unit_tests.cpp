@@ -1,9 +1,9 @@
-#include <cppunit/TestFixture.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/ui/text/TestRunner.h>
-#include <cppunit/extensions/HelperMacros.h>
+#include "cppunit/TestFixture.h"
+#include "cppunit/TestResult.h"
+#include "cppunit/ui/text/TestRunner.h"
+#include "cppunit/extensions/HelperMacros.h"
 
-#include "../Base Libraries/Base Math Library/Vector2D.h"
+#include "Vector2D.h"
 
 using namespace Math;
 
@@ -56,14 +56,8 @@ public:
 
 	  CPPUNIT_ASSERT( localV == * new Vector2D(3.0f, 4.0f) );
 
-	  CPPUNIT_ASSERT( *localV == 3.0f );
-	  //foo( *localV );
-	
+	  CPPUNIT_ASSERT( *localV == 3.0f );	
   }
-
-  //void foo( const float *f )
-  //{
-  //}
 
   void testAddition()
   {
