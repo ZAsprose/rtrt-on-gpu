@@ -20,7 +20,7 @@ namespace Math
 	{
 		public:
 
-			//---------------------------------- Public Fields ------------------------------------
+			//----------------------------------- Public Fields -----------------------------------
 
 			float X;
 
@@ -30,7 +30,7 @@ namespace Math
 
 			float W;
 
-			//--------------------------------- Public Constants ----------------------------------
+			//---------------------------------- Public Constants ---------------------------------
 
 			static Vector4D Zero;
 
@@ -44,7 +44,7 @@ namespace Math
 
 			static Vector4D AxisW;
 
-			//---------------------------------- Constructors -------------------------------------
+			//------------------------------------ Constructors -----------------------------------
 
 			Vector4D ( float = 0, float = 0, float = 0, float = 0 );
 
@@ -56,7 +56,7 @@ namespace Math
 
 			Vector4D ( const Vector4D& );
 
-			//------------------------------- Arithmetic Operators --------------------------------
+			//-------------------------------- Arithmetic Operators -------------------------------
 
 			friend Vector4D operator + ( const Vector4D& );
 			

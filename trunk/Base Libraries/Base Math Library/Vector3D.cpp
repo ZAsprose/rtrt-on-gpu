@@ -437,7 +437,14 @@ namespace Math
 	float Dot ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X * right.X + left.Y * right.Y + left.Z * right.Z;
-	}        
+	}
+	
+	Vector3D Cross ( const Vector3D& left, const Vector3D& right )
+	{
+		return Vector3D ( left.Y * right.Z - left.Z * right.Y,
+			              left.Z * right.X - left.X * right.Z,
+						  left.X * right.Y - left.Y * right.X );
+	} 
 
 	Vector3D Normalize ( const Vector3D& source )
 	{

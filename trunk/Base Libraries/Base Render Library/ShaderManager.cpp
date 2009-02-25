@@ -272,6 +272,62 @@ namespace RenderTools
 
 	//----------------------------------- Input and Output Data -----------------------------------
 
+	int ShaderManager :: GetUniformLocation ( char * name )
+	{
+		return glGetUniformLocation ( program, name );
+	}
+			
+	int ShaderManager :: GetAttributeLocation ( char * name )
+	{
+		return glGetAttribLocation ( program, name );
+	}
+			
+	Vector4D ShaderManager :: GetUniformVector ( char * name )
+	{
+		float values[SIZE4D];
+
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return Vector4D :: Zero;
+				
+		glGetUniformfv ( program, location, values );
+				
+		return Vector4D ( values );
+	}
+			
+	Vector4D ShaderManager :: GetUniformVector ( int location )
+	{
+		float values[SIZE4D];
+
+		glGetUniformfv ( program, location, values );
+
+		return Vector4D ( values );
+	}
+			
+	Vector4D ShaderManager :: GetAttributeVector ( char * name )
+	{
+		int location = glGetAttribLocation ( program, name );
+
+		if ( location < 0 )
+			return Vector4D :: Zero;
+				
+		float values[SIZE4D];
+
+		glGetVertexAttribfv ( location, GL_CURRENT_VERTEX_ATTRIB, values );
+				
+		return Vector4D ( values );
+	}
+			
+	Vector4D ShaderManager :: GetAttributeVector ( int location )
+	{
+		float values[SIZE4D];
+
+		glGetVertexAttribfv ( location, GL_CURRENT_VERTEX_ATTRIB, values );
+
+		return Vector4D ( values );
+	}
+
 	bool ShaderManager :: SetUniformInteger ( const char * name, int value )
 	{
 		int location = glGetUniformLocation ( program, name );
@@ -363,6 +419,63 @@ namespace RenderTools
 	bool ShaderManager :: SetUniformVector ( int location, const Vector4D& value )
 	{
 		glUniform4fv ( location, 1, value );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix2D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniformMatrix2fv ( location, 1, GL_FALSE, value[0] );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix2D& value )
+	{
+		glUniformMatrix2fv ( location, 1, GL_FALSE, value[0] );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix3D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniformMatrix3fv ( location, 1, GL_FALSE, value[0] );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix3D& value )
+	{
+		glUniformMatrix3fv ( location, 1, GL_FALSE, value[0] );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix4D& value )
+	{
+		int location = glGetUniformLocation ( program, name );
+
+		if ( location < 0 )
+			return false;
+
+		glUniformMatrix4fv ( location, 1, GL_FALSE, value[0] );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix4D& value )
+	{
+		glUniformMatrix4fv ( location, 1, GL_FALSE, value[0] );
 
 		return true;
 	}

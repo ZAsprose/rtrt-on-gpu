@@ -66,7 +66,6 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				//TODO: is it correct?
 				result[i][j] = source[i][j];
 			}
 		}
@@ -82,7 +81,6 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				//TODO: is it correct?
 				result[i][j] = -source[i][j];
 			}
 		}

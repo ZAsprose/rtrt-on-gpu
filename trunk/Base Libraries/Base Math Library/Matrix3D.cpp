@@ -4,7 +4,7 @@
 
 namespace Math
 {
-	//-------------------------------------- Public Constants -------------------------------------
+	//------------------------------------- Public Constants --------------------------------------
 
 	const Matrix3D Matrix3D :: Zero ( 0.0F );
 
@@ -298,38 +298,36 @@ namespace Math
 		return Adjugate ( source ) / Determinant ( source );
 	}
 
-	Matrix3D RotateX ( float angle )
+	//------------------------------------- Specific Functions ------------------------------------
+
+	Matrix3D Matrix3D :: MirrorX ( void )
 	{
 		Matrix3D result = Matrix3D :: Unit;
-		
-		float cos = cosf ( angle );
-		
-		float sin = sinf( angle );
 
-		result[1][1] =  cos; result[1][2] = sin;
-
-		result[2][1] = -sin; result[2][2] = cos;
+		result[A][A] = -1.0F;		
 
 		return result;
 	}
 			
-	Matrix3D RotateY ( float angle )
+	Matrix3D Matrix3D :: MirrorY ( void )
 	{
 		Matrix3D result = Matrix3D :: Unit;
-		
-		float cos = cosf ( angle );
-		
-		float sin = sinf( angle );
 
-		result[1][1] = cos;
-		result[1][2] = sin;
-		result[2][1] = -sin;
-		result[2][2] = cos;
+		result[B][B] = -1.0F;
 
 		return result;
 	}
 	
-	Matrix3D RotateZ ( float angle )
+	Matrix3D Matrix3D :: MirrorZ ( void )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+
+		result[C][C] = -1.0F;
+		
+		return result;
+	}
+
+	Matrix3D Matrix3D :: RotateX ( float angle )
 	{
 		Matrix3D result = Matrix3D :: Unit;
 		
@@ -337,11 +335,97 @@ namespace Math
 		
 		float sin = sinf( angle );
 
-		result[1][1] = cos;
-		result[1][2] = sin;
-		result[2][1] = -sin;
-		result[2][2] = cos;
+		result[B][B] = cos;
+		
+		result[B][C] = sin;
 
+		result[C][B] = -sin;
+		
+		result[C][C] = cos;
+
+		return result;
+	}
+			
+	Matrix3D Matrix3D :: RotateY ( float angle )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[A][A] = cos;
+		
+		result[A][C] = -sin;
+		
+		result[C][A] = sin;
+		
+		result[C][C] = cos;
+
+		return result;
+	}
+	
+	Matrix3D Matrix3D :: RotateZ ( float angle )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[A][A] = cos;
+		
+		result[A][B] = sin;
+		
+		result[B][A] = -sin;
+		
+		result[B][B] = cos;
+		
+		return result;
+	}
+
+	Matrix3D Matrix3D :: Rotate ( const Vector3D& orientation )
+	{
+		return RotateZ ( orientation.X ) * RotateY ( orientation.Y ) * RotateX ( orientation.Z );
+	}
+
+	Matrix3D Matrix3D :: ScaleX ( float scale )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+
+		result[A][A] = scale;		
+
+		return result;
+	}
+			
+	Matrix3D Matrix3D :: ScaleY ( float scale )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+
+		result[B][B] = scale;
+
+		return result;
+	}
+	
+	Matrix3D Matrix3D :: ScaleZ ( float scale )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+
+		result[C][C] = scale;
+		
+		return result;
+	}
+
+	Matrix3D Matrix3D :: Scale ( const Vector3D& scaling )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+
+		result[A][A] = scaling.X;
+		
+		result[B][B] = scaling.Y;
+		
+		result[C][C] = scaling.Z;
+		
 		return result;
 	}
 }

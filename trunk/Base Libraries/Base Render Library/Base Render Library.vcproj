@@ -166,6 +166,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Camera"
+				>
+				<File
+					RelativePath=".\Camera.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -177,6 +185,14 @@
 				>
 				<File
 					RelativePath=".\ShaderManager.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Camera"
+				>
+				<File
+					RelativePath=".\Camera.h"
 					>
 				</File>
 			</Filter>

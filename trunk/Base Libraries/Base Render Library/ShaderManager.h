@@ -62,6 +62,18 @@ namespace RenderTools
 
 			//------------------------------- Input and Output Data -------------------------------
 
+			int GetUniformLocation ( char * );
+			
+			int GetAttributeLocation ( char * );
+			
+			Vector4D GetUniformVector ( char * );
+			
+			Vector4D GetUniformVector ( int );
+			
+			Vector4D GetAttributeVector ( char * );
+			
+			Vector4D GetAttributeVector ( int );
+        
 			bool SetUniformInteger ( const char *, int );
 
 			bool SetUniformInteger ( int, int );
@@ -81,6 +93,18 @@ namespace RenderTools
 			bool SetUniformVector ( const char *, const Vector4D& );
 
 			bool SetUniformVector ( int, const Vector4D& );
+
+			bool SetUniformMatrix ( const char *, const Matrix2D& );
+
+			bool SetUniformMatrix ( int, const Matrix2D& );
+
+			bool SetUniformMatrix ( const char *, const Matrix3D& );
+
+			bool SetUniformMatrix ( int, const Matrix3D& );
+
+			bool SetUniformMatrix ( const char *, const Matrix4D& );
+
+			bool SetUniformMatrix ( int, const Matrix4D& );
 
 			bool SetAttributeName ( int, const char * );
 
