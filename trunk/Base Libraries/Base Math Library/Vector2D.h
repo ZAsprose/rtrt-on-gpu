@@ -140,8 +140,6 @@ namespace Math
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 
-			// TODO: denis do we need the following two operators?
-
 			operator float * ( )
 			{
 				return &X;
@@ -152,9 +150,6 @@ namespace Math
 				return &X;
 			}
 
-			// TODO: Denis I suppose that this is a dengerous thing and it depends of a compiler how it will 
-			// store class variable. Also there can be different выравнивание (i don't know the English version) 
-			// on the different platforms 
 			float& operator [] ( int index )
 			{
 				return * ( index + &X );

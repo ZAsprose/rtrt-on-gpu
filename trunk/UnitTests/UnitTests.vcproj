@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\3d party\cppunit-1.12.1\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\3d party\cppunit-1.12.1\include&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -58,8 +58,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib &quot;Base Math Library.lib&quot;"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library\Debug&quot;;&quot;$(SolutionDir)\3d party\cppunit-1.12.1\lib&quot;"
+				AdditionalDependencies="odbc32.lib odbccp32.lib cppunitd.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\3d party\cppunit-1.12.1\lib&quot;;&quot;E:\Projects\rtrt-on-gpu\3d party\cppunit-1.12.1\lib&quot;"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
 			/>
@@ -112,7 +112,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\3d party\cppunit-1.12.1\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\3d party\cppunit-1.12.1\include&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -129,8 +129,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="cppunitd.lib &quot;Base Math Library.lib&quot;"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library\Release&quot;;&quot;$(SolutionDir)\3d party\cppunit-1.12.1\lib&quot;"
+				AdditionalDependencies="odbc32.lib odbccp32.lib cppunitd.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\3d party\cppunit-1.12.1\lib&quot;"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -160,6 +160,10 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F1AE1E13-6A0F-40F0-955A-D5B2ACFDFE31}"
+			RelativePathToProject=".\Base Libraries\Base Math Library\Base Math Library.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -171,18 +175,6 @@
 				RelativePath=".\math_library_unit_tests.cpp"
 				>
 			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
 		</Filter>
 	</Files>
 	<Globals>

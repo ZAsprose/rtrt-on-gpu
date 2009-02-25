@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "Matrix3D.h"
 
 namespace Math
@@ -294,5 +296,52 @@ namespace Math
 	Matrix3D Inverse ( const Matrix3D& source )
 	{
 		return Adjugate ( source ) / Determinant ( source );
+	}
+
+	Matrix3D RotateX ( float angle )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[1][1] =  cos; result[1][2] = sin;
+
+		result[2][1] = -sin; result[2][2] = cos;
+
+		return result;
+	}
+			
+	Matrix3D RotateY ( float angle )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[1][1] = cos;
+		result[1][2] = sin;
+		result[2][1] = -sin;
+		result[2][2] = cos;
+
+		return result;
+	}
+	
+	Matrix3D RotateZ ( float angle )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[1][1] = cos;
+		result[1][2] = sin;
+		result[2][1] = -sin;
+		result[2][2] = cos;
+
+		return result;
 	}
 }
