@@ -32,17 +32,17 @@ namespace Math
 
 			//---------------------------------- Public Constants ---------------------------------
 
-			static Vector4D Zero;
+			static const Vector4D Zero;
 
-			static Vector4D Unit;
+			static const Vector4D Unit;
 
-			static Vector4D AxisX;
+			static const Vector4D AxisX;
 
-			static Vector4D AxisY;
+			static const Vector4D AxisY;
 
-			static Vector4D AxisZ;
+			static const Vector4D AxisZ;
 
-			static Vector4D AxisW;
+			static const Vector4D AxisW;
 
 			//------------------------------------ Constructors -----------------------------------
 

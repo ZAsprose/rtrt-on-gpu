@@ -14,6 +14,8 @@
 
 #include "ShaderManager.h"
 
+#include "Camera.h"
+
 #include "Vector3D.h"
 
 #include "Matrix3D.h"
@@ -39,7 +41,7 @@ int main( void )
 	Vector3D c (1);
 	Vector3D ddd;
 
-	ddd = a + b;
+	ddd += a + b;
 
 	float fff[SIZE3D][SIZE3D] = { {1,2,3}, {4,1,8}, {7,3,2} };
 
@@ -73,7 +75,7 @@ int main( void )
 
 	v1 = fa;
 
-	getchar ( );
+	//getchar ( );
 
 	//----------------------------------------------------
 
@@ -81,11 +83,13 @@ int main( void )
     glfwInit();
 
     // Open OpenGL window
-    if( !glfwOpenWindow( 640, 480, 0,0,0,0, 0,0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( 640, 480, 0,0,0,0, 16, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
         return 0;
 	}
+
+	//glEnable( GL_DEPTH_TEST );
 
 	//----------------------------------------------------
 
@@ -99,6 +103,12 @@ int main( void )
 
 	smanager.Bind ( );
 
+	Camera cam ( Vector3D ( 0, 0, 10 ) );
+
+	//cam.MoveGlobal ( 5, Vector3D ( 1, -1, 1 ) );
+
+	//cam.RotateGlobal ( Radians ( -50 ), Vector3D :: AxisZ );
+
 	//----------------------------------------------------
 
     // Enable sticky keys
@@ -111,6 +121,7 @@ int main( void )
     running = GL_TRUE;
     frames = 0;
     t0 = glfwGetTime();
+
     while( running )
     {
         // Get time and mouse position
@@ -146,23 +157,23 @@ int main( void )
             100.0f );
 
         // Select and setup the modelview matrix
-        glMatrixMode( GL_MODELVIEW );
-        glLoadIdentity();
-        gluLookAt( 0.0f, 1.0f, 0.0f,    // Eye-position
-                   0.0f, 20.0f, 0.0f,   // View-point
-                   0.0f, 0.0f, 1.0f );  // Up-vector
+		cam.Setup ( );
+
+
+        //glMatrixMode( GL_MODELVIEW );
+        //glLoadIdentity();
+        //gluLookAt( 0.0f, 0.0f, 10.0f,    // Eye-position
+        //           0.0f, 0.0f, 0.0f,   // View-point
+        //           0.0f, 1.0f, 0.0f );  // Up-vector
 
         // Draw a rotating colorful triangle
-        glTranslatef( 0.0f, 14.0f, 0.0f );
-        glRotatef( 0.3f*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 0.0f, 1.0f );
-        glBegin( GL_TRIANGLES );
-          glColor3f( 1.0f, 0.0f, 0.0f );
-          glVertex3f( -5.0f, 0.0f, -4.0f );
-          glColor3f( 0.0f, 1.0f, 0.0f );
-          glVertex3f( 5.0f, 0.0f, -4.0f );
-          glColor3f( 0.0f, 0.0f, 1.0f );
-          glVertex3f( 0.0f, 0.0f, 6.0f );
-        glEnd();
+        GLUquadric * q = gluNewQuadric ( );
+
+		glRotatef( 0.3f*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 1.0f, 1.0f );
+
+		gluSphere (q, 2.0, 50, 50 );
+
+		gluDeleteQuadric ( q );
 
         // Swap buffers
         glfwSwapBuffers();

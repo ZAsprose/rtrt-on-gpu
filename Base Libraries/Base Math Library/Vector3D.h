@@ -30,15 +30,15 @@ namespace Math
 
 			//---------------------------------- Public Constants ---------------------------------
 
-			static Vector3D Zero;
+			static const Vector3D Zero;
 
-			static Vector3D Unit;
+			static const Vector3D Unit;
 
-			static Vector3D AxisX;
+			static const Vector3D AxisX;
 
-			static Vector3D AxisY;
+			static const Vector3D AxisY;
 
-			static Vector3D AxisZ;
+			static const Vector3D AxisZ;
 
 			//------------------------------------ Constructors -----------------------------------
 
@@ -82,21 +82,21 @@ namespace Math
 
 			friend Vector3D operator / ( float, const Vector3D& );
 
-			friend Vector3D operator += ( const Vector3D&, const Vector3D& );
+			friend Vector3D operator += ( Vector3D&, const Vector3D& );
 			
-			friend Vector3D operator -= ( const Vector3D&, const Vector3D& );
+			friend Vector3D operator -= ( Vector3D&, const Vector3D& );
 
-			friend Vector3D operator += ( const Vector3D&, float );
+			friend Vector3D operator += ( Vector3D&, float );
 
-			friend Vector3D operator -= ( const Vector3D&, float );	
+			friend Vector3D operator -= ( Vector3D&, float );	
 
-			friend Vector3D operator *= ( const Vector3D&, const Vector3D& );
+			friend Vector3D operator *= ( Vector3D&, const Vector3D& );
 			
-			friend Vector3D operator /= ( const Vector3D&, const Vector3D& );
+			friend Vector3D operator /= ( Vector3D&, const Vector3D& );
 
-			friend Vector3D operator *= ( const Vector3D&, float );
+			friend Vector3D operator *= ( Vector3D&, float );
 
-			friend Vector3D operator /= ( const Vector3D&, float );
+			friend Vector3D operator /= ( Vector3D&, float );
 
 			//---------------------------------- Logic Operators ----------------------------------
 

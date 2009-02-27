@@ -28,13 +28,13 @@ namespace Math
 
 			//---------------------------------- Public Constants ---------------------------------
 
-			static Vector2D Zero;
+			static const Vector2D Zero;
 
-			static Vector2D Unit;
+			static const Vector2D Unit;
 
-			static Vector2D AxisX;
+			static const Vector2D AxisX;
 
-			static Vector2D AxisY;
+			static const Vector2D AxisY;
 
 			//------------------------------------ Constructors -----------------------------------
 
