@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/glfw.h>
+
 #include "Vector3D.h"
 
 #include "Matrix3D.h"
@@ -12,38 +14,60 @@ namespace RenderTools
 	{
 		private:
 
-			//---------------------------------- Private Fields -----------------------------------
+			//----------------------------------- Camera System -----------------------------------
 
-			Vector3D position;
-	        
-			Vector3D orientation;
-			
-			Vector3D upDirection;
-			
-			Vector3D rightDirection;
-			
-			Vector3D viewDirection;
+			Vector3D Position;
 
-			//---------------------------------- Private Methods ----------------------------------
+			Vector3D Side;
 
-			void UpdateDirections ( void );
-	       
-		public:
+			Vector3D Up;
 
-			//----------------------------------- Public Fields -----------------------------------
-			
-			int Width;
-			
-			int Height;
+			Vector3D View;
+
+			//----------------------------------- View Frustum ------------------------------------
 			
 			float FieldOfView;
 
+			float NearPlane;			
+			
+			float FarPlane;
+
+			//------------------------------------- Viewport --------------------------------------
+			
+			int Width;
+
+			int Height;			
+			
+			float Aspect;
+
+			//---------------------------------- Private Methods ----------------------------------
+
+			void Update ( void );
+	       
+		public:			
+
 			//----------------------------------- Constructors ------------------------------------
 
-			Camera(void);
-			
-			~Camera(void);
+			Camera( void );
 
-			//--------------------------------- Common Functions ----------------------------------
+			Camera( const Vector3D& );
+
+			Camera( const Vector3D&, const Vector3D& );
+
+			//---------------------------------- Camera Position ----------------------------------
+
+			void MoveLocal ( float, const Vector3D& );
+			
+			void MoveGlobal ( float, const Vector3D& );
+
+			//--------------------------------- Camera Orientation --------------------------------
+
+			void RotateLocal ( float, const Vector3D& );
+			
+			void RotateGlobal ( float, const Vector3D& );
+
+			//----------------------------------- Apply Settings ----------------------------------
+
+			void Setup ( void );
 	};
 }

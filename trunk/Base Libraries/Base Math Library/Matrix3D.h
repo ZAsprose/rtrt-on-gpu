@@ -99,6 +99,8 @@ namespace Math
 			static Matrix3D	RotateY ( float );
 			
 			static Matrix3D	RotateZ ( float );
+
+			static Matrix3D Rotate ( float, const Vector3D& );
 			
 			static Matrix3D	Rotate ( const Vector3D& );
 

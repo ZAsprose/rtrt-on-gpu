@@ -8,15 +8,15 @@ namespace Math
 {
 	//-------------------------------------- Public Constants -------------------------------------
 
-	Vector3D Vector3D :: Zero ( 0.0F, 0.0F, 0.0F );
+	const Vector3D Vector3D :: Zero ( 0.0F, 0.0F, 0.0F );
 
-	Vector3D Vector3D :: Unit ( 1.0F, 1.0F, 1.0F );
+	const Vector3D Vector3D :: Unit ( 1.0F, 1.0F, 1.0F );
 
-	Vector3D Vector3D :: AxisX ( 1.0F, 0.0F, 0.0F );
+	const Vector3D Vector3D :: AxisX ( 1.0F, 0.0F, 0.0F );
 
-	Vector3D Vector3D :: AxisY ( 0.0F, 1.0F, 0.0F );
+	const Vector3D Vector3D :: AxisY ( 0.0F, 1.0F, 0.0F );
 
-	Vector3D Vector3D :: AxisZ ( 0.0F, 0.0F, 1.0F );
+	const Vector3D Vector3D :: AxisZ ( 0.0F, 0.0F, 1.0F );
 
 	//--------------------------------------- Constructors ----------------------------------------
 
@@ -31,34 +31,36 @@ namespace Math
 
 	Vector3D :: Vector3D ( const float vector[SIZE3D] )
 	{
-		for ( int i = 0; i < SIZE3D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
+
+		Z = vector[C];
 	}
 
 	Vector3D :: Vector3D ( const Vector2D& vector )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
 	}
 
 	Vector3D :: Vector3D ( const Vector3D& vector )
 	{
-		for ( int i = 0; i < SIZE3D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
+
+		Z = vector[C];
 	}
 
 	Vector3D :: Vector3D ( const Vector4D& vector )
 	{
-		for ( int i = 0; i < SIZE3D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
+
+		Z = vector[C];
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------

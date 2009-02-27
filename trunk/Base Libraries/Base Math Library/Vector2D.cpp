@@ -8,13 +8,13 @@ namespace Math
 {
 	//-------------------------------------- Public Constants -------------------------------------
 
-	Vector2D Vector2D :: Zero ( 0.0F, 0.0F );
+	const Vector2D Vector2D :: Zero ( 0.0F, 0.0F );
 
-	Vector2D Vector2D :: Unit ( 1.0F, 1.0F );
+	const Vector2D Vector2D :: Unit ( 1.0F, 1.0F );
 
-	Vector2D Vector2D :: AxisX ( 1.0F, 0.0F );
+	const Vector2D Vector2D :: AxisX ( 1.0F, 0.0F );
 
-	Vector2D Vector2D :: AxisY ( 0.0F, 1.0F );
+	const Vector2D Vector2D :: AxisY ( 0.0F, 1.0F );
 
 	//--------------------------------------- Constructors ----------------------------------------
 
@@ -27,34 +27,30 @@ namespace Math
 
 	Vector2D :: Vector2D ( const float vector[SIZE2D] )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
 	}
 
 	Vector2D :: Vector2D ( const Vector2D& vector )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
 	}
 
 	Vector2D :: Vector2D ( const Vector3D& vector )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
 	}
 
 	Vector2D :: Vector2D ( const Vector4D& vector )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			this[i] = vector[i];
-		}
+		X = vector[A];
+
+		Y = vector[B];
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------

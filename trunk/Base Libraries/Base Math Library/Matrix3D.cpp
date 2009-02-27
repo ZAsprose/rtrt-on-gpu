@@ -384,6 +384,35 @@ namespace Math
 		return result;
 	}
 
+	Matrix3D Matrix3D :: Rotate ( float angle, const Vector3D& direction )
+	{
+		Matrix3D result = Matrix3D :: Unit;
+		
+		float cos = cosf ( angle );
+		
+		float sin = sinf( angle );
+
+		result[A][A] = direction.X * direction.X + ( 1.0F - direction.X * direction.X) * cos;
+
+		result[A][B] = direction.X * direction.Y * ( 1.0F - cos ) + direction.Z * sin;
+
+		result[A][C] = direction.X * direction.Z * ( 1.0F - cos ) - direction.Y * sin;
+
+		result[B][A] = direction.X * direction.Y * ( 1.0F - cos ) - direction.Z * sin;
+
+		result[B][B] = direction.Y * direction.Y + ( 1.0F - direction.Y * direction.Y ) * cos;
+
+		result[B][C] = direction.Y * direction.Z * ( 1.0F - cos ) + direction.X * sin;
+
+		result[C][A] = direction.X * direction.Z * ( 1.0F - cos ) + direction.Y * sin;
+
+		result[C][B] = direction.Y * direction.Z * ( 1.0F - cos ) - direction.X * sin;
+
+		result[C][C] = direction.Z * direction.Z + ( 1.0F - direction.Z * direction.Z ) * cos;
+
+		return result;
+	}
+
 	Matrix3D Matrix3D :: Rotate ( const Vector3D& orientation )
 	{
 		return RotateZ ( orientation.X ) * RotateY ( orientation.Y ) * RotateX ( orientation.Z );

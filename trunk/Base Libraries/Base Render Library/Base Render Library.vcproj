@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;;&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,8 +61,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="GLee.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;"
+				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -107,7 +107,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;;&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -126,8 +126,8 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="GLee.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;"
+				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
