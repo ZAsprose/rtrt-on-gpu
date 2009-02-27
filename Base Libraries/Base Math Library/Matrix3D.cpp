@@ -415,7 +415,7 @@ namespace Math
 
 	Matrix3D Matrix3D :: Rotate ( const Vector3D& orientation )
 	{
-		return RotateZ ( orientation.X ) * RotateY ( orientation.Y ) * RotateX ( orientation.Z );
+		return RotateZ ( orientation.Z ) * RotateY ( orientation.Y ) * RotateX ( orientation.X );
 	}
 
 	Matrix3D Matrix3D :: ScaleX ( float scale )

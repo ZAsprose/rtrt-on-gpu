@@ -26,7 +26,7 @@ namespace Math
 
 			//---------------------------------- Constructors -------------------------------------
 
-			Matrix2D ( float );
+			Matrix2D ( float = 0 );
 
 			Matrix2D ( const float[SIZE2D] );
 
