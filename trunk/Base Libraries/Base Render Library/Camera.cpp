@@ -4,49 +4,31 @@ namespace RenderTools
 {
 	//--------------------------------------- Constructors ----------------------------------------
 
-	Camera :: Camera( void )
-	{
-		Position = Vector3D :: Zero;
-
-		Side = Vector3D :: AxisX;
-
-		Up = Vector3D :: AxisY;
-
-		View = -Vector3D :: AxisZ;
-	}
-
-	Camera :: Camera( const Vector3D& position )
+	Camera :: Camera ( const Vector3D& position, const Vector3D& orientation )
 	{
 		Position = position;
 
-		Side = Vector3D :: AxisX;
+		WorldToCamera = Matrix3D :: Rotate ( orientation );
 
-		Up = Vector3D :: AxisY;
-
-		View = -Vector3D :: AxisZ;
-	}
-
-	Camera :: Camera( const Vector3D& position, const Vector3D& orientation )
-	{
-		Position = position;
-
-		Matrix3D rotation = Matrix3D :: Rotate ( orientation );
+		CameraToWorld = Transpose ( WorldToCamera );
 		
-		Side = rotation * Vector3D :: AxisX;
+		Side = WorldToCamera * Vector3D :: AxisX;
 
-		Up = rotation * Vector3D :: AxisY;
+		Up = WorldToCamera * Vector3D :: AxisY;
 
-		View = -rotation * Vector3D :: AxisZ;
+		View = -WorldToCamera * Vector3D :: AxisZ;
 	}
 
 	//-------------------------------------- Camera Position --------------------------------------
 
 	void Camera :: MoveLocal ( float distance, const Vector3D& direction )
 	{
+		Vector3D global = CameraToWorld * direction;
 
+		Position += global * distance;
 	}
 	
-	void Camera :: MoveGlobal ( float distance, const Vector3D& direction )
+	void Camera :: MoveWorld ( float distance, const Vector3D& direction )
 	{
 		Position += direction * distance;
 	}
@@ -55,18 +37,60 @@ namespace RenderTools
 
 	void Camera :: RotateLocal ( float angle, const Vector3D& direction )
 	{
+		WorldToCamera = WorldToCamera * Matrix3D :: Rotate ( angle, direction );
 
+		CameraToWorld = Transpose ( WorldToCamera );
+		
+		Side = WorldToCamera * Vector3D :: AxisX;
+
+		Up = WorldToCamera * Vector3D :: AxisY;
+
+		View = -WorldToCamera * Vector3D :: AxisZ;
 	}
 	
-	void Camera :: RotateGlobal ( float angle, const Vector3D& direction )
+	void Camera :: RotateWorld ( float angle, const Vector3D& direction )
 	{
-		Matrix3D rotation = Matrix3D :: Rotate ( angle, direction );
+		Vector3D local = CameraToWorld * direction;
+
+		WorldToCamera = WorldToCamera * Matrix3D :: Rotate ( angle, local );
+
+		CameraToWorld = Transpose ( WorldToCamera );
 		
-		Side = rotation * Vector3D :: AxisX;
+		Side = WorldToCamera * Vector3D :: AxisX;
 
-		Up = rotation * Vector3D :: AxisY;
+		Up = WorldToCamera * Vector3D :: AxisY;
 
-		View = -rotation * Vector3D :: AxisZ;
+		View = -WorldToCamera * Vector3D :: AxisZ;
+	}
+	
+	//------------------------------------ Viewport and Frustum -----------------------------------
+	
+	void Camera :: SetViewport ( int width, int height )
+	{
+		Width = width;
+
+		Height = height;
+
+		Aspect = Width / ( float) Height;
+
+		glViewport( DEFAULT_LEFT, DEFAULT_TOP, Width, Height );
+	}
+
+	void Camera :: SetFrustum ( float angle, float near, float far )
+	{
+		FieldOfView = angle;
+
+		NearPlane = near;
+
+		FarPlane = far;
+
+        glMatrixMode( GL_PROJECTION );
+
+        glLoadIdentity();
+
+        gluPerspective( FieldOfView, Aspect, NearPlane, FarPlane );
+		
+		glMatrixMode( GL_MODELVIEW );
 	}
 
 	//--------------------------------------- Apply Settings --------------------------------------
@@ -86,5 +110,44 @@ namespace RenderTools
 			        Up.X,
 					Up.Y,
 					Up.Z );
+	}
+	
+	//-------------------------------------- Getting Settings -------------------------------------
+
+	void Camera :: GetViewport ( int& width, int& height )
+	{
+		width = Width;
+
+		height = Height;
+	}
+
+	void Camera :: GetFrustum ( float& angle, float& near, float& far )
+	{
+		angle = FieldOfView;
+
+		near = NearPlane;
+
+		far = FarPlane;
+	}
+
+	void Camera :: GetPosition ( Vector3D& position )
+	{
+		position = Position;
+	}
+
+	void Camera :: GetDirections ( Vector3D& side, Vector3D& up, Vector3D& view )
+	{
+		side = Side;
+
+		up = Up;
+
+		view = View;
+	}
+
+	void Camera :: GetTransformations ( Matrix3D& worldcamera, Matrix3D& cameraworld )
+	{
+		worldcamera = WorldToCamera;
+
+		cameraworld = CameraToWorld;
 	}
 }

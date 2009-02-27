@@ -26,7 +26,7 @@ namespace Math
 
 			//---------------------------------- Constructors -------------------------------------
 
-			Matrix3D ( float );
+			Matrix3D ( float = 0 );
 
 			Matrix3D ( const float[SIZE3D] );
 
