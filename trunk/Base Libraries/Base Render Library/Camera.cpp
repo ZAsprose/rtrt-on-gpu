@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include <iostream>
+
 namespace RenderTools
 {
 	//--------------------------------------- Constructors ----------------------------------------
@@ -11,12 +13,19 @@ namespace RenderTools
 		WorldToCamera = Matrix3D :: Rotate ( orientation );
 
 		CameraToWorld = Transpose ( WorldToCamera );
-		
-		Side = WorldToCamera * Vector3D :: AxisX;
 
-		Up = WorldToCamera * Vector3D :: AxisY;
+		Update ( );		
+	}
 
-		View = -WorldToCamera * Vector3D :: AxisZ;
+	//------------------------------------- Update Directions -------------------------------------
+			
+	void Camera :: Update ( void )
+	{
+		Side = Normalize ( CameraToWorld * Vector3D :: AxisX );
+
+		Up = Normalize ( CameraToWorld * Vector3D :: AxisY );
+
+		View = Normalize ( CameraToWorld * Vector3D :: AxisZ );
 	}
 
 	//-------------------------------------- Camera Position --------------------------------------
@@ -37,30 +46,22 @@ namespace RenderTools
 
 	void Camera :: RotateLocal ( float angle, const Vector3D& direction )
 	{
-		WorldToCamera = WorldToCamera * Matrix3D :: Rotate ( angle, direction );
+		WorldToCamera = Matrix3D :: Rotate ( angle, direction ) * WorldToCamera;
 
 		CameraToWorld = Transpose ( WorldToCamera );
 		
-		Side = WorldToCamera * Vector3D :: AxisX;
-
-		Up = WorldToCamera * Vector3D :: AxisY;
-
-		View = -WorldToCamera * Vector3D :: AxisZ;
+		Update ( );
 	}
 	
 	void Camera :: RotateWorld ( float angle, const Vector3D& direction )
 	{
-		Vector3D local = CameraToWorld * direction;
+		Vector3D local = WorldToCamera * direction;
 
-		WorldToCamera = WorldToCamera * Matrix3D :: Rotate ( angle, local );
+		WorldToCamera = Matrix3D :: Rotate ( angle, local ) * WorldToCamera;
 
 		CameraToWorld = Transpose ( WorldToCamera );
-		
-		Side = WorldToCamera * Vector3D :: AxisX;
 
-		Up = WorldToCamera * Vector3D :: AxisY;
-
-		View = -WorldToCamera * Vector3D :: AxisZ;
+		Update ( );
 	}
 	
 	//------------------------------------ Viewport and Frustum -----------------------------------

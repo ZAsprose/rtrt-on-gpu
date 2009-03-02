@@ -216,9 +216,9 @@ namespace Math
 	
 	istream& operator >> ( istream& is, Matrix2D& source )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
+		for ( int j = 0; j < SIZE2D; j++ )
 		{
-			for ( int j = 0; j < SIZE2D; j++ )
+			for ( int i = 0; i < SIZE2D; i++ )
 			{
 				is >> source[i][j];
 			}
@@ -228,9 +228,9 @@ namespace Math
 	
 	ostream& operator << ( ostream& os, const Matrix2D& source )
 	{
-		for ( int i = 0; i < SIZE2D; i++ )
+		for ( int j = 0; j < SIZE2D; j++ )
 		{
-			for ( int j = 0; j < SIZE2D; j++ )
+			for ( int i = 0; i < SIZE2D; i++ )
 			{
 				os << source[i][j] << " ";
 			}

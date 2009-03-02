@@ -16,6 +16,8 @@
 
 #include "Camera.h"
 
+#include "Mouse.h"
+
 #include "Vector3D.h"
 
 #include "Matrix3D.h"
@@ -25,8 +27,77 @@ using namespace RenderTools;
 using namespace Math;
 
 //========================================================================
-// main()
-//========================================================================
+
+Camera cam;
+
+int LocationX;
+			
+int LocationY;
+
+float Step1 = 0.004F;
+
+bool Active = false;
+
+void MouseMove ( int x, int y )
+{
+	if ( Active )
+	{
+				if ( LocationX != x )
+				{
+					cam.RotateLocal ( -( x - LocationX ) * Step1, Vector3D :: AxisY );
+				}
+        	
+				if ( LocationY != y )
+				{
+					cam.RotateLocal ( ( y - LocationY ) * Step1, Vector3D :: AxisX );
+				}
+			
+				LocationX = x;
+			
+				LocationY = y;
+	}
+}
+		
+void MouseButton ( int button, int state )
+{
+	glfwGetMousePos ( &LocationX, &LocationY );
+
+	Active = state > 0;
+}
+
+bool W1 = false;
+bool S1 = false;
+bool A1 = false;
+bool D1 = false;
+
+void KeyButton ( int key, int state )
+{
+	switch ( key )
+	{
+		case 'W': W1 = state == GLFW_PRESS; break;
+
+		case 'S': S1 = state == GLFW_PRESS; break;
+
+		case 'A': A1 = state == GLFW_PRESS; break;
+
+		case 'D': D1 = state == GLFW_PRESS; break;
+	}
+}
+
+float Step2 = 0.004F;
+
+void KeyApply ( )
+{
+	if ( W1 ) cam.MoveLocal ( Step2, Vector3D :: AxisZ );
+
+	if ( S1 ) cam.MoveLocal ( -Step2, Vector3D :: AxisZ );
+
+	if ( A1 ) cam.MoveLocal ( Step2, Vector3D :: AxisX );
+
+	if ( D1 ) cam.MoveLocal ( -Step2, Vector3D :: AxisX );
+}
+
+
 
 int main( void )
 {
@@ -34,62 +105,15 @@ int main( void )
     double  t, t0, fps;
     char    titlestr[ 200 ];
 
-	//----------------------------------------------------
-
-	Vector3D a (1, 2, 3);
-	Vector3D b (1, 2);
-	Vector3D c (1);
-	Vector3D ddd;
-
-	ddd += a + b;
-
-	float fff[SIZE3D][SIZE3D] = { {1,2,3}, {4,1,8}, {7,3,2} };
-
-	Matrix3D aaa ( fff );
-
-	cout << "aaa = " << endl << aaa;
-
-	float d = Determinant ( aaa );
-
-	cout << "d = " << d << endl;
-
-	Matrix3D bbb = Adjugate ( aaa );
-
-	cout << "bbb = " << endl << bbb;
-
-	Matrix3D ccc = aaa * bbb;
-
-	cout << "ccc = " << endl << ccc;
-
-	bbb = Inverse ( aaa );
-
-	cout << "bbb = " << endl << bbb;
-
-	ccc = aaa * bbb;
-
-	cout << "ccc = " << endl << ccc;
-
-	Vector3D v1 ( 1, 2, 3 );
-
-	float fa[3] = { 4, 5, 6 };
-
-	v1 = fa;
-
-	//getchar ( );
-
-	//----------------------------------------------------
-
-    // Initialise GLFW
     glfwInit();
 
-    // Open OpenGL window
     if( !glfwOpenWindow( 640, 480, 0,0,0,0, 16, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
         return 0;
 	}
 
-	//glEnable( GL_DEPTH_TEST );
+	glEnable( GL_COLOR_MATERIAL );
 
 	//----------------------------------------------------
 
@@ -101,13 +125,11 @@ int main( void )
 
 	smanager.BuildProgram ( );
 
-	smanager.Bind ( );
+	//----------------------------------------------------
 
-	Camera cam ( Vector3D ( 0, 0, 10 ) );
+	cam = Camera ( Vector3D ( 0.0F, 0, 10.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
-	//cam.MoveGlobal ( 5, Vector3D ( 1, -1, 1 ) );
-
-	//cam.RotateGlobal ( Radians ( -50 ), Vector3D :: AxisZ );
+	//cam.MoveWorld ( 10, Vector3D::AxisY );
 
 	//----------------------------------------------------
 
@@ -116,6 +138,10 @@ int main( void )
 
     // Disable vertical sync (on cards that support it)
     glfwSwapInterval( 0 );
+
+	glfwSetMousePosCallback( MouseMove );
+	glfwSetMouseButtonCallback( MouseButton );
+	glfwSetKeyCallback ( KeyButton );
 
     // Main loop
     running = GL_TRUE;
@@ -156,26 +182,49 @@ int main( void )
         gluPerspective( 65.0f, (GLfloat)width/(GLfloat)height, 1.0f,
             100.0f );
 
-        // Select and setup the modelview matrix
+		KeyApply ( );
 		cam.Setup ( );
 
+		glColor3f ( 1, 0, 0 );
 
-        //glMatrixMode( GL_MODELVIEW );
-        //glLoadIdentity();
-        //gluLookAt( 0.0f, 0.0f, 10.0f,    // Eye-position
-        //           0.0f, 0.0f, 0.0f,   // View-point
-        //           0.0f, 1.0f, 0.0f );  // Up-vector
+		glBegin ( GL_LINES );
 
-        // Draw a rotating colorful triangle
+			glVertex3f ( 0, 0, 0 ); glVertex3f ( 20, 0, 0 );
+
+		glEnd ( );
+
+		glColor3f ( 0, 1, 0 );
+
+		glBegin ( GL_LINES );
+
+			glVertex3f ( 0, 0, 0 ); glVertex3f ( 0, 20, 0 );
+
+		glEnd ( );
+
+		glColor3f ( 0, 0, 1 );
+
+		glBegin ( GL_LINES );
+
+			glVertex3f ( 0, 0, 0 ); glVertex3f ( 0, 0, 20 );
+
+		glEnd ( );
+
+		//---
+
         GLUquadric * q = gluNewQuadric ( );
 
 		glRotatef( 0.3f*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 1.0f, 1.0f );
 
+		smanager.Bind ( );
+
 		gluSphere (q, 2.0, 50, 50 );
+
+		smanager.Unbind ( );
 
 		gluDeleteQuadric ( q );
 
-        // Swap buffers
+		//----------------------------------------
+
         glfwSwapBuffers();
 
         // Check if the ESC key was pressed or the window was closed
