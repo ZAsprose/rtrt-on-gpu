@@ -55,7 +55,7 @@ void KeyButton ( int key, int state )
 
 //=================================================================================================
 
-int main( void )
+int main ( void )
 {
     int     width, height, running, frames, x, y;
     double  t, t0, fps;
@@ -63,135 +63,108 @@ int main( void )
 
     glfwInit();
 
-    if( !glfwOpenWindow( 640, 480, 0,0,0,0, 16, 0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( 512, 512, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
+
         return 0;
 	}
 
-	glEnable( GL_COLOR_MATERIAL );
+	//---------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------
+	ShaderManager manager;
 
-	ShaderManager smanager;
+	manager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
 
-	smanager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
+	manager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
 
-	smanager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
+	manager.BuildProgram ( );
 
-	smanager.BuildProgram ( );
+	//---------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------
+	cam = Camera ( Vector3D ( 0.0F, 0, -20.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
-	cam = Camera ( Vector3D ( 0.0F, 0, -10.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
+	//---------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------
-
-    // Enable sticky keys
-    glfwEnable( GLFW_STICKY_KEYS );
-
-    // Disable vertical sync (on cards that support it)
     glfwSwapInterval( 0 );
 
 	glfwSetMousePosCallback( MouseMove );
 	glfwSetMouseButtonCallback( MouseButton );
 	glfwSetKeyCallback ( KeyButton );
 
-    // Main loop
+	//---------------------------------------------------------------------------------------------
+
     running = GL_TRUE;
-    frames = 0;
-    t0 = glfwGetTime();
+
+	frames = 0;
+
+	t0 = glfwGetTime();
 
     while( running )
     {
-        // Get time and mouse position
         t = glfwGetTime();
-        glfwGetMousePos( &x, &y );
 
-        // Calculate and display FPS (frames per second)
-        if( (t-t0) > 1.0 || frames == 0 )
+        if ( ( t-t0 ) > 1.0 || frames == 0 )
         {
             fps = (double)frames / (t-t0);
-            sprintf( titlestr, "Spinning Triangle (%.1f FPS)", fps );
+
+            sprintf( titlestr, "Implicity Surfaces (%.1f FPS)", fps );
+
             glfwSetWindowTitle( titlestr );
             t0 = t;
             frames = 0;
         }
-        frames ++;
 
-        // Get window size (may be different than the requested size)
+        frames++;
+
+		//-----------------------------------------------------------------------------------------
+
         glfwGetWindowSize( &width, &height );
+
         height = height > 0 ? height : 1;
 
-        // Set viewport
         glViewport( 0, 0, width, height );
 
-        // Clear color buffer
-        glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
-        glClear( GL_COLOR_BUFFER_BIT );
+		//-----------------------------------------------------------------------------------------
 
-        // Select and setup the projection matrix
-        glMatrixMode( GL_PROJECTION );
-        glLoadIdentity();
-        gluPerspective( 65.0f, (GLfloat)width/(GLfloat)height, 1.0f,
-            100.0f );
+        glMatrixMode ( GL_PROJECTION );
 
-		
+        glLoadIdentity ( );
+
+		glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+
+		//-----------------------------------------------------------------------------------------
 
 		mouse.Apply ( cam );
 
 		keyboard.Apply ( cam );
 
-		cam.Setup ( );
+		//-----------------------------------------------------------------------------------------
 
-		glColor3f ( 1, 0, 0 );
+		manager.Bind ( );
 
-		glBegin ( GL_LINES );
+		glClear ( GL_COLOR_BUFFER_BIT );
 
-			glVertex3f ( 0, 0, 0 ); glVertex3f ( 20, 0, 0 );
+		cam.SetShaderData ( manager );
 
-		glEnd ( );
+		glBegin ( GL_QUADS );
 
-		glColor3f ( 0, 1, 0 );
-
-		glBegin ( GL_LINES );
-
-			glVertex3f ( 0, 0, 0 ); glVertex3f ( 0, 20, 0 );
-
-		glEnd ( );
-
-		glColor3f ( 0, 0, 1 );
-
-		glBegin ( GL_LINES );
-
-			glVertex3f ( 0, 0, 0 ); glVertex3f ( 0, 0, 20 );
+			glVertex2f ( -1.0F, -1.0F );
+			glVertex2f ( -1.0F,  1.0F );
+			glVertex2f (  1.0F,  1.0F );
+			glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 
-		//---
-
-        GLUquadric * q = gluNewQuadric ( );
-
-		glRotatef( 0.3f*(GLfloat)x + (GLfloat)t*100.0f, 0.0f, 1.0f, 1.0f );
-
-		smanager.Bind ( );
-
-		gluSphere (q, 2.0, 50, 50 );
-
-		smanager.Unbind ( );
-
-		gluDeleteQuadric ( q );
-
-		//----------------------------------------
+		manager.Unbind ( );
 
         glfwSwapBuffers();
 
-        // Check if the ESC key was pressed or the window was closed
-        running = !glfwGetKey( GLFW_KEY_ESC ) &&
-                  glfwGetWindowParam( GLFW_OPENED );
-    }
+		//-----------------------------------------------------------------------------------------
+		
+		running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
+	}
 
-    // Close OpenGL window and terminate GLFW
     glfwTerminate();
 
     return 0;

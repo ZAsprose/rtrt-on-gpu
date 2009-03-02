@@ -6,6 +6,8 @@
 
 #include <Matrix3D.h>
 
+#include "ShaderManager.h"
+
 using namespace Math;
 
 //--------------------------------------- Useful Constants ----------------------------------------
@@ -95,6 +97,8 @@ namespace RenderTools
 			//----------------------------------- Apply Settings ----------------------------------
 
 			void Setup ( void );
+
+			void SetShaderData ( ShaderManager& );
 
 			//---------------------------------- Getting Settings ---------------------------------
 
