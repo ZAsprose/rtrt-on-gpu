@@ -117,7 +117,7 @@ namespace Math
 
 	Vector3D operator * ( const Vector3D& left, float right )
 	{
-		return Vector3D ( left.X * right, left.Y * right, left.Z / right );
+		return Vector3D ( left.X * right, left.Y * right, left.Z * right );
 	}
 
 	Vector3D operator / ( const Vector3D& left, float right )

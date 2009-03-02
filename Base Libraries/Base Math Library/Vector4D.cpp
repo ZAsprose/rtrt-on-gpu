@@ -136,7 +136,7 @@ namespace Math
 	Vector4D operator * ( const Vector4D& left, float right )
 	{
 		return Vector4D ( left.X * right, left.Y * right,
-			              left.Z / right, left.W / right );
+			              left.Z * right, left.W * right );
 	}
 
 	Vector4D operator / ( const Vector4D& left, float right )

@@ -63,6 +63,10 @@ namespace RenderTools
 			int Height;			
 			
 			float Aspect;
+
+			//--------------------------------- Update Directions ---------------------------------
+			
+			void Update ( void );
 	       
 		public:			
 
