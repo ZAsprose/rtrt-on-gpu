@@ -112,6 +112,17 @@ namespace RenderTools
 					Up.Y,
 					Up.Z );
 	}
+
+	void Camera :: SetShaderData ( ShaderManager& manager )
+	{
+		manager.SetUniformVector ( "Camera.Position", Position );
+        	
+		manager.SetUniformVector ( "Camera.Side", Side );
+        	
+		manager.SetUniformVector ( "Camera.Up", Up );
+        	
+		manager.SetUniformVector ( "Camera.View", View );
+	}
 	
 	//-------------------------------------- Getting Settings -------------------------------------
 
