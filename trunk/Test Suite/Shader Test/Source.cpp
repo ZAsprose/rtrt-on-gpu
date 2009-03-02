@@ -18,6 +18,8 @@
 
 #include "Mouse.h"
 
+#include "Keyboard.h"
+
 #include "Vector3D.h"
 
 #include "Matrix3D.h"
@@ -26,78 +28,32 @@ using namespace RenderTools;
 
 using namespace Math;
 
-//========================================================================
+//=================================================================================================
 
 Camera cam;
 
-int LocationX;
-			
-int LocationY;
+Mouse mouse;
 
-float Step1 = 0.004F;
+Keyboard keyboard;
 
-bool Active = false;
+//=================================================================================================
 
 void MouseMove ( int x, int y )
 {
-	if ( Active )
-	{
-				if ( LocationX != x )
-				{
-					cam.RotateLocal ( -( x - LocationX ) * Step1, Vector3D :: AxisY );
-				}
-        	
-				if ( LocationY != y )
-				{
-					cam.RotateLocal ( ( y - LocationY ) * Step1, Vector3D :: AxisX );
-				}
-			
-				LocationX = x;
-			
-				LocationY = y;
-	}
+	mouse.MouseMove ( x, y );
 }
 		
 void MouseButton ( int button, int state )
 {
-	glfwGetMousePos ( &LocationX, &LocationY );
-
-	Active = state > 0;
+	mouse.StateChange ( state );
 }
-
-bool W1 = false;
-bool S1 = false;
-bool A1 = false;
-bool D1 = false;
 
 void KeyButton ( int key, int state )
 {
-	switch ( key )
-	{
-		case 'W': W1 = state == GLFW_PRESS; break;
-
-		case 'S': S1 = state == GLFW_PRESS; break;
-
-		case 'A': A1 = state == GLFW_PRESS; break;
-
-		case 'D': D1 = state == GLFW_PRESS; break;
-	}
+	keyboard.StateChange ( key, state );
 }
 
-float Step2 = 0.004F;
-
-void KeyApply ( )
-{
-	if ( W1 ) cam.MoveLocal ( Step2, Vector3D :: AxisZ );
-
-	if ( S1 ) cam.MoveLocal ( -Step2, Vector3D :: AxisZ );
-
-	if ( A1 ) cam.MoveLocal ( Step2, Vector3D :: AxisX );
-
-	if ( D1 ) cam.MoveLocal ( -Step2, Vector3D :: AxisX );
-}
-
-
+//=================================================================================================
 
 int main( void )
 {
@@ -127,9 +83,7 @@ int main( void )
 
 	//----------------------------------------------------
 
-	cam = Camera ( Vector3D ( 0.0F, 0, 10.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
-
-	//cam.MoveWorld ( 10, Vector3D::AxisY );
+	cam = Camera ( Vector3D ( 0.0F, 0, -10.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
 	//----------------------------------------------------
 
@@ -182,7 +136,12 @@ int main( void )
         gluPerspective( 65.0f, (GLfloat)width/(GLfloat)height, 1.0f,
             100.0f );
 
-		KeyApply ( );
+		
+
+		mouse.Apply ( cam );
+
+		keyboard.Apply ( cam );
+
 		cam.Setup ( );
 
 		glColor3f ( 1, 0, 0 );
