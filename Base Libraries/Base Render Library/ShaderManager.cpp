@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-#include "GLee.h"
+#include <GLee.h>
 
 #include "ShaderManager.h"
 
@@ -135,7 +135,7 @@ namespace RenderTools
 
 		memset ( info, 0, capacity );
 
-		glGetShaderInfoLog ( shader, UINT_MAX, NULL, info );
+		glGetShaderInfoLog ( shader, capacity, NULL, info );
 
 		if ( 0 == strlen ( info ) )
 		{
@@ -227,7 +227,7 @@ namespace RenderTools
 
 		memset ( info, 0, capacity );
 
-		glGetProgramInfoLog ( program, UINT_MAX, NULL, info );
+		glGetProgramInfoLog ( program, capacity, NULL, info );
 
 		if ( 0 == strlen ( info ) )
 		{

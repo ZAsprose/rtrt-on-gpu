@@ -12,8 +12,6 @@ namespace RenderTools
 
 		WorldToCamera = Matrix3D :: Rotate ( orientation );
 
-		CameraToWorld = Transpose ( WorldToCamera );
-
 		Update ( );		
 	}
 
@@ -21,6 +19,8 @@ namespace RenderTools
 			
 	void Camera :: Update ( void )
 	{
+		CameraToWorld = Transpose ( WorldToCamera );
+
 		Side = Normalize ( CameraToWorld * Vector3D :: AxisX );
 
 		Up = Normalize ( CameraToWorld * Vector3D :: AxisY );
@@ -47,8 +47,6 @@ namespace RenderTools
 	void Camera :: RotateLocal ( float angle, const Vector3D& direction )
 	{
 		WorldToCamera = Matrix3D :: Rotate ( angle, direction ) * WorldToCamera;
-
-		CameraToWorld = Transpose ( WorldToCamera );
 		
 		Update ( );
 	}
@@ -58,8 +56,6 @@ namespace RenderTools
 		Vector3D local = WorldToCamera * direction;
 
 		WorldToCamera = Matrix3D :: Rotate ( angle, local ) * WorldToCamera;
-
-		CameraToWorld = Transpose ( WorldToCamera );
 
 		Update ( );
 	}
