@@ -1,11 +1,3 @@
-//========================================================================
-// This is a small test application for GLFW.
-// The program opens a window (640x480), and renders a spinning colored
-// triangle (it is controlled with both the GLFW timer and the mouse). It
-// also calculates the rendering speed (FPS), which is displayed in the
-// window title bar.
-//========================================================================
-
 #include <stdio.h>
 
 #include <GLee.h>
@@ -32,9 +24,9 @@ using namespace Math;
 
 Camera cam;
 
-Mouse mouse;
+Mouse mouse ( 0.01F );
 
-Keyboard keyboard;
+Keyboard keyboard ( 0.05F );
 
 //=================================================================================================
 
@@ -63,7 +55,7 @@ int main ( void )
 
     glfwInit();
 
-    if( !glfwOpenWindow( 512, 512, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( 1024, 1024, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
 
@@ -82,7 +74,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	cam = Camera ( Vector3D ( 0.0F, 0, -20.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
+	cam = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
 	//---------------------------------------------------------------------------------------------
 
