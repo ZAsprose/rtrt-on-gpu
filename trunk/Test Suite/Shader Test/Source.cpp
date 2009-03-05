@@ -8,6 +8,8 @@
 
 #include "Camera.h"
 
+#include "Texture2D.h"
+
 #include "Mouse.h"
 
 #include "Keyboard.h"
@@ -55,7 +57,7 @@ int main ( void )
 
     glfwInit();
 
-    if( !glfwOpenWindow( 1024, 1024, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( 512, 512, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
 
@@ -66,9 +68,9 @@ int main ( void )
 
 	ShaderManager manager;
 
-	manager.LoadVertexShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Vertex.vs" );
+	manager.LoadVertexShader ( "Vertex.vs" );
 
-	manager.LoadFragmentShader ( "E:/Projects/rtrt-on-gpu/Test Suite/Shader Test/Fragment.fs" );
+	manager.LoadFragmentShader ( "Fragment.fs" );
 
 	manager.BuildProgram ( );
 
@@ -83,6 +85,31 @@ int main ( void )
 	glfwSetMousePosCallback( MouseMove );
 	glfwSetMouseButtonCallback( MouseButton );
 	glfwSetKeyCallback ( KeyButton );
+
+	//---------------------------------------------------------------------------------------------
+
+	glEnable ( GL_TEXTURE_2D );
+	
+	unsigned int texture = 0;
+
+	glGenTextures ( 1, &texture );
+
+	glBindTexture ( GL_TEXTURE_2D, texture );
+
+	TextureData2D<Vector3D> td (512, 512);
+
+	td[200][300].X = 1;
+	td[210][300].Y = 1;
+	td[220][300].Z = 1;
+
+	td[230][300] = Vector3D ( 1, 1, 1 );
+
+	td.Upload ( );
+    
+	glTexParameteri( GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER,  GL_LINEAR);
+    
+	glTexParameteri( GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER,  GL_LINEAR);
+
 
 	//---------------------------------------------------------------------------------------------
 
@@ -133,22 +160,22 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		manager.Bind ( );
+		//manager.Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam.SetShaderData ( manager );
+		//cam.SetShaderData ( manager );
 
 		glBegin ( GL_QUADS );
 
-			glVertex2f ( -1.0F, -1.0F );
-			glVertex2f ( -1.0F,  1.0F );
-			glVertex2f (  1.0F,  1.0F );
-			glVertex2f (  1.0F, -1.0F );
+			glTexCoord2f( 0.0F, 0.0F );   glVertex2f ( -1.0F, -1.0F );
+			glTexCoord2f( 0.0F, 1.0F );   glVertex2f ( -1.0F,  1.0F );
+			glTexCoord2f( 1.0F, 1.0F );   glVertex2f (  1.0F,  1.0F );
+			glTexCoord2f( 1.0F, 0.0F );   glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 
-		manager.Unbind ( );
+		//manager.Unbind ( );
 
         glfwSwapBuffers();
 
