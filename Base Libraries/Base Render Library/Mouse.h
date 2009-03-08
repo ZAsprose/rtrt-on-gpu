@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _MOUSE_
+
+#define _MOUSE_
+
 #include "Camera.h"
 
 namespace RenderTools
@@ -45,3 +49,5 @@ namespace RenderTools
 			void Apply ( Camera& );
 	};
 }
+
+#endif

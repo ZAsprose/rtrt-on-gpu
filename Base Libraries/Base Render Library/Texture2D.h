@@ -1,165 +1,69 @@
 #pragma once
 
-#include <Vector3D.h>
+#ifndef _TEXTURE2D_
 
-#include <GLee.h>
+#define _TEXTURE2D_
 
-#include <GL/glfw.h>
-
-using namespace Math;
+#include "TextureData2D.h"
 
 namespace RenderTools
 {
-	//====================================== Data Proxy Class =====================================
-
-	template <class Type> class TextureData2D;
-
-	template <class Type> class DataProxy2D
+	class Texture2D
 	{
-		friend class TextureData2D<Type>;
-
 		private:
+
+			//----------------------------------- Texture Handle ----------------------------------
+
+			unsigned int Handle;
+
+			//---------------------------------- Texture Settings ---------------------------------
+
+			unsigned int Target;
+
+			unsigned int Unit;
 			
-			//------------------------------------- Pixels Row ------------------------------------
-			
-			float * Pixels;
+			const char * Name;
 
-			//---------------------------------- Pixel Components ---------------------------------
+			//------------------------------------ Texture Init -----------------------------------
 
-			int Components;
-
-			//------------------------------------ Constructor ------------------------------------
-
-			DataProxy2D ( float* pixels, int components )
-			{
-				Pixels = pixels;
-
-				Components = components;
-			}
-
+			void Init ( int, TextureData2D *, int, const char * );
+		
 		public:
-
-			//-------------------------------------- Indexer --------------------------------------
-			
-			Type& operator [] ( int index )
-			{
-				return ( Type& ) Pixels [ index * Components ];
-			}
-	};
-
-	//===================================== Texture Data Class ====================================
-
-	template <class Type> class TextureData2D
-	{
-		private:
 
 			//----------------------------------- Texture Data ------------------------------------
 
-			float * Pixels;
-
-			//----------------------------------- Texture Size ------------------------------------
-			
-			int Width;
-			
-			int Height;
-
-			//--------------------------------- Pixel Components ----------------------------------
-
-			int Components;
-		
-		public:
+			TextureData2D * Data;
 
 			//----------------------------- Constructor and Destructor ----------------------------
-		
-			TextureData2D ( int width = 512, int height = 512, int components = 3 )
-			{
-				Width = width;
 
-				Height = height;
+			Texture2D ( int = 0, const char * = "Texture" );
+						
+			Texture2D ( TextureData2D *, int = 0, const char * = "Texture" );
 
-				Components = components;
+			Texture2D ( int, int = 0, const char * = "Texture" );
+						
+			Texture2D ( int, TextureData2D *, int = 0, const char * = "Texture" );
 
-				Pixels = new float [ Width * Height * Components ];
+			~Texture2D ( void );
 
-				memset ( Pixels, 0, Width * Height * Components );
-			}
+			//--------------------------------- Texture Management --------------------------------
 			
-			~TextureData2D ( void )
-			{
-				if ( Pixels != NULL )
-				{
-					delete [] Pixels;
-				}
-			}
+			void Setup ( void );
 
-			//-------------------------------- Auxiliary Operators --------------------------------
+			void Bind ( void );
 
-			operator float * ( )
-			{
-				return Pixels;
-			}
+			void Unbind ( void );
+
+			//------------------------------------ Texture Info -----------------------------------
 			
-			operator const float * ( ) const
-			{
-				return Pixels;
-			}
+			unsigned int GetHandle ( void ) const { return Handle; }
 
-			DataProxy2D<Type> operator [] ( int index )
-			{
-				return DataProxy2D<Type> ( &Pixels[index * Width * Components], Components );
-			} 
+			unsigned int GetTarget ( void ) const { return Target; }
 
-			//------------------------------------ Data Upload ------------------------------------
+			unsigned int GetUnit ( void ) const { return Unit; }
 
-			void Upload ( int target = GL_TEXTURE_2D )
-			{
-				glTexImage2D ( target,
-					           0,
-							   GetInternalFormat ( ),
-							   Width,
-							   Height,
-							   0,
-							   GetPixelFormat ( ),
-							   GL_FLOAT,
-							   Pixels);
-			}
-
-			//----------------------------------- Texture Format ----------------------------------
-			
-			int GetPixelFormat ( void )
-			{
-				switch ( Components )
-				{
-					case 1:
-						return GL_ALPHA;
-
-					case 3:
-						return GL_RGB;
-					
-					case 4:
-						return GL_RGBA;
-					
-					default:
-						return -1;
-				}
-			}
-
-			int GetInternalFormat ( void )
-			{
-				switch ( Components )
-				{
-					case 1:
-						return GL_ALPHA32F_ARB;
-
-					case 3:
-						return GL_RGB32F_ARB;
-					
-					case 4:
-						return GL_RGBA32F_ARB;
-					
-					default:
-						return -1;
-				}
-			}
+			const char * GetName ( void ) const { return Name; }
 	};
 }
+
+#endif

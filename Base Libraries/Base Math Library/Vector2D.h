@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _VECTOR2D_
+
+#define _VECTOR2D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -248,3 +252,5 @@ namespace Math
 			friend  Vector2D Sqrt ( const Vector2D& );
 	};
 }
+
+#endif

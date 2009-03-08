@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _MATH_UTIL_
+
+#define _MATH_UTIL_
+
 //--------------------------------------- Useful Constants ----------------------------------------
 
 #define ONEPI 3.141592653589F
@@ -50,3 +54,5 @@ namespace Math
 
 	float Smooth ( float, float, float );
 }
+
+#endif

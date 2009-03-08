@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _VECTOR3D_
+
+#define _VECTOR3D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -254,3 +258,5 @@ namespace Math
 			friend  Vector3D Sqrt ( const Vector3D& );
 	};
 }
+
+#endif

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _MATRIX2D_
+
+#define _MATRIX2D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -87,3 +91,5 @@ namespace Math
 			friend Matrix2D Inverse ( const Matrix2D& );
 	};
 }
+
+#endif

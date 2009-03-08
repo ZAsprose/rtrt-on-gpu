@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-#include <iostream>
+#include <GL/glfw.h>
 
 namespace RenderTools
 {
@@ -73,13 +73,13 @@ namespace RenderTools
 		glViewport( DEFAULT_LEFT, DEFAULT_TOP, Width, Height );
 	}
 
-	void Camera :: SetFrustum ( float angle, float near, float far )
+	void Camera :: SetFrustum ( float angle, float znear, float zfar )
 	{
 		FieldOfView = angle;
 
-		NearPlane = near;
+		NearPlane = znear;
 
-		FarPlane = far;
+		FarPlane = zfar;
 
         glMatrixMode( GL_PROJECTION );
 
@@ -129,13 +129,13 @@ namespace RenderTools
 		height = Height;
 	}
 
-	void Camera :: GetFrustum ( float& angle, float& near, float& far )
+	void Camera :: GetFrustum ( float& angle, float& znear, float& zfar )
 	{
 		angle = FieldOfView;
 
-		near = NearPlane;
+		znear = NearPlane;
 
-		far = FarPlane;
+		zfar = FarPlane;
 	}
 
 	void Camera :: GetPosition ( Vector3D& position )

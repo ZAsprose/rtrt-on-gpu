@@ -194,6 +194,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Texture Data"
+				>
+				<File
+					RelativePath=".\TextureData2D.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -233,6 +241,14 @@
 				>
 				<File
 					RelativePath=".\Texture2D.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Data"
+				>
+				<File
+					RelativePath=".\TextureData2D.h"
 					>
 				</File>
 			</Filter>

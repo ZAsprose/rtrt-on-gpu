@@ -8,6 +8,8 @@
 
 #include "Camera.h"
 
+#include "TextureData2D.h"
+
 #include "Texture2D.h"
 
 #include "Mouse.h"
@@ -51,7 +53,7 @@ void KeyButton ( int key, int state )
 
 int main ( void )
 {
-    int     width, height, running, frames, x, y;
+    int     width, height, running, frames;
     double  t, t0, fps;
     char    titlestr[ 200 ];
 
@@ -68,9 +70,9 @@ int main ( void )
 
 	ShaderManager manager;
 
-	manager.LoadVertexShader ( "Vertex.vs" );
+	manager.LoadVertexShader ( "E:\\Projects\\rtrt-on-gpu\\Test Suite\\Shader Test\\Debug\\Vertex.vs" );
 
-	manager.LoadFragmentShader ( "Fragment.fs" );
+	manager.LoadFragmentShader ( "E:\\Projects\\rtrt-on-gpu\\Test Suite\\Shader Test\\Debug\\Fragment.fs" );
 
 	manager.BuildProgram ( );
 
@@ -89,31 +91,25 @@ int main ( void )
 	//---------------------------------------------------------------------------------------------
 
 	glEnable ( GL_TEXTURE_2D );
-	
-	unsigned int texture = 0;
 
-	glGenTextures ( 1, &texture );
+	glEnable ( GL_TEXTURE_RECTANGLE_ARB );
 
-	glBindTexture ( GL_TEXTURE_2D, texture );
 
-	TextureData2D<Vector3D> td (512, 512);
+	TextureData2D * data = new TextureData2D ( 512, 512, 3 );
 
-	td[200][300].X = 1;
-	td[210][300].Y = 1;
-	td[220][300].Z = 1;
+	data->Pixel < Vector3D > ( 256, 256 ) = Vector3D :: Unit;
+	data->Pixel < Vector3D > ( 500, 500 ) = Vector3D :: AxisX;
+	data->Pixel < Vector3D > ( 500, 12  ) = Vector3D :: AxisY;
+	data->Pixel < Vector3D > ( 12,  500 ) = Vector3D :: AxisZ;
+	data->Pixel < Vector3D > ( 12,  12  ) = Vector3D ( 1, 1, 0 );
 
-	td[230][300] = Vector3D ( 1, 1, 1 );
+	Texture2D texture ( GL_TEXTURE_RECTANGLE_ARB, data, 0, "TestTexture" );
 
-	td.Upload ( );
-    
-	glTexParameteri( GL_TEXTURE_2D,  GL_TEXTURE_MIN_FILTER,  GL_LINEAR);
-    
-	glTexParameteri( GL_TEXTURE_2D,  GL_TEXTURE_MAG_FILTER,  GL_LINEAR);
-
+	texture.Setup();
 
 	//---------------------------------------------------------------------------------------------
-
-    running = GL_TRUE;
+	
+	running = GL_TRUE;
 
 	frames = 0;
 
@@ -160,7 +156,9 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		//manager.Bind ( );
+		manager.Bind ( );
+
+		manager.SetTexture ( texture );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
@@ -168,14 +166,14 @@ int main ( void )
 
 		glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F, 0.0F );   glVertex2f ( -1.0F, -1.0F );
-			glTexCoord2f( 0.0F, 1.0F );   glVertex2f ( -1.0F,  1.0F );
-			glTexCoord2f( 1.0F, 1.0F );   glVertex2f (  1.0F,  1.0F );
-			glTexCoord2f( 1.0F, 0.0F );   glVertex2f (  1.0F, -1.0F );
+			glTexCoord2f( 0.0F,   0.0F );   glVertex2f ( -1.0F, -1.0F );
+			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( -1.0F,  1.0F );
+			glTexCoord2f( 512.0F, 512.0F );   glVertex2f (  1.0F,  1.0F );
+			glTexCoord2f( 512.0F, 0.0F );   glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 
-		//manager.Unbind ( );
+		manager.Unbind ( );
 
         glfwSwapBuffers();
 

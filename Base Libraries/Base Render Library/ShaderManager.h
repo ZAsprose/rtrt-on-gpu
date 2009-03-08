@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _SHADER_MANAGER_
+
+#define _SHADER_MANAGER_
+
 #include <Vector2D.h>
 
 #include <Vector3D.h>
@@ -12,6 +16,8 @@
 
 #include <Matrix4D.h>
 
+#include "Texture2D.h"
+
 using namespace Math;
 
 namespace RenderTools
@@ -22,11 +28,11 @@ namespace RenderTools
 
 			//---------------------------------- Private Fields -----------------------------------
 
-			int vertex;
+			int Vertex;
 
-			int fragment;
+			int Fragment;
 
-			int program;
+			int Program;
 
 			//---------------------------------- Private Methods ----------------------------------
 
@@ -105,6 +111,8 @@ namespace RenderTools
 			bool SetUniformMatrix ( const char *, const Matrix4D& );
 
 			bool SetUniformMatrix ( int, const Matrix4D& );
+			
+			bool SetTexture ( const Texture2D& );
 
 			bool SetAttributeName ( int, const char * );
 
@@ -125,3 +133,5 @@ namespace RenderTools
 			bool SetAttributeVector ( int, const Vector4D& );
 	};
 }
+
+#endif
