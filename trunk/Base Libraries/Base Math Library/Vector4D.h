@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _VECTOR4D_
+
+#define _VECTOR4D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -256,3 +260,5 @@ namespace Math
 			friend  Vector4D Sqrt ( const Vector4D& );
 	};
 }
+
+#endif

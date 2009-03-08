@@ -1,6 +1,6 @@
-#include <GL/glfw.h>
-
 #include "Mouse.h"
+
+#include <GL/glfw.h>
 
 namespace RenderTools
 {

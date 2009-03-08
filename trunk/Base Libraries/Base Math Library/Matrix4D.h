@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _MATRIX4D_
+
+#define _MATRIX4D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -87,3 +91,5 @@ namespace Math
 			friend Matrix4D Inverse ( const Matrix4D& );
 	};
 }
+
+#endif

@@ -1,3 +1,5 @@
+#include "ShaderManager.h"
+
 #include <stdlib.h>
 
 #include <stdio.h>
@@ -8,8 +10,6 @@
 
 #include <GLee.h>
 
-#include "ShaderManager.h"
-
 using namespace std;
 
 namespace RenderTools
@@ -18,20 +18,20 @@ namespace RenderTools
 
 	ShaderManager :: ShaderManager ( void )
 	{
-		vertex = glCreateShader ( GL_VERTEX_SHADER );
+		Vertex = glCreateShader ( GL_VERTEX_SHADER );
 		
-		fragment = glCreateShader ( GL_FRAGMENT_SHADER );
+		Fragment = glCreateShader ( GL_FRAGMENT_SHADER );
 
-		program = glCreateProgram ( );
+		Program = glCreateProgram ( );
 	}
 
 	ShaderManager :: ~ShaderManager ( void )
 	{
-		glDeleteShader ( vertex );
+		glDeleteShader ( Vertex );
                 
-		glDeleteShader ( fragment );
+		glDeleteShader ( Fragment );
 		
-		glDeleteProgram ( program );
+		glDeleteProgram ( Program );
 	}
 
 	//-------------------------------------- Private Methods --------------------------------------
@@ -172,7 +172,7 @@ namespace RenderTools
 	{
 		cout << "Attaching shader to program..." << endl;
 
-		glAttachShader ( program, shader );
+		glAttachShader ( Program, shader );
 
 		return true;
 	}
@@ -195,7 +195,7 @@ namespace RenderTools
 		cout << "+++                           VERTEX SHADER                          +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( vertex, filenames, count ) && Compile ( vertex ) && Attach ( vertex );
+		return Load ( Vertex, filenames, count ) && Compile ( Vertex ) && Attach ( Vertex );
 	}
 
 	bool ShaderManager :: LoadFragmentShader ( const char ** filenames, int count )
@@ -204,7 +204,7 @@ namespace RenderTools
 		cout << "+++                          FRAGMENT SHADER                         +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( fragment, filenames, count ) && Compile ( fragment ) && Attach ( fragment );
+		return Load ( Fragment, filenames, count ) && Compile ( Fragment ) && Attach ( Fragment );
 	}
 
 	bool ShaderManager :: BuildProgram ( void )
@@ -215,19 +215,19 @@ namespace RenderTools
             
 		cout << "Linking program..." << endl;
 	            
-		glLinkProgram ( program );
+		glLinkProgram ( Program );
 
 		//---------------------------------------------------------------------
 
     	int capacity = 0;
 
-        glGetProgramiv ( program, GL_INFO_LOG_LENGTH, &capacity );
+        glGetProgramiv ( Program, GL_INFO_LOG_LENGTH, &capacity );
 
 		char * info = new char[capacity];
 
 		memset ( info, 0, capacity );
 
-		glGetProgramInfoLog ( program, capacity, NULL, info );
+		glGetProgramInfoLog ( Program, capacity, NULL, info );
 
 		if ( 0 == strlen ( info ) )
 		{
@@ -244,7 +244,7 @@ namespace RenderTools
 		
 		int status = 0;
 		
-		glGetProgramiv ( program, GL_LINK_STATUS, &status );
+		glGetProgramiv ( Program, GL_LINK_STATUS, &status );
 	
 		if ( 0 == status )
 		{
@@ -262,7 +262,7 @@ namespace RenderTools
 
 	void ShaderManager :: Bind ( void )
 	{
-		glUseProgram ( program );
+		glUseProgram ( Program );
 	}
 			
 	void ShaderManager :: Unbind ( void )
@@ -274,24 +274,24 @@ namespace RenderTools
 
 	int ShaderManager :: GetUniformLocation ( char * name )
 	{
-		return glGetUniformLocation ( program, name );
+		return glGetUniformLocation ( Program, name );
 	}
 			
 	int ShaderManager :: GetAttributeLocation ( char * name )
 	{
-		return glGetAttribLocation ( program, name );
+		return glGetAttribLocation ( Program, name );
 	}
 			
 	Vector4D ShaderManager :: GetUniformVector ( char * name )
 	{
 		float values[SIZE4D];
 
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return Vector4D :: Zero;
 				
-		glGetUniformfv ( program, location, values );
+		glGetUniformfv ( Program, location, values );
 				
 		return Vector4D ( values );
 	}
@@ -300,14 +300,14 @@ namespace RenderTools
 	{
 		float values[SIZE4D];
 
-		glGetUniformfv ( program, location, values );
+		glGetUniformfv ( Program, location, values );
 
 		return Vector4D ( values );
 	}
 			
 	Vector4D ShaderManager :: GetAttributeVector ( char * name )
 	{
-		int location = glGetAttribLocation ( program, name );
+		int location = glGetAttribLocation ( Program, name );
 
 		if ( location < 0 )
 			return Vector4D :: Zero;
@@ -330,7 +330,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformInteger ( const char * name, int value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -349,7 +349,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformFloat ( const char * name, float value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -368,7 +368,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformVector ( const char * name, const Vector2D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -387,7 +387,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformVector ( const char * name, const Vector3D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -406,7 +406,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformVector ( const char * name, const Vector4D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -425,7 +425,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix2D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -444,7 +444,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix3D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -463,7 +463,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetUniformMatrix ( const char * name, const Matrix4D& value )
 	{
-		int location = glGetUniformLocation ( program, name );
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -479,17 +479,29 @@ namespace RenderTools
 
 		return true;
 	}
+	
+	bool ShaderManager :: SetTexture ( const Texture2D& texture )
+	{
+		int location = glGetUniformLocation ( Program, texture.GetName ( ) );
+
+		if ( location < 0 )
+			return false;
+				
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
 
 	bool ShaderManager :: SetAttributeName ( int location, const char * name )
 	{
-		glBindAttribLocation ( program, location, name );
+		glBindAttribLocation ( Program, location, name );
 		
 		return true;
 	}
 
 	bool ShaderManager :: SetAttributeFloat ( const char * name, float value )
 	{
-		int location = glGetAttribLocation ( program, name );
+		int location = glGetAttribLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -508,7 +520,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector2D& value )
 	{
-		int location = glGetAttribLocation ( program, name );
+		int location = glGetAttribLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -527,7 +539,7 @@ namespace RenderTools
 	
 	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector3D& value )
 	{
-		int location = glGetAttribLocation ( program, name );
+		int location = glGetAttribLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;
@@ -546,7 +558,7 @@ namespace RenderTools
 
 	bool ShaderManager :: SetAttributeVector ( const char * name, const Vector4D& value )
 	{
-		int location = glGetAttribLocation ( program, name );
+		int location = glGetAttribLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;

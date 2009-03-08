@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _MATRIX3D_
+
+#define _MATRIX3D_
+
 #include <iostream>
 
 #include "Util.h"
@@ -113,3 +117,5 @@ namespace Math
 			static Matrix3D Scale ( const Vector3D& );
 	};
 }
+
+#endif

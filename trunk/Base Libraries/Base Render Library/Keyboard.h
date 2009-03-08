@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef _KEYBOARD_
+
+#define _KEYBOARD_
+
 #include "Camera.h"
 
 namespace RenderTools
@@ -44,3 +48,5 @@ namespace RenderTools
 			void Apply ( Camera& );
 	};
 }
+
+#endif

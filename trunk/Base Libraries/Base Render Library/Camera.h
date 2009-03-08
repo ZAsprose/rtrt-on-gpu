@@ -1,6 +1,8 @@
 #pragma once
 
-#include <GL/glfw.h>
+#ifndef _CAMERA_
+
+#define _CAMERA_
 
 #include <Vector3D.h>
 
@@ -113,3 +115,5 @@ namespace RenderTools
 			void GetTransformations ( Matrix3D&, Matrix3D& );
 	};
 }
+
+#endif
