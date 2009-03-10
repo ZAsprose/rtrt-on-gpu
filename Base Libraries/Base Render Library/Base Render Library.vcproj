@@ -284,6 +284,10 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Frame Buffer"
+				>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
