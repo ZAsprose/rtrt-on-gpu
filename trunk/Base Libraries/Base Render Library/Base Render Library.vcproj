@@ -190,7 +190,15 @@
 				Name="Texture"
 				>
 				<File
+					RelativePath=".\Texture1D.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Texture2D.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Texture3D.cpp"
 					>
 				</File>
 			</Filter>
@@ -198,7 +206,15 @@
 				Name="Texture Data"
 				>
 				<File
+					RelativePath=".\TextureData1D.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TextureData2D.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\TextureData3D.cpp"
 					>
 				</File>
 			</Filter>
@@ -240,7 +256,15 @@
 				Name="Texture"
 				>
 				<File
+					RelativePath=".\Texture1D.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Texture2D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Texture3D.h"
 					>
 				</File>
 			</Filter>
@@ -248,7 +272,15 @@
 				Name="Texture Data"
 				>
 				<File
+					RelativePath=".\TextureData1D.h"
+					>
+				</File>
+				<File
 					RelativePath=".\TextureData2D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TextureData3D.h"
 					>
 				</File>
 			</Filter>
