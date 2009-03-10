@@ -1,14 +1,14 @@
 #pragma once
 
-#ifndef _TEXTURE_DATA_2D_
+#ifndef _TEXTURE_DATA_3D_
 
-#define _TEXTURE_DATA_2D_
+#define _TEXTURE_DATA_3D_
 
 #include <GLee.h>
 
 namespace RenderTools
 {
-	class TextureData2D
+	class TextureData3D
 	{
 		private:
 
@@ -22,6 +22,8 @@ namespace RenderTools
 			
 			int Height;
 
+			int Depth;
+
 			//--------------------------------- Pixel Components ----------------------------------
 
 			int Components;
@@ -30,9 +32,9 @@ namespace RenderTools
 
 			//----------------------------- Constructor and Destructor ----------------------------
 		
-			TextureData2D ( int, int, int = 3 );
+			TextureData3D ( int, int, int, int = 3 );
 			
-			~TextureData2D ( void );
+			~TextureData3D ( void );
 
 			//------------------------------------ Data Access ------------------------------------
 
@@ -40,7 +42,7 @@ namespace RenderTools
 			
 			operator const float * ( void ) const { return Pixels; }
 
-			template < class Type > Type& Pixel ( int, int );
+			template < class Type > Type& Pixel ( int, int, int );
 
 			//------------------------------------ Data Format ------------------------------------
 			
@@ -52,6 +54,8 @@ namespace RenderTools
 
 			int GetHeight ( void ) { return Height; }
 
+			int GetDepth ( void ) { return Depth; }
+
 			int GetComponents ( void ) { return Components; }
 
 			//------------------------------------ Data Upload ------------------------------------
@@ -61,9 +65,9 @@ namespace RenderTools
 
 	//------------------------------------- Template Functions ------------------------------------
 	
-	template < class Type > Type& TextureData2D :: Pixel ( int x, int y )
+	template < class Type > Type& TextureData3D :: Pixel ( int x, int y, int z )
 	{
-		return ( Type& ) Pixels [ ( x + y * Width ) * Components ];
+		return ( Type& ) Pixels [ ( x + y * Width + z * Width * Height ) * Components ];
 	}
 }
 

@@ -90,8 +90,6 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	glEnable ( GL_TEXTURE_2D );
-
 	glEnable ( GL_TEXTURE_RECTANGLE_ARB );
 
 
