@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -114,6 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -133,6 +137,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -163,6 +168,14 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F1AE1E13-6A0F-40F0-955A-D5B2ACFDFE31}"
+			RelativePathToProject=".\Base Libraries\Base Math Library\Base Math Library.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{FC467132-3751-4CAA-AE40-128D83836414}"
+			RelativePathToProject=".\Base Libraries\Base Render Library\Base Render Library.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
