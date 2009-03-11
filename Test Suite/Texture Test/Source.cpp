@@ -46,9 +46,17 @@ int main ( void )
 
     glfwSwapInterval ( 0 );
 
-	//glEnable ( GL_TEXTURE_2D );
-
 	glEnable ( GL_TEXTURE_RECTANGLE_ARB );
+
+	//---------------------------------------------------------------------------------------------
+
+	ShaderManager manager;
+
+	manager.LoadVertexShader ( "Vertex.vs" );
+
+	manager.LoadFragmentShader ( "Fragment.fs" );
+
+	manager.BuildProgram ( );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -110,11 +118,11 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Texture2D texture1 ( GL_TEXTURE_RECTANGLE_ARB, data1 );
+	Texture2D texture1 ( GL_TEXTURE_RECTANGLE_ARB, data1, 0 );
 
 	texture1.Setup();
 
-	Texture2D texture2 ( GL_TEXTURE_RECTANGLE_ARB, data2 );
+	Texture2D texture2 ( GL_TEXTURE_RECTANGLE_ARB, data2, 1, "TestTexture" );
 
 	texture2.Setup();
 
@@ -155,14 +163,20 @@ int main ( void )
 
 		texture2.Bind ( );
 
+		manager.Bind ( );
+
+		manager.SetTexture ( texture2 );
+
 		glBegin ( GL_QUADS );
 
 			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( 0.0F, -1.0F );
-			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( 0.0F,  1.0F );
-			glTexCoord2f( 256.0F, 512.0F );   glVertex2f ( 1.0F,  1.0F );
-			glTexCoord2f( 256.0F, 0.0F );     glVertex2f ( 1.0F, -1.0F );
+			glTexCoord2f( 0.0F,   512.5F );   glVertex2f ( 0.0F,  1.0F );
+			glTexCoord2f( 256.5F, 512.5F );   glVertex2f ( 1.0F,  1.0F );
+			glTexCoord2f( 256.5F, 0.0F );     glVertex2f ( 1.0F, -1.0F );
 
 		glEnd ( );
+
+		manager.Unbind ( );
 
         glfwSwapBuffers();
 
