@@ -230,6 +230,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Texture Mode"
+				>
+				<File
+					RelativePath=".\FilterMode.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\WrapMode.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -305,6 +317,18 @@
 				</File>
 				<File
 					RelativePath=".\RenderBuffer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Mode"
+				>
+				<File
+					RelativePath=".\FilterMode.h"
+					>
+				</File>
+				<File
+					RelativePath=".\WrapMode.h"
 					>
 				</File>
 			</Filter>
