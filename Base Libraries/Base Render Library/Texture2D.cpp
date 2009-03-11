@@ -64,9 +64,9 @@ namespace RenderTools
 			
 			glTexParameteri ( Target, GL_TEXTURE_WRAP_T, GL_CLAMP );
 
-			glTexParameteri ( Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+			glTexParameteri ( Target, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 		    
-			glTexParameteri ( Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			glTexParameteri ( Target, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 			
 			Data->Upload ( Target );
 		}

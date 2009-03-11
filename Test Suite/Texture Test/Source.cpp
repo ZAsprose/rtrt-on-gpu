@@ -91,30 +91,36 @@ int main ( void )
 
 	TextureData2D * data2 = new TextureData2D ( 256, 512, 3 );
 
-	for ( int i = 0; i < 256; i++ )
-	{
-		for ( int j = 0; j < 512; j++ )
-		{
-			if ( ( i + j ) % 2 == 0 )
-				data2->Pixel < Vector3D > ( i, j ) = Vector3D :: AxisY;
-			else
-				data2->Pixel < Vector3D > ( i, j ) = Vector3D :: AxisY / 6.0F;
-		}
-	}
+	//for ( int i = 0; i < 256; i++ )
+	//{
+	//	for ( int j = 0; j < 512; j++ )
+	//	{
+	//		if ( ( i + j ) % 2 == 0 )
+	//			data2->Pixel < Vector3D > ( i, j ) = Vector3D :: AxisY;
+	//		else
+	//			data2->Pixel < Vector3D > ( i, j ) = Vector3D :: AxisY / 6.0F;
+	//	}
+	//}
 
-	for ( int i = 0; i < 256; i++ )
-	{
-		data2->Pixel < Vector3D > ( i, 0 ) = Vector3D :: AxisZ;
+	//for ( int i = 0; i < 256; i++ )
+	//{
+	//	data2->Pixel < Vector3D > ( i, 0 ) = Vector3D :: AxisZ;
 
-		data2->Pixel < Vector3D > ( i, 511 ) = Vector3D :: AxisZ;
-	}
+	//	data2->Pixel < Vector3D > ( i, 511 ) = Vector3D :: AxisZ;
+	//}
 
-	for ( int j = 0; j < 512; j++ )
-	{
-		data2->Pixel < Vector3D > ( 0, j ) = Vector3D :: AxisZ;
+	//for ( int j = 0; j < 512; j++ )
+	//{
+	//	data2->Pixel < Vector3D > ( 0, j ) = Vector3D :: AxisZ;
 
-		data2->Pixel < Vector3D > ( 255, j ) = Vector3D :: AxisZ;
-	}
+	//	data2->Pixel < Vector3D > ( 255, j ) = Vector3D :: AxisZ;
+	//}
+
+	data2->Pixel < Vector3D > ( 9, 10 ) = Vector3D :: AxisX;
+
+	data2->Pixel < Vector3D > ( 10, 10 ) = Vector3D :: AxisY;
+
+	data2->Pixel < Vector3D > ( 11, 10 ) = Vector3D :: AxisZ;
 
 	//---------------------------------------------------------------------------------------------
 
