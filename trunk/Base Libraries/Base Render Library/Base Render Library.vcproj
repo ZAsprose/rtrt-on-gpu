@@ -218,6 +218,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Frame Buffer"
+				>
+				<File
+					RelativePath=".\FrameBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\RenderBuffer.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -287,6 +299,14 @@
 			<Filter
 				Name="Frame Buffer"
 				>
+				<File
+					RelativePath=".\FrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\RenderBuffer.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>

@@ -70,9 +70,9 @@ int main ( void )
 
 	ShaderManager manager;
 
-	manager.LoadVertexShader ( "E:\\Projects\\rtrt-on-gpu\\Test Suite\\Shader Test\\Debug\\Vertex.vs" );
+	manager.LoadVertexShader ( "Vertex.vs" );
 
-	manager.LoadFragmentShader ( "E:\\Projects\\rtrt-on-gpu\\Test Suite\\Shader Test\\Debug\\Fragment.fs" );
+	manager.LoadFragmentShader ( "Fragment.fs" );
 
 	manager.BuildProgram ( );
 
@@ -87,23 +87,6 @@ int main ( void )
 	glfwSetMousePosCallback( MouseMove );
 	glfwSetMouseButtonCallback( MouseButton );
 	glfwSetKeyCallback ( KeyButton );
-
-	//---------------------------------------------------------------------------------------------
-
-	glEnable ( GL_TEXTURE_RECTANGLE_ARB );
-
-
-	TextureData2D * data = new TextureData2D ( 512, 512, 3 );
-
-	data->Pixel < Vector3D > ( 256, 256 ) = Vector3D :: Unit;
-	data->Pixel < Vector3D > ( 500, 500 ) = Vector3D :: AxisX;
-	data->Pixel < Vector3D > ( 500, 12  ) = Vector3D :: AxisY;
-	data->Pixel < Vector3D > ( 12,  500 ) = Vector3D :: AxisZ;
-	data->Pixel < Vector3D > ( 12,  12  ) = Vector3D ( 1, 1, 0 );
-
-	Texture2D texture ( GL_TEXTURE_RECTANGLE_ARB, data, 0, "TestTexture" );
-
-	texture.Setup();
 
 	//---------------------------------------------------------------------------------------------
 	
@@ -156,18 +139,16 @@ int main ( void )
 
 		manager.Bind ( );
 
-		manager.SetTexture ( texture );
-
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		//cam.SetShaderData ( manager );
+		cam.SetShaderData ( manager );
 
 		glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F,   0.0F );   glVertex2f ( -1.0F, -1.0F );
+			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( -1.0F, -1.0F );
 			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( -1.0F,  1.0F );
 			glTexCoord2f( 512.0F, 512.0F );   glVertex2f (  1.0F,  1.0F );
-			glTexCoord2f( 512.0F, 0.0F );   glVertex2f (  1.0F, -1.0F );
+			glTexCoord2f( 512.0F, 0.0F );     glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 

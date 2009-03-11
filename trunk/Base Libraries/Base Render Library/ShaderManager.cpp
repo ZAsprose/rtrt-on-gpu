@@ -48,7 +48,7 @@ namespace RenderTools
 
 		for ( int index = 0; index < count; index++ )
 		{
-			cout << filenames[index] << "..." << endl;
+			cout << "File: \"" << filenames[index] << "\"..." << endl;
 
 			ifstream file ( filenames[index] );
 

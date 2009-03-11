@@ -188,6 +188,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Shader Files"
+			>
+			<File
+				RelativePath=".\Fragment.fs"
+				>
+			</File>
+			<File
+				RelativePath=".\Vertex.vs"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
