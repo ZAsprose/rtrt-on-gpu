@@ -6,6 +6,10 @@
 
 #include "TextureData1D.h"
 
+#include "FilterMode.h"
+
+#include "WrapMode.h"
+
 namespace RenderTools
 {
 	class Texture1D
@@ -33,6 +37,12 @@ namespace RenderTools
 			//----------------------------------- Texture Data ------------------------------------
 
 			TextureData1D * Data;
+
+			//---------------------------------- Texture Params -----------------------------------
+
+			FilterMode FilterMode;
+
+			WrapMode WrapMode;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 

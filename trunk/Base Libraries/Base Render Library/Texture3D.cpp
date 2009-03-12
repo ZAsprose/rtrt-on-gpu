@@ -50,13 +50,9 @@ namespace RenderTools
 		{
 			Bind ( );
 
-			glTexParameteri ( Target, GL_TEXTURE_WRAP_S, GL_CLAMP );
-			
-			glTexParameteri ( Target, GL_TEXTURE_WRAP_T, GL_CLAMP );
+			WrapMode.Setup ( Target );
 
-			glTexParameteri ( Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-		    
-			glTexParameteri ( Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+			FilterMode.Setup ( Target );
 			
 			Data->Upload ( Target );
 		}

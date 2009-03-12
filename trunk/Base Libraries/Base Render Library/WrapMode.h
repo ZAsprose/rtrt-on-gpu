@@ -22,7 +22,7 @@ namespace RenderTools
 
 			//------------------------------------ Constructor ------------------------------------
 	
-			WrapMode ( int = GL_REPEAT, int = GL_REPEAT, int = GL_REPEAT );
+			WrapMode ( int = GL_CLAMP, int = GL_CLAMP, int = GL_CLAMP );
 
 			//------------------------------------- Setup Mode ------------------------------------
 			
