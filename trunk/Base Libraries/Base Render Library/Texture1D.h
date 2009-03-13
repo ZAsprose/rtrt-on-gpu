@@ -1,8 +1,8 @@
 #pragma once
 
-#ifndef _TEXTURE1D_
+#ifndef _TEXTURE_1D_
 
-#define _TEXTURE1D_
+#define _TEXTURE_1D_
 
 #include "TextureData1D.h"
 
@@ -16,13 +16,15 @@ namespace RenderTools
 	{
 		private:
 
-			//----------------------------------- Texture Handle ----------------------------------
+			//---------------------------------- Texture Handle -----------------------------------
 
 			unsigned int Handle;
 
-			//---------------------------------- Texture Settings ---------------------------------
-
+			//--------------------------------- OpenGL Identifier ---------------------------------
+			
 			unsigned int Target;
+
+			//---------------------------------- Texture Settings ---------------------------------
 
 			unsigned int Unit;
 			
@@ -30,7 +32,7 @@ namespace RenderTools
 
 			//------------------------------------ Texture Init -----------------------------------
 
-			void Init ( int, TextureData1D *, int, const char * );
+			void Init ( unsigned int, TextureData1D *, unsigned int, const char * );
 		
 		public:
 
@@ -46,9 +48,9 @@ namespace RenderTools
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture1D ( int = 0, const char * = "Texture" );
+			Texture1D ( unsigned int = 0, const char * = "Texture" );
 						
-			Texture1D ( TextureData1D *, int = 0, const char * = "Texture" );
+			Texture1D ( TextureData1D *, unsigned int = 0, const char * = "Texture" );
 
 			~Texture1D ( void );
 

@@ -30,7 +30,7 @@ namespace RenderTools
 					   Width,
 					   0,
 					   GetPixelFormat ( ),
-					   GL_FLOAT,
+					   GetType ( ),
 					   Pixels );
 	}
 	

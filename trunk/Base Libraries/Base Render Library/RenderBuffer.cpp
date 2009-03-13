@@ -25,12 +25,22 @@ namespace RenderTools
 		glDeleteRenderbuffers ( 1, &Handle );
 	}
 
-	//--------------------------------------- Setup Buffer ----------------------------------------
+	//------------------------------------- Buffer Management -------------------------------------
 			
 	void RenderBuffer :: Setup ( void )
 	{
-		glBindRenderbuffer ( Target, Handle );
+		Bind ( );
 		
 		glRenderbufferStorage ( Target, InternalFormat, Width, Height );	
+	}
+
+	void RenderBuffer :: Bind ( void )
+	{
+		glBindRenderbuffer ( Target, Handle );
+	}
+	
+	void RenderBuffer :: Unbind ( void )
+	{
+		glBindRenderbuffer ( Target, 0 );
 	}
 }
