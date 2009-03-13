@@ -190,7 +190,7 @@
 				Name="Texture Support"
 				>
 				<Filter
-					Name="Texture Param"
+					Name="Param"
 					>
 					<File
 						RelativePath=".\FilterMode.cpp"
@@ -198,6 +198,22 @@
 					</File>
 					<File
 						RelativePath=".\WrapMode.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Data"
+					>
+					<File
+						RelativePath=".\TextureData1D.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\TextureData2D.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\TextureData3D.cpp"
 						>
 					</File>
 				</Filter>
@@ -214,22 +230,6 @@
 					</File>
 					<File
 						RelativePath=".\Texture3D.cpp"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Texture Data"
-					>
-					<File
-						RelativePath=".\TextureData1D.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\TextureData2D.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\TextureData3D.cpp"
 						>
 					</File>
 				</Filter>
@@ -296,7 +296,7 @@
 				Name="Texture Support"
 				>
 				<Filter
-					Name="Texture Param"
+					Name="Param"
 					>
 					<File
 						RelativePath=".\FilterMode.h"
@@ -304,6 +304,22 @@
 					</File>
 					<File
 						RelativePath=".\WrapMode.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Data"
+					>
+					<File
+						RelativePath=".\TextureData1D.h"
+						>
+					</File>
+					<File
+						RelativePath=".\TextureData2D.h"
+						>
+					</File>
+					<File
+						RelativePath=".\TextureData3D.h"
 						>
 					</File>
 				</Filter>
@@ -320,22 +336,6 @@
 					</File>
 					<File
 						RelativePath=".\Texture3D.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Texture Data"
-					>
-					<File
-						RelativePath=".\TextureData1D.h"
-						>
-					</File>
-					<File
-						RelativePath=".\TextureData2D.h"
-						>
-					</File>
-					<File
-						RelativePath=".\TextureData3D.h"
 						>
 					</File>
 				</Filter>

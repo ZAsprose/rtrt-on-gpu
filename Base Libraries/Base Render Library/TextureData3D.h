@@ -49,6 +49,8 @@ namespace RenderTools
 			int GetPixelFormat ( void );
 
 			int GetInternalFormat ( void );
+
+			int GetType ( void ) { return GL_FLOAT; }
 			
 			int GetWidth ( void ) { return Width; }
 

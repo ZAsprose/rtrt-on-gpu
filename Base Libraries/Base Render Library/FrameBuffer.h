@@ -26,7 +26,7 @@ namespace RenderTools
 
 		public:
 
-			//------------------------------------ Buffer Size ------------------------------------
+			//--------------------------------- Buffer Attachments --------------------------------
 			
 			vector < Texture2D * > ColorBuffers;
 
@@ -42,7 +42,7 @@ namespace RenderTools
 
 			~FrameBuffer ( void );
 
-			//----------------------------------- Setup Buffer ------------------------------------
+			//--------------------------------- Buffer Management ---------------------------------
 			
 			void Setup ( void );
 			

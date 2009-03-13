@@ -43,13 +43,17 @@ namespace RenderTools
 
 			~RenderBuffer ( void );
 
-			//----------------------------------- Setup Buffer ------------------------------------
+			//--------------------------------- Buffer Management ---------------------------------
 			
 			void Setup ( void );
 
-			//------------------------------------ Texture Info -----------------------------------
+			void Bind ( void );
 			
-			unsigned int GetHandle ( void ) const { return Handle; }
+			void Unbind ( void );
+
+			//------------------------------------ Buffer Info ------------------------------------
+			
+			int GetHandle ( void ) const { return Handle; }
 	};
 }
 

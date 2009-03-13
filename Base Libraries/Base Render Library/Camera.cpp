@@ -94,6 +94,12 @@ namespace RenderTools
 
 	void Camera :: Setup ( void )
 	{
+        glMatrixMode( GL_PROJECTION );
+        
+		glLoadIdentity ( );
+        
+		gluPerspective ( 45.0F, 1.0F, 0.1f, 1000.0f );
+
 		glMatrixMode ( GL_MODELVIEW );
 		
 		glLoadIdentity ( );

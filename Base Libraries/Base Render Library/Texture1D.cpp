@@ -8,12 +8,12 @@ namespace RenderTools
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture1D :: Texture1D ( int unit, const char * name )
+	Texture1D :: Texture1D ( unsigned int unit, const char * name )
 	{
 		Init ( GL_TEXTURE_1D, NULL, unit, name );
 	}
 				
-	Texture1D :: Texture1D ( TextureData1D * data, int unit, const char * name )
+	Texture1D :: Texture1D ( TextureData1D * data, unsigned int unit, const char * name )
 	{
 		Init ( GL_TEXTURE_1D, data, unit, name );
 	}
@@ -27,7 +27,8 @@ namespace RenderTools
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture1D :: Init ( int target, TextureData1D * data, int unit, const char * name )
+	void Texture1D :: Init ( unsigned int target, TextureData1D * data,
+							 unsigned int unit, const char * name )
 	{
 		Target = target;
 

@@ -8,22 +8,23 @@ namespace RenderTools
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture2D :: Texture2D ( int unit, const char * name )
+	Texture2D :: Texture2D ( unsigned int unit, const char * name )
 	{
 		Init ( GL_TEXTURE_2D, NULL, unit, name );
 	}
 				
-	Texture2D :: Texture2D ( TextureData2D * data, int unit, const char * name )
+	Texture2D :: Texture2D ( TextureData2D * data, unsigned int unit, const char * name )
 	{
 		Init ( GL_TEXTURE_2D, data, unit, name );
 	}
 
-	Texture2D :: Texture2D ( int target, int unit, const char * name )
+	Texture2D :: Texture2D ( unsigned int target, unsigned int unit, const char * name )
 	{
 		Init ( target, NULL, unit, name );
 	}
 				
-	Texture2D :: Texture2D ( int target, TextureData2D * data, int unit, const char * name )
+	Texture2D :: Texture2D ( unsigned  int target, TextureData2D * data,
+		                     unsigned int unit, const char * name )
 	{
 		Init ( target, data, unit, name );
 	}
@@ -37,7 +38,8 @@ namespace RenderTools
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture2D :: Init ( int target, TextureData2D * data, int unit, const char * name )
+	void Texture2D :: Init ( unsigned int target, TextureData2D * data,
+		                     unsigned int unit, const char * name )
 	{
 		Target = target;
 

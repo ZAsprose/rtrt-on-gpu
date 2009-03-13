@@ -115,7 +115,7 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-        glfwGetWindowSize( &width, &height );
+        glfwGetWindowSize ( &width, &height );
 
         height = height > 0 ? height : 1;
 
