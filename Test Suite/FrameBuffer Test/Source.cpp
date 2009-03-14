@@ -53,6 +53,8 @@ void KeyButton ( int key, int state )
 
 //-------------------------------------------------------------------------------------------------
 
+#define USE_FB
+
 int main ( void )
 {
 	int width = 512;
@@ -90,6 +92,8 @@ int main ( void )
 
 	renderbuffer.Setup ( );
 
+#ifdef USE_FB
+
 	FrameBuffer framebuffer;
 
 	framebuffer.ColorBuffers.push_back ( &texture );
@@ -97,6 +101,8 @@ int main ( void )
 	framebuffer.RenderBuffers.push_back ( &renderbuffer );
 
 	framebuffer.Setup ( );
+
+#endif
 
 	//---------------------------------------------------------------------------------------------
 
@@ -156,9 +162,15 @@ int main ( void )
 
 		glEnable ( GL_DEPTH_TEST );
 
+		glDisable ( GL_LIGHTING );
+
+#ifdef USE_FB
+
 		framebuffer.Bind ( );
 
 		texture.Unbind ( );
+
+#endif
 
 		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -199,7 +211,11 @@ int main ( void )
 		
 		gluDeleteQuadric ( q );
 
+#ifdef USE_FB
+
 		framebuffer.Unbind ( );
+
+#endif
 
 		//-----------------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------------

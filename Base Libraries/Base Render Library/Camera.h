@@ -34,7 +34,7 @@ namespace RenderTools
 {
 	class Camera
 	{
-		private:
+		public:
 
 			//---------------------------------- Camera System ------------------------------------
 
