@@ -1,12 +1,12 @@
-varying vec2 TextureCoord;    
+#extension GL_ARB_texture_rectangle : enable
 
-uniform sampler2D NextPositionTexture;  
+uniform sampler2DRect NextPositionTexture;  
 
-uniform sampler2D NextVelocityTexture;
+uniform sampler2DRect NextVelocityTexture;
 
 void main(void)
 {                     
-   gl_FragData[0] = texture2D( NextPositionTexture, TextureCoord );
+   gl_FragData[0] = texture2DRect ( NextPositionTexture, gl_TexCoord[0] );
    
-   gl_FragData[1] = texture2D( NextVelocityTexture, TextureCoord );
+   gl_FragData[1] = texture2DRect ( NextVelocityTexture, gl_TexCoord[0] );
 }
