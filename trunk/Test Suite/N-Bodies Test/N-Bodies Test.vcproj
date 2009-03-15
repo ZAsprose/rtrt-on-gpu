@@ -201,14 +201,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Copy.fs"
-				>
-			</File>
-			<File
-				RelativePath=".\Copy.vs"
-				>
-			</File>
-			<File
 				RelativePath=".\Render.fs"
 				>
 			</File>

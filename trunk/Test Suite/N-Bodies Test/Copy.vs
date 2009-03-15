@@ -1,8 +1,6 @@
-varying vec2 TextureCoord;
-
-void main()
+void main ( void )
 {   
-	TextureCoord = gl_Vertex.xy;
+	gl_TexCoord[0] = gl_MultiTexCoord0;
 	
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

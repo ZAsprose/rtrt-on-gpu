@@ -128,7 +128,7 @@ int main ( void )
 
 	texture1.Setup();
 
-	Texture2D texture2 ( GL_TEXTURE_RECTANGLE_ARB, data2, 1, "TestTexture" );
+	Texture2D texture2 ( GL_TEXTURE_RECTANGLE_ARB, data2, 1 );
 
 	texture2.Setup();
 
@@ -171,7 +171,7 @@ int main ( void )
 
 		manager.Bind ( );
 
-		manager.SetTexture ( texture2 );
+		manager.SetTexture ( "TestTexture", texture2 );
 
 		glBegin ( GL_QUADS );
 

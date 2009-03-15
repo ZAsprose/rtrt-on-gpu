@@ -480,9 +480,54 @@ namespace RenderTools
 		return true;
 	}
 	
-	bool ShaderManager :: SetTexture ( const Texture2D& texture )
+	bool ShaderManager :: SetTexture ( int location, const Texture1D& texture )
 	{
-		int location = glGetUniformLocation ( Program, texture.GetName ( ) );
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetTexture ( const char * name, const Texture1D& texture )
+	{
+		int location = glGetUniformLocation ( Program, name );
+
+		if ( location < 0 )
+			return false;
+				
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetTexture ( int location, const Texture2D& texture )
+	{
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetTexture ( const char * name, const Texture2D& texture )
+	{
+		int location = glGetUniformLocation ( Program, name );
+
+		if ( location < 0 )
+			return false;
+				
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetTexture ( int location, const Texture3D& texture )
+	{
+		glUniform1i ( location, texture.GetUnit ( ) );
+
+		return true;
+	}
+
+	bool ShaderManager :: SetTexture ( const char * name, const Texture3D& texture )
+	{
+		int location = glGetUniformLocation ( Program, name );
 
 		if ( location < 0 )
 			return false;

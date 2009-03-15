@@ -1,6 +1,8 @@
+#extension GL_ARB_texture_rectangle : enable
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-uniform sampler2D CurrentPositionTexture;
+uniform sampler2DRect CurrentPositionTexture;
 
 uniform vec3 UpDirection;
 
@@ -16,9 +18,9 @@ const float SizeScale = 0.005;
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-void main()
+void main ( void )
 {
-	vec4 position = texture2D( CurrentPositionTexture, TextureCoords );
+	vec4 position = texture2DRect ( CurrentPositionTexture, TextureCoords );
 	
 	float size = position.w * SizeScale;
 	
@@ -30,5 +32,5 @@ void main()
    
 	FragmentPosition = gl_Vertex.xy;
 	
-	gl_Position =  gl_ModelViewProjectionMatrix * vec4( vertex, 1.0 );
+	gl_Position =  gl_ModelViewProjectionMatrix * vec4 ( vertex, 1.0 );
 }

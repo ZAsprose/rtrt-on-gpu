@@ -16,7 +16,11 @@
 
 #include <Matrix4D.h>
 
+#include "Texture1D.h"
+
 #include "Texture2D.h"
+
+#include "Texture3D.h"
 
 using namespace Math;
 
@@ -112,7 +116,17 @@ namespace RenderTools
 
 			bool SetUniformMatrix ( int, const Matrix4D& );
 			
-			bool SetTexture ( const Texture2D& );
+			bool SetTexture ( int, const Texture1D& );
+
+			bool SetTexture ( const char *, const Texture1D& );
+
+			bool SetTexture ( int, const Texture2D& );
+
+			bool SetTexture ( const char *, const Texture2D& );
+
+			bool SetTexture ( int, const Texture3D& );
+
+			bool SetTexture ( const char *, const Texture3D& );
 
 			bool SetAttributeName ( int, const char * );
 
