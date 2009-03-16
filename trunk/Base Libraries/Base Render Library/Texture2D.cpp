@@ -8,27 +8,16 @@ namespace RenderTools
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture2D :: Texture2D ( unsigned int unit, const char * name )
+	Texture2D :: Texture2D ( unsigned int unit, unsigned int target )
 	{
-		Init ( GL_TEXTURE_2D, NULL, unit, name );
+		Init ( target, NULL, unit );
 	}
 				
-	Texture2D :: Texture2D ( TextureData2D * data, unsigned int unit, const char * name )
+	Texture2D :: Texture2D ( TextureData2D * data, unsigned int unit, unsigned int target )
 	{
-		Init ( GL_TEXTURE_2D, data, unit, name );
+		Init ( target, data, unit );
 	}
 
-	Texture2D :: Texture2D ( unsigned int target, unsigned int unit, const char * name )
-	{
-		Init ( target, NULL, unit, name );
-	}
-				
-	Texture2D :: Texture2D ( unsigned  int target, TextureData2D * data,
-		                     unsigned int unit, const char * name )
-	{
-		Init ( target, data, unit, name );
-	}
-	
 	Texture2D :: ~Texture2D ( void )
 	{
 		delete Data;
@@ -38,16 +27,13 @@ namespace RenderTools
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture2D :: Init ( unsigned int target, TextureData2D * data,
-		                     unsigned int unit, const char * name )
+	void Texture2D :: Init ( unsigned int target, TextureData2D * data, unsigned int unit )
 	{
 		Target = target;
 
 		Data = data;
 
 		Unit = unit;
-
-		Name = name;
 
 		glGenTextures ( 1, &Handle );
 	}
@@ -56,7 +42,7 @@ namespace RenderTools
 			
 	void Texture2D :: Setup ( void )
 	{
-		cout << "Loading texture data [ \"" << Name << "\" @ " << Unit << " ]" << endl;
+		cout << "Loading texture data [ \"" << Handle << "\" @ " << Unit << " ]" << endl;
 	
 		if ( NULL != Data )
 		{

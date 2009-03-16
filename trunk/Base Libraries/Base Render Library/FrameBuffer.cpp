@@ -41,8 +41,6 @@ namespace RenderTools
             	
 			for ( int index = 0; index < ColorBuffers.size ( ); index++ )
 			{
-				ColorBuffers[index]->Bind ( );
-
 				glFramebufferTexture2D ( Target,
 					                     GL_COLOR_ATTACHMENT0 + index,
 										 ColorBuffers[index]->GetTarget ( ),

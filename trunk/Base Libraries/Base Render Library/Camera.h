@@ -12,29 +12,11 @@
 
 using namespace Math;
 
-//--------------------------------------- Useful Constants ----------------------------------------
-
-#define DEFAULT_WIDTH 512
-
-#define DEFAULT_HEIGHT 512
-
-#define DEFAULT_LEFT 0
-
-#define DEFAULT_TOP 0
-
-#define DEFAULT_FOV 45.0F
-
-#define DEFAULT_NEAR 0.1F
-
-#define DEFAULT_FAR 1000.0F
-
-//-------------------------------------------------------------------------------------------------
-
 namespace RenderTools
 {
 	class Camera
 	{
-		public:
+		private:
 
 			//---------------------------------- Camera System ------------------------------------
 
@@ -62,9 +44,9 @@ namespace RenderTools
 
 			//------------------------------------- Viewport --------------------------------------
 			
-			int Width;
+			unsigned int Width;
 
-			int Height;			
+			unsigned int Height;			
 			
 			float Aspect;
 
@@ -92,9 +74,9 @@ namespace RenderTools
 
 			//-------------------------------- Viewport and Frustum -------------------------------
 
-			void SetViewport ( int = DEFAULT_WIDTH, int = DEFAULT_HEIGHT );
+			void SetViewport ( unsigned int = 512, unsigned int = 512 );
 
-			void SetFrustum ( float = DEFAULT_FOV, float = DEFAULT_NEAR, float = DEFAULT_FAR );
+			void SetFrustum ( float = 45.0F, float = 0.1F, float = 1000.0F );
 
 			//----------------------------------- Apply Settings ----------------------------------
 
@@ -104,15 +86,27 @@ namespace RenderTools
 
 			//---------------------------------- Getting Settings ---------------------------------
 
-			void GetViewport ( int&, int& );
+			unsigned int GetWidth ( void ) { return Width; }
 
-			void GetFrustum ( float&, float&, float& );
+			unsigned int GetHeight ( void ) { return Height; }
 
-			void GetPosition ( Vector3D& );
+			float GetFieldOfView ( void ) { return FieldOfView; }
 
-			void GetDirections ( Vector3D&, Vector3D&, Vector3D& );
+			float GetNearPlane ( void ) { return NearPlane; }
 
-			void GetTransformations ( Matrix3D&, Matrix3D& );
+			float GetFarPlane ( void ) { return FarPlane; }
+
+			const Vector3D& GetPosition ( void ) { return Position; }
+
+			const Vector3D& GetSide ( void ) { return Side; }
+
+			const Vector3D& GetUp ( void ) { return Up; }
+
+			const Vector3D& GetView ( void ) { return View; }
+
+			const Matrix3D& GetWorldToCamera ( void ) { return WorldToCamera; }
+
+			const Matrix3D& GetCameraToWorld ( void ) { return CameraToWorld; }
 	};
 }
 

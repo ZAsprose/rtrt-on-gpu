@@ -27,12 +27,10 @@ namespace RenderTools
 			//---------------------------------- Texture Settings ---------------------------------
 
 			unsigned int Unit;
-			
-			const char * Name;
 
 			//------------------------------------ Texture Init -----------------------------------
 
-			void Init ( unsigned int, TextureData2D *, unsigned int, const char * );
+			void Init ( unsigned int, TextureData2D *, unsigned int );
 		
 		public:
 
@@ -48,14 +46,9 @@ namespace RenderTools
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture2D ( unsigned int = 0, const char * = "Texture" );
-						
-			Texture2D ( TextureData2D *, unsigned int = 0, const char * = "Texture" );
+			Texture2D ( unsigned int = 0, unsigned int = GL_TEXTURE_2D );
 
-			Texture2D ( unsigned int, unsigned int = 0, const char * = "Texture" );
-						
-			Texture2D ( unsigned int, TextureData2D *,
-				        unsigned int = 0, const char * = "Texture" );
+			Texture2D ( TextureData2D *, unsigned int = 0, unsigned int = GL_TEXTURE_2D );
 
 			~Texture2D ( void );
 
@@ -74,8 +67,6 @@ namespace RenderTools
 			unsigned int GetTarget ( void ) const { return Target; }
 
 			unsigned int GetUnit ( void ) const { return Unit; }
-
-			const char * GetName ( void ) const { return Name; }
 	};
 }
 

@@ -14,7 +14,9 @@ varying vec2 Particle;
 
 //-----------------------------------------------------------------------------------------------------------
 
-const int Count = 128;
+const int CountX = 128;
+
+const int CountY = 128;
 
 const float TimeStep = 1e-4;
 
@@ -61,9 +63,9 @@ vec3 Acceleration ( vec3 current )
 	
 	#if defined ( UNROLL_1 )
 	
-	for ( float x = 0.0; x < Count; x ++ )
+	for ( float x = 0.0; x < CountX; x ++ )
 	{
-		for ( float y = 0.0; y < Count; y ++ )
+		for ( float y = 0.0; y < CountY; y ++ )
 		{
 			PartialAcceleration ( current, vec2 ( x, y ), acceleration );
 		}			
@@ -71,9 +73,9 @@ vec3 Acceleration ( vec3 current )
 	
 	#elif defined ( UNROLL_2 )
 	
-	for ( float x = 0.0; x < Count; x += 2.0 )
+	for ( float x = 0.0; x < CountX; x += 2.0 )
 	{
-		for ( float y = 0.0; y < Count; y += 2.0 )
+		for ( float y = 0.0; y < CountY; y += 2.0 )
 		{
 			PartialAcceleration ( current, vec2 ( x       ,       y ), acceleration );			
 			PartialAcceleration ( current, vec2 ( x + 1.0 ,       y ), acceleration );			
@@ -84,9 +86,9 @@ vec3 Acceleration ( vec3 current )
 	
 	#elif defined ( UNROLL_4 )
 	
-	for ( float x = 0.0; x < Count; x += 4.0 )
+	for ( float x = 0.0; x < CountX; x += 4.0 )
 	{
-		for ( float y = 0.0; y < Count; y += 4.0 )
+		for ( float y = 0.0; y < CountY; y += 4.0 )
 		{
 			PartialAcceleration ( current, vec2 ( x       ,       y ), acceleration );			
 			PartialAcceleration ( current, vec2 ( x + 1.0 ,       y ), acceleration );			

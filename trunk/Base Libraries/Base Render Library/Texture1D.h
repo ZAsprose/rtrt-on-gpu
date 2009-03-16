@@ -27,12 +27,10 @@ namespace RenderTools
 			//---------------------------------- Texture Settings ---------------------------------
 
 			unsigned int Unit;
-			
-			const char * Name;
 
 			//------------------------------------ Texture Init -----------------------------------
 
-			void Init ( unsigned int, TextureData1D *, unsigned int, const char * );
+			void Init ( unsigned int, TextureData1D *, unsigned int );
 		
 		public:
 
@@ -48,9 +46,9 @@ namespace RenderTools
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture1D ( unsigned int = 0, const char * = "Texture" );
+			Texture1D ( unsigned int = 0 );
 						
-			Texture1D ( TextureData1D *, unsigned int = 0, const char * = "Texture" );
+			Texture1D ( TextureData1D *, unsigned int = 0 );
 
 			~Texture1D ( void );
 
@@ -69,8 +67,6 @@ namespace RenderTools
 			unsigned int GetTarget ( void ) const { return Target; }
 
 			unsigned int GetUnit ( void ) const { return Unit; }
-
-			const char * GetName ( void ) const { return Name; }
 	};
 }
 
