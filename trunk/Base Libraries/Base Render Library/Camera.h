@@ -12,7 +12,7 @@
 
 using namespace Math;
 
-namespace RenderTools
+namespace Render
 {
 	class Camera
 	{
@@ -107,6 +107,10 @@ namespace RenderTools
 			const Matrix3D& GetWorldToCamera ( void ) { return WorldToCamera; }
 
 			const Matrix3D& GetCameraToWorld ( void ) { return CameraToWorld; }
+
+			Vector2D GetScreenScale ( void );
+
+			Vector2D GetPixelSize ( void );
 	};
 }
 

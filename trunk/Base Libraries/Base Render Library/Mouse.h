@@ -6,7 +6,7 @@
 
 #include "Camera.h"
 
-namespace RenderTools
+namespace Render
 {
 	class Mouse
 	{

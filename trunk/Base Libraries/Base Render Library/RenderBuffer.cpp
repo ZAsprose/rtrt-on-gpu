@@ -1,6 +1,6 @@
 #include "RenderBuffer.h"
 
-namespace RenderTools
+namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 

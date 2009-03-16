@@ -6,7 +6,7 @@
 
 #define _FILTER_MODE_
 
-namespace RenderTools
+namespace Render
 {
 	class FilterMode
 	{

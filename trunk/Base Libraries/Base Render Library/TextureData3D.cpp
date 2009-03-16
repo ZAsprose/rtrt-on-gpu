@@ -1,6 +1,6 @@
 #include "TextureData3D.h"
 
-namespace RenderTools
+namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 

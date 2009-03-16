@@ -14,7 +14,7 @@
 
 using namespace std;
 
-namespace RenderTools
+namespace Render
 {
 	class FrameBuffer
 	{

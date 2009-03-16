@@ -1,6 +1,6 @@
 #include "Keyboard.h"
 
-namespace RenderTools
+namespace Render
 {
 	//--------------------------------------- Constructors ----------------------------------------
 	

@@ -20,7 +20,7 @@
 
 #include "Matrix3D.h"
 
-using namespace RenderTools;
+using namespace Render;
 
 using namespace Math;
 

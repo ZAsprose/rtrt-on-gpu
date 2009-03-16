@@ -1,6 +1,6 @@
 #include "FilterMode.h"
 
-namespace RenderTools
+namespace Render
 {
 	//---------------------------------------- Constructor ----------------------------------------
 
