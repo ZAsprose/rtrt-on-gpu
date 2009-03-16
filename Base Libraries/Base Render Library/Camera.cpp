@@ -2,7 +2,9 @@
 
 #include <GL/glfw.h>
 
-namespace RenderTools
+#include <math.h>
+
+namespace Render
 {
 	//--------------------------------------- Constructors ----------------------------------------
 
@@ -120,5 +122,17 @@ namespace RenderTools
 		manager.SetUniformVector ( "Camera.Up", Up );
         	
 		manager.SetUniformVector ( "Camera.View", View );
+	}
+
+	//------------------------------------- Getting Settings --------------------------------------
+	
+	Vector2D Camera :: GetScreenScale ( void )
+	{
+		return Vector2D ( tanf ( Aspect * FieldOfView / 2.0F ), tanf ( FieldOfView / 2.0F ) );
+	}
+
+	Vector2D Camera :: GetPixelSize ( void )
+	{
+		return Vector2D ( 2.0F / Width, 2.0F / Height );
 	}
 }

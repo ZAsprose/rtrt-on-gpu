@@ -6,7 +6,7 @@
 
 #define _MAP_MODE_
 
-namespace RenderTools
+namespace Render
 {
 	class WrapMode
 	{

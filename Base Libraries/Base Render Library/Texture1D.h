@@ -10,7 +10,7 @@
 
 #include "WrapMode.h"
 
-namespace RenderTools
+namespace Render
 {
 	class Texture1D
 	{

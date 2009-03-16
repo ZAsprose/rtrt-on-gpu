@@ -6,7 +6,7 @@
 
 #include <GLee.h>
 
-namespace RenderTools
+namespace Render
 {
 	class TextureData3D
 	{

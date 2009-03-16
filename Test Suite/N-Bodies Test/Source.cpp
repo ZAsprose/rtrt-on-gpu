@@ -26,7 +26,7 @@ using namespace std;
 
 using namespace Math;
 
-using namespace RenderTools;
+using namespace Render;
 
 //-------------------------------------------------------------------------------------------------
 

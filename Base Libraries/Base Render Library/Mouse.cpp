@@ -2,7 +2,7 @@
 
 #include <GL/glfw.h>
 
-namespace RenderTools
+namespace Render
 {
 	//--------------------------------------- Constructors ----------------------------------------
 	

@@ -1,6 +1,6 @@
 #include "TextureData2D.h"
 
-namespace RenderTools
+namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 

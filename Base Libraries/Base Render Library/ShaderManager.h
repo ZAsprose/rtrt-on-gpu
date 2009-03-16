@@ -24,7 +24,7 @@
 
 using namespace Math;
 
-namespace RenderTools
+namespace Render
 {
 	class ShaderManager
 	{

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace RenderTools
+namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 

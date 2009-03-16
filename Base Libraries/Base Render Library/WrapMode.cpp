@@ -1,6 +1,6 @@
 #include "WrapMode.h"
 
-namespace RenderTools
+namespace Render
 {
 	WrapMode :: WrapMode ( int s, int t, int r )
 	{
