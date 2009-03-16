@@ -333,7 +333,7 @@ namespace Math
 		
 		float cos = cosf ( angle );
 		
-		float sin = sinf( angle );
+		float sin = sinf ( angle );
 
 		result[B][B] = cos;
 		
@@ -352,7 +352,7 @@ namespace Math
 		
 		float cos = cosf ( angle );
 		
-		float sin = sinf( angle );
+		float sin = sinf ( angle );
 
 		result[A][A] = cos;
 		
@@ -371,7 +371,7 @@ namespace Math
 		
 		float cos = cosf ( angle );
 		
-		float sin = sinf( angle );
+		float sin = sinf ( angle );
 
 		result[A][A] = cos;
 		
@@ -390,7 +390,7 @@ namespace Math
 		
 		float cos = cosf ( angle );
 		
-		float sin = sinf( angle );
+		float sin = sinf ( angle );
 
 		result[A][A] = direction.X * direction.X + ( 1.0F - direction.X * direction.X) * cos;
 

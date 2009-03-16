@@ -36,7 +36,9 @@ Keyboard keyboard ( 0.1F );
 
 //-------------------------------------------------------------------------------------------------
 
-int count = 128;
+int countX = 128;
+
+int countY = 128;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -96,19 +98,19 @@ float RandDouble ( )
 void SetupParticles ( )
 {
 	{
-		positions = new TextureData2D ( count, count, 4 );
+		positions = new TextureData2D ( countX, countY, 4 );
 
-		velocities = new TextureData2D ( count, count, 3 );     		
+		velocities = new TextureData2D ( countX, countY, 3 );     		
                 
-		colors = new TextureData2D ( count, count, 3 );
+		colors = new TextureData2D ( countX, countY, 3 );
 	}
 	
 	{
 		int index = 0;
 		
-		for (int i = 0; i < count; i++)
+		for ( int i = 0; i < countX; i++ )
 		{
-			for (int j = 0; j < count; j++)
+			for ( int j = 0; j < countY; j++ )
 			{
 				positions->Pixel<Vector4D> ( i, j ) =
 					Vector4D ( positionAverage.X + positionDispersion.X * RandDouble ( ),
@@ -133,13 +135,13 @@ void SetupParticles ( )
 void SetupKernels ( )
 {
 	{
-		currentPositionTexture = new Texture2D ( GL_TEXTURE_RECTANGLE_ARB, positions, 1 );
+		currentPositionTexture = new Texture2D ( positions, 1, GL_TEXTURE_RECTANGLE_ARB );
 				
-		currentVelocityTexture = new Texture2D ( GL_TEXTURE_RECTANGLE_ARB, velocities, 2 );
+		currentVelocityTexture = new Texture2D ( velocities, 2, GL_TEXTURE_RECTANGLE_ARB );
 
-		nextPositionTexture = new Texture2D ( GL_TEXTURE_RECTANGLE_ARB, positions, 3 );
+		nextPositionTexture = new Texture2D ( positions, 3, GL_TEXTURE_RECTANGLE_ARB );
 				
-		nextVelocityTexture = new Texture2D ( GL_TEXTURE_RECTANGLE_ARB, velocities, 4 );
+		nextVelocityTexture = new Texture2D ( velocities, 4, GL_TEXTURE_RECTANGLE_ARB );
 					
 		currentPositionTexture->Setup ( );
 				
@@ -268,10 +270,10 @@ void GenerateStream ( int width, int height )
 		
 		glBegin ( GL_QUADS );
 		{
-			glTexCoord2f (  0.0F,   0.0F );  glVertex2f ( 0.0F, 0.0F );
-			glTexCoord2f (  0.0F,  count );  glVertex2f ( 0.0F, 1.0F );
-			glTexCoord2f ( count,  count );  glVertex2f ( 1.0F, 1.0F );
-			glTexCoord2f ( count,   0.0F );  glVertex2f ( 1.0F, 0.0F );
+			glTexCoord2f (   0.0F,    0.0F );  glVertex2f ( 0.0F, 0.0F );
+			glTexCoord2f (   0.0F,  countY );  glVertex2f ( 0.0F, 1.0F );
+			glTexCoord2f ( countX,  countY );  glVertex2f ( 1.0F, 1.0F );
+			glTexCoord2f ( countX,    0.0F );  glVertex2f ( 1.0F, 0.0F );
 		}
 		glEnd ( ); 
 	}
@@ -294,24 +296,24 @@ void StartKernels ( )
 		secondProgram->Bind ( );
 	}
 	
-	GenerateStream ( count, count );
+	GenerateStream ( countX, countY );
 }
 
 void DrawParticles ( )
 {
 	glClear ( GL_COLOR_BUFFER_BIT );
-			
+
 	renderProgram->Bind ( );
 	{
 		int index = 0;
 		
-		renderProgram->SetUniformVector ( "UpDirection", camera.Up );
-					
-		renderProgram->SetUniformVector ( "RightDirection", camera.Side);			                
-		
-		for ( int i = 0; i < count; i++ )
+		renderProgram->SetUniformVector ( "UpDirection", camera.GetUp ( ) );
+
+		renderProgram->SetUniformVector ( "RightDirection", camera.GetSide ( ) );
+
+		for ( int i = 0; i < countX; i++ )
 		{
-			for ( int j = 0; j < count; j++ )
+			for ( int j = 0; j < countY; j++ )
 			{
 				renderProgram->SetUniformVector ( "TextureCoords", Vector2D ( i, j ) );
 				
@@ -339,6 +341,8 @@ void Draw ( int width, int height )
 	mouse.Apply ( camera );
 
 	keyboard.Apply ( camera );
+
+	camera.SetViewport ( width, height );
             	
 	camera.Setup ( );
 
@@ -392,6 +396,8 @@ int main ( void )
 	//---------------------------------------------------------------------------------------------
 
 	camera = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
+
+	camera.SetFrustum ( );
 
 	//---------------------------------------------------------------------------------------------
 

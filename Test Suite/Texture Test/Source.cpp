@@ -124,11 +124,11 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Texture2D texture1 ( GL_TEXTURE_RECTANGLE_ARB, data1, 0 );
+	Texture2D texture1 ( data1, 0, GL_TEXTURE_RECTANGLE_ARB );
 
 	texture1.Setup();
 
-	Texture2D texture2 ( GL_TEXTURE_RECTANGLE_ARB, data2, 1 );
+	Texture2D texture2 ( data2, 1, GL_TEXTURE_RECTANGLE_ARB );
 
 	texture2.Setup();
 

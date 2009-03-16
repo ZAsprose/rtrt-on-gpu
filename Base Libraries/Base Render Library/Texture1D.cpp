@@ -8,14 +8,14 @@ namespace RenderTools
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture1D :: Texture1D ( unsigned int unit, const char * name )
+	Texture1D :: Texture1D ( unsigned int unit )
 	{
-		Init ( GL_TEXTURE_1D, NULL, unit, name );
+		Init ( GL_TEXTURE_1D, NULL, unit );
 	}
 				
-	Texture1D :: Texture1D ( TextureData1D * data, unsigned int unit, const char * name )
+	Texture1D :: Texture1D ( TextureData1D * data, unsigned int unit )
 	{
-		Init ( GL_TEXTURE_1D, data, unit, name );
+		Init ( GL_TEXTURE_1D, data, unit );
 	}
 	
 	Texture1D :: ~Texture1D ( void )
@@ -27,16 +27,13 @@ namespace RenderTools
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture1D :: Init ( unsigned int target, TextureData1D * data,
-							 unsigned int unit, const char * name )
+	void Texture1D :: Init ( unsigned int target, TextureData1D * data, unsigned int unit )
 	{
 		Target = target;
 
 		Data = data;
 
 		Unit = unit;
-
-		Name = name;
 
 		glGenTextures ( 1, &Handle );
 	}
@@ -45,7 +42,7 @@ namespace RenderTools
 			
 	void Texture1D :: Setup ( void )
 	{
-		cout << "Loading texture data [ \"" << Name << "\" @ " << Unit << " ]" << endl;
+		cout << "Loading texture data [ \"" << Handle << "\" @ " << Unit << " ]" << endl;
 	
 		if ( NULL != Data )
 		{

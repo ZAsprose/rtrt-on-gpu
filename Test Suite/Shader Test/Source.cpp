@@ -80,6 +80,8 @@ int main ( void )
 
 	cam = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
+	cam.SetFrustum ( );
+
 	//---------------------------------------------------------------------------------------------
 
     glfwSwapInterval( 0 );
@@ -119,7 +121,7 @@ int main ( void )
 
         height = height > 0 ? height : 1;
 
-        glViewport( 0, 0, width, height );
+        glViewport ( 0, 0, width, height );
 
 		//-----------------------------------------------------------------------------------------
 
@@ -145,10 +147,10 @@ int main ( void )
 
 		glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( -1.0F, -1.0F );
-			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( -1.0F,  1.0F );
-			glTexCoord2f( 512.0F, 512.0F );   glVertex2f (  1.0F,  1.0F );
-			glTexCoord2f( 512.0F, 0.0F );     glVertex2f (  1.0F, -1.0F );
+			glVertex2f ( -1.0F, -1.0F );
+			glVertex2f ( -1.0F,  1.0F );
+			glVertex2f (  1.0F,  1.0F );
+			glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 

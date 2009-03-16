@@ -12,10 +12,6 @@
 
 #include "Keyboard.h"
 
-#include "Vector3D.h"
-
-#include "Matrix3D.h"
-
 #include "FrameBuffer.h"
 
 #include "RenderBuffer.h"
@@ -53,8 +49,6 @@ void KeyButton ( int key, int state )
 
 //-------------------------------------------------------------------------------------------------
 
-#define USE_FB
-
 int main ( void )
 {
 	int width = 512;
@@ -65,7 +59,7 @@ int main ( void )
 
     glfwInit ( );
 
-    if( !glfwOpenWindow ( width, height, 0, 0, 0, 0, 16, 0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow ( width, height, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
     {
         glfwTerminate ( );
 
@@ -74,7 +68,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	glEnable ( GL_TEXTURE_RECTANGLE_ARB );
+	glEnable ( GL_TEXTURE_2D );
 	
 	glEnable ( GL_COLOR_MATERIAL );
 
@@ -83,16 +77,22 @@ int main ( void )
 	//---------------------------------------------------------------------------------------------
 
 	Camera camera = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
+	
+	camera.SetViewport ( width, height );
+	
+	camera.SetFrustum ( );
 
-	Texture2D texture ( GL_TEXTURE_RECTANGLE_ARB, new TextureData2D ( 512, 512, 4 ) );
+	Texture2D texture ( new TextureData2D ( width, height, 3 ), 0, GL_TEXTURE_2D );
+
+	texture.FilterMode.Magnification = GL_LINEAR;
+
+	texture.FilterMode.Minification = GL_LINEAR;
 
 	texture.Setup ( );
 
 	RenderBuffer renderbuffer;
 
 	renderbuffer.Setup ( );
-
-#ifdef USE_FB
 
 	FrameBuffer framebuffer;
 
@@ -101,8 +101,6 @@ int main ( void )
 	framebuffer.RenderBuffers.push_back ( &renderbuffer );
 
 	framebuffer.Setup ( );
-
-#endif
 
 	//---------------------------------------------------------------------------------------------
 
@@ -128,7 +126,7 @@ int main ( void )
 
         if ( ( t-t0 ) > 1.0 || frames == 0 )
         {
-            fps = (double) frames / ( t - t0 );
+            fps = ( double ) frames / ( t - t0 );
 
             sprintf_s ( titlestr, "Implicity Surfaces (%.1f FPS)", fps );
 
@@ -146,11 +144,9 @@ int main ( void )
         glfwGetWindowSize ( &width, &height );
 
         height = height > 0 ? height : 1;
-
-        glViewport ( 0, 0, width, height );
 		
 		//-----------------------------------------------------------------------------------------
-		
+
 		mouse.Apply ( camera );
 		
 		keyboard.Apply ( camera );
@@ -164,13 +160,9 @@ int main ( void )
 
 		glDisable ( GL_LIGHTING );
 
-#ifdef USE_FB
-
 		framebuffer.Bind ( );
 
 		texture.Unbind ( );
-
-#endif
 
 		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -211,14 +203,12 @@ int main ( void )
 		
 		gluDeleteQuadric ( q );
 
-#ifdef USE_FB
-
-		framebuffer.Unbind ( );
-
-#endif
+		framebuffer.Unbind ( ); 
 
 		//-----------------------------------------------------------------------------------------
 		//-----------------------------------------------------------------------------------------
+
+		glViewport ( 0, 0, width, height );
 
 		glMatrixMode ( GL_PROJECTION );
 
@@ -246,10 +236,10 @@ int main ( void )
 
 		glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( -1.0F,  -1.0F );
-			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( -1.0F,   1.0F );
-			glTexCoord2f( 512.0F, 512.0F );   glVertex2f (  1.0F,   1.0F );
-			glTexCoord2f( 512.0F, 0.0F );     glVertex2f (  1.0F,  -1.0F );
+			glTexCoord2f( 0.0F, 0.0F );   glVertex2f ( -1.0F,  -1.0F );
+			glTexCoord2f( 0.0F, 1.0F );   glVertex2f ( -1.0F,   1.0F );
+			glTexCoord2f( 1.0F, 1.0F );   glVertex2f (  1.0F,   1.0F );
+			glTexCoord2f( 1.0F, 0.0F );   glVertex2f (  1.0F,  -1.0F );
 
 		glEnd ( );
 

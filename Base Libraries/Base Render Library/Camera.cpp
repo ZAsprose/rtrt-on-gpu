@@ -47,7 +47,7 @@ namespace RenderTools
 	void Camera :: RotateLocal ( float angle, const Vector3D& direction )
 	{
 		WorldToCamera = Matrix3D :: Rotate ( angle, direction ) * WorldToCamera;
-		
+
 		Update ( );
 	}
 	
@@ -62,46 +62,42 @@ namespace RenderTools
 	
 	//------------------------------------ Viewport and Frustum -----------------------------------
 	
-	void Camera :: SetViewport ( int width, int height )
+	void Camera :: SetViewport ( unsigned int width, unsigned int height )
 	{
 		Width = width;
 
 		Height = height;
 
-		Aspect = Width / ( float) Height;
-
-		glViewport( DEFAULT_LEFT, DEFAULT_TOP, Width, Height );
+		Aspect = Width / ( float ) Height;
 	}
 
-	void Camera :: SetFrustum ( float angle, float znear, float zfar )
+	void Camera :: SetFrustum ( float fieldOfView, float nearPlane, float farPlane )
 	{
-		FieldOfView = angle;
+		FieldOfView = fieldOfView;
 
-		NearPlane = znear;
+		NearPlane = nearPlane;
 
-		FarPlane = zfar;
-
-        glMatrixMode( GL_PROJECTION );
-
-        glLoadIdentity();
-
-        gluPerspective( FieldOfView, Aspect, NearPlane, FarPlane );
-		
-		glMatrixMode( GL_MODELVIEW );
+		FarPlane = farPlane;
 	}
 
 	//--------------------------------------- Apply Settings --------------------------------------
 
 	void Camera :: Setup ( void )
 	{
-        glMatrixMode( GL_PROJECTION );
-        
-		glLoadIdentity ( );
-        
-		gluPerspective ( 45.0F, 1.0F, 0.1f, 1000.0f );
+		glViewport ( 0, 0, Width, Height );
+
+		//---------------------------------------------------------------------
+
+        glMatrixMode ( GL_PROJECTION );
+
+        glLoadIdentity ( );
+
+        gluPerspective ( FieldOfView, Aspect, NearPlane, FarPlane );
+
+		//---------------------------------------------------------------------
 
 		glMatrixMode ( GL_MODELVIEW );
-		
+
 		glLoadIdentity ( );
 
 		gluLookAt ( Position.X,
@@ -124,44 +120,5 @@ namespace RenderTools
 		manager.SetUniformVector ( "Camera.Up", Up );
         	
 		manager.SetUniformVector ( "Camera.View", View );
-	}
-	
-	//-------------------------------------- Getting Settings -------------------------------------
-
-	void Camera :: GetViewport ( int& width, int& height )
-	{
-		width = Width;
-
-		height = Height;
-	}
-
-	void Camera :: GetFrustum ( float& angle, float& znear, float& zfar )
-	{
-		angle = FieldOfView;
-
-		znear = NearPlane;
-
-		zfar = FarPlane;
-	}
-
-	void Camera :: GetPosition ( Vector3D& position )
-	{
-		position = Position;
-	}
-
-	void Camera :: GetDirections ( Vector3D& side, Vector3D& up, Vector3D& view )
-	{
-		side = Side;
-
-		up = Up;
-
-		view = View;
-	}
-
-	void Camera :: GetTransformations ( Matrix3D& worldcamera, Matrix3D& cameraworld )
-	{
-		worldcamera = WorldToCamera;
-
-		cameraworld = CameraToWorld;
 	}
 }
