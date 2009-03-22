@@ -7,13 +7,13 @@ namespace Raytracing
 	//---------------------------------------- Constructor ----------------------------------------
 	
 	Material :: Material ( const Vector3D& color,
-		                   const Vector3D& ambiant,
-						   const Vector3D& diffuse,
-						   const Vector3D& specular,
-						   float shininess,
-						   const Vector3D& reflective,
-						   const Vector3D& refractive,
-						   float refractIndex )
+		                           const Vector3D& ambiant,
+								   const Vector3D& diffuse,
+								   const Vector3D& specular,
+								   float shininess,
+								   const Vector3D& reflective,
+								   const Vector3D& refractive,
+								   float refractIndex )
 	{
 		Color = color;
 				

@@ -4,11 +4,14 @@
 
 #define _TRANSFORM_
 
-class Transform
+namespace Math
 {
-public:
-	Transform(void);
-	~Transform(void);
-};
+	class Transform
+	{
+		public:
+
+			Transform ( void );
+	};
+}
 
 #endif
