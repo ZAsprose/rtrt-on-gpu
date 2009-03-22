@@ -184,22 +184,50 @@
 				<Filter
 					Name="Atomic"
 					>
+					<File
+						RelativePath=".\Triangle.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Vertex.cpp"
+						>
+					</File>
 				</Filter>
 				<Filter
-					Name="Primitive"
+					Name="Base"
 					>
-					<Filter
-						Name="Base"
+					<File
+						RelativePath=".\Primitive.cpp"
 						>
-					</Filter>
-					<Filter
-						Name="Standard"
+					</File>
+				</Filter>
+				<Filter
+					Name="Standard"
+					>
+					<File
+						RelativePath=".\Box.cpp"
 						>
-					</Filter>
-					<Filter
-						Name="Type"
+					</File>
+					<File
+						RelativePath=".\Plane.cpp"
 						>
-					</Filter>
+					</File>
+					<File
+						RelativePath=".\Sphere.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Type"
+					>
+					<File
+						RelativePath=".\Composite.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Solid.cpp"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -230,22 +258,50 @@
 				<Filter
 					Name="Atomic"
 					>
+					<File
+						RelativePath=".\Triangle.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Vertex.h"
+						>
+					</File>
 				</Filter>
 				<Filter
-					Name="Primitive"
+					Name="Standard"
 					>
-					<Filter
-						Name="Base"
+					<File
+						RelativePath=".\Box.h"
 						>
-					</Filter>
-					<Filter
-						Name="Type"
+					</File>
+					<File
+						RelativePath=".\Plane.h"
 						>
-					</Filter>
-					<Filter
-						Name="Standard"
+					</File>
+					<File
+						RelativePath=".\Sphere.h"
 						>
-					</Filter>
+					</File>
+				</Filter>
+				<Filter
+					Name="Type"
+					>
+					<File
+						RelativePath=".\Composite.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Solid.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Base"
+					>
+					<File
+						RelativePath=".\Primitive.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>

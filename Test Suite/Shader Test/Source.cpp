@@ -98,7 +98,7 @@ int main ( void )
 
 	t0 = glfwGetTime();
 
-    while( running )
+    while ( running )
     {
         t = glfwGetTime();
 
@@ -106,7 +106,7 @@ int main ( void )
         {
             fps = (double)frames / (t-t0);
 
-            sprintf( titlestr, "Implicity Surfaces (%.1f FPS)", fps );
+            sprintf_s ( titlestr, "Implicity Surfaces (%.1f FPS)", fps );
 
             glfwSetWindowTitle( titlestr );
             t0 = t;

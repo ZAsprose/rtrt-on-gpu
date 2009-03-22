@@ -1,9 +1,8 @@
 #include "Transform.h"
 
-Transform::Transform(void)
+namespace Math
 {
-}
-
-Transform::~Transform(void)
-{
+	Transform :: Transform ( void )
+	{
+	}
 }
