@@ -163,38 +163,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<Filter
-				Name="Light"
-				>
-				<File
-					RelativePath=".\Light.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Material"
-				>
-				<File
-					RelativePath=".\Material.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Geometry"
+				Name="Primitive"
 				>
 				<Filter
-					Name="Atomic"
-					>
-					<File
-						RelativePath=".\Triangle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Vertex.cpp"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Base"
+					Name="Abstract"
 					>
 					<File
 						RelativePath=".\Primitive.cpp"
@@ -218,7 +190,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Type"
+					Name="Species"
 					>
 					<File
 						RelativePath=".\Composite.cpp"
@@ -229,6 +201,34 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Common"
+				>
+				<File
+					RelativePath=".\Triangle.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Vertex.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Light"
+				>
+				<File
+					RelativePath=".\Light.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Material"
+				>
+				<File
+					RelativePath=".\Material.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -253,20 +253,20 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Geometry"
+				Name="Common"
 				>
-				<Filter
-					Name="Atomic"
+				<File
+					RelativePath=".\Triangle.h"
 					>
-					<File
-						RelativePath=".\Triangle.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Vertex.h"
-						>
-					</File>
-				</Filter>
+				</File>
+				<File
+					RelativePath=".\Vertex.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Primitive"
+				>
 				<Filter
 					Name="Standard"
 					>
@@ -284,7 +284,15 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Type"
+					Name="Abstract"
+					>
+					<File
+						RelativePath=".\Primitive.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Species"
 					>
 					<File
 						RelativePath=".\Composite.h"
@@ -292,14 +300,6 @@
 					</File>
 					<File
 						RelativePath=".\Solid.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Base"
-					>
-					<File
-						RelativePath=".\Primitive.h"
 						>
 					</File>
 				</Filter>
