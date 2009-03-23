@@ -6,7 +6,7 @@
 
 #include "Triangle.h"
 
-#include <Transform.h>
+#include "Transform.h"
 
 #include <vector>
 
@@ -18,25 +18,23 @@ namespace Raytracing
 	{
 		public:
 
-			//-------------------------------- Primitive Triangles ---------------------------------
+			//------------------------------ Triangles and Transform ------------------------------
 
 			vector < Triangle * > Triangles;
 
-			//------------------------------ Triangles Transformation ------------------------------
+			Transform * Transformation;
 
-			Transform * Transform;
-
-			//--------------------------- Primitive Name and Visibility ---------------------------
+			//-------------------------------- Visibility and Name --------------------------------
 			
+			bool Visible;
+
 			const char * Name;
-			
-			bool Visible;	  
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Primitive ( void );
+			Primitive ( Transform *, const char * );
 			
-			~Primitive ( void );
+			virtual ~Primitive ( void );
 
 			//---------------------------------- Build Triangles ----------------------------------
 			

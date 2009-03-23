@@ -6,27 +6,24 @@ namespace Raytracing
 {
 	//----------------------------- Constructor and Destructor ----------------------------
 
-	Solid :: Solid ( void )
+	Solid :: Solid ( Transform * transformation,
+		             Material * properties,
+					 const char * name ) : Primitive ( transformation, name )
 	{
-
-	}
-	
-	Solid :: ~Solid ( void )
-	{
-
+		Properties = properties;
 	}
 
 	//--------------------------------------- Draw ----------------------------------------
 	
 	void Solid :: Draw ( void )
 	{
-		Material->Setup ( );
+		Properties->Setup ( );
 		
 		glBegin ( GL_TRIANGLES );
 
 			for ( int index = 0; index < Triangles.size ( ); index++ )
 			{
-				Triangles[index]->Draw ( );
+				Triangles [ index ]->Draw ( );
 			}
 
 		glEnd ( );

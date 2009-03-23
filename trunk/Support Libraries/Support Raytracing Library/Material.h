@@ -34,16 +34,20 @@ namespace Raytracing
 			
 			float RefractIndex;
 
+			//--------------------------------- Default Material ---------------------------------
+
+			static const Material Default;
+
 			//------------------------------------ Constructor ------------------------------------
 			
 			Material ( const Vector3D& = Vector3D :: Unit,
-				           const Vector3D& = Vector3D :: Unit,
-						   const Vector3D& = Vector3D :: Unit,
-						   const Vector3D& = Vector3D :: Unit,
-						   float = 32.0F,
-						   const Vector3D& = Vector3D :: Zero,
-						   const Vector3D& = Vector3D :: Zero,
-						   float = 1.5F );
+				       const Vector3D& = Vector3D :: Unit,
+					   const Vector3D& = Vector3D :: Unit,
+					   const Vector3D& = Vector3D :: Unit,
+					   float = 32.0F,
+					   const Vector3D& = Vector3D :: Zero,
+					   const Vector3D& = Vector3D :: Zero,
+					   float = 1.5F );
 			
 			//----------------------------------- Apply Settings ----------------------------------
 

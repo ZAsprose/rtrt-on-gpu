@@ -6,11 +6,18 @@ namespace Raytracing
 {
 	//---------------------------------------- Constructor ----------------------------------------
 
-	Sphere :: Sphere ( Math::Transform * transform, Raytracing::Material * material, float radius )
+	Sphere :: Sphere ( float radius,
+		               int slices,
+					   int stacks,
+		               Transform * transformation,
+					   Material * properties,
+					   const char * name ) : Solid ( transformation, properties, name )
 	{
-		Material = material;
-
 		Radius = radius;
+
+		Slices = slices;
+
+		Stacks = stacks;
 	}
 
 	//-------------------------------------- Build Triangles --------------------------------------
@@ -27,7 +34,7 @@ namespace Raytracing
 			Triangles.clear ( );
 		}
 
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------
 
 		Vertex *** vertices = new Vertex ** [ Slices + 1 ];
 
@@ -36,7 +43,7 @@ namespace Raytracing
 			vertices [ index ] = new Vertex * [ Stacks + 1 ];
 		}
 
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------
 
 		float uStep = TWOPI / Slices;
 			
@@ -56,11 +63,13 @@ namespace Raytracing
 				
 				Vector3D normal = Normalize ( position );
 				
-				vertices [ x ][ y ] = new Vertex ( position, normal );
+				vertices [ x ][ y ] =
+					new Vertex ( Transformation->ForwardPoint ( position ),
+					             Normalize ( Transformation->ForwardNormal ( normal ) ) );
 			}
 		}
 
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------
 
 		for ( int x = 0; x < Slices; x++ )
 		{

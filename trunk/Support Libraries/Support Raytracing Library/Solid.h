@@ -6,27 +6,19 @@
 
 #include "Primitive.h"
 
-#include "Triangle.h"
-
-#include <Transform.h>
-
-#include <vector>
-
-using namespace std;
-
 namespace Raytracing
 {
 	class Solid : public Primitive
 	{
 		public:
 
-			Material * Material;
+			//-------------------------------- Material Properties --------------------------------
 
-			//----------------------------- Constructor and Destructor ----------------------------
+			Material * Properties;
 
-			Solid ( void );
-			
-			~Solid ( void );
+			//------------------------------------ Constructor ------------------------------------
+
+			Solid ( Transform *, Material *, const char * );
 
 			//--------------------------------------- Draw ----------------------------------------
 			
