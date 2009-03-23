@@ -4,16 +4,20 @@ namespace Raytracing
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Primitive :: Primitive ( void )
+	Primitive :: Primitive ( Transform * transformation, const char * name )
 	{
+		Transformation = transformation;
 
+		Name = name;
 	}
 
 	Primitive :: ~Primitive ( void )
 	{
+		delete Transformation;
+
 		for ( int index = 0; index < Triangles.size ( ); index++ )
 		{
-			delete Triangles[index];
+			delete Triangles [ index ];
 		}
 
 		Triangles.clear ( );

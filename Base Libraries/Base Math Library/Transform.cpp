@@ -8,11 +8,11 @@ namespace Math
 		                     const Vector3D& orientation,
 							 const Vector3D& scale )
 	{
-		Translation = translation;
+		SetTranslation ( translation );
 
-		Orientation = orientation;
+		SetOrientation ( orientation );
 
-		Scale = scale;
+		SetScale ( scale );
 	}
 	
 	//------------------------------ Transformation Functions -----------------------------

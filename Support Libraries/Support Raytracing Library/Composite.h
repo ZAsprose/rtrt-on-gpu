@@ -4,13 +4,7 @@
 
 #define _COMPOSITE_PRIMITIVE_
 
-#include "Triangle.h"
-
-#include <Transform.h>
-
-#include <vector>
-
-using namespace std;
+#include "Primitive.h"
 
 namespace Raytracing
 {
@@ -20,7 +14,7 @@ namespace Raytracing
 
 			Composite ( void );
 			
-			~Composite ( void );
+			virtual ~Composite ( void );
 	};
 }
 

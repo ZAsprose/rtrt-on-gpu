@@ -6,14 +6,6 @@
 
 #include "Solid.h"
 
-#include "Transform.h"
-
-#include "Material.h"
-
-using namespace std;
-
-using namespace Math;
-
 namespace Raytracing
 {
 	class Sphere : public Solid
@@ -32,7 +24,12 @@ namespace Raytracing
 
 			//------------------------------------ Constructor ------------------------------------
 		
-			Sphere ( Math :: Transform *, Raytracing :: Material *, float radius = 1.0F );
+			Sphere ( float = 1.0F,
+				     int = 25,
+					 int = 25,
+				     Transform * = new Transform ( ),
+					 Material * = new Material ( ),
+					 const char * = "Sphere" );
 
 			//---------------------------------- Build Triangles ----------------------------------
 			
