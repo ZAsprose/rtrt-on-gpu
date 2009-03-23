@@ -4,7 +4,7 @@
 
 namespace Raytracing
 {
-	//---------------------------------------- Constructor ----------------------------------------
+	//--------------------------------- Constructor and Destructor --------------------------------
 
 	Light :: Light ( unsigned int number,
 		             const Vector3D& position,
@@ -21,6 +21,11 @@ namespace Raytracing
 		Diffuse = diffuse;
 		
 		Specular = specular;
+	}
+
+	Light :: ~Light ( void )
+	{
+		glDisable ( GL_LIGHT0 + Number );
 	}
 
 	//--------------------------------------- Apply Settings --------------------------------------

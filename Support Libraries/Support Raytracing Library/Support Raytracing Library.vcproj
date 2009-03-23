@@ -230,6 +230,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Scene"
+				>
+				<File
+					RelativePath=".\Scene.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -303,6 +311,14 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Scene"
+				>
+				<File
+					RelativePath=".\Scene.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>
