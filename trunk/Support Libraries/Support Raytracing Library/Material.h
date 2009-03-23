@@ -41,9 +41,9 @@ namespace Raytracing
 			//------------------------------------ Constructor ------------------------------------
 			
 			Material ( const Vector3D& = Vector3D :: Unit,
-				       const Vector3D& = Vector3D :: Unit,
-					   const Vector3D& = Vector3D :: Unit,
-					   const Vector3D& = Vector3D :: Unit,
+				       const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
+					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
+					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
 					   float = 32.0F,
 					   const Vector3D& = Vector3D :: Zero,
 					   const Vector3D& = Vector3D :: Zero,

@@ -30,13 +30,15 @@ namespace Raytracing
 
 			unsigned int Number;
 
-			//------------------------------------ Constructor ------------------------------------
+			//----------------------------- Constructor and Destructor ----------------------------
 
 			Light ( unsigned int = 0,
 				    const Vector3D& = Vector3D ( 10.0F, 10.0F, 10.0F ),
 					const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
 					const Vector3D& = Vector3D ( 1.0F, 1.0F, 1.0F ),
 					const Vector3D& = Vector3D ( 0.5F, 0.5F, 0.5F ) );
+
+			~Light ( void );
 
 			//----------------------------------- Apply Settings ----------------------------------
 
