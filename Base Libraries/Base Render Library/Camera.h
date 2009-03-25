@@ -82,7 +82,7 @@ namespace Render
 
 			void Setup ( void );
 
-			void SetShaderData ( ShaderManager& );
+			void SetShaderData ( ShaderManager * );
 
 			//---------------------------------- Getting Settings ---------------------------------
 

@@ -238,6 +238,50 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Mesh"
+				>
+				<Filter
+					Name="Loader"
+					>
+					<File
+						RelativePath=".\LoaderOBJ.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Model"
+					>
+					<File
+						RelativePath=".\OBJModel.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Uniform Grid"
+				>
+				<Filter
+					Name="Grid"
+					>
+					<File
+						RelativePath=".\Grid.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Voxel.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Intersector"
+					>
+					<File
+						RelativePath=".\Intersector.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -319,6 +363,50 @@
 					RelativePath=".\Scene.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="Mesh"
+				>
+				<Filter
+					Name="Loader"
+					>
+					<File
+						RelativePath=".\LoaderOBJ.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Model"
+					>
+					<File
+						RelativePath=".\OBJModel.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Uniform Grid"
+				>
+				<Filter
+					Name="Grid"
+					>
+					<File
+						RelativePath=".\Grid.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Voxel.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Intersector"
+					>
+					<File
+						RelativePath=".\Intersector.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>
