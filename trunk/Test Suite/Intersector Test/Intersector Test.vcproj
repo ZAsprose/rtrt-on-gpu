@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="GPU Raytracing"
-	ProjectGUID="{3545863C-BEAE-4330-B445-A7731E1454D3}"
-	RootNamespace="GPURaytracing"
+	Name="Intersector Test"
+	ProjectGUID="{3B2CBCAB-B54C-4CF8-8971-07AA4D3D222A}"
+	RootNamespace="IntersectorTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 				GenerateDebugInformation="true"
@@ -116,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Support Libraries\Support Raytracing Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -135,6 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 				GenerateDebugInformation="true"
@@ -186,18 +188,6 @@
 			>
 			<File
 				RelativePath=".\Source.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Shader Files"
-			>
-			<File
-				RelativePath=".\Fragment.fs"
-				>
-			</File>
-			<File
-				RelativePath=".\Vertex.vs"
 				>
 			</File>
 		</Filter>

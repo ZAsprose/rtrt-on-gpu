@@ -68,13 +68,13 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	ShaderManager manager;
+	ShaderManager * manager = new ShaderManager ( );
 
-	manager.LoadVertexShader ( "Vertex.vs" );
+	manager->LoadVertexShader ( "Vertex.vs" );
 
-	manager.LoadFragmentShader ( "Fragment.fs" );
+	manager->LoadFragmentShader ( "Fragment.fs" );
 
-	manager.BuildProgram ( );
+	manager->BuildProgram ( );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -139,7 +139,7 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		manager.Bind ( );
+		manager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
@@ -154,7 +154,7 @@ int main ( void )
 
 		glEnd ( );
 
-		manager.Unbind ( );
+		manager->Unbind ( );
 
         glfwSwapBuffers();
 

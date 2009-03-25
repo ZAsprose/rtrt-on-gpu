@@ -6,8 +6,6 @@
 
 #include "Solid.h"
 
-using namespace std;
-
 namespace Raytracing
 {
 	class Box : public Solid

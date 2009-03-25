@@ -9,7 +9,7 @@ namespace Raytracing
 	Triangle :: Triangle ( Vertex * vertexA,
 		                   Vertex * vertexB,
 						   Vertex * vertexC,
-						   Raytracing::Material * material )
+						   Material * properties )
 	{
 		VertexA = vertexA;
 		
@@ -17,7 +17,7 @@ namespace Raytracing
 		
 		VertexC = vertexC;
 		
-		Material = material;
+		Properties = properties;
 	}
 
 	Triangle :: ~Triangle ( void )
@@ -31,7 +31,7 @@ namespace Raytracing
 
 	//------------------------------------------- Draw --------------------------------------------
 	
-	void Triangle :: Draw ( void )
+	void Triangle :: Draw ( void ) const
 	{
 		glNormal3fv ( VertexA->Normal );   glVertex3fv ( VertexA->Position );
 
@@ -42,7 +42,7 @@ namespace Raytracing
 
 	//------------------------------------- Support Functions -------------------------------------
 		
-	bool Triangle :: IsEmpty ( void )
+	bool Triangle :: IsEmpty ( void ) const
 	{
 		Vector3D cross = Cross ( VertexB->Position - VertexA->Position,
 			                     VertexC->Position - VertexA->Position );
@@ -50,12 +50,12 @@ namespace Raytracing
 		return Square ( cross ) == 0.0F;
 	}
 
-	Vector3D Triangle :: GetMinimum ( void )
+	Vector3D Triangle :: GetMinimum ( void ) const
 	{
 		return Min ( Min ( VertexA->Position, VertexB->Position ), VertexC->Position );
 	}
 
-	Vector3D Triangle :: GetMaximum ( void )
+	Vector3D Triangle :: GetMaximum ( void ) const
 	{
 		return Max ( Max ( VertexA->Position, VertexB->Position ), VertexC->Position );
 	}

@@ -75,13 +75,17 @@ namespace Raytracing
 		{
 			for ( int y = 0; y < Stacks; y++ )
 			{
-				Triangles.push_back ( new Triangle ( vertices [ x ][ y ],
-					                                 vertices [ x + 1 ][ y ],
-													 vertices [ x ][ y + 1 ] ) );
-				
-				Triangles.push_back ( new Triangle ( vertices [ x ][ y + 1 ],
-					                                 vertices [ x + 1 ][ y ],
-													 vertices [ x + 1 ][ y + 1 ] ) );
+				Triangle * triangle =
+					new Triangle ( vertices [ x ][ y ],  vertices [ x + 1 ][ y ], vertices [ x ][ y + 1 ] );
+
+				if ( !triangle->IsEmpty ( ) )
+					Triangles.push_back ( triangle );
+
+				triangle =
+					new Triangle ( vertices [ x ][ y + 1 ], vertices [ x + 1 ][ y ], vertices [ x + 1 ][ y + 1 ] );
+
+				if ( !triangle->IsEmpty ( ) )
+					Triangles.push_back ( triangle );
 			}
 		}
 	}

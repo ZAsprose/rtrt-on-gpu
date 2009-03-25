@@ -113,15 +113,17 @@ namespace Render
 					Up.Z );
 	}
 
-	void Camera :: SetShaderData ( ShaderManager& manager )
+	void Camera :: SetShaderData ( ShaderManager * manager )
 	{
-		manager.SetUniformVector ( "Camera.Position", Position );
+		manager->SetUniformVector ( "Camera.Position", Position );
         	
-		manager.SetUniformVector ( "Camera.Side", Side );
+		manager->SetUniformVector ( "Camera.Side", Side );
         	
-		manager.SetUniformVector ( "Camera.Up", Up );
+		manager->SetUniformVector ( "Camera.Up", Up );
         	
-		manager.SetUniformVector ( "Camera.View", View );
+		manager->SetUniformVector ( "Camera.View", View );
+
+		manager->SetUniformVector ( "Camera.Scale", GetScreenScale ( ) );
 	}
 
 	//------------------------------------- Getting Settings --------------------------------------

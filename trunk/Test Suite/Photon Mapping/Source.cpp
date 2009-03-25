@@ -28,9 +28,9 @@ using namespace Math;
 
 Camera cam;
 
-Mouse mouse ( 0.01F );
+Mouse mouse ( 0.005F );
 
-Keyboard keyboard ( 0.05F );
+Keyboard keyboard ( 0.005F );
 
 //=================================================================================================
 
@@ -53,9 +53,9 @@ void KeyButton ( int key, int state )
 
 int main ( void )
 {
-    int     width, height, running, frames;
-    double  t, t0, fps;
-    char    titlestr[ 200 ];
+    int width, height, running, frames;
+
+    double t, t0, fps;
 
     glfwInit();
 
@@ -68,13 +68,27 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	ShaderManager manager;
+	ShaderManager * manager = new ShaderManager ( );
 
-	manager.LoadVertexShader ( "Vertex.vs" );
+	manager->LoadVertexShader ( "Vertex.vs" );
 
-	manager.LoadFragmentShader ( "Fragment.fs" );
+	manager->LoadFragmentShader ( "Fragment.fs" );
 
-	manager.BuildProgram ( );
+	manager->BuildProgram ( );
+
+	//---------------------------------------------------------------------------------------------
+
+	manager->Bind ( );
+
+	manager->SetUniformVector ( "Plane.Center", Vector3D ( 0.0F, -5.0F, 0.0F ) );
+
+	manager->SetUniformVector ( "Plane.Size", Vector2D (  20.0F,  20.0F ) );
+
+	manager->SetUniformVector ( "Sphere.Center", Vector3D (  0.0F,  -3.0F,  0.0F ) );
+
+	manager->SetUniformFloat ( "Sphere.Radius", 2.0F );
+
+	manager->Unbind ( );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -82,12 +96,16 @@ int main ( void )
 
 	cam.SetFrustum ( );
 
+	cam.SetViewport ( width, height );
+
 	//---------------------------------------------------------------------------------------------
 
     glfwSwapInterval( 0 );
 
 	glfwSetMousePosCallback( MouseMove );
+
 	glfwSetMouseButtonCallback( MouseButton );
+
 	glfwSetKeyCallback ( KeyButton );
 
 	//---------------------------------------------------------------------------------------------
@@ -96,20 +114,20 @@ int main ( void )
 
 	frames = 0;
 
-	t0 = glfwGetTime();
+	t0 = glfwGetTime ( );
 
     while ( running )
     {
         t = glfwGetTime();
 
-        if ( ( t-t0 ) > 1.0 || frames == 0 )
+        if ( ( t-t0 ) > 1.0F || frames == 0 )
         {
-            fps = (double)frames / (t-t0);
+            fps = ( double ) frames / ( t - t0 );
 
-            sprintf_s ( titlestr, "Implicity Surfaces (%.1f FPS)", fps );
+			cout << "FPS: " << fps << endl;
 
-            glfwSetWindowTitle( titlestr );
             t0 = t;
+
             frames = 0;
         }
 
@@ -121,7 +139,7 @@ int main ( void )
 
         height = height > 0 ? height : 1;
 
-        glViewport ( 0, 0, width, height );
+        cam.SetViewport ( width, height );
 
 		//-----------------------------------------------------------------------------------------
 
@@ -139,7 +157,7 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		manager.Bind ( );
+		manager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
@@ -154,7 +172,7 @@ int main ( void )
 
 		glEnd ( );
 
-		manager.Unbind ( );
+		manager->Unbind ( );
 
         glfwSwapBuffers();
 

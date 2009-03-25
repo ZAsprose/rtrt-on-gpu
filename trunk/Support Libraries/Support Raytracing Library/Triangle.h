@@ -24,25 +24,25 @@ namespace Raytracing
 
 			//--------------------------------- Triangle Material ---------------------------------
 
-			Raytracing::Material * Material;
+			Material * Properties;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 			
-			Triangle ( Vertex *, Vertex *, Vertex *, Raytracing::Material * = NULL );
+			Triangle ( Vertex * = NULL, Vertex * = NULL, Vertex * = NULL, Material * = NULL );
 
 			~Triangle ( void );
 
 			//--------------------------------------- Draw ----------------------------------------
 			
-			void Draw ( void );
+			void Draw ( void ) const;
 
 			//--------------------------------- Support Functions ---------------------------------
 			
-			bool IsEmpty ( void );
+			bool IsEmpty ( void ) const;
 
-			Vector3D GetMinimum ( void );
+			Vector3D GetMinimum ( void ) const;
 
-			Vector3D GetMaximum ( void );
+			Vector3D GetMaximum ( void ) const;
 	};
 }
 
