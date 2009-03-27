@@ -209,6 +209,7 @@ namespace Raytracing
 		}
 		
 		//-------------- Execute 9 tests for every possible pairs of edges --------------
+
 		{
 			if ( SeparateAxisX ( ) ) return false;
 				

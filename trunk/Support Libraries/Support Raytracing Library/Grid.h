@@ -14,19 +14,23 @@ namespace Raytracing
 	{
 		private:
 
-			Voxel *** Voxels;
-
-		public:
-			
 			int PartitionsX;
 		
 			int PartitionsY;
 			
 			int PartitionsZ;
+
+			Voxel **** Voxels;
+
+			Volume * Box;
+
+		public:
 		
-			Grid ( void );
+			Grid ( int = 16, int = 16, int = 16 );
 			
 			~Grid ( void );
+
+			void BuildGrid ( vector < Triangle * > );
 	};
 }
 
