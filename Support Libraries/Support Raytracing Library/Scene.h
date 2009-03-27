@@ -8,6 +8,8 @@
 
 #include "Primitive.h"
 
+#include "Volume.h"
+
 #include <Camera.h>
 
 #include <vector>
