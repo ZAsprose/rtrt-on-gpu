@@ -8,14 +8,14 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture3D :: Texture3D ( unsigned int unit, const char * name )
+	Texture3D :: Texture3D ( unsigned int unit )
 	{
-		Init ( GL_TEXTURE_3D, NULL, unit, name );
+		Init ( GL_TEXTURE_3D, NULL, unit );
 	}
 				
-	Texture3D :: Texture3D ( TextureData3D * data, unsigned int unit, const char * name )
+	Texture3D :: Texture3D ( TextureData3D * data, unsigned int unit )
 	{
-		Init ( GL_TEXTURE_3D, data, unit, name );
+		Init ( GL_TEXTURE_3D, data, unit );
 	}
 	
 	Texture3D :: ~Texture3D ( void )
@@ -27,16 +27,13 @@ namespace Render
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture3D :: Init ( unsigned int target, TextureData3D * data,
-		                     unsigned int unit, const char * name )
+	void Texture3D :: Init ( unsigned int target, TextureData3D * data, unsigned int unit )
 	{
 		Target = target;
 
 		Data = data;
 
 		Unit = unit;
-
-		Name = name;
 
 		glGenTextures ( 1, &Handle );
 	}
@@ -45,7 +42,7 @@ namespace Render
 			
 	void Texture3D :: Setup ( void )
 	{
-		cout << "Loading texture data [ \"" << Name << "\" @ " << Unit << " ]" << endl;
+		cout << "Loading texture data [ \"" << Handle << "\" @ " << Unit << " ]" << endl;
 	
 		if ( NULL != Data )
 		{

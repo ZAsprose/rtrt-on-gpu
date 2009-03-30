@@ -171,7 +171,7 @@ int main ( void )
 
 		manager.Bind ( );
 
-		manager.SetTexture ( "TestTexture", texture2 );
+		manager.SetTexture ( "TestTexture", &texture2 );
 
 		glBegin ( GL_QUADS );
 

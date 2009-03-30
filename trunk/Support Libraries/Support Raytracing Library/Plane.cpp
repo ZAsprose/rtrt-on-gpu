@@ -18,7 +18,7 @@ namespace Raytracing
 	{
 		if ( !Triangles.empty ( ) )
 		{
-			for ( int index = 0; index < Triangles.size ( ); index++ )
+			for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 			{
 				delete Triangles [ index ];
 			}

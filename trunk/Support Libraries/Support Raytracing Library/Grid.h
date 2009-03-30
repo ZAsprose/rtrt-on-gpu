@@ -4,9 +4,9 @@
 
 #define _GRID_
 
-#include "Intersector.h"
-
 #include "Scene.h"
+
+#include "Intersector.h"
 
 namespace Raytracing
 {
@@ -14,23 +14,43 @@ namespace Raytracing
 	{
 		private:
 
+			//------------------------------ Uniform Grid Dimensions ------------------------------
+
 			int PartitionsX;
 		
 			int PartitionsY;
 			
 			int PartitionsZ;
 
+			//----------------------------------- Voxels Array ------------------------------------
+
 			Voxel **** Voxels;
+
+		public:
+
+			//-------------------------------- Scene Bounding Box ---------------------------------
 
 			Volume * Box;
 
-		public:
+			//---------------------------- Constructor and Destructor -----------------------------
 		
-			Grid ( int = 16, int = 16, int = 16 );
+			Grid ( Volume *, int = 16, int = 16, int = 16 );
 			
 			~Grid ( void );
 
+			//------------------------------- Building Uniform Grid -------------------------------
+
 			void BuildGrid ( vector < Triangle * > );
+
+			//-------------------------------- Getting Grid Params --------------------------------
+
+			int GetPartitionsX ( void ) { return PartitionsX; }
+
+			int GetPartitionsY ( void ) { return PartitionsY; }
+
+			int GetPartitionsZ ( void ) { return PartitionsZ; }
+
+			Voxel * GetVoxel ( int, int, int );	
 	};
 }
 

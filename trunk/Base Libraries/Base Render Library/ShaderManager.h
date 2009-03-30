@@ -116,17 +116,17 @@ namespace Render
 
 			bool SetUniformMatrix ( int, const Matrix4D& );
 			
-			bool SetTexture ( int, const Texture1D& );
+			bool SetTexture ( int, const Texture1D * );
 
-			bool SetTexture ( const char *, const Texture1D& );
+			bool SetTexture ( const char *, const Texture1D * );
 
-			bool SetTexture ( int, const Texture2D& );
+			bool SetTexture ( int, const Texture2D * );
 
-			bool SetTexture ( const char *, const Texture2D& );
+			bool SetTexture ( const char *, const Texture2D * );
 
-			bool SetTexture ( int, const Texture3D& );
+			bool SetTexture ( int, const Texture3D * );
 
-			bool SetTexture ( const char *, const Texture3D& );
+			bool SetTexture ( const char *, const Texture3D * );
 
 			bool SetAttributeName ( int, const char * );
 

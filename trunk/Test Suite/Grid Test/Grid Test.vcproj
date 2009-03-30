@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Texture Test"
-	ProjectGUID="{7A3AEC2F-A85E-4754-9B39-D8BD0F4782D0}"
-	RootNamespace="TextureTest"
+	Name="Grid Test"
+	ProjectGUID="{5839036D-371C-4306-B8C4-AD2C92366BD3}"
+	RootNamespace="GridTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Support Libraries\Support Raytracing Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Support Libraries\Support Raytracing Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -177,12 +177,14 @@
 			ReferencedProjectIdentifier="{FC467132-3751-4CAA-AE40-128D83836414}"
 			RelativePathToProject=".\Base Libraries\Base Render Library\Base Render Library.vcproj"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{865F9011-B492-439B-9EC5-AE421C7EBE44}"
+			RelativePathToProject=".\Support Libraries\Support Raytracing Library\Support Raytracing Library.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
 				RelativePath=".\Source.cpp"

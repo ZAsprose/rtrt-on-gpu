@@ -37,14 +37,14 @@ namespace Render
 		//------------------------------------------------------------------------
 		
 		{
-			unsigned int * buffers = new unsigned int [ ColorBuffers.size ( ) ];
+			unsigned * buffers = new unsigned [ColorBuffers.size ( )];
             	
-			for ( int index = 0; index < ColorBuffers.size ( ); index++ )
+			for ( unsigned index = 0; index < ColorBuffers.size ( ); index++ )
 			{
 				glFramebufferTexture2D ( Target,
 					                     GL_COLOR_ATTACHMENT0 + index,
-										 ColorBuffers[index]->GetTarget ( ),
-										 ColorBuffers[index]->GetHandle ( ),
+										 ColorBuffers [index]->GetTarget ( ),
+										 ColorBuffers [index]->GetHandle ( ),
 										 0 );
 
 				buffers[index] = GL_COLOR_ATTACHMENT0 + index;
@@ -58,12 +58,12 @@ namespace Render
 		//------------------------------------------------------------------------
 		
 		{
-			for ( int index = 0; index < RenderBuffers.size ( ); index++ )
+			for ( unsigned index = 0; index < RenderBuffers.size ( ); index++ )
 			{
 				glFramebufferRenderbuffer ( Target,
-					                        RenderBuffers[index]->Attachment,
-											RenderBuffers[index]->Target,
-											RenderBuffers[index]->GetHandle ( ) );
+					                        RenderBuffers [index]->Attachment,
+											RenderBuffers [index]->Target,
+											RenderBuffers [index]->GetHandle ( ) );
 			}
 		}
 
@@ -87,17 +87,17 @@ namespace Render
 	
 	void FrameBuffer :: FetchOutcome ( void )
 	{
-		for ( int index = 0; index < ColorBuffers.size ( ); index++ )
+		for ( unsigned index = 0; index < ColorBuffers.size ( ); index++ )
 		{
-			glReadBuffer ( GL_COLOR_ATTACHMENT0_EXT + index );
+			glReadBuffer ( GL_COLOR_ATTACHMENT0 + index );
 				
 			glReadPixels ( 0,
 				           0,
-				           ColorBuffers[index]->Data->GetWidth ( ),
-						   ColorBuffers[index]->Data->GetHeight ( ),
-				           ColorBuffers[index]->Data->GetPixelFormat ( ),
-						   ColorBuffers[index]->Data->GetType ( ),
-						   * ( ColorBuffers[index]->Data ) );
+				           ColorBuffers [index]->Data->GetWidth ( ),
+						   ColorBuffers [index]->Data->GetHeight ( ),
+				           ColorBuffers [index]->Data->GetPixelFormat ( ),
+						   ColorBuffers [index]->Data->GetType ( ),
+						   * ( ColorBuffers [index]->Data ) );
 		}	
 	}
 }

@@ -213,9 +213,9 @@ int main ( void )
 
 
 
-		Vector3D vmin = voxel->Position - voxel->HalfSize;
+		Vector3D vmin = voxel->Position - voxel->Radius;
 
-		Vector3D vmax = voxel->Position + voxel->HalfSize;
+		Vector3D vmax = voxel->Position + voxel->Radius;
 
 		glColor3f ( 1.0F, 1.0F, 1.0F );
 		

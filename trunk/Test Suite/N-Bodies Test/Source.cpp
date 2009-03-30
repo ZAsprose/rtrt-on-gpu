@@ -171,9 +171,9 @@ void SetupKernels ( )
 		
 		firstProgram->Bind ( );
 		
-		firstProgram->SetTexture ( "CurrentPositionTexture", *currentPositionTexture );
+		firstProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );
 		
-		firstProgram->SetTexture ( "CurrentVelocityTexture", *currentVelocityTexture );
+		firstProgram->SetTexture ( "CurrentVelocityTexture", currentVelocityTexture );
 		
 		firstProgram->Unbind ( );
 	}
@@ -197,9 +197,9 @@ void SetupKernels ( )
 		        
 		secondProgram->Bind ( );
 		
-		secondProgram->SetTexture ( "CurrentPositionTexture", *nextPositionTexture );
+		secondProgram->SetTexture ( "CurrentPositionTexture", nextPositionTexture );
 		
-		secondProgram->SetTexture ( "CurrentVelocityTexture", *nextVelocityTexture );
+		secondProgram->SetTexture ( "CurrentVelocityTexture", nextVelocityTexture );
 		
 		secondProgram->Unbind ( );
 	}
@@ -223,7 +223,7 @@ void SetupKernels ( )
 		        
 		renderProgram->Bind ( );
 		
-		renderProgram->SetTexture ( "CurrentPositionTexture", *currentPositionTexture );
+		renderProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );
 		
 		renderProgram->Unbind ( );
 	}

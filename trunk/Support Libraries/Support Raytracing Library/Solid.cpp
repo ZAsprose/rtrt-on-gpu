@@ -21,7 +21,7 @@ namespace Raytracing
 		
 		glBegin ( GL_TRIANGLES );
 
-			for ( int index = 0; index < Triangles.size ( ); index++ )
+			for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 			{
 				Triangles [ index ]->Draw ( );
 			}
