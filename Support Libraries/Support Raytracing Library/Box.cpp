@@ -18,7 +18,7 @@ namespace Raytracing
 	{
 		if ( !Triangles.empty ( ) )
 		{
-			for ( int index = 0; index < Triangles.size ( ); index++ )
+			for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 			{
 				delete Triangles [ index ];
 			}
@@ -32,7 +32,7 @@ namespace Raytracing
 
 		int index = 0;
 
-		for ( int sign = -1; sign < 2; sign += 2 )
+		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [ index++ ] = new Vertex (
 				Transformation->ForwardPoint ( Vector3D ( sign * HalfSize.X, -HalfSize.Y, -HalfSize.Z ) ),
@@ -51,7 +51,7 @@ namespace Raytracing
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisX ) ) );
 		}
 
-		for ( int sign = -1; sign < 2; sign += 2 )
+		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [ index++ ] = new Vertex (
 				Transformation->ForwardPoint ( Vector3D ( -HalfSize.X, sign * HalfSize.Y, -HalfSize.Z ) ),
@@ -70,7 +70,7 @@ namespace Raytracing
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisY ) ) );
 		}
 
-		for ( int sign = -1; sign < 2; sign += 2 )
+		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [ index++ ] = new Vertex (
 				Transformation->ForwardPoint ( Vector3D ( -HalfSize.X, -HalfSize.Y, sign * HalfSize.Z ) ),

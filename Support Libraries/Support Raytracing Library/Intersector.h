@@ -30,7 +30,7 @@ namespace Raytracing
 					
 			//--------------------------------- Voxel parameters ----------------------------------
 			
-			static Vector3D HalfSize;
+			static Vector3D Radius;
 
 			static bool PlaneVoxelOverlap ( const Vector3D&, float );
 

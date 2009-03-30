@@ -27,12 +27,10 @@ namespace Render
 			//---------------------------------- Texture Settings ---------------------------------
 
 			unsigned int Unit;
-			
-			const char * Name;
 
 			//------------------------------------ Texture Init -----------------------------------
 
-			void Init ( unsigned int, TextureData3D *, unsigned int, const char * );
+			void Init ( unsigned int, TextureData3D *, unsigned int );
 		
 		public:
 
@@ -48,9 +46,9 @@ namespace Render
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture3D ( unsigned int = 0, const char * = "Texture" );
+			Texture3D ( unsigned int = 0 );
 						
-			Texture3D ( TextureData3D *, unsigned int = 0, const char * = "Texture" );
+			Texture3D ( TextureData3D *, unsigned int = 0 );
 
 			~Texture3D ( void );
 
@@ -69,8 +67,6 @@ namespace Render
 			unsigned int GetTarget ( void ) const { return Target; }
 
 			unsigned int GetUnit ( void ) const { return Unit; }
-
-			const char * GetName ( void ) const { return Name; }
 	};
 }
 

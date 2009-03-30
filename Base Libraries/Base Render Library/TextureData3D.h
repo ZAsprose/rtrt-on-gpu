@@ -36,11 +36,15 @@ namespace Render
 			
 			~TextureData3D ( void );
 
-			//------------------------------------ Data Access ------------------------------------
+			//---------------------------------- Type Conversion ----------------------------------
 
 			operator float * ( void ) { return Pixels; }
 			
 			operator const float * ( void ) const { return Pixels; }
+
+			//------------------------------------ Data Access ------------------------------------
+
+			template < class Type > Type& Pixel ( int );
 
 			template < class Type > Type& Pixel ( int, int, int );
 
@@ -67,6 +71,11 @@ namespace Render
 
 	//------------------------------------- Template Functions ------------------------------------
 	
+	template < class Type > Type& TextureData3D :: Pixel ( int x )
+	{
+		return ( Type& ) Pixels [ x * Components ];
+	}
+
 	template < class Type > Type& TextureData3D :: Pixel ( int x, int y, int z )
 	{
 		return ( Type& ) Pixels [ ( x + y * Width + z * Width * Height ) * Components ];

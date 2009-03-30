@@ -18,7 +18,7 @@ namespace Raytracing
 			
 			Vector3D Position;
 			
-			Vector3D HalfSize;
+			Vector3D Radius;
 
 			//------------------------------- Intersected Triangles -------------------------------
 			
@@ -26,7 +26,7 @@ namespace Raytracing
 
 			//------------------------------------ Constructor ------------------------------------
 
-			Voxel ( const Vector3D& position, const Vector3D& halfSize );
+			Voxel ( const Vector3D&, const Vector3D& );
 	};
 }
 

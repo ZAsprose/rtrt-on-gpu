@@ -237,5 +237,7 @@ int main ( void )
 
     glfwTerminate();
 
+	delete scene;
+
     return 0;
 }

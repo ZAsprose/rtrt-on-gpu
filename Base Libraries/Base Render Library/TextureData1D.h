@@ -32,11 +32,13 @@ namespace Render
 			
 			~TextureData1D ( void );
 
-			//------------------------------------ Data Access ------------------------------------
+			//---------------------------------- Type Conversion ----------------------------------
 
 			operator float * ( void ) { return Pixels; }
 			
 			operator const float * ( void ) const { return Pixels; }
+
+			//------------------------------------ Data Access ------------------------------------
 
 			template < class Type > Type& Pixel ( int );
 

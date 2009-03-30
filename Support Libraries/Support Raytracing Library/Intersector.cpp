@@ -44,17 +44,17 @@ namespace Raytracing
 						
 	//--------------------------------- Voxel parameters ----------------------------------
 				
-	Vector3D Intersector :: HalfSize ( 0.0F, 0.0F, 0.0F );
+	Vector3D Intersector :: Radius ( 0.0F, 0.0F, 0.0F );
 
 	//--------------------------------- Voxel parameters ----------------------------------
 
 	bool Intersector :: PlaneVoxelOverlap ( const Vector3D& normal, float distance )
 	{
-		Vector3D minimum = -Sign ( normal ) * HalfSize;						
+		Vector3D minimum = -Sign ( normal ) * Radius;						
 		
 		if ( Dot ( normal, minimum ) + distance <= 0.0F )
 		{
-			Vector3D maximum = Sign ( normal ) * HalfSize;
+			Vector3D maximum = Sign ( normal ) * Radius;
 			
 			if ( Dot ( normal, maximum ) + distance >= 0.0F )
 			{
@@ -74,7 +74,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotYZ ( axis, MovedA ), DotYZ ( axis, MovedC ) );
 				
-			float radius = AbsDotYZ ( axis, HalfSize );
+			float radius = AbsDotYZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -86,7 +86,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotYZ ( axis, MovedA ), DotYZ ( axis, MovedC ) );
 				
-			float radius = AbsDotYZ ( axis, HalfSize );
+			float radius = AbsDotYZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -98,7 +98,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotYZ ( axis, MovedA ), DotYZ ( axis, MovedB ) );
 				
-			float radius = AbsDotYZ ( axis, HalfSize );
+			float radius = AbsDotYZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -115,7 +115,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXZ ( axis, MovedA ), DotXZ ( axis, MovedC ) );
 				
-			float radius = AbsDotXZ ( axis, HalfSize );
+			float radius = AbsDotXZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -127,7 +127,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXZ ( axis, MovedA ), DotXZ ( axis, MovedC ) );
 				
-			float radius = AbsDotXZ ( axis, HalfSize );
+			float radius = AbsDotXZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -139,7 +139,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXZ ( axis, MovedA ), DotXZ ( axis, MovedB ) );
 				
-			float radius = AbsDotXZ ( axis, HalfSize );
+			float radius = AbsDotXZ ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -156,7 +156,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXY ( axis, MovedB ), DotXY ( axis, MovedC ) );
 				
-			float radius = AbsDotXY ( axis, HalfSize );
+			float radius = AbsDotXY ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -168,7 +168,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXY ( axis, MovedA ), DotXY ( axis, MovedB ) );
 				
-			float radius = AbsDotXY ( axis, HalfSize );
+			float radius = AbsDotXY ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -180,7 +180,7 @@ namespace Raytracing
 				
 			Vector2D projection ( DotXY ( axis, MovedB ), DotXY ( axis, MovedC ) );
 				
-			float radius = AbsDotXY ( axis, HalfSize );
+			float radius = AbsDotXY ( axis, Radius );
 				
 			if ( projection < -radius || projection > radius ) return true;
 		}
@@ -205,7 +205,7 @@ namespace Raytracing
 			
 			EdgeCA = MovedA - MovedC;
 			
-			HalfSize = voxel->HalfSize;
+			Radius = voxel->Radius;
 		}
 		
 		//-------------- Execute 9 tests for every possible pairs of edges --------------
@@ -225,11 +225,11 @@ namespace Raytracing
 
 			Vector3D maximum = Max ( Max ( MovedA, MovedB ), MovedC );
 
-			if ( minimum.X > HalfSize.X || maximum.X < -HalfSize.X ) return false;
+			if ( minimum.X > Radius.X || maximum.X < -Radius.X ) return false;
 
-			if ( minimum.Y > HalfSize.Y || maximum.Y < -HalfSize.Y ) return false;
+			if ( minimum.Y > Radius.Y || maximum.Y < -Radius.Y ) return false;
 
-			if ( minimum.Z > HalfSize.Z || maximum.Z < -HalfSize.Z ) return false;
+			if ( minimum.Z > Radius.Z || maximum.Z < -Radius.Z ) return false;
 		}
 		
 		//------------------- Execute test for plane-voxel intesection ------------------

@@ -14,8 +14,8 @@ namespace Raytracing
 	Primitive :: ~Primitive ( void )
 	{
 		delete Transformation;
-
-		for ( int index = 0; index < Triangles.size ( ); index++ )
+		
+		for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 		{
 			delete Triangles [ index ];
 		}

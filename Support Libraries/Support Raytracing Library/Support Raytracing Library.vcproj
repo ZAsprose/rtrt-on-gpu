@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="glfw.lib glee.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 			/>
 			<Tool
@@ -286,6 +286,14 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="Data"
+				>
+				<File
+					RelativePath=".\Data.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -415,6 +423,14 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Data"
+				>
+				<File
+					RelativePath=".\Data.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>
