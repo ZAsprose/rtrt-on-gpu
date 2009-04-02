@@ -54,12 +54,15 @@ namespace Raytracing
 	
 	void Grid :: BuildGrid ( vector < Triangle * > triangles )
 	{
+		//-----------------------------------------------------------------------------------------
+
 		Vector3D size = ( Box->Maximum - Box->Minimum ) / Vector3D ( ( float ) PartitionsX,
-			                                                         ( float ) PartitionsY,
+		                                                             ( float ) PartitionsY,
 																	 ( float ) PartitionsZ );
+
 		Vector3D radius = size / 2.0F;
 		
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 		
 		{
 			Vector3D position = Box->Minimum + radius;
@@ -90,13 +93,21 @@ namespace Raytracing
 			}
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
+
+		Vector3D maximum = Vector3D ( ( float ) ( PartitionsX - 1 ),
+			                          ( float ) ( PartitionsY - 1 ),
+									  ( float ) ( PartitionsZ - 1 ) );
 
 		for ( unsigned index = 0; index < triangles.size ( ); index++ )
 		{
-			Vector3D start = ( triangles [index]->GetMinimum ( ) - Box->Minimum ) / size; 	
+			Vector3D start = ( triangles [index]->GetMinimum ( ) - Box->Minimum ) / size;
 
-			Vector3D final = ( triangles [index]->GetMaximum ( ) - Box->Minimum ) / size; 				
+			start = Clamp ( start, Vector3D :: Zero, maximum );
+
+			Vector3D final = ( triangles [index]->GetMaximum ( ) - Box->Minimum ) / size;
+
+			final = Clamp ( final, Vector3D :: Zero, maximum );
 				
 			for ( int i = ( int ) start.X; i <= ( int ) final.X; i++ )
 			{

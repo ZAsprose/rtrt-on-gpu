@@ -108,6 +108,17 @@ namespace Raytracing
 			cout << "WARNING: Model has no texture coordinates" << endl;
 		}
 
+		if ( 0 != model->FaceNumber )
+		{
+			cout << "MODEL: Faces number = " << model->FaceNumber << endl;
+		}
+		else
+		{
+			cout << "ERROR: Model has no faces" << endl;
+
+			return NULL;
+		}
+
 		//-------------------------------------------------------------------------------
 
 		model->Vertices = new Vector3D[model->VertexNumber];
