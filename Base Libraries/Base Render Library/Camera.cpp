@@ -94,7 +94,7 @@ namespace Render
 
         glLoadIdentity ( );
 
-        gluPerspective ( FieldOfView, Aspect, NearPlane, FarPlane );
+        gluPerspective ( Degrees ( FieldOfView ), Aspect, NearPlane, FarPlane );
 
 		//---------------------------------------------------------------------
 

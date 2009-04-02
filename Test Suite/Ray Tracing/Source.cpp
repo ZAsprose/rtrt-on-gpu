@@ -82,7 +82,7 @@ int main ( void )
 {
 	int     width, height, running, frames;
     double  t, t0, fps;
-    char    titlestr[ 200 ];
+    char    titlestr [ 200 ];
 
 	//---------------------------------------------------------------------------------------------
 
@@ -99,11 +99,11 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = LoaderOBJ :: LoadModel ( "C:/Web/BUNNY_4K.obj" );
+	OBJModel * model = LoaderOBJ :: LoadModel ( "C:/Web/DUCK.obj" );
 
 	vector <Triangle*> trl;
 
-	float scale = 20.0F;
+	float scale = 0.004F;
 
 	for ( int i = 0; i < model->FaceNumber; i++ )
 	{
@@ -231,9 +231,21 @@ int main ( void )
 
 			manager->SetTexture ( "VoxelTexture", data->VoxelTexture );
 
-			manager->SetTexture ( "VertexTexture", data->VertexTexture );
+			manager->SetTexture ( "PositionTexture", data->PositionTexture );
 
-			manager->SetUniformVector ( "Position", position );
+			manager->SetTexture ( "NormalTexture", data->NormalTexture );
+
+			manager->SetUniformVector ( "Grid.Minimum", grid->Box->Minimum );
+
+			manager->SetUniformVector ( "Grid.Maximum", grid->Box->Maximum );
+
+			manager->SetUniformVector ( "Grid.VoxelSize", ( grid->Box->Maximum - grid->Box->Minimum ) / 16.0F );
+
+			manager->SetUniformVector ( "VoxelTextureStep", Vector3D( 1.0F / 16.0F, 1.0F / 16.0F, 1.0F / 16.0F ) );
+
+			manager->SetUniformFloat ( "VertexTextureSize", 4096.0F );
+
+			manager->SetUniformFloat ( "VertexTextureStep", 1.0F / 4096.0F );
 
 			camera.SetShaderData ( manager );
 
