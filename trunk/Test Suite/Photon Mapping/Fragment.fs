@@ -216,7 +216,7 @@ void main ( void )
 								 
 				//-------------------------------------------------------------
 				
-				refractDir = refract ( ray.Direction, test.Normal, 1.5 );
+				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
 				
 				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 				
@@ -246,7 +246,7 @@ void main ( void )
 			
 			//-----------------------------------------------------------------
 			
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.1 );
+			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
 			
 			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 			
@@ -257,7 +257,7 @@ void main ( void )
 								 
 				//-------------------------------------------------------------
 				
-				refractDir = refract ( ray.Direction, test.Normal, 1.1 );
+				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
 				
 				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 				
