@@ -4,11 +4,11 @@
 
 #define _SPHERE_
 
-#include "Solid.h"
+#include "Primitive.h"
 
 namespace Raytracing
 {
-	class Sphere : public Solid
+	class Sphere : public Primitive
 	{
 		public:
 

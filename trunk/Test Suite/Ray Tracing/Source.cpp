@@ -18,7 +18,7 @@
 
 #include <Box.h>
 
-#include <LoaderOBJ.h>
+#include <OBJLoader.h>
 
 #include <Data.h>
 
@@ -99,11 +99,12 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = LoaderOBJ :: LoadModel ( "C:/Web/DUCK.obj" );
+	/*
+	OBJModel * model = OBJLoader :: LoadModel ( "C:/Web/VIC.obj" );
 
 	vector <Triangle*> trl;
 
-	float scale = 0.004F;
+	float scale = 0.001F;
 
 	for ( int i = 0; i < model->FaceNumber; i++ )
 	{
@@ -121,6 +122,55 @@ int main ( void )
 
 		trl.push_back ( triangle );
 	}
+	*/
+
+	//---------------------------------------------------------------------------------------------
+
+	Sphere * sphere = new Sphere ( 2.0F, 50, 50, new Transform (), new Material () );
+
+	sphere->Transformation->SetScale ( Vector3D ( 1.0F, 2.0F, 3.0F ) );
+
+	sphere->Transformation->SetTranslation ( Vector3D ( 2.0F, -2.0F, 3.0F ) );
+
+	sphere->Transformation->SetOrientation( Vector3D ( 1.5F, 1.0F, 0.75F ) );
+
+	sphere->Properties->Color = Vector3D ( 0.5F, 0.5F, 0.0F );
+
+	sphere->Tesselate ( );
+
+
+	Plane * plane = new Plane ( Vector2D ( 10.0F, 10.0F ), new Transform (), new Material () );
+
+	plane->Transformation->SetTranslation ( Vector3D ( 0.0F, 0.0F, 8.0F ) );
+
+	plane->Transformation->SetOrientation( Vector3D ( 2.8F, 0.0F, 0.0F ) );
+
+	plane->Properties->Color = Vector3D ( 0.0F, 0.5F, 0.5F );
+
+	plane->Tesselate ( );
+
+
+	Box * box = new Box ( Vector3D ( 2.0F, 2.0F, 2.0F ), new Transform (), new Material () );
+	
+	box->Transformation->SetTranslation ( Vector3D ( -5.0F, 0.0F, 0.0F ) );
+
+	box->Transformation->SetOrientation( Vector3D ( 2.3F, 1.2F, 0.5F ) );
+
+	box->Properties->Color = Vector3D ( 0.5F, 0.0F, 0.5F );
+
+	box->Tesselate ( );
+
+
+	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ), Vector3D ( 10, 10, 10 ) ) );
+
+	scene->Primitives.push_back ( sphere );
+	scene->Primitives.push_back ( plane );
+	scene->Primitives.push_back ( box );
+
+	scene->Lights.push_back ( new Light (0, Vector3D ( 10.0F, 10.0F, -10.0F ) ) );
+	scene->Lights.push_back ( new Light (1, Vector3D ( -10.0F, -10.0F, -10.0F ) ) );
+
+	scene->BuildGrid ( 16, 16, 16 );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -134,19 +184,9 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Volume * box = new Volume ( );
-
-	box->Minimum = Vector3D ( -5.0F, -5.0F, -5.0F );
-
-	box->Maximum = Vector3D ( 5.0F, 5.0F, 5.0F );
-
-	Grid * grid = new Grid ( box );
-
-	grid->BuildGrid ( trl );
-
 	Data * data = new Data ( );
 
-	data->BuildTextures ( grid );
+	data->SetupTextures ( scene );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -235,13 +275,17 @@ int main ( void )
 
 			manager->SetTexture ( "NormalTexture", data->NormalTexture );
 
-			manager->SetUniformVector ( "Grid.Minimum", grid->Box->Minimum );
+			manager->SetUniformVector ( "Grid.Minimum", scene->Box->Minimum );
 
-			manager->SetUniformVector ( "Grid.Maximum", grid->Box->Maximum );
+			manager->SetUniformVector ( "Grid.Maximum", scene->Box->Maximum );
 
-			manager->SetUniformVector ( "Grid.VoxelSize", ( grid->Box->Maximum - grid->Box->Minimum ) / 16.0F );
+			manager->SetUniformVector ( "Grid.VoxelCount", Vector3D ( scene->Grid->GetPartitionsX ( ),
+				                                                      scene->Grid->GetPartitionsY ( ),
+																	  scene->Grid->GetPartitionsZ ( ) ) );
 
-			manager->SetUniformVector ( "VoxelTextureStep", Vector3D( 1.0F / 16.0F, 1.0F / 16.0F, 1.0F / 16.0F ) );
+			manager->SetUniformVector ( "Grid.VoxelSize", ( scene->Box->Maximum - scene->Box->Minimum ) / 16.0F );
+
+			manager->SetUniformVector ( "VoxelTextureStep", Vector3D ( 1.0F / 16.0F, 1.0F / 16.0F, 1.0F / 16.0F ) );
 
 			manager->SetUniformFloat ( "VertexTextureSize", 4096.0F );
 
@@ -303,20 +347,20 @@ int main ( void )
 
 			glBegin ( GL_TRIANGLES );
 			
-			for ( int index = 0; index < grid->GetVoxel ( i, j, k )->Triangles.size ( ); index++ )
+			for ( int index = 0; index < scene->Grid->GetVoxel ( i, j, k )->Triangles.size ( ); index++ )
 			{
-				glColor3fv ( Abs ( grid->GetVoxel ( i, j, k )->Triangles [index]->VertexA->Position ) );
+				glColor3fv ( Abs ( scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->VertexA->Position ) );
 
-				grid->GetVoxel ( i, j, k )->Triangles [index]->Draw ( );
+				scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->Draw ( );
 			}			
 			
 			glEnd ( );
 
 			//-------------------------------------------------------------------------------------
 
-			Vector3D vmin = grid->GetVoxel ( i, j, k )->Position - grid->GetVoxel ( i, j, k )->Radius;
+			Vector3D vmin = scene->Grid->GetVoxel ( i, j, k )->Position - scene->Grid->GetVoxel ( i, j, k )->Radius;
 
-			Vector3D vmax = grid->GetVoxel ( i, j, k )->Position + grid->GetVoxel ( i, j, k )->Radius;
+			Vector3D vmax = scene->Grid->GetVoxel ( i, j, k )->Position + scene->Grid->GetVoxel ( i, j, k )->Radius;
 
 			glColor3f ( 1.0F, 1.0F, 1.0F );
 			

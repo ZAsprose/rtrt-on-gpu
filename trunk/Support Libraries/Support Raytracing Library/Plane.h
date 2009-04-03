@@ -4,11 +4,11 @@
 
 #define _PLANE_
 
-#include "Solid.h"
+#include "Primitive.h"
 
 namespace Raytracing
 {
-	class Plane : public Solid
+	class Plane : public Primitive
 	{
 		public:
 

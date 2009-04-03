@@ -4,10 +4,6 @@
 
 namespace Raytracing
 {
-	//-------------------------------------- Default Material -------------------------------------
-
-	const Material Material :: Default;
-
 	//---------------------------------------- Constructor ----------------------------------------
 	
 	Material :: Material ( const Vector3D& color,

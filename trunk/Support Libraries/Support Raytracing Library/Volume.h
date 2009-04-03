@@ -13,18 +13,23 @@ namespace Raytracing
 	class Volume
 	{
 		public:
+
+			//-------------------------------- Volume End Vertices --------------------------------
 			
 			Vector3D Minimum;
 		
 			Vector3D Maximum;
+
+			//----------------------------- Lines Color and Visibility ----------------------------
 			
 			Vector3D Color;
 			
-			bool Visible;		
+			bool Visible;
+
+			//------------------------------------ Constructor ------------------------------------
 			
-			Volume ( void );
-			
-			~Volume ( void );
+			Volume ( const Vector3D& = Vector3D ( -5.0F, -5.0F, -5.0F ),
+				     const Vector3D& = Vector3D ( 5.0F, 5.0F, 5.0F ) );
 	};
 }
 

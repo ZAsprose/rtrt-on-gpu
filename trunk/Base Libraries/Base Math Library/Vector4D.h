@@ -54,9 +54,9 @@ namespace Math
 
 			Vector4D ( const float[SIZE4D] );
 
-			Vector4D ( const Vector2D& );
+			Vector4D ( const Vector2D&, float = 0, float = 0  );
 
-			Vector4D ( const Vector3D& );
+			Vector4D ( const Vector3D&, float = 0 );
 
 			Vector4D ( const Vector4D& );
 

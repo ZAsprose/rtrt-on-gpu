@@ -2,13 +2,12 @@
 
 namespace Raytracing
 {
-	Volume :: Volume ( void )
+	//---------------------------------------- Constructor ----------------------------------------
+
+	Volume :: Volume ( const Vector3D& minimum, const Vector3D& maximum )
 	{
+		Minimum = minimum;
 
-	}
-
-	Volume :: ~Volume ( void )
-	{
-
+		Maximum = maximum;
 	}
 }
