@@ -11,7 +11,7 @@ namespace Raytracing
 					   int stacks,
 		               Transform * transformation,
 					   Material * properties,
-					   const char * name ) : Solid ( transformation, properties, name )
+					   const char * name ) : Primitive ( transformation, properties, name )
 	{
 		Radius = radius;
 
@@ -28,7 +28,7 @@ namespace Raytracing
 		{
 			for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 			{
-				delete Triangles [ index ];
+				delete Triangles [index];
 			}
 
 			Triangles.clear ( );
@@ -36,11 +36,11 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 
-		Vertex *** vertices = new Vertex ** [ Slices + 1 ];
+		Vertex *** vertices = new Vertex ** [Slices + 1];
 
 		for ( int index = 0; index <= Slices; index++ )
 		{
-			vertices [ index ] = new Vertex * [ Stacks + 1 ];
+			vertices [index] = new Vertex * [Stacks + 1];
 		}
 
 		//-------------------------------------------------------------------------------
@@ -63,9 +63,9 @@ namespace Raytracing
 				
 				Vector3D normal = Normalize ( position );
 				
-				vertices [ x ][ y ] =
-					new Vertex ( Transformation->ForwardPoint ( position ),
-					             Normalize ( Transformation->ForwardNormal ( normal ) ) );
+				vertices [x][y] = new Vertex (
+					Transformation->ForwardPoint ( position ),
+					Normalize ( Transformation->ForwardNormal ( normal ) ) );
 			}
 		}
 
@@ -75,14 +75,18 @@ namespace Raytracing
 		{
 			for ( int y = 0; y < Stacks; y++ )
 			{
-				Triangle * triangle =
-					new Triangle ( vertices [ x ][ y ],  vertices [ x + 1 ][ y ], vertices [ x ][ y + 1 ] );
+				Triangle * triangle = new Triangle ( vertices [x][y],
+					                                 vertices [x + 1][y],
+													 vertices [x][y + 1],
+													 Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );
 
-				triangle =
-					new Triangle ( vertices [ x ][ y + 1 ], vertices [ x + 1 ][ y ], vertices [ x + 1 ][ y + 1 ] );
+				triangle = new Triangle ( vertices [x][y + 1],
+					                      vertices [x + 1][y],
+										  vertices [x + 1][y + 1],
+										  Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );

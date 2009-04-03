@@ -10,6 +10,8 @@
 
 #include "Volume.h"
 
+#include "UniformGrid.h"
+
 #include <Camera.h>
 
 #include <vector>
@@ -22,7 +24,7 @@ namespace Raytracing
 {
 	class Scene
 	{
-        public:
+		public:
 
 			//---------------------------- Primitives and Light Sources ---------------------------
 			
@@ -34,15 +36,27 @@ namespace Raytracing
 			
 			Camera * Viewer;
 
+			//-------------------------------- Scene Bounding Box ---------------------------------
+
+			Volume * Box;
+
+			//------------------------------------ Uniform Grid -----------------------------------
+			
+			UniformGrid * Grid;
+
 			//----------------------------- Constructor and Destructor ----------------------------
 			
-			Scene ( Camera * = new Camera ( Vector3D ( 0.0F, 0.0F, -10.0F ) ) );
+			Scene ( Camera * = new Camera ( ), Volume * = new Volume ( ) );
 
 			~Scene ( void );
 
 			//--------------------------------------- Draw ----------------------------------------
 			
 			void Draw ( void );
+
+			//-------------------------------- Build Uniform Grid ---------------------------------
+			
+			void BuildGrid ( int, int, int );
 	};
 }
 

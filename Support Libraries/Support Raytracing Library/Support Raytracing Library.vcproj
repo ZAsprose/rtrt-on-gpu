@@ -189,18 +189,6 @@
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="Species"
-					>
-					<File
-						RelativePath=".\Composite.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Solid.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Common"
@@ -249,7 +237,7 @@
 					Name="Loader"
 					>
 					<File
-						RelativePath=".\LoaderOBJ.cpp"
+						RelativePath=".\OBJLoader.cpp"
 						>
 					</File>
 				</Filter>
@@ -266,14 +254,10 @@
 				Name="Uniform Grid"
 				>
 				<Filter
-					Name="Grid"
+					Name="Structure"
 					>
 					<File
-						RelativePath=".\Grid.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Voxel.cpp"
+						RelativePath=".\UniformGrid.cpp"
 						>
 					</File>
 				</Filter>
@@ -285,9 +269,17 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Voxel"
+					>
+					<File
+						RelativePath=".\Voxel.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Data"
+				Name="Static Data"
 				>
 				<File
 					RelativePath=".\Data.cpp"
@@ -355,18 +347,6 @@
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="Species"
-					>
-					<File
-						RelativePath=".\Composite.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Solid.h"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Scene"
@@ -387,7 +367,7 @@
 					Name="Loader"
 					>
 					<File
-						RelativePath=".\LoaderOBJ.h"
+						RelativePath=".\OBJLoader.h"
 						>
 					</File>
 				</Filter>
@@ -404,14 +384,10 @@
 				Name="Uniform Grid"
 				>
 				<Filter
-					Name="Grid"
+					Name="Structure"
 					>
 					<File
-						RelativePath=".\Grid.h"
-						>
-					</File>
-					<File
-						RelativePath=".\Voxel.h"
+						RelativePath=".\UniformGrid.h"
 						>
 					</File>
 				</Filter>
@@ -423,9 +399,17 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Voxel"
+					>
+					<File
+						RelativePath=".\Voxel.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Data"
+				Name="Static Data"
 				>
 				<File
 					RelativePath=".\Data.h"

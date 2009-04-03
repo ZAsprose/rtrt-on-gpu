@@ -40,11 +40,13 @@ namespace Math
 		Z = vector[C];
 	}
 
-	Vector3D :: Vector3D ( const Vector2D& vector )
+	Vector3D :: Vector3D ( const Vector2D& vector, float z )
 	{
 		X = vector[A];
 
 		Y = vector[B];
+
+		Z = z;
 	}
 
 	Vector3D :: Vector3D ( const Vector3D& vector )

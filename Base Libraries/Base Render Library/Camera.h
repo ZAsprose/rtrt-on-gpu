@@ -58,7 +58,8 @@ namespace Render
 
 			//----------------------------------- Constructors ------------------------------------
 
-			Camera ( const Vector3D& = Vector3D :: Zero, const Vector3D& = Vector3D :: Zero );
+			Camera ( const Vector3D& = Vector3D ( 0.0F, 0.0F, -10.0F ),
+				     const Vector3D& = Vector3D :: Zero );
 
 			//---------------------------------- Camera Position ----------------------------------
 

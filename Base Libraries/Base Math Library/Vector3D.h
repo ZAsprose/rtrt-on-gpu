@@ -50,7 +50,7 @@ namespace Math
 
 			Vector3D ( const float[SIZE3D] );
 
-			Vector3D ( const Vector2D& );
+			Vector3D ( const Vector2D&, float = 0 );
 
 			Vector3D ( const Vector3D& );
 

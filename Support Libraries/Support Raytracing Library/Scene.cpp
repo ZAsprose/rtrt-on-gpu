@@ -4,23 +4,27 @@ namespace Raytracing
 {
 	//--------------------------------- Constructor and Destructor --------------------------------
 
-	Scene :: Scene ( Camera * viewer )
+	Scene :: Scene ( Camera * viewer, Volume * box )
 	{
 		Viewer = viewer;
+
+		Box = box;
+
+		Grid = NULL;
 	}
 
 	Scene :: ~Scene ( void )
 	{
 		for ( unsigned index = 0; index < Lights.size ( ); index++ )
 		{
-			delete Lights [ index ];
+			delete Lights [index];
 		}
 
 		Lights.clear ( );
 		
 		for ( unsigned index = 0; index < Primitives.size ( ); index++ )
 		{
-			delete Primitives [ index ];
+			delete Primitives [index];
 		}
 
 		Primitives.clear ( );
@@ -34,17 +38,42 @@ namespace Raytracing
 	{
 		for ( unsigned index = 0; index < Lights.size ( ); index++ )
 		{
-			Lights [ index ]->Setup ( );
+			Lights [index]->Setup ( );
 			
-			Lights [ index ]->Draw ( );
+			Lights [index]->Draw ( );
 		}
 		
 		for ( unsigned index = 0; index < Primitives.size ( ); index++ )
 		{
-			if ( Primitives [ index ]->Visible )
+			if ( Primitives [index]->Visible )
 			{
-				Primitives [ index ]->Draw ( );
+				Primitives [index]->Draw ( );
 			}
 		}
+	}
+
+	//------------------------------------- Build Uniform Grid ------------------------------------
+			
+	void Scene :: BuildGrid ( int partitionsX, int partitionsY, int partitionsZ )
+	{
+		vector < Triangle * > triangles;
+
+		for ( unsigned index = 0; index < Primitives.size ( ); index++ )
+		{
+			triangles.insert ( triangles.end ( ),
+				               Primitives [index]->Triangles.begin ( ),
+							   Primitives [index]->Triangles.end ( ) );
+		}
+
+		//---------------------------------------------------------------------
+
+		if ( NULL != Grid )
+		{
+			delete Grid;
+		}
+
+		Grid = new UniformGrid ( Box, partitionsX, partitionsY, partitionsZ );
+
+		Grid->BuildGrid ( triangles );
 	}
 }

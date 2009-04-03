@@ -34,9 +34,9 @@ namespace Raytracing
 			
 			float RefractIndex;
 
-			//--------------------------------- Default Material ---------------------------------
+			//-------------------------------- Material Identifier --------------------------------
 
-			static const Material Default;
+			int Identifier;
 
 			//------------------------------------ Constructor ------------------------------------
 			

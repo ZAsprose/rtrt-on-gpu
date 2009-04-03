@@ -4,11 +4,11 @@
 
 #define _BOX_
 
-#include "Solid.h"
+#include "Primitive.h"
 
 namespace Raytracing
 {
-	class Box : public Solid
+	class Box : public Primitive
 	{
 		public:
 

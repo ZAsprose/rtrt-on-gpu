@@ -18,11 +18,15 @@ namespace Raytracing
 	{
 		public:
 
-			//------------------------------ Triangles and Transform ------------------------------
+			//------------------------------------- Triangles -------------------------------------
 
 			vector < Triangle * > Triangles;
 
+			//----------------------- Transformation and Material Properties ----------------------
+
 			Transform * Transformation;
+
+			Material * Properties;
 
 			//-------------------------------- Visibility and Name --------------------------------
 			
@@ -32,7 +36,7 @@ namespace Raytracing
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Primitive ( Transform *, const char * );
+			Primitive ( Transform *, Material *, const char * );
 			
 			virtual ~Primitive ( void );
 
@@ -42,7 +46,7 @@ namespace Raytracing
 
 			//--------------------------------------- Draw ----------------------------------------
 			
-			virtual void Draw ( void ) = 0;
+			void Draw ( void );
 	};
 }
 

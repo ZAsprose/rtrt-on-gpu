@@ -18,7 +18,7 @@
 
 #include <Box.h>
 
-#include <LoaderOBJ.h>
+#include <OBJLoader.h>
 
 #include <Data.h>
 
@@ -99,7 +99,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = LoaderOBJ :: LoadModel ( "C:/Web/BUNNY_4K.obj" );
+	OBJModel * model = OBJLoader :: LoadModel ( "C:/Web/BUNNY_4K.obj" );
 
 	vector <Triangle*> trl;
 
@@ -140,13 +140,13 @@ int main ( void )
 
 	box->Maximum = Vector3D ( 5.0F, 5.0F, 5.0F );
 
-	Grid * grid = new Grid ( box );
+	UniformGrid * grid = new UniformGrid ( box );
 
 	grid->BuildGrid ( trl );
 
 	Data * data = new Data ( );
 
-	data->BuildTextures ( grid );
+	//data->BuildTextures ( grid, NULL );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -231,7 +231,7 @@ int main ( void )
 
 			manager->SetTexture ( "VoxelTexture", data->VoxelTexture );
 
-			manager->SetTexture ( "VertexTexture", data->VertexTexture );
+			manager->SetTexture ( "VertexTexture", data->PositionTexture );
 
 			manager->SetUniformVector ( "Position", position );
 
