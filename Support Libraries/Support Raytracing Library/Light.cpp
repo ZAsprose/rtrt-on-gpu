@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "Light.h"
 
 #include <GL/glfw.h>
@@ -43,6 +47,27 @@ namespace Raytracing
 		glLightfv ( GL_LIGHT0 + Number, GL_DIFFUSE, Diffuse );
         	
 		glLightfv ( GL_LIGHT0 + Number, GL_SPECULAR, Specular );
+	}
+	
+	void Light :: SetShaderData ( ShaderManager * manager )
+	{
+		char name [200];
+
+		sprintf ( name, "Lights[%d].Ambient", Number );
+
+		manager->SetUniformVector ( name, Ambient );
+
+		sprintf ( name, "Lights[%d].Diffuse", Number );
+        	
+		manager->SetUniformVector ( name, Diffuse );
+
+		sprintf ( name, "Lights[%d].Specular", Number );
+        	
+		manager->SetUniformVector ( name, Specular );
+
+		sprintf ( name, "Lights[%d].Position", Number );
+
+		manager->SetUniformVector ( name, Position );
 	}
 
 	//-------------------------------------------- Draw -------------------------------------------

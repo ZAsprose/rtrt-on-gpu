@@ -1,11 +1,13 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "UniformGrid.h"
 
 namespace Raytracing
 {
-	UniformGrid :: UniformGrid ( Volume * box, int partitionsX, int partitionsY, int partitionsZ )
+	UniformGrid :: UniformGrid ( int partitionsX, int partitionsY, int partitionsZ )
 	{
-		Box = box;
-
 		PartitionsX = partitionsX;
 		
 		PartitionsY = partitionsY;			
@@ -52,11 +54,11 @@ namespace Raytracing
 		delete Voxels;
 	}
 	
-	void UniformGrid :: BuildGrid ( vector < Triangle * > triangles )
+	void UniformGrid :: BuildGrid (  Volume * box, vector < Triangle * > triangles )
 	{
 		//-----------------------------------------------------------------------------------------
 
-		Vector3D size = ( Box->Maximum - Box->Minimum ) / Vector3D ( ( float ) PartitionsX,
+		Vector3D size = ( box->Maximum - box->Minimum ) / Vector3D ( ( float ) PartitionsX,
 		                                                             ( float ) PartitionsY,
 																	 ( float ) PartitionsZ );
 
@@ -65,7 +67,7 @@ namespace Raytracing
 		//-----------------------------------------------------------------------------------------
 		
 		{
-			Vector3D position = Box->Minimum + radius;
+			Vector3D position = box->Minimum + radius;
 					
 			for ( int i = 0; i < PartitionsX; i++ )
 			{
@@ -85,8 +87,7 @@ namespace Raytracing
 						}
 						else
 						{
-							Voxels [i][j][k] = new Voxel ( Vector3D ( x, y, z ),
-								                           radius );
+							Voxels [i][j][k] = new Voxel ( Vector3D ( x, y, z ), radius );
 						}
 					}	
 				}
@@ -101,11 +102,11 @@ namespace Raytracing
 
 		for ( unsigned index = 0; index < triangles.size ( ); index++ )
 		{
-			Vector3D start = ( triangles [index]->GetMinimum ( ) - Box->Minimum ) / size;
+			Vector3D start = ( triangles [index]->GetMinimum ( ) - box->Minimum ) / size;
 
 			start = Clamp ( start, Vector3D :: Zero, maximum );
 
-			Vector3D final = ( triangles [index]->GetMaximum ( ) - Box->Minimum ) / size;
+			Vector3D final = ( triangles [index]->GetMaximum ( ) - box->Minimum ) / size;
 
 			final = Clamp ( final, Vector3D :: Zero, maximum );
 				

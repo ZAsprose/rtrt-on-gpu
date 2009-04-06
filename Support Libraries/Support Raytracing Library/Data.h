@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #pragma once
 
 #include <Texture1D.h>
@@ -51,5 +55,9 @@ namespace Raytracing
 			//----------------------------- Load Static Texture Data ------------------------------
 
 			void SetupTextures ( Scene * );
+
+			//----------------------------------- Apply Settings ----------------------------------
+
+			void SetShaderData ( ShaderManager * );
 	};
 }

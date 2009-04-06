@@ -22,6 +22,27 @@ struct SVertex
 
 //---------------------------------------------------------------------------------------------------------------------
 
+struct SMaterial
+{
+	vec3 Ambiant;
+    
+	vec3 Diffuse;
+    
+	vec3 Specular;
+    
+	vec3 Color;
+	
+	vec3 Reflective;
+    
+	vec3 Refractive;
+	
+	float Shininess;
+	
+	float RefractIndex;
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
 struct STriangle
 {
 	SVertex A;
@@ -29,6 +50,8 @@ struct STriangle
 	SVertex B;
 	
 	SVertex C;
+    
+    SMaterial Properties;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -68,6 +91,19 @@ struct SCamera
 	vec2 Scale;
 };
 
+//---------------------------------------------------------------------------------------------------------------------
+
+struct SLight
+{
+	vec3 Ambient;
+	
+	vec3 Diffuse;
+	
+	vec3 Specular;
+	
+	vec3 Position;
+};
+
 /**********************************************************************************************************************/
 /************************************************** SHADER INTERFACE **************************************************/
 /**********************************************************************************************************************/
@@ -77,6 +113,12 @@ uniform SCamera Camera;
 //---------------------------------------------------------------------------------------------------------------------
 
 uniform SGrid Grid;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+uniform int LightsCount;
+
+uniform SLight Lights[8];
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -119,6 +161,10 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 /**********************************************************************************************************************/
 /*************************************************** SUPPORT MACRO ****************************************************/
 /**********************************************************************************************************************/
+
+#define SHADOWS
+
+//---------------------------------------------------------------------------------------------------------------------
 
 #define BIG 1000000.0
 
@@ -189,37 +235,12 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 }
 
 /**********************************************************************************************************************/
-/************************************************* LIGHTING FUNCTIONS *************************************************/
-/**********************************************************************************************************************/
-
-#define DiffuseContribution 0.7
-
-#define SpecularContribution 0.8
-
-#define AmbientContribution 0.05
-
-vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color )
-{
-	vec3 light = normalize ( lightpos - point );
-	
-	vec3 view = normalize ( camerapos - point );
-	
-	vec3 reflect = reflect ( -view, normal );
-   
-	float diffuse = abs ( dot ( light, normal ) );
-	
-	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), 32.0 );  
-	
-	return DiffuseContribution * diffuse * color + vec3 ( SpecularContribution * specular ) + vec3 ( AmbientContribution );
-}
-
-/**********************************************************************************************************************/
 /*********************************************** RAY TRACING FUNCTIONS ************************************************/
 /**********************************************************************************************************************/
 
-bool Raytrace ( SRay ray, inout SIntersection intersection )
+bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 {	
-	//---------------------------------------------- Initialization ----------------------------------------------
+	//------------------------------------------------ Initialization -------------------------------------------------
 	
 	vec3 voxel = WorldToVoxel ( ray.Origin );
 	
@@ -229,22 +250,34 @@ bool Raytrace ( SRay ray, inout SIntersection intersection )
 	
 	vec3 max = delta * max ( step, Zero ) - mod ( ray.Origin - Grid.Minimum, Grid.VoxelSize ) / ray.Direction;
 		
-	//------------------------------------------------ Traversal -------------------------------------------------
+	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
-	while ( all ( greaterThanEqual ( voxel, Zero ) ) && all ( lessThan ( voxel, Grid.VoxelCount ) ) )
+	float min;
+	
+	do
 	{
+		//---------------------------------- Calc next direction and voxel out time -----------------------------------
+		
+		vec3 next = NextVoxel ( max );
+		
+		min = dot ( max, next );
+		
+		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
+		
 		vec3 content = vec3 ( texture3D ( VoxelTexture, voxel * VoxelTextureStep ) );
 				
 		float count = content.x;
 				
 		float offset = content.y;
+				
+		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
 		
 		float start = 0.0;
-		
-		//--------------------------------------------------------------------------------------------------------
-				
-		for ( float index = 0; index < count; index++ )
+						
+		for ( float index = 0.0; index < count; index++ )
 		{
+            //------------------------------------- Reading triangle vertices -----------------------------------------
+            
 			vec3 PA = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
 																	 floor ( offset * VertexTextureStep ) ) ) );
 			offset++;
@@ -256,69 +289,183 @@ bool Raytrace ( SRay ray, inout SIntersection intersection )
 			vec3 PC = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
 																	 floor ( offset * VertexTextureStep ) ) ) );
 			
-			//----------------------------------------------------------------------------------------------------
-					
 			STriangle triangle;
-
-			triangle.A.Position = PA;
-			
-			triangle.B.Position = PB;
-			
+            
+            triangle.A.Position = PA;
+            
+            triangle.B.Position = PB;
+            
 			triangle.C.Position = PC;
+            
+            //------------------------------- Testing triangle for ray intersection -----------------------------------
 			
 			vec3 test = vec3 ( 0.0 );
-					
-			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x )
-			{
-				if ( all ( lessThan ( vec3 ( test.x ), max ) ) )
-				{
-					intersection = SIntersection ( test, triangle );
-					
-					start = offset;
-				}
-			}
 			
-			//----------------------------------------------------------------------------------------------------
+			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x && test.x < min )
+			{
+				intersection = SIntersection ( test, triangle );
+				
+				start = offset;
+			}
 			
 			offset++;
 		}
 		
-		//--------------------------------------------------------------------------------------------------------
-				
+		//----------------------------------- Reading parameters of founded triangle ----------------------------------
+			
 		if ( intersection.Parameters.x < BIG )
 		{
-			vec3 NC = vec3 ( texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-																   floor ( start * VertexTextureStep ) ) ) );
+            //-------------------------------------- Reading triangle normals -----------------------------------------
+            
+			vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
+                                                            floor ( start * VertexTextureStep ) ) );
 			start--;
 						
-			vec3 NB =  vec3 ( texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-																	floor ( start * VertexTextureStep ) ) ) );
+			vec4 NB = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
+                                                            floor ( start * VertexTextureStep ) ) );
 			start--;
 						
-			vec3 NA =  vec3 ( texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-																	floor ( start * VertexTextureStep ) ) ) );
-																		
-			//----------------------------------------------------------------------------------------------------
+			vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
+                                                            floor ( start * VertexTextureStep ) ) );                                                
 						
-			intersection.Triangle.A.Normal = NA;
+			intersection.Triangle.A.Normal = vec3 ( NA );
 				
-			intersection.Triangle.B.Normal = NB;
+			intersection.Triangle.B.Normal = vec3 ( NB );
 				
-			intersection.Triangle.C.Normal = NC;
-						
+			intersection.Triangle.C.Normal = vec3 ( NC );
+            
+            //-------------------------------- Reading triangle material properties -----------------------------------
+            
+            float material = NC.w;
+            
+ 			vec3 ambient = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
+            
+			material++;
+            
+ 			vec3 diffuse = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
+            
+			material++;
+            
+ 			vec3 specular = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
+            
+			material++;
+            
+ 			vec3 color = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
+            
+			material++;
+            
+ 			vec4 reflective = texture1D ( MaterialTexture, material * MaterialTextureStep );
+            
+			material++;
+            
+ 			vec4 refractive = texture1D ( MaterialTexture, material * MaterialTextureStep );
+            
+            intersection.Triangle.Properties = SMaterial ( ambient,
+                                                           diffuse,
+                                                           specular,
+                                                           color,
+                                                           reflective.xyz,
+                                                           refractive.xyz,
+                                                           reflective.w,
+                                                           refractive.w );
+            
 			return true;
 		}
 		
-		//--------------------------------------------------------------------------------------------------------
-		
-		vec3 next = NextVoxel ( max );
+		//---------------------------------------------- Go to next voxel ---------------------------------------------
 			
 		max += delta * next;
 			
 		voxel += step * next;
-	}
+	}	
+	while ( min < final );
 	
 	return false;
+}
+
+/**********************************************************************************************************************/
+/************************************************* LIGHTING FUNCTIONS *************************************************/
+/**********************************************************************************************************************/
+
+void Lighting ( SRay ray, SIntersection intersection, out vec3 color )
+{			              
+	SIntersection test;
+		
+	test.Parameters.x = BIG;
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
+			
+	vec3 normal = Interpolate ( intersection.Triangle.A.Normal,
+	                            intersection.Triangle.B.Normal,
+								intersection.Triangle.C.Normal,
+								intersection.Parameters.yz );
+								
+	//-----------------------------------------------------------------------------------------------------------------
+
+	vec3 reflection = reflect ( ray.Direction, normal );
+
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	for ( int index = 0; index < LightsCount; index++ )
+	{
+		vec3 light = normalize ( Lights[index].Position - point );
+		
+		float shadow = 1.0;
+
+		#ifdef SHADOWS_
+
+		ray = SRay ( point + light * 0.1, light );
+		
+		float start = 0.0, final = 0.0;
+		
+		if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, start, final ) )
+		{
+			ray.Origin += ( start + EPSILON ) * ray.Direction;
+			
+			if ( Raytrace ( ray, test, final - start ) && test.Parameters.x < intersection.Parameters.x )
+			{
+				shadow = 0.0;
+			}
+		}
+		
+		#endif
+		
+		SMaterial properties = intersection.Triangle.Properties;
+		
+		//-------------------------------------------------------------------------------------------------------------
+		
+		color += properties.Ambiant * Lights[index].Ambient;		
+
+		//-------------------------------------------------------------------------------------------------------------
+		
+		float diffuse = abs ( dot ( light, normal) );
+		
+		color += properties.Diffuse * properties.Color * Lights[index].Diffuse * diffuse * shadow;
+		
+		//-------------------------------------------------------------------------------------------------------------			
+				
+		float specular = abs ( dot ( light, reflection ) );
+		
+		color += properties.Specular * Lights[index].Specular * pow ( specular, properties.Shininess ) * shadow;
+	}
+}
+
+vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, STriangle triangle )
+{
+	vec3 light = normalize ( lightpos - point );
+	
+	vec3 view = normalize ( camerapos - point );
+	
+	vec3 reflect = reflect ( -view, normal );
+   
+	float diffuse = abs ( dot ( light, normal ) );
+	
+	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), triangle.Properties.Shininess );  
+	
+	return triangle.Properties.Diffuse * triangle.Properties.Color * diffuse +
+	       triangle.Properties.Specular * specular + triangle.Properties.Ambiant;
 }
 
 /**********************************************************************************************************************/
@@ -335,32 +482,21 @@ void main ( void )
 	
 	vec3 color = vec3 ( 0.0 );
 	
-	bool find = false;
-	
 	//-------------------------------------------------------------------------
 	
-	float tmin = 0.0, tmax = 0.0;
+	float start = 0.0, final = 0.0;
 	
-	if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, tmin, tmax ) )
+	if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, start, final ) )
 	{
-		vec3 point = ray.Origin + ( tmin + 0.001 ) * ray.Direction;
-		
-		ray.Origin = point;
-		
+		ray.Origin += ( start + 0.001 ) * ray.Direction;
+				
 		//---------------------------------------------------------------------
 		
-		if ( Raytrace ( ray, intersection ) )
+		if ( Raytrace ( ray, intersection, final - start ) )
 		{
-			vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
-			
-			vec3 normal = Interpolate ( intersection.Triangle.A.Normal,
-			                            intersection.Triangle.B.Normal,
-										intersection.Triangle.C.Normal,
-										intersection.Parameters.yz );
-		
-			color += 0.8 * Phong ( Camera.Position, Camera.Position, point, normal, abs ( point ) / 2.0 );
-								 
-			gl_FragColor = vec4 ( color, 1.0 );
+			Lighting ( ray, intersection, color );
 		}
 	}
+							 
+	gl_FragColor = vec4 ( color, 1.0 );
 }

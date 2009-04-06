@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "Scene.h"
 
 namespace Raytracing
@@ -72,8 +76,35 @@ namespace Raytracing
 			delete Grid;
 		}
 
-		Grid = new UniformGrid ( Box, partitionsX, partitionsY, partitionsZ );
+		Grid = new UniformGrid ( partitionsX, partitionsY, partitionsZ );
 
-		Grid->BuildGrid ( triangles );
+		Grid->BuildGrid ( Box, triangles );
+	}
+
+	//---------------------------------------- Apply Settings ---------------------------------------
+
+	void Scene :: SetShaderData ( ShaderManager * manager )
+	{
+		manager->SetUniformVector ( "Grid.Minimum", Box->Minimum );
+		
+		manager->SetUniformVector ( "Grid.Maximum", Box->Maximum );
+
+		Vector3D dimesions ( Grid->GetPartitionsX ( ),
+			                 Grid->GetPartitionsY ( ),
+							 Grid->GetPartitionsZ ( ) );
+
+		manager->SetUniformVector ( "Grid.VoxelCount", dimesions );
+
+		manager->SetUniformVector ( "Grid.VoxelSize",
+			                        ( Box->Maximum - Box->Minimum ) / dimesions );
+
+		//---------------------------------------------------------------------
+
+		manager->SetUniformInteger ( "LightsCount" , Lights.size ( ) );
+		
+		for ( int index = 0; index < Lights.size ( ); index++)
+		{
+			Lights [index]->SetShaderData ( manager );
+		}
 	}
 }

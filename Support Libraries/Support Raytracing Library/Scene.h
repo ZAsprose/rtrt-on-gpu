@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #pragma once
 
 #ifndef _SCENE_
@@ -57,6 +61,10 @@ namespace Raytracing
 			//-------------------------------- Build Uniform Grid ---------------------------------
 			
 			void BuildGrid ( int, int, int );
+
+			//----------------------------------- Apply Settings ----------------------------------
+
+			void SetShaderData ( ShaderManager * );
 	};
 }
 
