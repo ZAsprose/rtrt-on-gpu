@@ -18,9 +18,11 @@
 
 #include <Box.h>
 
-#include <OBJLoader.h>
+#include <Mesh.h>
 
 #include <Data.h>
+
+#include <OBJLoader.h>
 
 using namespace Math;
 
@@ -99,30 +101,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	/*
-	OBJModel * model = OBJLoader :: LoadModel ( "C:/Web/VIC.obj" );
-
-	vector <Triangle*> trl;
-
-	float scale = 0.001F;
-
-	for ( int i = 0; i < model->FaceNumber; i++ )
-	{
-		
-		Vertex * a = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[A] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[A] - 1 ] );
-
-		Vertex * b = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[B] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[B] - 1 ] );
-
-		Vertex * c = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[C] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[C] - 1 ] );
-		
-		Triangle * triangle = new Triangle ( a, b, c );
-
-		trl.push_back ( triangle );
-	}
-	*/
+	OBJModel * model = OBJLoader :: LoadModel ( "C:\\Web\\DUCK.obj" );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -167,16 +146,28 @@ int main ( void )
 	box->Tesselate ( );
 
 
+	Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
+	
+	mesh->Transformation->SetScale ( Vector3D ( 1.0F / 120.0F, 1.0F / 120.0F, 1.0F / 120.0F ) ); // Vector3D ( 1.0F / 500.0F, 1.0F / 500.0F, 1.0F / 500.0F )
+
+	mesh->Tesselate ( );
+
+	mesh->Properties->Color = Vector3D ( 0.8F, 0.8F, 0.0F );
+
+	mesh->Properties->Shininess = 128.0F;
+
+
 	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ), Vector3D ( 10, 10, 10 ) ) );
 
-	scene->Primitives.push_back ( sphere );
-	scene->Primitives.push_back ( plane );
-	scene->Primitives.push_back ( box );
+	//scene->Primitives.push_back ( sphere );
+	//scene->Primitives.push_back ( plane );
+	//scene->Primitives.push_back ( box );
+	scene->Primitives.push_back ( mesh );
 
 	scene->Lights.push_back ( new Light (0, Vector3D ( 10.0F, 10.0F, -10.0F ) ) );
 	scene->Lights.push_back ( new Light (1, Vector3D ( -10.0F, -10.0F, -10.0F ) ) );
 
-	scene->BuildGrid ( 32, 32, 32 );
+	scene->BuildGrid ( 64, 64, 64 );
 
 	//---------------------------------------------------------------------------------------------
 

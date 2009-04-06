@@ -48,7 +48,7 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
    	
-		char * memory = new char[end];
+		char * memory = new char [end];
 			
 		unsigned int size = fread ( memory, sizeof ( char ), end, file );
 
@@ -143,29 +143,29 @@ namespace Raytracing
 		{
 			if ( memcmp ( position, "vn", 2 ) == 0 )
 			{
-				sscanf_s ( position, "vn %f %f %f",
-					       &model->Normals [nN].X,
-						   &model->Normals [nN].Y,
-						   &model->Normals [nN].Z );
+				sscanf ( position, "vn %f %f %f",
+					     &model->Normals [nN].X,
+						 &model->Normals [nN].Y,
+						 &model->Normals [nN].Z );
 
 				nN++;
 			}
 			else
 				if ( memcmp ( position, "vt", 2 ) == 0 )
 				{
-					sscanf_s ( position, "vt %f %f",
-						       &model->Textures [nT].X,
-							   &model->Textures [nT].Y );
+					sscanf ( position, "vt %f %f",
+						     &model->Textures [nT].X,
+							 &model->Textures [nT].Y );
 
 					nT++;
 				}
 				else
 					if ( memcmp ( position, "v", 1 ) == 0 )
 					{
-						sscanf_s ( position, "v %f %f %f",
-							       &model->Vertices [nV].X,
-								   &model->Vertices [nV].Y,
-								   &model->Vertices [nV].Z );
+						sscanf ( position, "v %f %f %f",
+							     &model->Vertices [nV].X,
+								 &model->Vertices [nV].Y,
+								 &model->Vertices [nV].Z );
 						nV++;
 					}
 					else
@@ -175,46 +175,46 @@ namespace Raytracing
 							{
 								if ( 0 != model->NormalNumber )
 								{
-									sscanf_s ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-											   &model->Faces [nF].Vertex[0],
-											   &model->Faces [nF].Texture[0],
-											   &model->Faces [nF].Normal[0],
-											   &model->Faces [nF].Vertex[1],
-											   &model->Faces [nF].Texture[1],
-											   &model->Faces [nF].Normal[1],
-											   &model->Faces [nF].Vertex[2],
-											   &model->Faces [nF].Texture[2],
-											   &model->Faces [nF].Normal[2] );
+									sscanf ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+											 &model->Faces [nF].Vertex[0],
+											 &model->Faces [nF].Texture[0],
+											 &model->Faces [nF].Normal[0],
+											 &model->Faces [nF].Vertex[1],
+											 &model->Faces [nF].Texture[1],
+											 &model->Faces [nF].Normal[1],
+											 &model->Faces [nF].Vertex[2],
+											 &model->Faces [nF].Texture[2],
+											 &model->Faces [nF].Normal[2] );
 								}
 								else
 								{
-									sscanf_s ( position, "f %d/%d %d/%d %d/%d",
-											   &model->Faces [nF].Vertex[0],
-											   &model->Faces [nF].Texture[0],
-											   &model->Faces [nF].Vertex[1],
-											   &model->Faces [nF].Texture[1],
-											   &model->Faces [nF].Vertex[2],
-											   &model->Faces [nF].Texture[2] );
+									sscanf ( position, "f %d/%d %d/%d %d/%d",
+											 &model->Faces [nF].Vertex[0],
+											 &model->Faces [nF].Texture[0],
+											 &model->Faces [nF].Vertex[1],
+											 &model->Faces [nF].Texture[1],
+											 &model->Faces [nF].Vertex[2],
+											 &model->Faces [nF].Texture[2] );
 								}
 							}
 							else
 							{
 								if ( 0 != model->NormalNumber )
 								{
-									sscanf_s ( position, "f %d//%d %d//%d %d//%d",
-											   &model->Faces [nF].Vertex[0],
-											   &model->Faces [nF].Normal[0],
-											   &model->Faces [nF].Vertex[1],
-											   &model->Faces [nF].Normal[1],
-											   &model->Faces [nF].Vertex[2],
-											   &model->Faces [nF].Normal[2] );
+									sscanf ( position, "f %d//%d %d//%d %d//%d",
+											 &model->Faces [nF].Vertex[0],
+											 &model->Faces [nF].Normal[0],
+											 &model->Faces [nF].Vertex[1],
+											 &model->Faces [nF].Normal[1],
+											 &model->Faces [nF].Vertex[2],
+											 &model->Faces [nF].Normal[2] );
 								}
 								else
 								{
-									sscanf_s ( position, "f %d %d %d",
-											   &model->Faces [nF].Vertex[0],
-											   &model->Faces [nF].Vertex[1],
-											   &model->Faces [nF].Vertex[2] );
+									sscanf ( position, "f %d %d %d",
+											 &model->Faces [nF].Vertex[0],
+											 &model->Faces [nF].Vertex[1],
+											 &model->Faces [nF].Vertex[2] );
 								}
 							}
 							

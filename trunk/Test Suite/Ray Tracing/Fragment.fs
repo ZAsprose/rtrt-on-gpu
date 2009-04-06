@@ -452,22 +452,6 @@ void Lighting ( SRay ray, SIntersection intersection, out vec3 color )
 	}
 }
 
-vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, STriangle triangle )
-{
-	vec3 light = normalize ( lightpos - point );
-	
-	vec3 view = normalize ( camerapos - point );
-	
-	vec3 reflect = reflect ( -view, normal );
-   
-	float diffuse = abs ( dot ( light, normal ) );
-	
-	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), triangle.Properties.Shininess );  
-	
-	return triangle.Properties.Diffuse * triangle.Properties.Color * diffuse +
-	       triangle.Properties.Specular * specular + triangle.Properties.Ambiant;
-}
-
 /**********************************************************************************************************************/
 /**************************************************** ENTRY POINT *****************************************************/
 /**********************************************************************************************************************/
