@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "Box.h"
 
 namespace Raytracing

@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "Mouse.h"
 
 #include <GL/glfw.h>

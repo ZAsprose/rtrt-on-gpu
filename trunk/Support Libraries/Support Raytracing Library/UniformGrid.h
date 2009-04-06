@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #pragma once
 
 #ifndef _GRID_
@@ -28,19 +32,15 @@ namespace Raytracing
 
 		public:
 
-			//-------------------------------- Scene Bounding Box ---------------------------------
-
-			Volume * Box;
-
 			//---------------------------- Constructor and Destructor -----------------------------
 		
-			UniformGrid ( Volume *, int = 16, int = 16, int = 16 );
+			UniformGrid ( int = 16, int = 16, int = 16 );
 			
 			~UniformGrid ( void );
 
 			//------------------------------- Building Uniform Grid -------------------------------
 
-			void BuildGrid ( vector < Triangle * > );
+			void BuildGrid ( Volume *, vector < Triangle * > );
 
 			//-------------------------------- Getting Grid Params --------------------------------
 

@@ -1,3 +1,7 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #pragma once
 
 #ifndef _LIGHT_SOURCE_
@@ -6,7 +10,11 @@
 
 #include <Vector3D.h>
 
+#include <ShaderManager.h>
+
 using namespace Math;
+
+using namespace Render;
 
 namespace Raytracing
 {
@@ -43,6 +51,8 @@ namespace Raytracing
 			//----------------------------------- Apply Settings ----------------------------------
 
 			void Setup ( void );
+			
+			void SetShaderData ( ShaderManager * manager );
 
 			//--------------------------------------- Draw ----------------------------------------
 

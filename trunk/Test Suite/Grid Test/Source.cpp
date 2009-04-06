@@ -140,9 +140,9 @@ int main ( void )
 
 	box->Maximum = Vector3D ( 5.0F, 5.0F, 5.0F );
 
-	UniformGrid * grid = new UniformGrid ( box );
+	UniformGrid * grid = new UniformGrid ( );
 
-	grid->BuildGrid ( trl );
+	grid->BuildGrid ( box, trl );
 
 	Data * data = new Data ( );
 

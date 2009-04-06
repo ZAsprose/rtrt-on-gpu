@@ -1,10 +1,14 @@
+/*
+ * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ */
+
 #include "Data.h"
 
 namespace Raytracing
 {
 	//------------------------------------------- Constant Parameters --------------------------------------------
 
-	const unsigned Data :: VertexSize = 4096;
+	const unsigned Data :: VertexSize = 1024;
 
 	const unsigned Data :: MaterialSize = 1024;
 	
@@ -122,7 +126,7 @@ namespace Raytracing
 				}
 			}
 		}
-		
+
 		//------------------------------------ Setup textures -------------------------------------
 
 		VoxelTexture->Setup ( );
@@ -132,5 +136,29 @@ namespace Raytracing
 		NormalTexture->Setup ( );
 
 		MaterialTexture->Setup ( );
+	}
+
+	//---------------------------------------- Apply Settings ---------------------------------------
+
+	void Data :: SetShaderData ( ShaderManager * manager )
+	{
+		manager->SetTexture ( "VoxelTexture", VoxelTexture );
+
+		manager->SetTexture ( "PositionTexture", PositionTexture );
+
+		manager->SetTexture ( "NormalTexture", NormalTexture );
+
+		manager->SetTexture ( "MaterialTexture", MaterialTexture );
+		
+		manager->SetUniformVector ( "VoxelTextureStep",
+			                         Vector3D ( 1.0F / VoxelTexture->Data->GetWidth ( ),
+									            1.0F / VoxelTexture->Data->GetHeight ( ),
+												1.0F / VoxelTexture->Data->GetDepth ( ) ) );
+		
+		manager->SetUniformFloat ( "VertexTextureSize", VertexSize );
+		
+		manager->SetUniformFloat ( "VertexTextureStep", 1.0F / VertexSize );
+
+		manager->SetUniformFloat ( "MaterialTextureStep", 1.0F / MaterialSize );
 	}
 }

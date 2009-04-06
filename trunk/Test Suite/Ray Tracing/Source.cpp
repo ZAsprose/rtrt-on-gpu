@@ -36,7 +36,7 @@ Mouse mouse ( 0.01F );
 
 Keyboard keyboard ( 0.1F );
 
-Vector3D position ( 8.0F, 8.0F, 8.0F );
+Vector3D position ( 4.0F, 4.0F, 4.0F );
 
 bool Mode;
 
@@ -126,7 +126,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Sphere * sphere = new Sphere ( 2.0F, 50, 50, new Transform (), new Material () );
+	Sphere * sphere = new Sphere ( 2.0F, 100, 100, new Transform (), new Material () );
 
 	sphere->Transformation->SetScale ( Vector3D ( 1.0F, 2.0F, 3.0F ) );
 
@@ -135,6 +135,8 @@ int main ( void )
 	sphere->Transformation->SetOrientation( Vector3D ( 1.5F, 1.0F, 0.75F ) );
 
 	sphere->Properties->Color = Vector3D ( 0.5F, 0.5F, 0.0F );
+
+	sphere->Properties->Shininess = 8.0F;
 
 	sphere->Tesselate ( );
 
@@ -147,6 +149,8 @@ int main ( void )
 
 	plane->Properties->Color = Vector3D ( 0.0F, 0.5F, 0.5F );
 
+	plane->Properties->Shininess = 32.0F;
+
 	plane->Tesselate ( );
 
 
@@ -157,6 +161,8 @@ int main ( void )
 	box->Transformation->SetOrientation( Vector3D ( 2.3F, 1.2F, 0.5F ) );
 
 	box->Properties->Color = Vector3D ( 0.5F, 0.0F, 0.5F );
+
+	box->Properties->Shininess = 64.0F;
 
 	box->Tesselate ( );
 
@@ -170,7 +176,7 @@ int main ( void )
 	scene->Lights.push_back ( new Light (0, Vector3D ( 10.0F, 10.0F, -10.0F ) ) );
 	scene->Lights.push_back ( new Light (1, Vector3D ( -10.0F, -10.0F, -10.0F ) ) );
 
-	scene->BuildGrid ( 16, 16, 16 );
+	scene->BuildGrid ( 32, 32, 32 );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -188,6 +194,12 @@ int main ( void )
 
 	data->SetupTextures ( scene );
 
+	manager->Bind ( );
+
+	data->SetShaderData ( manager );
+
+	manager->Unbind ( );
+
 	//---------------------------------------------------------------------------------------------
 
 	camera = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
@@ -196,10 +208,10 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-    glfwSwapInterval( 0 );
+    glfwSwapInterval ( 0 );
 
-	glfwSetMousePosCallback( MouseMove );
-	glfwSetMouseButtonCallback( MouseButton );
+	glfwSetMousePosCallback ( MouseMove );
+	glfwSetMouseButtonCallback ( MouseButton );
 	glfwSetKeyCallback ( KeyButton );
 
 	//---------------------------------------------------------------------------------------------
@@ -208,11 +220,11 @@ int main ( void )
 
 	frames = 0;
 
-	t0 = glfwGetTime();
+	t0 = glfwGetTime ( );
 
     while ( running )
     {
-        t = glfwGetTime();
+        t = glfwGetTime ( );
 
         if ( ( t-t0 ) > 1.0 || frames == 0 )
         {
@@ -269,29 +281,15 @@ int main ( void )
 
 			manager->Bind ( );
 
-			manager->SetTexture ( "VoxelTexture", data->VoxelTexture );
-
-			manager->SetTexture ( "PositionTexture", data->PositionTexture );
-
-			manager->SetTexture ( "NormalTexture", data->NormalTexture );
-
-			manager->SetUniformVector ( "Grid.Minimum", scene->Box->Minimum );
-
-			manager->SetUniformVector ( "Grid.Maximum", scene->Box->Maximum );
-
-			manager->SetUniformVector ( "Grid.VoxelCount", Vector3D ( scene->Grid->GetPartitionsX ( ),
-				                                                      scene->Grid->GetPartitionsY ( ),
-																	  scene->Grid->GetPartitionsZ ( ) ) );
-
-			manager->SetUniformVector ( "Grid.VoxelSize", ( scene->Box->Maximum - scene->Box->Minimum ) / 16.0F );
-
-			manager->SetUniformVector ( "VoxelTextureStep", Vector3D ( 1.0F / 16.0F, 1.0F / 16.0F, 1.0F / 16.0F ) );
-
-			manager->SetUniformFloat ( "VertexTextureSize", 4096.0F );
-
-			manager->SetUniformFloat ( "VertexTextureStep", 1.0F / 4096.0F );
+			scene->SetShaderData ( manager );
 
 			camera.SetShaderData ( manager );
+
+			int i = position.X, j = position.Y, k = position.Z;
+
+			manager->SetUniformVector ( "Position", position );
+
+			manager->SetUniformFloat ( "UCOUNT", scene->Grid->GetVoxel ( i, j, k )->Triangles.size ( ) );
 
 			//-------------------------------------------------------------------------------------
 
@@ -324,21 +322,21 @@ int main ( void )
 			
 			glBegin ( GL_LINES );
 				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 5, 0, 0 );
+				glVertex3f ( 10, 0, 0 );
 			glEnd ( );
 			
 			glColor3f ( 0.0F, 1.0F, 0.0F );
 			
 			glBegin ( GL_LINES );			
 				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 0, 5, 0 );			
+				glVertex3f ( 0, 10, 0 );			
 			glEnd ( );
 			
 			glColor3f ( 0.0F, 0.0F, 1.0F );
 			
 			glBegin ( GL_LINES );			
 				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 0, 0, 5 );			
+				glVertex3f ( 0, 0, 10 );			
 			glEnd ( );
 
 			//-------------------------------------------------------------------------------------
