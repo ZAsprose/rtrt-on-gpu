@@ -189,6 +189,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Advanced"
+					>
+					<File
+						RelativePath=".\Mesh.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Common"
@@ -344,6 +352,14 @@
 					>
 					<File
 						RelativePath=".\Primitive.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Advanced"
+					>
+					<File
+						RelativePath=".\Mesh.h"
 						>
 					</File>
 				</Filter>
