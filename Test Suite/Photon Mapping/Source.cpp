@@ -53,13 +53,13 @@ void KeyButton ( int key, int state )
 
 int main ( void )
 {
-    int width, height, running, frames;
+    int width = 512, height = 512, running, frames;
 
     double t, t0, fps;
 
     glfwInit();
 
-    if( !glfwOpenWindow( 512, 512, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
+    if( !glfwOpenWindow( width, height, 0, 0, 0, 0, 0, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
 

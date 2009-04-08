@@ -101,7 +101,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = OBJLoader :: LoadModel ( "C:\\Web\\DUCK.obj" );
+	//OBJModel * model = OBJLoader :: LoadModel ( "C:\\Web\\DUCK.obj" );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -146,23 +146,23 @@ int main ( void )
 	box->Tesselate ( );
 
 
-	Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
-	
-	mesh->Transformation->SetScale ( Vector3D ( 1.0F / 120.0F, 1.0F / 120.0F, 1.0F / 120.0F ) ); // Vector3D ( 1.0F / 500.0F, 1.0F / 500.0F, 1.0F / 500.0F )
+	//Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
+	//
+	//mesh->Transformation->SetScale ( Vector3D ( 1.0F / 120.0F, 1.0F / 120.0F, 1.0F / 120.0F ) ); // Vector3D ( 1.0F / 500.0F, 1.0F / 500.0F, 1.0F / 500.0F )
 
-	mesh->Tesselate ( );
+	//mesh->Tesselate ( );
 
-	mesh->Properties->Color = Vector3D ( 0.8F, 0.8F, 0.0F );
+	//mesh->Properties->Color = Vector3D ( 0.8F, 0.8F, 0.0F );
 
-	mesh->Properties->Shininess = 128.0F;
+	//mesh->Properties->Shininess = 128.0F;
 
 
 	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ), Vector3D ( 10, 10, 10 ) ) );
 
-	//scene->Primitives.push_back ( sphere );
-	//scene->Primitives.push_back ( plane );
-	//scene->Primitives.push_back ( box );
-	scene->Primitives.push_back ( mesh );
+	scene->Primitives.push_back ( sphere );
+	scene->Primitives.push_back ( plane );
+	scene->Primitives.push_back ( box );
+	//scene->Primitives.push_back ( mesh );
 
 	scene->Lights.push_back ( new Light (0, Vector3D ( 10.0F, 10.0F, -10.0F ) ) );
 	scene->Lights.push_back ( new Light (1, Vector3D ( -10.0F, -10.0F, -10.0F ) ) );
