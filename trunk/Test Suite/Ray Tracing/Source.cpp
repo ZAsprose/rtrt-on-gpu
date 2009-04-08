@@ -1,3 +1,4 @@
+//This is ray tracing
 #include <stdio.h>
 
 #include <GLee.h>
@@ -32,9 +33,6 @@ using namespace Raytracing;
 
 //=================================================================================================
 
-#define CountX  128
-#define CountY  128
-
 Camera camera;
 
 Mouse mouse ( 0.01F );
@@ -44,14 +42,6 @@ Keyboard keyboard ( 0.1F );
 Vector3D position ( 4.0F, 4.0F, 4.0F );
 
 bool Mode;
-
-TextureData2D* photons;
-
-Texture2D positions;
-
-Texture2D colors;
-
-FraneBuffer* photonProgram;
 
 //=================================================================================================
 
@@ -116,25 +106,6 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	photons = new TextureData2D(CountX,CountY,4);
-
-	positions = new Texture2D(photons, 1 , Gl_TEXTURE_RECTANGLE_ARB);
-
-	colors = new Texture2D(photons, 2 , Gl_TEXTURE_RECTANGLE_ARB);
-
-	positions->Setup();
-
-	colors->Setup();
-
-	//Где делать SetTexture?
-
-	photonProgram = new FrameBuffer();
-
-	photonProgram->ColorBuffers.push_back(positions);
-
-	photonProgram->ColorBuffers.push_back(color);
-
-	photonProgram->Setup();
 
 	//-----------------------------------------------------------------------------------------------
 

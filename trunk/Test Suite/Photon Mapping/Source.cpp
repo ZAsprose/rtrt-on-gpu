@@ -24,6 +24,17 @@ using namespace Render;
 
 using namespace Math;
 
+#define CountX  128
+
+#define CountY  128
+
+TextureData2D* photons = NULL;
+
+Texture2D* positions = NULL;
+
+Texture2D* colors = NULL;
+
+FrameBuffer* photonProgram = NULL;
 //=================================================================================================
 
 Camera cam;
@@ -65,16 +76,43 @@ int main ( void )
 
         return 0;
 	}
+	
+	photons = new TextureData2D(CountX,CountY,4);
 
+	positions = new Texture2D(photons, 1 , Gl_TEXTURE_RECTANGLE_ARB);
+
+	colors = new Texture2D(photons, 2 , Gl_TEXTURE_RECTANGLE_ARB);
+
+	positions->Setup();
+
+	colors->Setup();
+
+	
 	//---------------------------------------------------------------------------------------------
 
 	ShaderManager * manager = new ShaderManager ( );
 
-	manager->LoadVertexShader ( "Vertex.vs" );
+	manager->LoadVertexShader ( "Vertex2.vs" );
 
-	manager->LoadFragmentShader ( "Fragment.fs" );
+	manager->LoadFragmentShader ( "Fragment2.fs" );
 
 	manager->BuildProgram ( );
+
+	manager->Bind();
+
+	manager->SetTexture("Position",positions);
+
+	manager->SetTexture("Color",colors);
+
+	manager->Unbind();
+
+	photonProgram = new FrameBuffer();
+
+	photonProgram->ColorBuffers.push_back(positions);
+
+	photonProgram->ColorBuffers.push_back(colors);
+
+	photonProgram->Setup();
 
 	//---------------------------------------------------------------------------------------------
 
@@ -87,6 +125,18 @@ int main ( void )
 	manager->SetUniformVector ( "Sphere.Center", Vector3D (  0.0F,  -3.0F,  0.0F ) );
 
 	manager->SetUniformFloat ( "Sphere.Radius", 2.0F );
+
+	manager->SetUniformVector("Light.Position", Vector3D(0.0F, 7.0F, 0.0F));
+
+	manager->SetUniformFloat("Light.distance", 3.0F);
+
+	manager->SetUniformVector("Light.HalfSize", Vector2D(20.0F, 20.0F));
+
+	manager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));//На то ли число делим?
+
+	manager->SetTexture("Position",positions);
+
+	manager->SetTexture("Color",colors);
 
 	manager->Unbind ( );
 

@@ -191,7 +191,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Fragment2.fs"
+				>
+			</File>
+			<File
 				RelativePath=".\Vertex.vs"
+				>
+			</File>
+			<File
+				RelativePath=".\Vertex2.vs"
 				>
 			</File>
 		</Filter>
