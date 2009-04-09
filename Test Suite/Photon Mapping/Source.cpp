@@ -20,6 +20,8 @@
 
 #include "Matrix3D.h"
 
+#include "FrameBuffer.h"
+
 using namespace Render;
 
 using namespace Math;
@@ -79,9 +81,9 @@ int main ( void )
 	
 	photons = new TextureData2D(CountX,CountY,4);
 
-	positions = new Texture2D(photons, 1 , Gl_TEXTURE_RECTANGLE_ARB);
+	positions = new Texture2D(photons, 1 , GL_TEXTURE_RECTANGLE_ARB);
 
-	colors = new Texture2D(photons, 2 , Gl_TEXTURE_RECTANGLE_ARB);
+	colors = new Texture2D(photons, 2 , GL_TEXTURE_RECTANGLE_ARB);
 
 	positions->Setup();
 
