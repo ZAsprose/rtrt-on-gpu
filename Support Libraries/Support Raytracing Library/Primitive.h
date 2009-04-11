@@ -32,11 +32,11 @@ namespace Raytracing
 
 			Material * Properties;
 
-			//-------------------------------- Visibility and Name --------------------------------
-			
-			bool Visible;
+			//-------------------------------- Name and Visibility --------------------------------
 
 			const char * Name;
+
+			bool Visible;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
