@@ -20,6 +20,8 @@
 
 #include <OBJLoader.h>
 
+#include <Mesh.h>
+
 #include <Data.h>
 
 using namespace Math;
@@ -99,30 +101,32 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = OBJLoader :: LoadModel ( "C:/Web/BUNNY_4K.obj" );
+	OBJModel * model = OBJLoader :: LoadModel ( "H:/Projects/models/bunny.obj" );
 
-	vector <Triangle*> trl;
 
-	float scale = 20.0F;
+	Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
+	
+	mesh->Transformation->SetScale ( Vector3D ( 30.0F, 30.0F, 30.0F ) );
 
-	for ( int i = 0; i < model->FaceNumber; i++ )
-	{
-		
-		Vertex * a = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[A] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[A] - 1 ] );
+	mesh->Tesselate ( );
 
-		Vertex * b = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[B] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[B] - 1 ] );
+	mesh->Properties->Color = Vector3D ( 0.8F, 0.8F, 0.0F );
 
-		Vertex * c = new Vertex ( scale * model->Vertices [ model->Faces[i].Vertex[C] - 1 ],
-			                      model->Normals [ model->Faces[i].Normal[C] - 1 ] );
-		
-		Triangle * triangle = new Triangle ( a, b, c );
+	mesh->Properties->Shininess = 128.0F;
 
-		trl.push_back ( triangle );
-	}
+
+	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ),
+		                                              Vector3D ( 10, 10, 10 ) ) );
+
+	scene->Primitives.push_back ( mesh );
+
+	scene->BuildGrid ( 16, 16, 16 );
 
 	//---------------------------------------------------------------------------------------------
+
+	Data * data = new Data ( );
+
+	data->SetupTextures ( scene );
 
 	ShaderManager * manager = new ShaderManager ( );
 
@@ -134,19 +138,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Volume * box = new Volume ( );
 
-	box->Minimum = Vector3D ( -5.0F, -5.0F, -5.0F );
-
-	box->Maximum = Vector3D ( 5.0F, 5.0F, 5.0F );
-
-	UniformGrid * grid = new UniformGrid ( );
-
-	grid->BuildGrid ( box, trl );
-
-	Data * data = new Data ( );
-
-	//data->BuildTextures ( grid, NULL );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -291,20 +283,20 @@ int main ( void )
 
 			glBegin ( GL_TRIANGLES );
 			
-			for ( int index = 0; index < grid->GetVoxel ( i, j, k )->Triangles.size ( ); index++ )
+			for ( int index = 0; index < scene->Grid->GetVoxel ( i, j, k )->Triangles.size ( ); index++ )
 			{
-				glColor3fv ( Abs ( grid->GetVoxel ( i, j, k )->Triangles [index]->VertexA->Position ) );
+				glColor3fv ( Abs ( scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->VertexA->Position ) );
 
-				grid->GetVoxel ( i, j, k )->Triangles [index]->Draw ( );
+				scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->Draw ( );
 			}			
 			
 			glEnd ( );
 
 			//-------------------------------------------------------------------------------------
 
-			Vector3D vmin = grid->GetVoxel ( i, j, k )->Position - grid->GetVoxel ( i, j, k )->Radius;
+			Vector3D vmin = scene->Grid->GetVoxel ( i, j, k )->Position - scene->Grid->GetVoxel ( i, j, k )->Radius;
 
-			Vector3D vmax = grid->GetVoxel ( i, j, k )->Position + grid->GetVoxel ( i, j, k )->Radius;
+			Vector3D vmax = scene->Grid->GetVoxel ( i, j, k )->Position + scene->Grid->GetVoxel ( i, j, k )->Radius;
 
 			glColor3f ( 1.0F, 1.0F, 1.0F );
 			
