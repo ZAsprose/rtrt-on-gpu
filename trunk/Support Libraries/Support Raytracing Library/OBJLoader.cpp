@@ -16,10 +16,14 @@
 
 namespace Raytracing
 {
-	//------------------------------------- Loading OBJ Model -------------------------------------
+	//------------------------------------------ Loading OBJ Model ------------------------------------------
 
 	OBJModel * OBJLoader :: LoadModel ( const char * filename )
 	{
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                         OBJ MODEL LOADER                         +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+
 		FILE * file = fopen ( filename, "rt" );
 
 		if ( file == NULL )
@@ -29,7 +33,7 @@ namespace Raytracing
 			return NULL;
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 		
 		fseek ( file, 0, SEEK_END );
 			
@@ -37,7 +41,7 @@ namespace Raytracing
 			
 		fseek ( file, 0, SEEK_SET );
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 
 		if ( 0 == end )
 		{
@@ -46,7 +50,7 @@ namespace Raytracing
 			return NULL;
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
    	
 		char * memory = new char [end];
 			
@@ -54,13 +58,13 @@ namespace Raytracing
 
 		fclose ( file );
 		
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 		
 		char * position = memory;
 		
 		char * finish = memory + size;
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 
 		OBJModel * model = new OBJModel ( );
 
@@ -81,7 +85,7 @@ namespace Raytracing
 			while ( *position++ != ( char ) 0x0A );
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 
 		if ( 0 != model->VertexNumber )
 		{
@@ -123,7 +127,7 @@ namespace Raytracing
 			return NULL;
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 
 		model->Vertices = new Vector3D [model->VertexNumber];
 
@@ -133,40 +137,48 @@ namespace Raytracing
 
 		model->Faces = new OBJFace [model->FaceNumber];
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
+
+		cout << "LOADING: ";
+
+		float progress = 1.0F;
+
+		//-----------------------------------------------------------------------------------------
 
 		position = memory;
 
-		int nV = 0, nN = 0, nT = 0, nF = 0;
+		int vertex = 0, normal = 0, texture = 0, face = 0;
+
+		//-----------------------------------------------------------------------------------------
 	
 		while ( position != finish )
 		{
 			if ( memcmp ( position, "vn", 2 ) == 0 )
 			{
 				sscanf ( position, "vn %f %f %f",
-					     &model->Normals [nN].X,
-						 &model->Normals [nN].Y,
-						 &model->Normals [nN].Z );
+					     &model->Normals [normal].X,
+						 &model->Normals [normal].Y,
+						 &model->Normals [normal].Z );
 
-				nN++;
+				normal++;
 			}
 			else
 				if ( memcmp ( position, "vt", 2 ) == 0 )
 				{
 					sscanf ( position, "vt %f %f",
-						     &model->Textures [nT].X,
-							 &model->Textures [nT].Y );
+						     &model->Textures [texture].X,
+							 &model->Textures [texture].Y );
 
-					nT++;
+					texture++;
 				}
 				else
 					if ( memcmp ( position, "v", 1 ) == 0 )
 					{
 						sscanf ( position, "v %f %f %f",
-							     &model->Vertices [nV].X,
-								 &model->Vertices [nV].Y,
-								 &model->Vertices [nV].Z );
-						nV++;
+							     &model->Vertices [vertex].X,
+								 &model->Vertices [vertex].Y,
+								 &model->Vertices [vertex].Z );
+						vertex++;
 					}
 					else
 						if ( memcmp ( position, "f", 1 ) == 0 )
@@ -176,25 +188,25 @@ namespace Raytracing
 								if ( 0 != model->NormalNumber )
 								{
 									sscanf ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-											 &model->Faces [nF].Vertex[0],
-											 &model->Faces [nF].Texture[0],
-											 &model->Faces [nF].Normal[0],
-											 &model->Faces [nF].Vertex[1],
-											 &model->Faces [nF].Texture[1],
-											 &model->Faces [nF].Normal[1],
-											 &model->Faces [nF].Vertex[2],
-											 &model->Faces [nF].Texture[2],
-											 &model->Faces [nF].Normal[2] );
+											 &model->Faces [face].Vertex[0],
+											 &model->Faces [face].Texture[0],
+											 &model->Faces [face].Normal[0],
+											 &model->Faces [face].Vertex[1],
+											 &model->Faces [face].Texture[1],
+											 &model->Faces [face].Normal[1],
+											 &model->Faces [face].Vertex[2],
+											 &model->Faces [face].Texture[2],
+											 &model->Faces [face].Normal[2] );
 								}
 								else
 								{
 									sscanf ( position, "f %d/%d %d/%d %d/%d",
-											 &model->Faces [nF].Vertex[0],
-											 &model->Faces [nF].Texture[0],
-											 &model->Faces [nF].Vertex[1],
-											 &model->Faces [nF].Texture[1],
-											 &model->Faces [nF].Vertex[2],
-											 &model->Faces [nF].Texture[2] );
+											 &model->Faces [face].Vertex[0],
+											 &model->Faces [face].Texture[0],
+											 &model->Faces [face].Vertex[1],
+											 &model->Faces [face].Texture[1],
+											 &model->Faces [face].Vertex[2],
+											 &model->Faces [face].Texture[2] );
 								}
 							}
 							else
@@ -202,27 +214,36 @@ namespace Raytracing
 								if ( 0 != model->NormalNumber )
 								{
 									sscanf ( position, "f %d//%d %d//%d %d//%d",
-											 &model->Faces [nF].Vertex[0],
-											 &model->Faces [nF].Normal[0],
-											 &model->Faces [nF].Vertex[1],
-											 &model->Faces [nF].Normal[1],
-											 &model->Faces [nF].Vertex[2],
-											 &model->Faces [nF].Normal[2] );
+											 &model->Faces [face].Vertex[0],
+											 &model->Faces [face].Normal[0],
+											 &model->Faces [face].Vertex[1],
+											 &model->Faces [face].Normal[1],
+											 &model->Faces [face].Vertex[2],
+											 &model->Faces [face].Normal[2] );
 								}
 								else
 								{
 									sscanf ( position, "f %d %d %d",
-											 &model->Faces [nF].Vertex[0],
-											 &model->Faces [nF].Vertex[1],
-											 &model->Faces [nF].Vertex[2] );
+											 &model->Faces [face].Vertex[0],
+											 &model->Faces [face].Vertex[1],
+											 &model->Faces [face].Vertex[2] );
 								}
 							}
 							
-							nF++;
+							face++;
 						}
+
+			if ( progress > ( finish - position ) / ( float ) size )
+			{
+				progress -= 0.02F;
+
+				cout << ".";
+			}
 
 			while ( *position++ != ( char ) 0x0A );
 		}
+
+		cout << endl;
 
 		return model;
 	}
