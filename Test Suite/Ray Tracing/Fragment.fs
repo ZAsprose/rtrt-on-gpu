@@ -51,7 +51,7 @@ struct STriangle
 	
 	SVertex C;
     
-    SMaterial Properties;
+    float Offset;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -271,8 +271,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		float offset = content.y;
 				
 		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
-		
-		float start = 0.0;
 						
 		for ( float index = 0.0; index < count; index++ )
 		{
@@ -296,6 +294,8 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
             triangle.B.Position = PB;
             
 			triangle.C.Position = PC;
+			
+			triangle.Offset = offset;
             
             //------------------------------- Testing triangle for ray intersection -----------------------------------
 			
@@ -304,8 +304,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x && test.x < min )
 			{
 				intersection = SIntersection ( test, triangle );
-				
-				start = offset;
 			}
 			
 			offset++;
@@ -315,7 +313,9 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 		if ( intersection.Parameters.x < BIG )
 		{
-            //-------------------------------------- Reading triangle normals -----------------------------------------
+			//-------------------------------------- Reading triangle normals -----------------------------------------
+            
+			float start = intersection.Triangle.offset;
             
 			vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
                                                             floor ( start * VertexTextureStep ) ) );
@@ -328,7 +328,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
                                                             floor ( start * VertexTextureStep ) ) );                                                
 						
-			intersection.Triangle.A.Normal = vec3 ( NA );
+			intersection.Triangle.A.Normal = vec3 ( NA ); 
 				
 			intersection.Triangle.B.Normal = vec3 ( NB );
 				
@@ -414,17 +414,17 @@ void Lighting ( SRay ray, SIntersection intersection, out vec3 color )
 		
 		float shadow = 1.0;
 
-		#ifdef SHADOWS_
+		#ifdef SHADOWS__
 
-		ray = SRay ( point + light * 0.1, light );
+		ray = SRay ( point + light * EPSILON, light );
 		
 		float start = 0.0, final = 0.0;
 		
 		if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, start, final ) )
 		{
-			ray.Origin += ( start + EPSILON ) * ray.Direction;
+			ray.Origin += ( start + 0.9 ) * ray.Direction;
 			
-			if ( Raytrace ( ray, test, final - start ) && test.Parameters.x < intersection.Parameters.x )
+			if ( Raytrace ( ray, test, final - start ) && test.Parameters.x < length ( Lights[index].Position - point ) )
 			{
 				shadow = 0.0;
 			}

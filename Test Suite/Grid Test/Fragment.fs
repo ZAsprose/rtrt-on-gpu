@@ -133,13 +133,13 @@ void main ( void )
 	
 	for ( float i = 0; i < count; i ++ )
 	{
-		vec3 A = vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 4096.0 ), floor ( tc / 4096.0 ) ) ) );
+		vec3 A = vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 1024.0 ), floor ( tc / 1024.0 ) ) ) );
 		tc ++;
 		
-		vec3 B =  vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 4096.0 ), floor ( tc / 4096.0 ) ) ) );
+		vec3 B =  vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 1024.0 ), floor ( tc / 1024.0 ) ) ) );
 		tc ++;
 		
-		vec3 C =  vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 4096.0 ), floor ( tc / 4096.0 ) ) ) );
+		vec3 C =  vec3 ( texture2DRect ( VertexTexture, vec2 ( mod ( tc, 1024.0 ), floor ( tc / 1024.0 ) ) ) );
 		tc ++;
 		
 		STriangle triangle = STriangle ( A, B, C );

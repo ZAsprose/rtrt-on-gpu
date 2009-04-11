@@ -169,18 +169,18 @@ void UpdateState ( inout State Y )
 
 void main()
 {
-	vec4 position = texture2DRect ( CurrentPositionTexture, gl_TexCoord[0] );
+	vec4 position = texture2DRect ( CurrentPositionTexture, vec2 ( gl_TexCoord[0] ) );
 	
-	vec4 velocity = texture2DRect ( CurrentVelocityTexture, gl_TexCoord[0] );
+	vec4 velocity = texture2DRect ( CurrentVelocityTexture, vec2 ( gl_TexCoord[0] ) );
 		
 #if defined ( RUNGE_KUTTA_1 )   // [ 20 * N FLOPS ]
 
-	State Y = State ( position + TimeStep * velocity,
-	                  velocity + TimeStep * Acceleration ( position) );
+	State Y = State ( vec3 ( position + TimeStep * velocity ),
+	                  vec3 ( velocity ) + TimeStep * Acceleration ( vec3 ( position ) ) );
 	            
 #else
 
-	State Y = State ( position, velocity );
+	State Y = State ( vec3 ( position ), vec3 ( velocity ) );
 	
 	UpdateState ( Y );
 
