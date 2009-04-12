@@ -120,11 +120,11 @@ int main ( void )
 	sphere->Tesselate ( );
 
 
-	Plane * plane = new Plane ( Vector2D ( 10.0F, 10.0F ), new Transform (), new Material () );
+	Plane * plane = new Plane ( Vector2D ( 8.0F, 8.0F ), new Transform (), new Material () );
 
-	plane->Transformation->SetTranslation ( Vector3D ( 0.0F, 0.0F, 8.0F ) );
+	plane->Transformation->SetTranslation ( Vector3D ( 0.0F, 0.0F, 6.0F ) );
 
-	plane->Transformation->SetOrientation( Vector3D ( 2.8F, 0.0F, 0.0F ) );
+	plane->Transformation->SetOrientation( Vector3D ( ONEPI, 0.0F, 0.0F ) );
 
 	plane->Properties->Color = Vector3D ( 0.0F, 0.5F, 0.5F );
 
@@ -148,7 +148,7 @@ int main ( void )
 
 	Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
 	
-	mesh->Transformation->SetScale ( Vector3D ( 25.0F, 25.0F, 25.0F ) );
+	mesh->Transformation->SetScale ( Vector3D ( 50.0F, 50.0F, 50.0F ) );
 
 	mesh->Tesselate ( );
 
@@ -167,7 +167,7 @@ int main ( void )
 	scene->Lights.push_back ( new Light (0, Vector3D ( 10.0F, 10.0F, -10.0F ) ) );
 	scene->Lights.push_back ( new Light (1, Vector3D ( -10.0F, -10.0F, -10.0F ) ) );
 
-	scene->BuildGrid ( 32, 32, 32 );
+	scene->BuildGrid ( 64, 64, 64 );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -276,12 +276,6 @@ int main ( void )
 
 			camera.SetShaderData ( manager );
 
-			int i = position.X, j = position.Y, k = position.Z;
-
-			manager->SetUniformVector ( "Position", position );
-
-			manager->SetUniformFloat ( "UCOUNT", scene->Grid->GetVoxel ( i, j, k )->Triangles.size ( ) );
-
 			//-------------------------------------------------------------------------------------
 
 			glBegin ( GL_QUADS );
@@ -299,7 +293,7 @@ int main ( void )
 		{
 			mouse.Step = 0.01F;
 
-			keyboard.Step = 0.001F;
+			keyboard.Step = 0.01F;
 
 			camera.Setup ( );
 
@@ -332,51 +326,8 @@ int main ( void )
 
 			//-------------------------------------------------------------------------------------
 
-			int i = position.X, j = position.Y, k = position.Z;
-
-			glBegin ( GL_TRIANGLES );
-			
-			for ( int index = 0; index < scene->Grid->GetVoxel ( i, j, k )->Triangles.size ( ); index++ )
-			{
-				glColor3fv ( Abs ( scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->VertexA->Position ) );
-
-				scene->Grid->GetVoxel ( i, j, k )->Triangles [index]->Draw ( );
-			}			
-			
-			glEnd ( );
-
-			//-------------------------------------------------------------------------------------
-
-			Vector3D vmin = scene->Grid->GetVoxel ( i, j, k )->Position - scene->Grid->GetVoxel ( i, j, k )->Radius;
-
-			Vector3D vmax = scene->Grid->GetVoxel ( i, j, k )->Position + scene->Grid->GetVoxel ( i, j, k )->Radius;
-
-			glColor3f ( 1.0F, 1.0F, 1.0F );
-			
-			glBegin ( GL_LINE_LOOP );			
-				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmin.Z );			
-			glEnd ( );
-
-			glBegin ( GL_LINE_LOOP );			
-				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
-			glEnd ( );
-
-			glBegin ( GL_LINES );			
-				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
-			glEnd ( );
+			scene->Draw ( );
+		
 		}
 
         glfwSwapBuffers();
