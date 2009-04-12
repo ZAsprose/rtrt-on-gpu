@@ -19,6 +19,8 @@ namespace Raytracing
 		Name = name;
 
 		Properties = properties;
+
+		Visible = true;
 	}
 
 	Primitive :: ~Primitive ( void )

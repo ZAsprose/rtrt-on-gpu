@@ -22,27 +22,6 @@ struct SVertex
 
 //---------------------------------------------------------------------------------------------------------------------
 
-struct SMaterial
-{
-	vec3 Ambiant;
-    
-	vec3 Diffuse;
-    
-	vec3 Specular;
-    
-	vec3 Color;
-	
-	vec3 Reflective;
-    
-	vec3 Refractive;
-	
-	float Shininess;
-	
-	float RefractIndex;
-};
-
-//---------------------------------------------------------------------------------------------------------------------
-
 struct STriangle
 {
 	SVertex A;
@@ -89,6 +68,27 @@ struct SCamera
 	vec3 View;
 	
 	vec2 Scale;
+};
+
+//---------------------------------------------------------------------------------------------------------------------
+
+struct SMaterial
+{
+	vec3 Ambiant;
+    
+	vec3 Diffuse;
+    
+	vec3 Specular;
+    
+	vec3 Color;
+	
+	vec3 Reflective;
+    
+	vec3 Refractive;
+	
+	float Shininess;
+	
+	float RefractIndex;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -162,7 +162,9 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 /*************************************************** SUPPORT MACRO ****************************************************/
 /**********************************************************************************************************************/
 
-#define SHADOWS
+#define LIGHTING_SHADOWS
+
+#define LIGHTING_TWO_SIDED_
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -178,60 +180,149 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 #define Interpolate( A, B, C, coords ) ( A * ( 1.0 - coords.x - coords.y ) + B * coords.x + C * coords.y )
 
-#define NextVoxel( maximum ) vec3 ( all ( lessThanEqual ( vec2 ( maximum.x ), maximum.yz ) ), \
-                                    all ( lessThanEqual ( vec2 ( maximum.y ), maximum.xz ) ), \
-									all ( lessThanEqual ( vec2 ( maximum.z ), maximum.xy ) ) )							
+#define InsideBox( point ) ( all ( lessThanEqual ( point, Grid.Maximum ) ) && \
+                             all ( greaterThanEqual ( point, Grid.Minimum ) ) )					
 
 /**********************************************************************************************************************/
 /************************************************* SUPPORT FUNCTIONS **************************************************/
 /**********************************************************************************************************************/
 
-// [23 FLOPS]
 SRay GenerateRay ( void )
 {
-	vec2 scale = Camera.Scale * vec2 ( gl_TexCoord[0] ); // [2 FLOPS]
+	vec2 scale = Camera.Scale * vec2 ( gl_TexCoord[0] );
 	
-	vec3 direction = Camera.View - scale.x * Camera.Side + scale.y * Camera.Up; // [12 FLOPS]
+	vec3 direction = Camera.View - scale.x * Camera.Side + scale.y * Camera.Up;
 	
-	return SRay ( Camera.Position, normalize ( direction ) ); // [9 FLOPS]
+	return SRay ( Camera.Position, normalize ( direction ) );
+}
+
+/**********************************************************************************************************************/
+/*********************************************** DATA LOADING FUNCTIONS ***********************************************/
+/**********************************************************************************************************************/
+
+void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
+{
+	//------------------------------------------- Reading triangle normals --------------------------------------------
+            
+	float offset = triangle.Offset;
+            
+	vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
+	                                                floor ( offset * VertexTextureStep ) ) );
+	offset--;
+						
+	vec4 NB = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
+                                                    floor ( offset * VertexTextureStep ) ) );
+	offset--;
+						
+	vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
+                                                    floor ( offset * VertexTextureStep ) ) );                                                
+						
+	triangle.A.Normal = vec3 ( NA ); 
+				
+	triangle.B.Normal = vec3 ( NB );
+				
+	triangle.C.Normal = vec3 ( NC );
+	
+	//------------------------------------- Reading triangle material properties --------------------------------------
+	
+	offset = NC.w;
+	
+	vec3 ambient = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	
+	offset++;
+	
+	vec3 diffuse = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	
+	offset++;
+	
+	vec3 specular = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	
+	offset++;
+	
+	vec3 color = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	
+	offset++;
+	
+	vec4 reflective = texture1D ( MaterialTexture, offset * MaterialTextureStep );
+	
+	offset++;
+	
+	vec4 refractive = texture1D ( MaterialTexture, offset * MaterialTextureStep );
+	
+	properties = SMaterial ( ambient,
+	                         diffuse,
+	                         specular,
+	                         color,
+	                         reflective.xyz,
+	                         refractive.xyz,
+	                         reflective.w,
+	                         refractive.w );
 }
 
 /**********************************************************************************************************************/
 /*********************************************** INTERSECTION FUNCTIONS ***********************************************/
 /**********************************************************************************************************************/
 
-bool IntersectBox ( SRay ray, vec3 minimum, vec3 maximum, out float tmin, out float tmax )
+float IntersectBox ( SRay ray )
 {
-   vec3 l1 = ( minimum - ray.Origin ) / ray.Direction;
-   vec3 l2 = ( maximum - ray.Origin ) / ray.Direction;
+	vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
    
-   vec3 lmax = max ( l1, l2 );
-   vec3 lmin = min ( l1, l2 );
-  
-   tmax = min ( lmax.x, min ( lmax.y, lmax.z ) );
-   tmin = max ( max ( lmin.x, 0.0 ), max ( lmin.y, lmin.z ) );
-  
-   return tmax >= tmin;
+	vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
+	
+	vec3 MAX = max ( OMAX, OMIN );
+	
+	return min ( MAX.x, min ( MAX.y, MAX.z ) );
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 
-// [60 FLOPS]
+bool IntersectBox ( SRay ray, out float start, out float final )
+{
+	if ( InsideBox ( ray.Origin ) )
+	{
+		final = IntersectBox ( ray );
+	}
+	else
+	{
+	   vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
+	   
+	   vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
+	   
+	   vec3 MAX = max ( OMAX, OMIN );
+	   
+	   vec3 MIN = min ( OMAX, OMIN );
+	  
+	   final = min ( MAX.x, min ( MAX.y, MAX.z ) );
+	   
+	   start = max ( MIN.x, max ( MIN.y, MIN.z ) );	
+	}
+	
+	return final > start;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
 bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 {
-	vec3 AB = triangle.B.Position - triangle.A.Position; // [3 FLOPS]
+	//------------------------------------------------ Initialization -------------------------------------------------
 	
-	vec3 AC = triangle.C.Position - triangle.A.Position; // [3 FLOPS]
+	vec3 AB = triangle.B.Position - triangle.A.Position;
 	
-	vec3 T = ray.Origin - triangle.A.Position; // [3 FLOPS]
+	vec3 AC = triangle.C.Position - triangle.A.Position;
 	
-	vec3 P = cross ( ray.Direction, AC ); // [9 FLOPS]
+	vec3 AO = ray.Origin - triangle.A.Position;
+	
+	//------------------------------------------------ Initialization -------------------------------------------------
+	
+	vec3 P = cross ( ray.Direction, AC );
 
-	vec3 Q = cross ( T, AB ); // [9 FLOPS]
+	vec3 Q = cross ( AO, AB );
 	
-	result = vec3 ( dot ( Q, AC ), dot ( P, T ), dot ( Q, ray.Direction ) ) / dot ( P, AB ); // [23 FLOPS]
+	result = vec3 ( dot ( Q, AC ), dot ( P, AO ), dot ( Q, ray.Direction ) ) / dot ( P, AB );
 	
-	return ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0; // [1 FLOPS]
+	//------------------------------------------------ Initialization -------------------------------------------------
+	
+	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
 }
 
 /**********************************************************************************************************************/
@@ -252,15 +343,36 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
-	float min;
+	vec3 next = vec3 ( 0.0 );
+	
+	float min = 0.0;
 	
 	do
 	{
 		//---------------------------------- Calc next direction and voxel out time -----------------------------------
 		
-		vec3 next = NextVoxel ( max );
+		next = AxisZ;
 		
-		min = dot ( max, next );
+		min = max.z;
+		
+		if ( max.x < max.y )
+		{
+			if ( max.x < max.z )
+			{
+				next = AxisX;
+				
+				min = max.x;
+			}
+		}
+		else
+		{
+			if ( max.y < max.z )
+			{
+				next = AxisY;
+				
+				min = max.y;
+			}
+		}
 		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
@@ -287,15 +399,10 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			vec3 PC = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
 																	 floor ( offset * VertexTextureStep ) ) ) );
 			
-			STriangle triangle;
-            
-            triangle.A.Position = PA;
-            
-            triangle.B.Position = PB;
-            
-			triangle.C.Position = PC;
-			
-			triangle.Offset = offset;
+			STriangle triangle = STriangle ( SVertex ( PA, Zero ),
+			                                 SVertex ( PB, Zero ),
+			                                 SVertex ( PC, Zero ),
+			                                 offset );
             
             //------------------------------- Testing triangle for ray intersection -----------------------------------
 			
@@ -309,66 +416,8 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			offset++;
 		}
 		
-		//----------------------------------- Reading parameters of founded triangle ----------------------------------
-			
 		if ( intersection.Parameters.x < BIG )
-		{
-			//-------------------------------------- Reading triangle normals -----------------------------------------
-            
-			float start = intersection.Triangle.offset;
-            
-			vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-                                                            floor ( start * VertexTextureStep ) ) );
-			start--;
-						
-			vec4 NB = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-                                                            floor ( start * VertexTextureStep ) ) );
-			start--;
-						
-			vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( start, VertexTextureSize ),
-                                                            floor ( start * VertexTextureStep ) ) );                                                
-						
-			intersection.Triangle.A.Normal = vec3 ( NA ); 
-				
-			intersection.Triangle.B.Normal = vec3 ( NB );
-				
-			intersection.Triangle.C.Normal = vec3 ( NC );
-            
-            //-------------------------------- Reading triangle material properties -----------------------------------
-            
-            float material = NC.w;
-            
- 			vec3 ambient = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
-            
-			material++;
-            
- 			vec3 diffuse = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
-            
-			material++;
-            
- 			vec3 specular = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
-            
-			material++;
-            
- 			vec3 color = vec3 ( texture1D ( MaterialTexture, material * MaterialTextureStep ) );
-            
-			material++;
-            
- 			vec4 reflective = texture1D ( MaterialTexture, material * MaterialTextureStep );
-            
-			material++;
-            
- 			vec4 refractive = texture1D ( MaterialTexture, material * MaterialTextureStep );
-            
-            intersection.Triangle.Properties = SMaterial ( ambient,
-                                                           diffuse,
-                                                           specular,
-                                                           color,
-                                                           reflective.xyz,
-                                                           refractive.xyz,
-                                                           reflective.w,
-                                                           refractive.w );
-            
+		{            
 			return true;
 		}
 		
@@ -387,13 +436,9 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 /************************************************* LIGHTING FUNCTIONS *************************************************/
 /**********************************************************************************************************************/
 
-void Lighting ( SRay ray, SIntersection intersection, out vec3 color )
-{			              
-	SIntersection test;
-		
-	test.Parameters.x = BIG;
-	
-	//-----------------------------------------------------------------------------------------------------------------
+void Lighting ( SRay ray, SIntersection intersection, SMaterial properties, out vec3 color )
+{			              	
+	//----------------------------------- Calculating intersection point attributes -----------------------------------
 	
 	vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
 			
@@ -402,53 +447,72 @@ void Lighting ( SRay ray, SIntersection intersection, out vec3 color )
 								intersection.Triangle.C.Normal,
 								intersection.Parameters.yz );
 								
-	//-----------------------------------------------------------------------------------------------------------------
-
 	vec3 reflection = reflect ( ray.Direction, normal );
 
-	//-----------------------------------------------------------------------------------------------------------------
+	//---------------------------------------- Calculating directional lighting ---------------------------------------
 	
 	for ( int index = 0; index < LightsCount; index++ )
 	{
-		vec3 light = normalize ( Lights[index].Position - point );
+		//-------------------------------- Calculating ligth vector and ligth distance --------------------------------
+		
+		vec3 light = Lights [index].Position - point;
+		
+		float distance = length ( light );
+		
+		light /= distance;
+		
+		//------------------------------------ Checking if point is in the shadow -------------------------------------
 		
 		float shadow = 1.0;
-
-		#ifdef SHADOWS__
-
-		ray = SRay ( point + light * EPSILON, light );
 		
-		float start = 0.0, final = 0.0;
+		#ifdef LIGHTING_SHADOWS
 		
-		if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, start, final ) )
-		{
-			ray.Origin += ( start + 0.9 ) * ray.Direction;
+		SIntersection test;
 			
-			if ( Raytrace ( ray, test, final - start ) && test.Parameters.x < length ( Lights[index].Position - point ) )
-			{
-				shadow = 0.0;
-			}
+		test.Parameters.x = BIG;
+
+		SRay ray = SRay ( point + light * EPSILON, light );
+		
+		float final = IntersectBox ( ray );
+		
+		if ( Raytrace ( ray, test, final ) && test.Parameters.x < distance )
+		{
+			shadow = 0.0;
 		}
 		
 		#endif
 		
-		SMaterial properties = intersection.Triangle.Properties;
+		//------------------------------------- Calculating ambient contribution --------------------------------------
 		
-		//-------------------------------------------------------------------------------------------------------------
-		
-		color += properties.Ambiant * Lights[index].Ambient;		
+		color += properties.Ambiant * Lights [index].Ambient;		
 
-		//-------------------------------------------------------------------------------------------------------------
+		//------------------------------------- Calculating diffuse contribution --------------------------------------
 		
-		float diffuse = abs ( dot ( light, normal) );
+		#ifdef LIGHTING_TWO_SIDED
 		
-		color += properties.Diffuse * properties.Color * Lights[index].Diffuse * diffuse * shadow;
+		float diffuse = abs ( dot ( light, normal ) );
 		
-		//-------------------------------------------------------------------------------------------------------------			
-				
-		float specular = abs ( dot ( light, reflection ) );
+		#else
 		
-		color += properties.Specular * Lights[index].Specular * pow ( specular, properties.Shininess ) * shadow;
+		float diffuse = max ( dot ( light, normal ), 0.0 );
+		
+		#endif
+		
+		color += properties.Diffuse * properties.Color * Lights [index].Diffuse * diffuse * shadow;
+		
+		//------------------------------------- Calculating specular contribution -------------------------------------			
+		
+		#ifdef LIGHTING_TWO_SIDED
+		
+		float specular = pow ( abs ( dot ( light, reflection ) ), properties.Shininess );
+		
+		#else
+		
+		float specular = pow ( max ( dot ( light, reflection ), 0.0 ), properties.Shininess );
+		
+		#endif
+		
+		color += properties.Specular * Lights [index].Specular * specular * shadow;
 	}
 }
 
@@ -470,7 +534,7 @@ void main ( void )
 	
 	float start = 0.0, final = 0.0;
 	
-	if ( IntersectBox ( ray, Grid.Minimum, Grid.Maximum, start, final ) )
+	if ( IntersectBox ( ray, start, final ) )
 	{
 		ray.Origin += ( start + 0.001 ) * ray.Direction;
 				
@@ -478,7 +542,11 @@ void main ( void )
 		
 		if ( Raytrace ( ray, intersection, final - start ) )
 		{
-			Lighting ( ray, intersection, color );
+			SMaterial properties;
+			
+			LoadTriangle ( intersection.Triangle, properties  );
+			
+			Lighting ( ray, intersection, properties, color );
 		}
 	}
 							 
