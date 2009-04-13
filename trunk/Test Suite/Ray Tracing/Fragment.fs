@@ -1,6 +1,18 @@
 #extension GL_ARB_texture_rectangle : enable
 
 /**********************************************************************************************************************/
+/************************************************** RENDERING CONFIG **************************************************/
+/**********************************************************************************************************************/
+
+#define LIGHTING_SHADOWS
+
+#define LIGHTING_TWO_SIDED
+
+#define RENDER_REFLECTIONS
+
+#define RENDER_REFRACTIONS
+
+/**********************************************************************************************************************/
 /*************************************************** DATA STRUCTURES **************************************************/
 /**********************************************************************************************************************/
 
@@ -162,15 +174,9 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 /*************************************************** SUPPORT MACRO ****************************************************/
 /**********************************************************************************************************************/
 
-#define LIGHTING_SHADOWS
-
-#define LIGHTING_TWO_SIDED_
-
-//---------------------------------------------------------------------------------------------------------------------
-
 #define BIG 1000000.0
 
-#define EPSILON 0.0001
+#define EPSILON 0.001
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -436,20 +442,9 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 /************************************************* LIGHTING FUNCTIONS *************************************************/
 /**********************************************************************************************************************/
 
-void Lighting ( SRay ray, SIntersection intersection, SMaterial properties, out vec3 color )
-{			              	
-	//----------------------------------- Calculating intersection point attributes -----------------------------------
-	
-	vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
-			
-	vec3 normal = Interpolate ( intersection.Triangle.A.Normal,
-	                            intersection.Triangle.B.Normal,
-								intersection.Triangle.C.Normal,
-								intersection.Parameters.yz );
-								
-	vec3 reflection = reflect ( ray.Direction, normal );
-
-	//---------------------------------------- Calculating directional lighting ---------------------------------------
+vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial properties )
+{
+	vec3 color = vec3 ( 0.0 );
 	
 	for ( int index = 0; index < LightsCount; index++ )
 	{
@@ -467,15 +462,15 @@ void Lighting ( SRay ray, SIntersection intersection, SMaterial properties, out 
 		
 		#ifdef LIGHTING_SHADOWS
 		
-		SIntersection test;
-			
-		test.Parameters.x = BIG;
+		SIntersection intersection;
+		
+		intersection.Parameters.x = BIG;
 
 		SRay ray = SRay ( point + light * EPSILON, light );
 		
 		float final = IntersectBox ( ray );
 		
-		if ( Raytrace ( ray, test, final ) && test.Parameters.x < distance )
+		if ( Raytrace ( ray, intersection, final ) && intersection.Parameters.x < distance )
 		{
 			shadow = 0.0;
 		}
@@ -514,6 +509,8 @@ void Lighting ( SRay ray, SIntersection intersection, SMaterial properties, out 
 		
 		color += properties.Specular * Lights [index].Specular * specular * shadow;
 	}
+	
+	return color;
 }
 
 /**********************************************************************************************************************/
@@ -522,6 +519,8 @@ void Lighting ( SRay ray, SIntersection intersection, SMaterial properties, out 
 
 void main ( void )
 {
+	//-----------------------------------------------------------------------------------------------------------------
+	
 	SRay ray = GenerateRay ( );
 	
 	SIntersection intersection;
@@ -530,7 +529,7 @@ void main ( void )
 	
 	vec3 color = vec3 ( 0.0 );
 	
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 	
 	float start = 0.0, final = 0.0;
 	
@@ -538,15 +537,141 @@ void main ( void )
 	{
 		ray.Origin += ( start + 0.001 ) * ray.Direction;
 				
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------------------------------------
 		
 		if ( Raytrace ( ray, intersection, final - start ) )
 		{
-			SMaterial properties;
+			SMaterial primaryProperties;
 			
-			LoadTriangle ( intersection.Triangle, properties  );
+			LoadTriangle ( intersection.Triangle, primaryProperties );
 			
-			Lighting ( ray, intersection, properties, color );
+			//------------------------------- Calculating intersection point attributes -------------------------------
+			
+			vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
+					
+			vec3 normal = Interpolate ( intersection.Triangle.A.Normal,
+										intersection.Triangle.B.Normal,
+										intersection.Triangle.C.Normal,
+										intersection.Parameters.yz );
+										
+			vec3 reflection = reflect ( ray.Direction, normal );
+			
+			//------------------------------------ Calculating directional lighting -----------------------------------
+			
+			color += Lighting ( point, normal, reflection, primaryProperties );
+			
+			//------------------------------------------- Render reflections ------------------------------------------
+					
+			#ifdef RENDER_REFLECTIONS
+			
+			if ( any ( greaterThan ( primaryProperties.Reflective, Zero ) ) )
+			{
+				intersection.Parameters.x = BIG;
+
+				ray = SRay ( point + reflection * EPSILON, reflection );
+			                
+				final = IntersectBox ( ray );
+			                
+				if ( Raytrace ( ray, intersection, final ) )
+				{
+					SMaterial reflectionProperties;
+					
+					LoadTriangle ( intersection.Triangle, reflectionProperties );
+					
+					//--------------------------- Calculating intersection point attributes ---------------------------
+					
+					point = ray.Origin + intersection.Parameters.x * ray.Direction;
+							
+					normal = Interpolate ( intersection.Triangle.A.Normal,
+										   intersection.Triangle.B.Normal,
+										   intersection.Triangle.C.Normal,
+										   intersection.Parameters.yz );
+												
+					reflection = reflect ( ray.Direction, normal );
+					
+					//-------------------------------- Calculating directional lighting -------------------------------
+					
+					color += primaryProperties.Reflective * Lighting ( point,
+					                                                   normal,
+					                                                   reflection,
+					                                                   reflectionProperties );
+				}			
+			}
+				
+			#endif
+			
+			#ifdef RENDER_REFRACTIONS
+			
+			if ( any ( greaterThan ( primaryProperties.Refractive, Zero ) ) )
+			{
+				intersection.Parameters.x = BIG;
+				
+				vec3 refraction = refract ( ray.Direction, normal, 1.0 / primaryProperties.RefractIndex );
+
+				ray = SRay ( point + refraction * EPSILON, refraction );
+			                
+				final = IntersectBox ( ray );
+			                
+				if ( Raytrace ( ray, intersection, final ) )
+				{
+					LoadTriangle ( intersection.Triangle, primaryProperties );
+					
+					//--------------------------- Calculating intersection point attributes ---------------------------
+					
+					point = ray.Origin + intersection.Parameters.x * ray.Direction;
+							
+					normal = Interpolate ( intersection.Triangle.A.Normal,
+										   intersection.Triangle.B.Normal,
+										   intersection.Triangle.C.Normal,
+										   intersection.Parameters.yz );
+												
+					reflection = reflect ( ray.Direction, normal );
+					
+					//-------------------------------- Calculating directional lighting -------------------------------
+					
+					color += primaryProperties.Refractive * Lighting ( point,
+					                                                   normal,
+					                                                   reflection,
+					                                                   primaryProperties );
+					                                                   
+					//-------------------------------------------------------------------------------------------------
+					
+					refraction = refract ( ray.Direction, -normal, primaryProperties.RefractIndex );
+
+					ray = SRay ( point + refraction * EPSILON, refraction );
+				                
+					final = IntersectBox ( ray );
+					
+					intersection.Parameters.x = BIG;
+				                
+					if ( Raytrace ( ray, intersection, final ) )
+					{
+						SMaterial refractionProperties;
+						
+						LoadTriangle ( intersection.Triangle, refractionProperties );
+						
+						//--------------------------- Calculating intersection point attributes ---------------------------
+						
+						point = ray.Origin + intersection.Parameters.x * ray.Direction;
+								
+						normal = Interpolate ( intersection.Triangle.A.Normal,
+											   intersection.Triangle.B.Normal,
+											   intersection.Triangle.C.Normal,
+											   intersection.Parameters.yz );
+													
+						reflection = reflect ( ray.Direction, normal );
+						
+						//-------------------------------- Calculating directional lighting -------------------------------
+						
+						color += primaryProperties.Refractive * Lighting ( point,
+																		   normal,
+																		   reflection,
+																		   refractionProperties );
+					}
+				}			
+			}
+				
+			#endif
 		}
 	}
 							 
