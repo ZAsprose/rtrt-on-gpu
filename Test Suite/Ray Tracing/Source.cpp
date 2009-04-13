@@ -105,7 +105,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Sphere * sphere = new Sphere ( 2.0F, 100, 100, new Transform (), new Material () );
+	Sphere * sphere = new Sphere ( 2.0F, 50, 50, new Transform (), new Material () );
 
 	sphere->Transformation->SetScale ( Vector3D ( 1.0F, 2.0F, 3.0F ) );
 
@@ -113,7 +113,9 @@ int main ( void )
 
 	sphere->Transformation->SetOrientation( Vector3D ( 1.5F, 1.0F, 0.75F ) );
 
-	sphere->Properties->Color = Vector3D ( 0.5F, 0.5F, 0.0F );
+	sphere->Properties->Color = Vector3D ( 0.2F, 0.2F, 0.0F );
+
+	sphere->Properties->Refractive = Vector3D ( 0.8F, 0.8F, 0.8F );
 
 	sphere->Properties->Shininess = 8.0F;
 
@@ -127,6 +129,8 @@ int main ( void )
 	plane->Transformation->SetOrientation( Vector3D ( ONEPI, 0.0F, 0.0F ) );
 
 	plane->Properties->Color = Vector3D ( 0.0F, 0.5F, 0.5F );
+
+	//plane->Properties->Reflective = Vector3D ( 0.8F, 0.8F, 0.8F );
 
 	plane->Properties->Shininess = 32.0F;
 
@@ -152,14 +156,16 @@ int main ( void )
 
 	mesh->Tesselate ( );
 
-	mesh->Properties->Color = Vector3D ( 0.5F, 0.5F, 0.5F );
+	mesh->Properties->Color = Vector3D ( 0.1F, 0.1F, 0.1F );
+
+	mesh->Properties->Refractive = Vector3D ( 0.8F, 0.8F, 0.8F );
 
 	mesh->Properties->Shininess = 128.0F;
 
 
 	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ), Vector3D ( 10, 10, 10 ) ) );
 
-	scene->Primitives.push_back ( sphere );
+	//scene->Primitives.push_back ( sphere );
 	scene->Primitives.push_back ( plane );
 	scene->Primitives.push_back ( box );
 	scene->Primitives.push_back ( mesh );
