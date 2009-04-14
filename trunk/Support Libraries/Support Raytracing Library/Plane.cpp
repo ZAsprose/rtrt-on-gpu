@@ -32,34 +32,34 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 
-		Vertex * vertices [2][2];
+		Vertex * vertices [4];
 
-		vertices [0][0] = new Vertex (
+		vertices [0] = new Vertex (
 			Transformation->ForwardPoint ( Vector3D ( -HalfSize.X, -HalfSize.Y ) ),
-			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ) );
+			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ),
+			Vector2D ( 0.0F, 0.0F ) );
 
-		vertices [0][1] = new Vertex (
+		vertices [1] = new Vertex (
 			Transformation->ForwardPoint ( Vector3D ( -HalfSize.X, HalfSize.Y ) ),
-			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ) );
+			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ),
+			Vector2D ( 0.0F, 1.0F ) );
 
-		vertices [1][1] = new Vertex (
+		vertices [2] = new Vertex (
 			Transformation->ForwardPoint ( Vector3D ( HalfSize.X, HalfSize.Y ) ),
-			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ) );
+			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ),
+			Vector2D ( 1.0F, 1.0F ) );
 
-		vertices [1][0] = new Vertex (
+		vertices [3] = new Vertex (
 			Transformation->ForwardPoint ( Vector3D ( HalfSize.X, -HalfSize.Y ) ),
-			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ) );
+			Normalize ( Transformation->ForwardNormal ( Vector3D :: AxisZ ) ),
+			Vector2D ( 1.0F, 0.0F ) );
 
 		//-------------------------------------------------------------------------------
 
-		Triangles.push_back ( new Triangle ( vertices [0][0],
-			                                 vertices [0][1],
-											 vertices [1][1],
-											 Properties ) );
+		Triangles.push_back ( new Triangle ( vertices [0], vertices [1],
+											 vertices [3], Properties ) );
 		
-		Triangles.push_back ( new Triangle ( vertices [1][1],
-			                                 vertices [1][0],
-											 vertices [0][0],
-											 Properties ) );
+		Triangles.push_back ( new Triangle ( vertices [3], vertices [1],
+											 vertices [2], Properties ) );
 	}
 }

@@ -81,7 +81,7 @@ namespace Render
 
 			void SetViewport ( unsigned int = 512, unsigned int = 512 );
 
-			void SetFrustum ( float = ONEPI / 4.0F, float = 0.1F, float = 1000.0F );
+			void SetFrustum ( float = ONEPI / 3.0F, float = 0.1F, float = 1000.0F );
 
 			//----------------------------------- Apply Settings ----------------------------------
 

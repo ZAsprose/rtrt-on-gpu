@@ -78,4 +78,27 @@ namespace Render
 				return -1;
 		}
 	}
+
+	//--------------------------------- Load Data from TGA Format --------------------------------
+
+	TextureData2D * TextureData2D :: FromTGA ( const char * file )
+	{
+		TextureData2D * data = NULL;
+		
+		GLFWimage * image = new GLFWimage ( );
+
+		if ( glfwReadImage ( file, image, 0 ) )
+		{
+			data = new TextureData2D ( image->Width, image->Height, image->BytesPerPixel );
+
+			for ( int index = 0; index < data->Width * data->Height * data->Components; index++ )
+			{
+				( *data ) [index] = image->Data [index] / 255.0F;
+			}
+		}
+
+		glfwFreeImage ( image );
+
+		return data;
+	}
 }

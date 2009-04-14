@@ -178,6 +178,7 @@ namespace Raytracing
 							     &model->Vertices [vertex].X,
 								 &model->Vertices [vertex].Y,
 								 &model->Vertices [vertex].Z );
+
 						vertex++;
 					}
 					else

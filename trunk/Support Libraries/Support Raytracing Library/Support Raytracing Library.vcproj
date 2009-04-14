@@ -290,7 +290,7 @@
 				Name="Static Data"
 				>
 				<File
-					RelativePath=".\Data.cpp"
+					RelativePath=".\StaticData.cpp"
 					>
 				</File>
 			</Filter>
@@ -428,7 +428,7 @@
 				Name="Static Data"
 				>
 				<File
-					RelativePath=".\Data.h"
+					RelativePath=".\StaticData.h"
 					>
 				</File>
 			</Filter>

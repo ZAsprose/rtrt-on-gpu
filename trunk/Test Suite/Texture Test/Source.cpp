@@ -60,32 +60,34 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	TextureData2D * data1 = new TextureData2D ( 256, 512, 3 );
+	//TextureData2D * data1 = new TextureData2D ( 256, 512, 3 );
 
-	for ( int i = 0; i < 256; i++ )
-	{
-		for ( int j = 0; j < 512; j++ )
-		{
-			if ( ( i + j ) % 2 == 0 )
-				data1->Pixel < Vector3D > ( i, j ) = Vector3D :: Unit;
-			else
-				data1->Pixel < Vector3D > ( i, j ) = Vector3D :: Unit / 6.0F;
-		}
-	}
+	//for ( int i = 0; i < 256; i++ )
+	//{
+	//	for ( int j = 0; j < 512; j++ )
+	//	{
+	//		if ( ( i + j ) % 2 == 0 )
+	//			data1->Pixel < Vector3D > ( i, j ) = Vector3D :: Unit;
+	//		else
+	//			data1->Pixel < Vector3D > ( i, j ) = Vector3D :: Unit / 6.0F;
+	//	}
+	//}
 
-	for ( int i = 0; i < 256; i++ )
-	{
-		data1->Pixel < Vector3D > ( i, 0 ) = Vector3D :: AxisX;
+	//for ( int i = 0; i < 256; i++ )
+	//{
+	//	data1->Pixel < Vector3D > ( i, 0 ) = Vector3D :: AxisX;
 
-		data1->Pixel < Vector3D > ( i, 511 ) = Vector3D :: AxisX;
-	}
+	//	data1->Pixel < Vector3D > ( i, 511 ) = Vector3D :: AxisX;
+	//}
 
-	for ( int j = 0; j < 512; j++ )
-	{
-		data1->Pixel < Vector3D > ( 0, j ) = Vector3D :: AxisX;
+	//for ( int j = 0; j < 512; j++ )
+	//{
+	//	data1->Pixel < Vector3D > ( 0, j ) = Vector3D :: AxisX;
 
-		data1->Pixel < Vector3D > ( 255, j ) = Vector3D :: AxisX;
-	}
+	//	data1->Pixel < Vector3D > ( 255, j ) = Vector3D :: AxisX;
+	//}
+
+	TextureData2D * data1 = TextureData2D :: FromTGA ( "C:/test.tga" );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -128,9 +130,9 @@ int main ( void )
 
 	texture1.Setup();
 
-	Texture2D texture2 ( data2, 1, GL_TEXTURE_RECTANGLE_ARB );
+	//Texture2D texture2 ( data2, 1, GL_TEXTURE_RECTANGLE_ARB );
 
-	texture2.Setup();
+	//texture2.Setup();
 
 	//---------------------------------------------------------------------------------------------
 	
@@ -160,29 +162,29 @@ int main ( void )
 
 		glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( -1.0F, -1.0F );
-			glTexCoord2f( 0.0F,   512.0F );   glVertex2f ( -1.0F,  1.0F );
-			glTexCoord2f( 256.0F, 512.0F );   glVertex2f (  0.0F,  1.0F );
-			glTexCoord2f( 256.0F, 0.0F );     glVertex2f (  0.0F, -1.0F );
+			glTexCoord2f( 0.0F,     0.0F );      glVertex2f ( -1.0F, -1.0F );
+			glTexCoord2f( 0.0F,     1024.0F );   glVertex2f ( -1.0F,  1.0F );
+			glTexCoord2f( 1024.0F,  1024.0F );   glVertex2f (  1.0F,  1.0F );
+			glTexCoord2f( 1024.0F,  0.0F );      glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
 
-		texture2.Bind ( );
+		//texture2.Bind ( );
 
-		manager.Bind ( );
+		//manager.Bind ( );
 
-		manager.SetTexture ( "TestTexture", &texture2 );
+		//manager.SetTexture ( "TestTexture", &texture2 );
 
-		glBegin ( GL_QUADS );
+		//glBegin ( GL_QUADS );
 
-			glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( 0.0F, -1.0F );
-			glTexCoord2f( 0.0F,   512.5F );   glVertex2f ( 0.0F,  1.0F );
-			glTexCoord2f( 256.5F, 512.5F );   glVertex2f ( 1.0F,  1.0F );
-			glTexCoord2f( 256.5F, 0.0F );     glVertex2f ( 1.0F, -1.0F );
+		//	glTexCoord2f( 0.0F,   0.0F );     glVertex2f ( 0.0F, -1.0F );
+		//	glTexCoord2f( 0.0F,   512.5F );   glVertex2f ( 0.0F,  1.0F );
+		//	glTexCoord2f( 256.5F, 512.5F );   glVertex2f ( 1.0F,  1.0F );
+		//	glTexCoord2f( 256.5F, 0.0F );     glVertex2f ( 1.0F, -1.0F );
 
-		glEnd ( );
+		//glEnd ( );
 
-		manager.Unbind ( );
+		//manager.Unbind ( );
 
         glfwSwapBuffers();
 

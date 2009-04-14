@@ -24,9 +24,13 @@ namespace Raytracing
 			
 			Vector3D Normal;
 
+			Vector2D TexCoord;
+
 			//------------------------------------ Constructor ------------------------------------
 			
-			Vertex ( const Vector3D& = Vector3D :: Zero, const Vector3D& = Vector3D :: AxisZ );
+			Vertex ( const Vector3D& = Vector3D :: Zero,
+				     const Vector3D& = Vector3D :: AxisZ,
+					 const Vector2D& = Vector2D :: Zero );
 
 			//--------------------------------------- Draw ----------------------------------------
 
