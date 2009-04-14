@@ -10,6 +10,8 @@
 
 #include <GLee.h>
 
+#include <GL/glfw.h>
+
 namespace Render
 {
 	class TextureData2D
@@ -66,7 +68,11 @@ namespace Render
 
 			//------------------------------------ Data Upload ------------------------------------
 
-			void Upload ( int target = GL_TEXTURE_3D );
+			void Upload ( int target = GL_TEXTURE_2D );
+
+			//----------------------------- Load Data from TGA Format -----------------------------
+
+			static TextureData2D * FromTGA ( const char * file );
 	};
 
 	//------------------------------------- Template Functions ------------------------------------

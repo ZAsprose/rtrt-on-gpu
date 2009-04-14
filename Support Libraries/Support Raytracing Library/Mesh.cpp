@@ -31,26 +31,55 @@ namespace Raytracing
 		}
 
 		//-------------------------------------------------------------------------------
-
-		for ( int index = 0; index < Model->FaceNumber; index++ )
+		
+		if ( Model->TextureNumber != 0 )
 		{
-			Vertex * vertexA = new Vertex ( Transformation->ForwardPoint (
-				Model->Vertices [ Model->Faces [index].Vertex [A] - 1 ] ),
-				Normalize ( Transformation->ForwardNormal (
-				Model->Normals [ Model->Faces [index].Normal [A] - 1 ] ) ) );
+			for ( int index = 0; index < Model->FaceNumber; index++ )
+			{
+				Vertex * vertexA = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [A] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [A] - 1 ] ) ),
+					Model->Textures [ Model->Faces [index].Texture [A] - 1 ] );
 
-			Vertex * vertexB = new Vertex ( Transformation->ForwardPoint (
-				Model->Vertices [ Model->Faces [index].Vertex [B] - 1 ] ),
-				Normalize ( Transformation->ForwardNormal (
-				Model->Normals [ Model->Faces [index].Normal [B] - 1 ] ) ) );
+				Vertex * vertexB = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [B] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [B] - 1 ] ) ),
+					Model->Textures [ Model->Faces [index].Texture [B] - 1 ] );
 
-			Vertex * vertexC = new Vertex ( Transformation->ForwardPoint (
-				Model->Vertices [ Model->Faces [index].Vertex [C] - 1 ] ),
-				Normalize ( Transformation->ForwardNormal (
-				Model->Normals [ Model->Faces [index].Normal [C] - 1 ] ) ) );
-			
-			Triangles.push_back (
-				new Triangle ( vertexA, vertexB, vertexC, Properties ) );
+				Vertex * vertexC = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [C] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [C] - 1 ] ) ),
+					Model->Textures [ Model->Faces [index].Texture [C] - 1 ] );
+				
+				Triangles.push_back (
+					new Triangle ( vertexA, vertexB, vertexC, Properties ) );
+			}
+		}
+		else
+		{
+			for ( int index = 0; index < Model->FaceNumber; index++ )
+			{
+				Vertex * vertexA = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [A] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [A] - 1 ] ) ) );
+
+				Vertex * vertexB = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [B] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [B] - 1 ] ) ) );
+
+				Vertex * vertexC = new Vertex ( Transformation->ForwardPoint (
+					Model->Vertices [ Model->Faces [index].Vertex [C] - 1 ] ),
+					Normalize ( Transformation->ForwardNormal (
+					Model->Normals [ Model->Faces [index].Normal [C] - 1 ] ) ) );
+				
+				Triangles.push_back (
+					new Triangle ( vertexA, vertexB, vertexC, Properties ) );
+			}
 		}
 	}
 }

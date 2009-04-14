@@ -10,7 +10,11 @@
 
 #include <Vector3D.h>
 
+#include <Texture2D.h>
+
 using namespace Math;
+
+using namespace Render;
 
 namespace Raytracing
 {
@@ -25,9 +29,7 @@ namespace Raytracing
 			Vector3D Diffuse;
 
 			Vector3D Specular;
-
-			Vector3D Color;
-
+			
 			float Shininess;
 
 			//----------------------------- Reflection and Refraction -----------------------------
@@ -38,20 +40,27 @@ namespace Raytracing
 			
 			float RefractIndex;
 
+			//----------------------------------- Raster Texture ----------------------------------
+			
+			Vector2D Scale;
+
+			Texture2D * Texture;
+
 			//-------------------------------- Material Identifier --------------------------------
 
 			int Identifier;
 
 			//------------------------------------ Constructor ------------------------------------
 			
-			Material ( const Vector3D& = Vector3D :: Unit,
-				       const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
+			Material ( const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
 					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
 					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
 					   float = 32.0F,
 					   const Vector3D& = Vector3D :: Zero,
 					   const Vector3D& = Vector3D :: Zero,
-					   float = 1.5F );
+					   float = 1.5F,
+					   Texture2D * = NULL,
+					   const Vector2D& = Vector2D :: Unit );
 			
 			//----------------------------------- Apply Settings ----------------------------------
 

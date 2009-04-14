@@ -98,7 +98,7 @@ int main ( void )
 
 	sphere->Transformation->SetOrientation( Vector3D ( 1.5F, 1.0F, 0.75F ) );
 
-	sphere->Properties->Color = Vector3D ( 0.5F, 0.5F, 0.0F );
+	sphere->Properties->Diffuse = Vector3D ( 0.5F, 0.5F, 0.0F );
 
 	sphere->Tesselate ( );
 
@@ -109,7 +109,7 @@ int main ( void )
 
 	plane->Transformation->SetOrientation( Vector3D ( 2.8F, 0.0F, 0.0F ) );
 
-	plane->Properties->Color = Vector3D ( 0.0F, 0.5F, 0.5F );
+	plane->Properties->Diffuse = Vector3D ( 0.0F, 0.5F, 0.5F );
 
 	plane->Tesselate ( );
 
@@ -120,7 +120,7 @@ int main ( void )
 
 	box->Transformation->SetOrientation( Vector3D ( 2.3F, 1.2F, 0.5F ) );
 
-	box->Properties->Color = Vector3D ( 0.5F, 0.0F, 0.5F );
+	box->Properties->Diffuse = Vector3D ( 0.5F, 0.0F, 0.5F );
 
 	box->Tesselate ( );
 

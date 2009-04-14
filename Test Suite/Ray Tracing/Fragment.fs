@@ -4,13 +4,15 @@
 /************************************************** RENDERING CONFIG **************************************************/
 /**********************************************************************************************************************/
 
-#define LIGHTING_SHADOWS
-
-#define LIGHTING_TWO_SIDED
+#define RENDER_SHADOWS_
 
 #define RENDER_REFLECTIONS
 
 #define RENDER_REFRACTIONS
+
+#define USE_TEXTURES
+
+#define LIGHTING_TWO_SIDED_
 
 /**********************************************************************************************************************/
 /*************************************************** DATA STRUCTURES **************************************************/
@@ -30,6 +32,8 @@ struct SVertex
 	vec3 Position;
 	
 	vec3 Normal;
+	
+	vec2 TexCoord;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -91,9 +95,7 @@ struct SMaterial
 	vec3 Diffuse;
     
 	vec3 Specular;
-    
-	vec3 Color;
-	
+		
 	vec3 Reflective;
     
 	vec3 Refractive;
@@ -101,6 +103,10 @@ struct SMaterial
 	float Shininess;
 	
 	float RefractIndex;
+	
+	int Texture;
+	
+	vec2 Scale;
 };
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -144,6 +150,8 @@ uniform sampler2DRect PositionTexture;
 
 uniform sampler2DRect NormalTexture;
 
+uniform sampler2DRect TexCoordTexture;
+
 uniform float VertexTextureSize;
 
 uniform float VertexTextureStep;
@@ -153,6 +161,16 @@ uniform float VertexTextureStep;
 uniform sampler1D MaterialTexture;
 
 uniform float MaterialTextureStep;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+uniform sampler2D ImageTexture0;
+
+uniform sampler2D ImageTexture1;
+
+uniform sampler2D ImageTexture2;
+
+uniform sampler2D ImageTexture3;
 
 /**********************************************************************************************************************/
 /************************************************** SHADER CONSTANTS **************************************************/
@@ -180,14 +198,21 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 //---------------------------------------------------------------------------------------------------------------------
 
+#define InsideBox( point ) ( all ( lessThan ( point, Grid.Maximum ) ) && all ( greaterThan ( point, Grid.Minimum ) ) )
+
+//---------------------------------------------------------------------------------------------------------------------
+
 #define WorldToVoxel( point ) floor ( ( point - Grid.Minimum ) / Grid.VoxelSize )
 
 #define VoxelToWorld( voxel ) ( Grid.Minimum + voxel * Grid.VoxelSize )
 
-#define Interpolate( A, B, C, coords ) ( A * ( 1.0 - coords.x - coords.y ) + B * coords.x + C * coords.y )
+//---------------------------------------------------------------------------------------------------------------------
 
-#define InsideBox( point ) ( all ( lessThanEqual ( point, Grid.Maximum ) ) && \
-                             all ( greaterThanEqual ( point, Grid.Minimum ) ) )					
+#define ClearIntersection( intersection ) intersection.Parameters.x = BIG
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define Interpolate( A, B, C, coords ) ( A * ( 1.0 - coords.x - coords.y ) + B * coords.x + C * coords.y )		
 
 /**********************************************************************************************************************/
 /************************************************* SUPPORT FUNCTIONS **************************************************/
@@ -206,63 +231,92 @@ SRay GenerateRay ( void )
 /*********************************************** DATA LOADING FUNCTIONS ***********************************************/
 /**********************************************************************************************************************/
 
-void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
+float LoadTriangle ( inout STriangle triangle )
 {
-	//------------------------------------------- Reading triangle normals --------------------------------------------
+	//---------------------------------- Reading triangle normals and texture coords ----------------------------------
             
 	float offset = triangle.Offset;
             
 	vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                floor ( offset * VertexTextureStep ) ) );
+	                                                
+	#ifdef USE_TEXTURES
+	
+	vec2 TC = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
+	                                                         floor ( offset * VertexTextureStep ) ) ) );	
+	
+	#endif
+	
 	offset--;
-						
+	                                                
 	vec4 NB = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
-                                                    floor ( offset * VertexTextureStep ) ) );
+	                                                floor ( offset * VertexTextureStep ) ) );
+	                                                
+	#ifdef USE_TEXTURES
+	
+	vec2 TB = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
+	                                                         floor ( offset * VertexTextureStep ) ) ) );	
+	
+	#endif
+	
 	offset--;
-						
+	                                                       
 	vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
-                                                    floor ( offset * VertexTextureStep ) ) );                                                
+	                                                floor ( offset * VertexTextureStep ) ) );      
+	                                                
+	#ifdef USE_TEXTURES
+	
+	vec2 TA = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
+	                                                         floor ( offset * VertexTextureStep ) ) ) );	
+	
+	#endif
 						
-	triangle.A.Normal = vec3 ( NA ); 
-				
+	triangle.A.Normal = vec3 ( NA );
+					
 	triangle.B.Normal = vec3 ( NB );
 				
 	triangle.C.Normal = vec3 ( NC );
 	
+	#ifdef USE_TEXTURES
+	
+	triangle.A.TexCoord = TA; 
+	
+	triangle.B.TexCoord = TB;
+	
+	triangle.C.TexCoord = TC;
+	
+	#endif
+	
+	return NC.w;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
+{	
 	//------------------------------------- Reading triangle material properties --------------------------------------
 	
-	offset = NC.w;
+	float offset = LoadTriangle ( triangle );
 	
-	vec3 ambient = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	vec4 ambient =  texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
-	offset++;
+	vec4 diffuse = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
-	vec3 diffuse = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	vec4 specular = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
-	offset++;
+	vec4 reflective = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
-	vec3 specular = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
+	vec4 refractive = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
-	offset++;
-	
-	vec3 color = vec3 ( texture1D ( MaterialTexture, offset * MaterialTextureStep ) );
-	
-	offset++;
-	
-	vec4 reflective = texture1D ( MaterialTexture, offset * MaterialTextureStep );
-	
-	offset++;
-	
-	vec4 refractive = texture1D ( MaterialTexture, offset * MaterialTextureStep );
-	
-	properties = SMaterial ( ambient,
-	                         diffuse,
-	                         specular,
-	                         color,
-	                         reflective.xyz,
-	                         refractive.xyz,
+	properties = SMaterial ( vec3 ( ambient ),
+	                         vec3 ( diffuse ),
+	                         vec3 ( specular ),
+	                         vec3 ( reflective ),
+	                         vec3 ( refractive ),
 	                         reflective.w,
-	                         refractive.w );
+	                         refractive.w,
+	                         int ( ambient.w ),
+	                         vec2 ( diffuse.w, specular.w ) );
 }
 
 /**********************************************************************************************************************/
@@ -310,7 +364,7 @@ bool IntersectBox ( SRay ray, out float start, out float final )
 
 bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 {
-	//------------------------------------------------ Initialization -------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 	
 	vec3 AB = triangle.B.Position - triangle.A.Position;
 	
@@ -318,7 +372,7 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 	
 	vec3 AO = ray.Origin - triangle.A.Position;
 	
-	//------------------------------------------------ Initialization -------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 	
 	vec3 P = cross ( ray.Direction, AC );
 
@@ -326,7 +380,7 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 	
 	result = vec3 ( dot ( Q, AC ), dot ( P, AO ), dot ( Q, ray.Direction ) ) / dot ( P, AB );
 	
-	//------------------------------------------------ Initialization -------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 	
 	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
 }
@@ -405,10 +459,15 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			vec3 PC = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
 																	 floor ( offset * VertexTextureStep ) ) ) );
 			
-			STriangle triangle = STriangle ( SVertex ( PA, Zero ),
-			                                 SVertex ( PB, Zero ),
-			                                 SVertex ( PC, Zero ),
-			                                 offset );
+			STriangle triangle;
+			
+			triangle.A.Position = PA;
+			
+			triangle.B.Position = PB;
+			
+			triangle.C.Position = PC;
+			
+			triangle.Offset = offset;
             
             //------------------------------- Testing triangle for ray intersection -----------------------------------
 			
@@ -442,7 +501,15 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 /************************************************* LIGHTING FUNCTIONS *************************************************/
 /**********************************************************************************************************************/
 
+#ifdef USE_TEXTURES
+		
+vec3 Lighting ( vec3 point, vec3 normal, vec2 texcoord, vec3 reflection, SMaterial properties )
+		
+#else
+		
 vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial properties )
+		
+#endif
 {
 	vec3 color = vec3 ( 0.0 );
 	
@@ -460,11 +527,11 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial properties )
 		
 		float shadow = 1.0;
 		
-		#ifdef LIGHTING_SHADOWS
+		#ifdef RENDER_SHADOWS
 		
 		SIntersection intersection;
 		
-		intersection.Parameters.x = BIG;
+		ClearIntersection ( intersection );
 
 		SRay ray = SRay ( point + light * EPSILON, light );
 		
@@ -493,7 +560,27 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial properties )
 		
 		#endif
 		
-		color += properties.Diffuse * properties.Color * Lights [index].Diffuse * diffuse * shadow;
+		#ifdef USE_TEXTURES
+		
+		vec3 textures [5];
+		
+		textures [0] = Unit;
+		
+		textures [1] = vec3 ( texture2D ( ImageTexture0, fract ( texcoord * properties.Scale ) ) );
+		
+		textures [2] = vec3 ( texture2D ( ImageTexture1, fract ( texcoord * properties.Scale ) ) );
+		
+		textures [3] = vec3 ( texture2D ( ImageTexture2, fract ( texcoord * properties.Scale ) ) );
+		
+		textures [4] = vec3 ( texture2D ( ImageTexture3, fract ( texcoord * properties.Scale ) ) );
+		
+		color += properties.Diffuse * textures [properties.Texture] * Lights [index].Diffuse * diffuse * shadow;
+		
+		#else
+		
+		color += properties.Diffuse * Lights [index].Diffuse * diffuse * shadow;
+		
+		#endif
 		
 		//------------------------------------- Calculating specular contribution -------------------------------------			
 		
@@ -519,82 +606,111 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial properties )
 
 void main ( void )
 {
-	//-----------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------- Generating primary ray --------------------------------------------
 	
 	SRay ray = GenerateRay ( );
 	
-	SIntersection intersection;
-		
-	intersection.Parameters.x = BIG;
+	vec3 color = vec3(0.0);
 	
-	vec3 color = vec3 ( 0.0 );
-	
-	//-----------------------------------------------------------------------------------------------------------------
+	//-------------------------------- Intersecting primary ray with scene bounding box -------------------------------
 	
 	float start = 0.0, final = 0.0;
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + 0.001 ) * ray.Direction;
+		ray.Origin += ( start + EPSILON ) * ray.Direction;
 				
-		//-------------------------------------------------------------------------------------------------------------
+		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
+		
+		SIntersection intersection;
+			
+		ClearIntersection ( intersection );
 		
 		if ( Raytrace ( ray, intersection, final - start ) )
 		{
-			SMaterial primaryProperties;
+            //-------------------------- Loading vertices attributes and material properties --------------------------
 			
-			LoadTriangle ( intersection.Triangle, primaryProperties );
+			SMaterial primaryMaterial;
+			
+			LoadTriangle ( intersection.Triangle, primaryMaterial );
 			
 			//------------------------------- Calculating intersection point attributes -------------------------------
 			
 			vec3 point = ray.Origin + intersection.Parameters.x * ray.Direction;
 					
-			vec3 normal = Interpolate ( intersection.Triangle.A.Normal,
-										intersection.Triangle.B.Normal,
-										intersection.Triangle.C.Normal,
-										intersection.Parameters.yz );
+			vec3 normal = Interpolate ( intersection.Triangle.A.Normal, intersection.Triangle.B.Normal,
+										intersection.Triangle.C.Normal, intersection.Parameters.yz );
 										
-			vec3 reflection = reflect ( ray.Direction, normal );
-			
+			#ifdef USE_TEXTURES
+
+			vec2 texcoord = Interpolate ( intersection.Triangle.A.TexCoord, intersection.Triangle.B.TexCoord,
+										  intersection.Triangle.C.TexCoord, intersection.Parameters.yz );					
+					
+			#endif
+										
+			vec3 reflection = reflect ( ray.Direction, normal );          
+            
 			//------------------------------------ Calculating directional lighting -----------------------------------
 			
-			color += Lighting ( point, normal, reflection, primaryProperties );
-			
-			//------------------------------------------- Render reflections ------------------------------------------
+			#ifdef USE_TEXTURES
+
+			color += Lighting ( point, normal, texcoord, reflection, primaryMaterial );					
+							
+			#else	
+								
+			color += Lighting ( point, normal, reflection, primaryMaterial );
 					
+			#endif
+			
 			#ifdef RENDER_REFLECTIONS
 			
-			if ( any ( greaterThan ( primaryProperties.Reflective, Zero ) ) )
+			if ( any ( greaterThan ( primaryMaterial.Reflective, Zero ) ) )
 			{
-				intersection.Parameters.x = BIG;
-
-				ray = SRay ( point + reflection * EPSILON, reflection );
+                //------------------------------------- Generating reflection ray -------------------------------------
+                
+                ray = SRay ( point + reflection * EPSILON, reflection );
 			                
 				final = IntersectBox ( ray );
+                
+                //--------------------- Testing reflection ray for intersection with scene objects --------------------
+                
+                ClearIntersection ( intersection );
 			                
 				if ( Raytrace ( ray, intersection, final ) )
 				{
-					SMaterial reflectionProperties;
+                    //---------------------- Loading vertices attributes and material properties ----------------------
+                    
+					SMaterial reflectMaterial;
 					
-					LoadTriangle ( intersection.Triangle, reflectionProperties );
-					
+					LoadTriangle ( intersection.Triangle, reflectMaterial );
+												
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					
 					point = ray.Origin + intersection.Parameters.x * ray.Direction;
 							
-					normal = Interpolate ( intersection.Triangle.A.Normal,
-										   intersection.Triangle.B.Normal,
-										   intersection.Triangle.C.Normal,
-										   intersection.Parameters.yz );
+					normal = Interpolate ( intersection.Triangle.A.Normal, intersection.Triangle.B.Normal,
+										   intersection.Triangle.C.Normal, intersection.Parameters.yz );
+										   
+					#ifdef USE_TEXTURES
+
+					vec2 texcoord = Interpolate ( intersection.Triangle.A.TexCoord, intersection.Triangle.B.TexCoord,
+												  intersection.Triangle.C.TexCoord, intersection.Parameters.yz );					
+							
+					#endif
 												
-					reflection = reflect ( ray.Direction, normal );
+					reflection = reflect ( ray.Direction, normal );                  
 					
 					//-------------------------------- Calculating directional lighting -------------------------------
 					
-					color += primaryProperties.Reflective * Lighting ( point,
-					                                                   normal,
-					                                                   reflection,
-					                                                   reflectionProperties );
+					#ifdef USE_TEXTURES
+
+					color += primaryMaterial.Reflective * Lighting ( point, normal, texcoord, reflection, reflectMaterial );					
+							
+					#else	
+								
+					color += primaryMaterial.Reflective * Lighting ( point, normal, reflection, reflectMaterial );
+					
+					#endif	
 				}			
 			}
 				
@@ -602,71 +718,101 @@ void main ( void )
 			
 			#ifdef RENDER_REFRACTIONS
 			
-			if ( any ( greaterThan ( primaryProperties.Refractive, Zero ) ) )
+			if ( any ( greaterThan ( primaryMaterial.Refractive, Zero ) ) )
 			{
-				intersection.Parameters.x = BIG;
+                //---------------------------------- Generating first refraction ray ----------------------------------
 				
-				vec3 refraction = refract ( ray.Direction, normal, 1.0 / primaryProperties.RefractIndex );
+                vec3 refraction = refract ( ray.Direction, normal, 1.0 / primaryMaterial.RefractIndex );
 
 				ray = SRay ( point + refraction * EPSILON, refraction );
 			                
 				final = IntersectBox ( ray );
+				
+                //------------------ Testing first refraction ray for intersection with scene objects -----------------
+                
+                ClearIntersection ( intersection );
 			                
 				if ( Raytrace ( ray, intersection, final ) )
 				{
-					LoadTriangle ( intersection.Triangle, primaryProperties );
+                    //---------------------------------- Loading vertices attributes ----------------------------------
+				
+					LoadTriangle ( intersection.Triangle );
 					
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					
 					point = ray.Origin + intersection.Parameters.x * ray.Direction;
 							
-					normal = Interpolate ( intersection.Triangle.A.Normal,
-										   intersection.Triangle.B.Normal,
-										   intersection.Triangle.C.Normal,
-										   intersection.Parameters.yz );
+					normal = Interpolate ( intersection.Triangle.A.Normal, intersection.Triangle.B.Normal,
+										   intersection.Triangle.C.Normal, intersection.Parameters.yz );
+										   
+					#ifdef USE_TEXTURES
+
+					vec2 texcoord = Interpolate ( intersection.Triangle.A.TexCoord, intersection.Triangle.B.TexCoord,
+												  intersection.Triangle.C.TexCoord, intersection.Parameters.yz );					
+							
+					#endif										 
 												
 					reflection = reflect ( ray.Direction, normal );
-					
+                
 					//-------------------------------- Calculating directional lighting -------------------------------
 					
-					color += primaryProperties.Refractive * Lighting ( point,
-					                                                   normal,
-					                                                   reflection,
-					                                                   primaryProperties );
-					                                                   
-					//-------------------------------------------------------------------------------------------------
+					#ifdef USE_TEXTURES
+
+					color += primaryMaterial.Refractive * Lighting ( point, normal, texcoord, reflection, primaryMaterial );					
+							
+					#else				
 					
-					refraction = refract ( ray.Direction, -normal, primaryProperties.RefractIndex );
+					color += primaryMaterial.Refractive * Lighting ( point, normal, reflection, primaryMaterial );
+					
+					#endif
+					                                                   
+					//-------------------------------- Generating second refraction ray -------------------------------
+					
+					refraction = refract ( ray.Direction, -normal, primaryMaterial.RefractIndex );
 
 					ray = SRay ( point + refraction * EPSILON, refraction );
 				                
 					final = IntersectBox ( ray );
 					
-					intersection.Parameters.x = BIG;
+                    //--------------- Testing second refraction ray for intersection with scene objects ---------------
+                    
+                    ClearIntersection ( intersection );
 				                
 					if ( Raytrace ( ray, intersection, final ) )
 					{
-						SMaterial refractionProperties;
+                        //-------------------- Loading vertices attributes and material properties --------------------
+                        
+						SMaterial refractMaterial;
 						
-						LoadTriangle ( intersection.Triangle, refractionProperties );
+						LoadTriangle ( intersection.Triangle, refractMaterial );
 						
-						//--------------------------- Calculating intersection point attributes ---------------------------
+						//------------------------- Calculating intersection point attributes -------------------------
 						
 						point = ray.Origin + intersection.Parameters.x * ray.Direction;
 								
-						normal = Interpolate ( intersection.Triangle.A.Normal,
-											   intersection.Triangle.B.Normal,
-											   intersection.Triangle.C.Normal,
-											   intersection.Parameters.yz );
+						normal = Interpolate ( intersection.Triangle.A.Normal, intersection.Triangle.B.Normal,
+											   intersection.Triangle.C.Normal, intersection.Parameters.yz );
+											   
+						#ifdef USE_TEXTURES
+
+						vec2 texcoord = Interpolate ( intersection.Triangle.A.TexCoord, intersection.Triangle.B.TexCoord,
+													  intersection.Triangle.C.TexCoord, intersection.Parameters.yz );					
+								
+						#endif											   
 													
 						reflection = reflect ( ray.Direction, normal );
 						
-						//-------------------------------- Calculating directional lighting -------------------------------
+						//------------------------------ Calculating directional lighting -----------------------------
 						
-						color += primaryProperties.Refractive * Lighting ( point,
-																		   normal,
-																		   reflection,
-																		   refractionProperties );
+						#ifdef USE_TEXTURES
+
+						color += primaryMaterial.Refractive * Lighting ( point, normal, texcoord, reflection, refractMaterial );				
+							
+						#else
+						
+						color += primaryMaterial.Refractive * Lighting ( point, normal, reflection, refractMaterial );
+								
+						#endif											
 					}
 				}			
 			}

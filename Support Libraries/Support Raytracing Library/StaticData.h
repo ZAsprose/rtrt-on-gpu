@@ -4,6 +4,10 @@
 
 #pragma once
 
+#ifndef _STATIC_DATA_
+
+#define _STATIC_DATA_
+
 #include <Texture1D.h>
 
 #include <Texture2D.h>
@@ -18,7 +22,7 @@ using namespace Render;
 
 namespace Raytracing
 {
-	class Data
+	class StaticData
 	{
 		public:
 
@@ -34,6 +38,8 @@ namespace Raytracing
 
 			static const unsigned NormalUnit;
 
+			static const unsigned TexCoordUnit;
+
 			static const unsigned MaterialUnit;
 
 			//----------------------------------- Data Textures -----------------------------------
@@ -44,13 +50,15 @@ namespace Raytracing
 
 			Texture2D * NormalTexture;
 
+			Texture2D * TexCoordTexture;
+
 			Texture1D * MaterialTexture;
 
 			//---------------------------- Constructor and Destructor -----------------------------
 
-			Data ( void );
+			StaticData ( void );
 
-			~Data ( void );
+			~StaticData ( void );
 
 			//----------------------------- Load Static Texture Data ------------------------------
 
@@ -61,3 +69,5 @@ namespace Raytracing
 			void SetShaderData ( ShaderManager * );
 	};
 }
+
+#endif

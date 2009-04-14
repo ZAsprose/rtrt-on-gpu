@@ -22,7 +22,7 @@
 
 #include <Mesh.h>
 
-#include <Data.h>
+#include <StaticData.h>
 
 using namespace Math;
 
@@ -110,7 +110,7 @@ int main ( void )
 
 	mesh->Tesselate ( );
 
-	mesh->Properties->Color = Vector3D ( 0.8F, 0.8F, 0.0F );
+	mesh->Properties->Diffuse = Vector3D ( 0.8F, 0.8F, 0.0F );
 
 	mesh->Properties->Shininess = 128.0F;
 
@@ -124,7 +124,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	Data * data = new Data ( );
+	StaticData * data = new StaticData ( );
 
 	data->SetupTextures ( scene );
 

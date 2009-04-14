@@ -36,7 +36,7 @@ namespace Raytracing
 			
 			vector < Primitive * > Primitives;
 
-			//----------------------------------- Virtual Viewer ----------------------------------
+			//---------------------------------- Virtual Viewer -----------------------------------
 			
 			Camera * Viewer;
 
@@ -44,7 +44,7 @@ namespace Raytracing
 
 			Volume * Box;
 
-			//------------------------------------ Uniform Grid -----------------------------------
+			//----------------------------------- Uniform Grid ------------------------------------
 			
 			UniformGrid * Grid;
 
@@ -62,7 +62,7 @@ namespace Raytracing
 			
 			void BuildGrid ( int, int, int );
 
-			//----------------------------------- Apply Settings ----------------------------------
+			//---------------------------------- Apply Settings -----------------------------------
 
 			void SetShaderData ( ShaderManager * );
 	};

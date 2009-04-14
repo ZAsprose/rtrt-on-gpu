@@ -2,55 +2,69 @@
  * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
  */
 
-#include "Data.h"
+#include "StaticData.h"
 
 namespace Raytracing
 {
 	//------------------------------------------- Constant Parameters --------------------------------------------
 
-	const unsigned Data :: VertexSize = 1024;
+	const unsigned StaticData :: VertexSize = 1024;
 
-	const unsigned Data :: MaterialSize = 1024;
+	const unsigned StaticData :: MaterialSize = 1024;
 	
-	const unsigned Data :: VoxelUnit = 0;
+	const unsigned StaticData :: VoxelUnit = 8;
 	
-	const unsigned Data :: PositionUnit = 1;
+	const unsigned StaticData :: PositionUnit = 9;
 	
-	const unsigned Data :: NormalUnit = 2;
+	const unsigned StaticData :: NormalUnit = 10;
 
-	const unsigned Data :: MaterialUnit = 3;
+	const unsigned StaticData :: TexCoordUnit = 11;
+
+	const unsigned StaticData :: MaterialUnit = 12;
 
 	//---------------------------------------- Constructor and Destructor ----------------------------------------
 	
-	Data :: Data ( void )
+	StaticData :: StaticData ( void )
 	{
 		VoxelTexture = new Texture3D ( VoxelUnit );
+
+		//-------------------------------------------------------------------------------
 		
 		PositionTexture = new Texture2D ( PositionUnit, GL_TEXTURE_RECTANGLE_ARB );
 		
 		NormalTexture = new Texture2D ( NormalUnit, GL_TEXTURE_RECTANGLE_ARB );
 
+		TexCoordTexture = new Texture2D ( TexCoordUnit, GL_TEXTURE_RECTANGLE_ARB );
+
 		MaterialTexture = new Texture1D ( MaterialUnit );
+
+		//-------------------------------------------------------------------------------
 
 		PositionTexture->Data = new TextureData2D ( VertexSize, VertexSize, 3 );
 
 		NormalTexture->Data = new TextureData2D ( VertexSize, VertexSize, 4 );
 
+		TexCoordTexture->Data =  new TextureData2D ( VertexSize, VertexSize, 3 );
+
 		MaterialTexture->Data = new TextureData1D ( MaterialSize, 4 );
 	}
 
-	Data :: ~Data ( void )
+	StaticData :: ~StaticData ( void )
 	{
 		delete VoxelTexture;
 
 		delete PositionTexture;
 
 		delete NormalTexture;
+
+		delete TexCoordTexture;
+
+		delete MaterialTexture;
 	}
 
 	//--------------------------------------------- Data Generation ----------------------------------------------
 
-	void Data :: SetupTextures ( Scene * scene )
+	void StaticData :: SetupTextures ( Scene * scene )
 	{
 		//-------------------------------- Generating material data -------------------------------
 
@@ -60,17 +74,25 @@ namespace Raytracing
 		{
 			scene->Primitives [i]->Properties->Identifier = offset;
 
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
-				scene->Primitives [i]->Properties->Ambient;
+			if ( scene->Primitives [i]->Properties->Texture == NULL )
+			{
+				MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
+					Vector4D ( scene->Primitives [i]->Properties->Ambient, 0 );
+			}
+			else
+			{
+				MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
+					Vector4D ( scene->Primitives [i]->Properties->Ambient,
+					           scene->Primitives [i]->Properties->Texture->GetUnit ( ) + 1 );
+			}
 
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
-				scene->Primitives [i]->Properties->Diffuse;
+			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
+				Vector4D ( scene->Primitives [i]->Properties->Diffuse,
+				           scene->Primitives [i]->Properties->Scale.X );
 
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
-				scene->Primitives [i]->Properties->Specular;
-
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
-				scene->Primitives [i]->Properties->Color;
+			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
+				Vector4D ( scene->Primitives [i]->Properties->Specular,
+				           scene->Primitives [i]->Properties->Scale.Y );
 
 			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
 				Vector4D ( scene->Primitives [i]->Properties->Reflective,
@@ -107,27 +129,40 @@ namespace Raytracing
 						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Position;
 
-						NormalTexture->Data->Pixel < Vector3D > ( offset++ ) = 
+						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Normal;
+
+						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) = 
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->TexCoord;
+
+						//-------------------------------------------------------------------------
 						
 						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Position;
 
-						NormalTexture->Data->Pixel < Vector3D > ( offset++ ) = 
+						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Normal;
+
+						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) = 
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->TexCoord;
+
+						//-------------------------------------------------------------------------
 
 						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Position;
 
-						NormalTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (  
+						NormalTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (  
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Normal,
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->Properties->Identifier );
+
+						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) =
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->TexCoord;
 					}
 				}
 			}
 		}
 
-		//------------------------------------ Setup textures -------------------------------------
+		//---------------------------------- Setup data textures ----------------------------------
 
 		VoxelTexture->Setup ( );
 
@@ -135,18 +170,22 @@ namespace Raytracing
 
 		NormalTexture->Setup ( );
 
+		TexCoordTexture->Setup ( );
+
 		MaterialTexture->Setup ( );
 	}
 
-	//---------------------------------------- Apply Settings ---------------------------------------
+	//---------------------------------------------- Apply Settings ----------------------------------------------
 
-	void Data :: SetShaderData ( ShaderManager * manager )
+	void StaticData :: SetShaderData ( ShaderManager * manager )
 	{
 		manager->SetTexture ( "VoxelTexture", VoxelTexture );
 
 		manager->SetTexture ( "PositionTexture", PositionTexture );
 
 		manager->SetTexture ( "NormalTexture", NormalTexture );
+
+		manager->SetTexture ( "TexCoordTexture", TexCoordTexture );
 
 		manager->SetTexture ( "MaterialTexture", MaterialTexture );
 		

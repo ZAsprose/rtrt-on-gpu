@@ -10,17 +10,16 @@ namespace Raytracing
 {
 	//---------------------------------------- Constructor ----------------------------------------
 	
-	Material :: Material ( const Vector3D& color,
-		                   const Vector3D& ambiant,
+	Material :: Material ( const Vector3D& ambiant,
 						   const Vector3D& diffuse,
 						   const Vector3D& specular,
 						   float shininess,
 						   const Vector3D& reflective,
 						   const Vector3D& refractive,
-						   float refractIndex )
+						   float refractIndex,
+						   Texture2D * texture,
+						   const Vector2D& scale )
 	{
-		Color = color;
-				
 		Ambient = ambiant;
 				
 		Diffuse = diffuse;
@@ -28,12 +27,20 @@ namespace Raytracing
 		Specular = specular;
 				
 		Shininess = shininess;
+
+		//-------------------------------------------------------------------------------
 				
 		Reflective = reflective;
 				
 		Refractive = refractive;
 				
 		RefractIndex = refractIndex;
+
+		//-------------------------------------------------------------------------------
+
+		Texture = texture;
+
+		Scale = scale;
 	}
 
 	//--------------------------------------- Apply Settings --------------------------------------
@@ -42,7 +49,7 @@ namespace Raytracing
 	{
 		glMaterialfv ( GL_FRONT_AND_BACK, GL_AMBIENT, Ambient );
 		
-		glMaterialfv ( GL_FRONT_AND_BACK, GL_DIFFUSE, Diffuse * Color );
+		glMaterialfv ( GL_FRONT_AND_BACK, GL_DIFFUSE, Diffuse );
 		
 		glMaterialfv ( GL_FRONT_AND_BACK, GL_SPECULAR, Specular );
 		
