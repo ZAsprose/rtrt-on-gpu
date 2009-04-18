@@ -187,19 +187,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Fragment.fs"
+				RelativePath=".\ForPhotonMapping.vs"
 				>
 			</File>
 			<File
-				RelativePath=".\Fragment2.fs"
+				RelativePath=".\PhotonMapping.fs"
 				>
 			</File>
 			<File
-				RelativePath=".\Vertex.vs"
+				RelativePath=".\RayTracing.fs"
 				>
 			</File>
 			<File
-				RelativePath=".\Vertex2.vs"
+				RelativePath=".\RayTracing.vs"
 				>
 			</File>
 		</Filter>
