@@ -43,6 +43,14 @@ struct SSphere
 	float Radius;
 };
 
+struct SLight
+{
+	vec3 Position;
+
+	vec3 Intens;
+	
+};
+
 //=================================================================================================
 
 uniform SCamera Camera;
@@ -50,6 +58,8 @@ uniform SCamera Camera;
 uniform SPlane Plane;
 
 uniform SSphere Sphere;
+
+uniform SLight Light;
 
 varying vec2 ScreenCoords;
 
@@ -75,14 +85,15 @@ vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 texcoords )
 
 //=================================================================================================
 
-#define DiffuseContribution 0.7
+#define DiffuseContribution 0.8
 
 #define SpecularContribution 0.8
 
-#define AmbientContribution 0.05
+#define AmbientContribution 0.2
 
-vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color )
+vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color, float shadow)
 {
+
 	vec3 light = normalize ( lightpos - point );
 	
 	vec3 view = normalize ( camerapos - point );
@@ -93,24 +104,10 @@ vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color 
 	
 	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), 32.0 );  
 	
-	return DiffuseContribution * diffuse * color + vec3 ( SpecularContribution * specular ) + vec3 ( AmbientContribution );
+	return DiffuseContribution * diffuse * color * shadow + shadow * vec3 ( SpecularContribution * specular ) + vec3 ( AmbientContribution ) * color;
 }
 
-//=================================================================================================
-
-bool HitBox ( SRay ray, vec3 boxMin, vec3 boxMax, out float tmin, out float tmax )
-{
-   vec3 l1 = ( boxMin - ray.Origin ) / ray.Direction;
-   vec3 l2 = ( boxMax - ray.Origin ) / ray.Direction;
-   
-   vec3 lmax = max ( l1, l2 );
-   vec3 lmin = min ( l1, l2 );
-  
-   tmax = min ( lmax.x, min ( lmax.y, lmax.z ) );
-   tmin = max ( max ( lmin.x, 0.0 ), max ( lmin.y, lmin.z ) );
-  
-   return tmax >= tmin;
-}
+	
 
 //=================================================================================================
 
@@ -128,7 +125,7 @@ bool HitPlane ( in SRay ray, out SIntersection intersection  )
 	
 	intersection.Color = ChessBoardTexture ( vec3 ( 0.8, 0.8, 0.0 ),
 	                                         vec3 ( 0.0, 0.0, 0.8 ),
-											 texcoords );
+						 texcoords );
 	
 	return ( intersection.Time >= 0.0 ) &&
 	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
@@ -200,8 +197,8 @@ void main ( void )
 		
 		if ( HitSphere ( ray, test ) && ( test.Time < intersect.Time ) )
 		{
-			color += Phong ( Camera.Position, Camera.Position, test.Point,
-			                 test.Normal, test.Color );
+			color += Phong ( Light.Position, Camera.Position, test.Point,
+			                 test.Normal, test.Color, 1.0 );
 			
 			//-----------------------------------------------------------------
 			
@@ -211,8 +208,8 @@ void main ( void )
 			
 			if ( HitSphere ( ray, test ) )
 			{
-				color += Phong ( Camera.Position, Camera.Position,
-				                 test.Point, test.Normal, test.Color );	
+				color += Phong ( Light.Position, Camera.Position,
+				                 test.Point, test.Normal, test.Color, 1.0 );	
 								 
 				//-------------------------------------------------------------
 				
@@ -224,15 +221,51 @@ void main ( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					color += Phong ( Camera.Position, Camera.Position,
-					                 test.Point, test.Normal, test.Color );				
+					vec3 l = Light.Position - test.Point;
+					
+					float distance = length(l);
+					
+					l /= distance;
+					
+					SRay shadowRay = SRay(test.Point + 0.001 * l, l);
+					
+					SIntersection testShadow;
+
+					if ( HitSphere ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
+					{
+						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
+					}
+					else
+					{
+					
+						color += Phong ( Light.Position, Camera.Position,
+					                 test.Point, test.Normal, test.Color,1.0 );		
+					}	
 				}
 			}
 		}
 		else
 		{
-			color += Phong ( Camera.Position, Camera.Position, intersect.Point,
-							 intersect.Normal, intersect.Color );
+			vec3 l = Light.Position - intersect.Point;
+					
+			float distance = length(l);
+					
+			l /= distance;
+					
+			SRay shadowRay = SRay(intersect.Point + 0.001 * l, l);
+					
+			SIntersection testShadow;
+
+			if ( HitSphere(shadowRay,testShadow) && (testShadow.Time < distance))
+			{
+				color += Phong(Light.Position, Camera.Position, intersect.Point, intersect.Normal,intersect.Color,0.0);
+			}
+			else
+			{	
+				color += Phong ( Light.Position, Camera.Position, intersect.Point,
+							 intersect.Normal, intersect.Color,1.0 );
+			}
+			
 		}
 	}
 	else
@@ -241,8 +274,8 @@ void main ( void )
 		
 		if ( HitSphere ( ray, test ) )
 		{
-			color += Phong ( Camera.Position, Camera.Position, test.Point,
-			                 test.Normal, test.Color );
+			color += Phong ( Light.Position, Camera.Position, test.Point,
+			                 test.Normal, test.Color,1.0 );
 			
 			//-----------------------------------------------------------------
 			
@@ -253,7 +286,7 @@ void main ( void )
 			if ( HitSphere ( ray, test ) )
 			{
 				color += Phong ( Camera.Position, Camera.Position,
-				                 test.Point, test.Normal, test.Color );	
+				                 test.Point, test.Normal, test.Color,1.0 );	
 								 
 				//-------------------------------------------------------------
 				
@@ -265,8 +298,27 @@ void main ( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					color += Phong ( Camera.Position, Camera.Position,
-					                 test.Point, test.Normal, test.Color );				
+					vec3 l = Light.Position - test.Point;
+					
+					float distance = length(l);
+					
+					l /= distance;
+					
+					SRay shadowRay = SRay(test.Point + 0.001 * l, l);
+					
+					SIntersection testShadow;
+					
+					if ( HitSphere(shadowRay,testShadow) && (test.Time < distance))
+					{
+						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
+					}
+					else
+					{
+					
+						color += Phong ( Light.Position, Camera.Position,
+										test.Point, test.Normal, test.Color,1.0 );
+					}		
+							
 				}
 			}
 		}

@@ -30,13 +30,16 @@ using namespace Math;
 
 #define CountY  128
 
-TextureData2D* photons = NULL;
+TextureData2D* photonsTextureData = NULL;
 
-Texture2D* positions = NULL;
+TextureData2D* colorTextureData = NULL;
 
-Texture2D* colors = NULL;
+Texture2D* positionsTexture = NULL;
 
-FrameBuffer* photonProgram = NULL;
+Texture2D* colorsTexture = NULL;
+
+FrameBuffer* photonFrameBuffer = NULL;
+
 //=================================================================================================
 
 Camera cam;
@@ -79,68 +82,104 @@ int main ( void )
         return 0;
 	}
 	
-	photons = new TextureData2D(CountX,CountY,4);
+	photonsTextureData = new TextureData2D(CountX,CountY,4);
 
-	positions = new Texture2D(photons, 1 , GL_TEXTURE_RECTANGLE_ARB);
+	colorTextureData = new TextureData2D(CountX,CountY,4);
 
-	colors = new Texture2D(photons, 2 , GL_TEXTURE_RECTANGLE_ARB);
+	positionsTexture = new Texture2D(photonsTextureData, 1 , GL_TEXTURE_RECTANGLE_ARB);
 
-	positions->Setup();
+	colorsTexture = new Texture2D(colorTextureData, 2 , GL_TEXTURE_RECTANGLE_ARB);
 
-	colors->Setup();
+	positionsTexture->Setup();
+
+	colorsTexture->Setup();
 
 	
 	//---------------------------------------------------------------------------------------------
 
-	ShaderManager * manager = new ShaderManager ( );
+	ShaderManager * PhotonManager = new ShaderManager ( );
 
-	manager->LoadVertexShader ( "Vertex2.vs" );
+	PhotonManager->LoadVertexShader ( "Vertex2.vs" );
 
-	manager->LoadFragmentShader ( "Fragment2.fs" );
+	PhotonManager->LoadFragmentShader ( "Fragment2.fs" );
 
-	manager->BuildProgram ( );
+	PhotonManager->BuildProgram ( );
 
-	manager->Bind();
+	PhotonManager->Bind();
 
-	manager->SetTexture("Position",positions);
+	PhotonManager->SetTexture("Position",positionsTexture);
 
-	manager->SetTexture("Color",colors);
+	PhotonManager->SetTexture("Color",colorsTexture);
 
-	manager->Unbind();
+	PhotonManager->Unbind();
 
-	photonProgram = new FrameBuffer();
+	ShaderManager * RayTracingManager = new ShaderManager();
 
-	photonProgram->ColorBuffers.push_back(positions);
+	RayTracingManager->LoadVertexShader( "Vertex.vs" );
 
-	photonProgram->ColorBuffers.push_back(colors);
+	RayTracingManager->LoadFragmentShader( "Fragment.fs" );
 
-	photonProgram->Setup();
+	RayTracingManager->BuildProgram();
+
+	photonFrameBuffer = new FrameBuffer();
+
+	photonFrameBuffer->ColorBuffers.push_back(positionsTexture);
+
+	photonFrameBuffer->ColorBuffers.push_back(colorsTexture);
+
+	photonFrameBuffer->Setup();
 
 	//---------------------------------------------------------------------------------------------
 
-	manager->Bind ( );
+	PhotonManager->Bind ( );
 
-	manager->SetUniformVector ( "Plane.Center", Vector3D ( 0.0F, -5.0F, 0.0F ) );
+	PhotonManager->SetUniformVector ( "Plane.Center", Vector3D ( 0.0F, -5.0F, 0.0F ) );
 
-	manager->SetUniformVector ( "Plane.Size", Vector2D (  20.0F,  20.0F ) );
+	PhotonManager->SetUniformVector ( "Plane.Size", Vector2D (  20.0F,  20.0F ) );
 
-	manager->SetUniformVector ( "Sphere.Center", Vector3D (  0.0F,  -3.0F,  0.0F ) );
+	PhotonManager->SetUniformVector ( "Sphere.Center", Vector3D (  0.0F,  -3.0F,  0.0F ) );
 
-	manager->SetUniformFloat ( "Sphere.Radius", 2.0F );
+	PhotonManager->SetUniformFloat ( "Sphere.Radius", 2.0F );
 
-	manager->SetUniformVector("Light.Position", Vector3D(0.0F, 7.0F, 0.0F));
+	PhotonManager->SetUniformVector("Light.Position", Vector3D(0.0F, 7.0F, 0.0F));
 
-	manager->SetUniformFloat("Light.distance", 3.0F);
+	PhotonManager->SetUniformFloat("Light.distance", 3.0F);
 
-	manager->SetUniformVector("Light.HalfSize", Vector2D(20.0F, 20.0F));
+	PhotonManager->SetUniformVector("Light.HalfSize", Vector2D(20.0F, 20.0F));
 
-	manager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));//На то ли число делим?
+	PhotonManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
 
-	manager->SetTexture("Position",positions);
+	PhotonManager->SetTexture("Position",positionsTexture);
 
-	manager->SetTexture("Color",colors);
+	PhotonManager->SetTexture("Color",colorsTexture);
 
-	manager->Unbind ( );
+	PhotonManager->Unbind ( );
+
+	RayTracingManager->Bind();
+
+	RayTracingManager->SetUniformVector("Camera.Position", Vector3D( 0.0f, 7.0f, 0.0f));
+
+	RayTracingManager->SetUniformVector("Camera.Side", Vector3D( 1.0f,0.0f,0.0f));
+
+	RayTracingManager->SetUniformVector("Camera.Up", Vector3D(0.0f,1.0f,0.0f));
+
+	RayTracingManager->SetUniformVector("Camera.View", Vector3D(0.0f,0.0f,1.0f));
+
+	RayTracingManager->SetUniformVector("Camera.Scale", Vector2D(0.0f,0.0f));
+
+	RayTracingManager->SetUniformVector ( "Plane.Center", Vector3D ( 0.0F, -5.0F, 0.0F ) );
+
+	RayTracingManager->SetUniformVector ( "Plane.Size", Vector2D (  20.0F,  20.0F ) );
+
+	RayTracingManager->SetUniformVector ( "Sphere.Center", Vector3D (  0.0F,  -3.0F,  0.0F ) );
+
+	RayTracingManager->SetUniformFloat ( "Sphere.Radius", 2.0F );
+
+	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
+
+	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
+
+	RayTracingManager->Unbind();
 
 	//---------------------------------------------------------------------------------------------
 
@@ -208,12 +247,13 @@ int main ( void )
 		keyboard.Apply ( cam );
 
 		//-----------------------------------------------------------------------------------------
+		photonFrameBuffer->Bind();
 
-		manager->Bind ( );
+		PhotonManager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam.SetShaderData ( manager );
+		cam.SetShaderData ( PhotonManager );
 
 		glBegin ( GL_QUADS );
 
@@ -224,16 +264,38 @@ int main ( void )
 
 		glEnd ( );
 
-		manager->Unbind ( );
+		PhotonManager->Unbind ( );
+
+		photonFrameBuffer->Unbind();
+
+
+		//-----------------------------------------------------------------------------------------
+
+		RayTracingManager->Bind ( );
+
+		glClear ( GL_COLOR_BUFFER_BIT );
+
+		cam.SetShaderData ( RayTracingManager );
+
+		glBegin ( GL_QUADS );
+
+			glVertex2f ( -1.0F, -1.0F );
+			glVertex2f ( -1.0F,  1.0F );
+			glVertex2f (  1.0F,  1.0F );
+			glVertex2f (  1.0F, -1.0F );
+
+		glEnd ( );
+
+		RayTracingManager->Unbind ( );
 
         glfwSwapBuffers();
 
-		//-----------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------
 		
 		running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 	}
 
     glfwTerminate();
 
-    return 0;///
+    return 0;
 }
