@@ -18,16 +18,20 @@ namespace Raytracing
 	{
 		public:
 
-			//--------------------------- 3D Model Loaded From OBJ File ---------------------------
+			//--------------------------- 3D Model Loaded from OBJ File ---------------------------
 
 			const OBJModel * Model;
+
+			int Group;
 
 			//------------------------------------ Constructor ------------------------------------
 		
 			Mesh ( const OBJModel *,
+				   int = 0,
 				   Transform * = new Transform ( ),
 				   Material * = new Material ( ),
-				   const char * = "Mesh" );
+				   const char * = "Mesh",
+				   bool = true );
 
 			//---------------------------------- Build Triangles ----------------------------------
 			

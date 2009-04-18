@@ -101,24 +101,24 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	OBJModel * model = OBJLoader :: LoadModel ( "H:/Projects/models/bunny.obj" );
+	//OBJModel * model = OBJLoader :: LoadModel ( "H:/Projects/models/bunny.obj" );
 
 
-	Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
-	
-	mesh->Transformation->SetScale ( Vector3D ( 30.0F, 30.0F, 30.0F ) );
+	//Mesh * mesh = new Mesh ( model, new Transform ( ), new Material ( ) );
+	//
+	//mesh->Transformation->SetScale ( Vector3D ( 30.0F, 30.0F, 30.0F ) );
 
-	mesh->Tesselate ( );
+	//mesh->Tesselate ( );
 
-	mesh->Properties->Diffuse = Vector3D ( 0.8F, 0.8F, 0.0F );
+	//mesh->Properties->Diffuse = Vector3D ( 0.8F, 0.8F, 0.0F );
 
-	mesh->Properties->Shininess = 128.0F;
+	//mesh->Properties->Shininess = 128.0F;
 
 
 	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -10, -10, -10 ),
 		                                              Vector3D ( 10, 10, 10 ) ) );
 
-	scene->Primitives.push_back ( mesh );
+	//scene->Primitives.push_back ( mesh );
 
 	scene->BuildGrid ( 16, 16, 16 );
 

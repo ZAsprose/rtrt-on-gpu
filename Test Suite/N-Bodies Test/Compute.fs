@@ -1,6 +1,6 @@
 #extension GL_ARB_texture_rectangle : enable
 
-#define RUNGE_KUTTA_1
+#define RUNGE_KUTTA_2
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 

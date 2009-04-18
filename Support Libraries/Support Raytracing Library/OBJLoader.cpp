@@ -16,19 +16,15 @@
 
 namespace Raytracing
 {
-	//------------------------------------------ Loading OBJ Model ------------------------------------------
-
-	OBJModel * OBJLoader :: LoadModel ( const char * filename )
+	//------------------------------------------ Loading Text File ------------------------------------------
+	
+	char * OBJLoader :: LoadFile ( const char * filename, unsigned& size )
 	{
-		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-		cout << "+++                         OBJ MODEL LOADER                         +++" << endl;
-		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
-
 		FILE * file = fopen ( filename, "rt" );
 
 		if ( file == NULL )
 		{
-			cout << "ERROR: Could not open model file" << endl;
+			cout << "ERROR: Could not open file" << endl;
 
 			return NULL;
 		}
@@ -37,7 +33,7 @@ namespace Raytracing
 		
 		fseek ( file, 0, SEEK_END );
 			
-		unsigned int end = ftell ( file );
+		unsigned end = ftell ( file );
 			
 		fseek ( file, 0, SEEK_SET );
 
@@ -45,19 +41,198 @@ namespace Raytracing
 
 		if ( 0 == end )
 		{
-			cout << "ERROR: Model file is empty" << endl;
+			cout << "ERROR: File is empty" << endl;
 
 			return NULL;
 		}
 
 		//-----------------------------------------------------------------------------------------
-   	
-		char * memory = new char [end];
-			
-		unsigned int size = fread ( memory, sizeof ( char ), end, file );
-
-		fclose ( file );
 		
+		char * memory = new char [end + 1];
+		
+		size = fread ( memory, sizeof ( char ), end, file );
+
+		memory [end] = '\n';
+
+		//-----------------------------------------------------------------------------------------
+		
+		fclose ( file );
+
+		return memory;
+	}
+	
+	//-------------------------------------- Loading MTL Material File --------------------------------------
+
+	bool OBJLoader :: LoadMTL ( const char * filename, OBJModel * model )
+	{
+		unsigned size = 0;
+
+		char * memory = LoadFile ( filename, size );
+
+		if ( NULL == memory )
+		{
+			cout << "ERROR: Could not load MTL materials file" << endl;
+
+			return false;
+		}
+
+		//-----------------------------------------------------------------------------------------
+		
+		char * position = memory;
+		
+		char * finish = memory + size;
+
+		//-----------------------------------------------------------------------------------------
+
+		MTLMaterial * material = NULL;
+
+		while ( position <= finish )
+		{
+			if ( memcmp ( position, "newmtl", 6 ) == 0 )
+			{
+				//--------------------- Adding previous material to the model ---------------------
+
+				if ( material != NULL )
+				{
+					model->Materials.push_back ( material );
+				}
+
+				//----------------------------- Getting material name -----------------------------
+
+				char name [LENGTH];
+
+				memset ( name, 0, LENGTH );
+				
+				sscanf ( position, "newmtl %s", name );
+
+				//----------------------------- Creating new material -----------------------------
+
+				material = new MTLMaterial ( name );
+			}
+			else
+				if ( memcmp ( position, "map_Kd", 6 ) == 0 )
+				{
+					//--------------------------- Getting texture name ----------------------------
+
+					char name [LENGTH];
+
+					memset ( name, 0, LENGTH );
+
+					sscanf ( position, "map_Kd %s", &name );
+
+					//--------------- Trying to search texture in previous textures ---------------
+
+					MTLTexture * texture = NULL;
+
+					for ( int i = 0; i < model->Textures.size ( ); i++ )
+					{
+						if ( memcmp ( model->Textures [i]->Name, name, LENGTH ) == 0 )
+						{
+							texture = model->Textures [i];
+						}
+					}
+
+					//---------------- Creating new texture ( if it is necessary ) ----------------
+
+					if ( NULL == texture )
+					{
+						texture = new MTLTexture ( name,
+							new Texture2D ( TextureData2D :: FromTGA ( name ) ) );
+
+						model->Textures.push_back ( texture );
+					}
+
+					//------------------------ Setting texture to material ------------------------
+					
+					material->Texture = texture->Texture;
+				}
+				else
+					if ( memcmp ( position, "Ka", 2 ) == 0 )
+					{
+						sscanf ( position, "Ka %f %f %f",
+								 &material->Ambient.X,
+								 &material->Ambient.Y,
+								 &material->Ambient.Z );
+					}
+					else
+						if ( memcmp ( position, "Kd", 2 ) == 0 )
+						{
+							sscanf ( position, "Kd %f %f %f",
+									 &material->Diffuse.X,
+									 &material->Diffuse.Y,
+									 &material->Diffuse.Z );
+						}
+						else
+							if ( memcmp ( position, "Ks", 2 ) == 0 )
+							{
+								sscanf ( position, "Ks %f %f %f",
+										 &material->Specular.X,
+										 &material->Specular.Y,
+										 &material->Specular.Z );
+							}
+							else
+								if ( memcmp ( position, "Tf", 2 ) == 0 )
+								{
+									sscanf ( position, "Tf %f %f %f",
+											 &material->Transmission.X,
+											 &material->Transmission.Y,
+											 &material->Transmission.Z );
+								}
+								else
+									if ( memcmp ( position, "Ns", 2 ) == 0 )
+									{
+										sscanf ( position, "Ns %f",
+												 &material->Shininess );
+									}
+									else
+										if ( memcmp ( position, "Ni", 2 ) == 0 )
+										{
+											sscanf ( position, "Ni %f",
+													 &material->Density );
+										}
+										else
+											if ( memcmp ( position, "d", 1 ) == 0 )
+											{
+												sscanf ( position, "d %f",
+														 &material->Dissolve );
+											}
+											else
+												if ( memcmp ( position, "illum", 5 ) == 0 )
+												{
+													sscanf ( position, "illum %d",
+															 &material->Model );
+												}
+
+			while ( *position++ != '\n' );
+		}
+
+		if ( material != NULL )
+		{
+			model->Materials.push_back ( material );
+		}
+
+		return true;
+	}
+
+	//--------------------------------- Loading OBJ Geometry File ---------------------------------
+
+	OBJModel * OBJLoader :: LoadOBJ ( const char * filename )
+	{
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                         OBJ MODEL LOADER                         +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+
+		unsigned size = 0;
+
+		char * memory = LoadFile ( filename, size );
+
+		if ( NULL == memory )
+		{
+			cout << "ERROR: Could not load OBJ model file" << endl;
+
+			return NULL;
+		}
+
 		//-----------------------------------------------------------------------------------------
 		
 		char * position = memory;
@@ -68,171 +243,131 @@ namespace Raytracing
 
 		OBJModel * model = new OBJModel ( );
 
-		while ( position != finish )
-		{
-			if ( memcmp ( position, "vn", 2 ) == 0 )
-				model->NormalNumber++;
-			else
-				if ( memcmp ( position, "vt", 2 ) == 0 )
-					model->TextureNumber++;
-				else
-					if ( memcmp ( position, "v",  1 ) == 0 )
-						model->VertexNumber++;
-					else
-						if ( memcmp ( position, "f",  1 ) == 0 )
-							model->FaceNumber++;
-
-			while ( *position++ != ( char ) 0x0A );
-		}
-
-		//-----------------------------------------------------------------------------------------
-
-		if ( 0 != model->VertexNumber )
-		{
-			cout << "MODEL: Vertices number = " << model->VertexNumber << endl;
-		}
-		else
-		{
-			cout << "ERROR: Model has no vertices" << endl;
-
-			return NULL;
-		}
-
-		if ( 0 != model->NormalNumber )
-		{
-			cout << "MODEL: Normals number = " << model->NormalNumber << endl;
-		}
-		else
-		{
-			cout << "WARNING: Model has no normals" << endl;
-		}
-
-		if ( 0 != model->TextureNumber )
-		{
-			cout << "MODEL: Texture coords number = " << model->TextureNumber << endl;
-		}
-		else
-		{
-			cout << "WARNING: Model has no texture coordinates" << endl;
-		}
-
-		if ( 0 != model->FaceNumber )
-		{
-			cout << "MODEL: Faces number = " << model->FaceNumber << endl;
-		}
-		else
-		{
-			cout << "ERROR: Model has no faces" << endl;
-
-			return NULL;
-		}
-
-		//-----------------------------------------------------------------------------------------
-
-		model->Vertices = new Vector3D [model->VertexNumber];
-
-		model->Normals = new Vector3D [model->NormalNumber];
-
-		model->Textures = new Vector2D [model->TextureNumber];
-
-		model->Faces = new OBJFace [model->FaceNumber];
+		OBJGroup * group = new OBJGroup ( );
 
 		//-----------------------------------------------------------------------------------------
 
 		cout << "LOADING: ";
 
 		float progress = 1.0F;
-
+		
 		//-----------------------------------------------------------------------------------------
 
-		position = memory;
-
-		int vertex = 0, normal = 0, texture = 0, face = 0;
-
-		//-----------------------------------------------------------------------------------------
-	
-		while ( position != finish )
+		while ( position <= finish )
 		{
-			if ( memcmp ( position, "vn", 2 ) == 0 )
+			if ( memcmp ( position, "mtllib", 6 ) == 0 )
 			{
-				sscanf ( position, "vn %f %f %f",
-					     &model->Normals [normal].X,
-						 &model->Normals [normal].Y,
-						 &model->Normals [normal].Z );
+				//-------------------- Groups will be created later ---------------------
 
-				normal++;
+				group = NULL;
+
+				//----------------------- Getting MTL file path -------------------------
+
+				char mtlfile [LENGTH];
+
+				sscanf ( position, "mtllib %s", &mtlfile );
+
+				//------------------- Loading materials from MTL file -------------------
+
+				if ( !LoadMTL ( mtlfile, model ) )
+				{
+					return NULL;
+				}
 			}
 			else
-				if ( memcmp ( position, "vt", 2 ) == 0 )
+				if ( memcmp ( position, "usemtl", 6 ) == 0 )
 				{
-					sscanf ( position, "vt %f %f",
-						     &model->Textures [texture].X,
-							 &model->Textures [texture].Y );
+					//--------------- Adding previous group to the model ----------------
 
-					texture++;
+					if ( NULL != group )
+					{
+						model->Groups.push_back ( group );
+					}
+
+					//---------------------- Getting material name ----------------------
+
+					char name [LENGTH];
+
+					memset ( name, 0, LENGTH );
+
+					sscanf ( position, "usemtl %s", &name );
+
+					//---------------- Finding this material in the list ----------------
+
+					MTLMaterial * material = NULL;
+
+					for ( int index = 0; index < model->Materials.size ( ); index++ )
+					{
+						if ( memcmp ( model->Materials [index]->Name, name, LENGTH ) == 0 )
+						{
+							material = model->Materials [index];
+							
+							break;
+						}
+					}
+
+					if ( NULL == material )
+					{
+						cout << "WARNING: Could not find specified material" << endl;
+					}
+
+					//------------ Creating new group with specified material -----------
+
+					group = new OBJGroup ( material );
 				}
 				else
-					if ( memcmp ( position, "v", 1 ) == 0 )
+					if ( memcmp ( position, "vn", 2 ) == 0 )
 					{
-						sscanf ( position, "v %f %f %f",
-							     &model->Vertices [vertex].X,
-								 &model->Vertices [vertex].Y,
-								 &model->Vertices [vertex].Z );
+						Vector3D normal = Vector3D :: Zero;
 
-						vertex++;
+						sscanf ( position, "vn %f %f %f",
+								 &normal.X,
+								 &normal.Y,
+								 &normal.Z );
+
+						model->Normals.push_back ( normal );
 					}
 					else
-						if ( memcmp ( position, "f", 1 ) == 0 )
+						if ( memcmp ( position, "vt", 2 ) == 0 )
 						{
-							if ( 0 != model->TextureNumber )
+							Vector2D texture = Vector2D :: Zero;
+
+							sscanf ( position, "vt %f %f",
+									 &texture.X,
+									 &texture.Y );
+
+							model->TexCoords.push_back ( texture );
+						}
+						else
+							if ( memcmp ( position, "v", 1 ) == 0 )
 							{
-								if ( 0 != model->NormalNumber )
-								{
-									sscanf ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-											 &model->Faces [face].Vertex[0],
-											 &model->Faces [face].Texture[0],
-											 &model->Faces [face].Normal[0],
-											 &model->Faces [face].Vertex[1],
-											 &model->Faces [face].Texture[1],
-											 &model->Faces [face].Normal[1],
-											 &model->Faces [face].Vertex[2],
-											 &model->Faces [face].Texture[2],
-											 &model->Faces [face].Normal[2] );
-								}
-								else
-								{
-									sscanf ( position, "f %d/%d %d/%d %d/%d",
-											 &model->Faces [face].Vertex[0],
-											 &model->Faces [face].Texture[0],
-											 &model->Faces [face].Vertex[1],
-											 &model->Faces [face].Texture[1],
-											 &model->Faces [face].Vertex[2],
-											 &model->Faces [face].Texture[2] );
-								}
+								Vector3D vertex = Vector3D :: Zero;
+
+								sscanf ( position, "v %f %f %f",
+										 &vertex.X,
+										 &vertex.Y,
+										 &vertex.Z );
+
+								model->Vertices.push_back ( vertex );
 							}
 							else
-							{
-								if ( 0 != model->NormalNumber )
+								if ( memcmp ( position, "f", 1 ) == 0 )
 								{
-									sscanf ( position, "f %d//%d %d//%d %d//%d",
-											 &model->Faces [face].Vertex[0],
-											 &model->Faces [face].Normal[0],
-											 &model->Faces [face].Vertex[1],
-											 &model->Faces [face].Normal[1],
-											 &model->Faces [face].Vertex[2],
-											 &model->Faces [face].Normal[2] );
+									OBJFace face;
+
+									sscanf ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+											 &face.Vertex[0],
+											 &face.Texture[0],
+											 &face.Normal[0],
+											 &face.Vertex[1],
+											 &face.Texture[1],
+											 &face.Normal[1],
+											 &face.Vertex[2],
+											 &face.Texture[2],
+											 &face.Normal[2] );
+
+									group->Faces.push_back ( face );
 								}
-								else
-								{
-									sscanf ( position, "f %d %d %d",
-											 &model->Faces [face].Vertex[0],
-											 &model->Faces [face].Vertex[1],
-											 &model->Faces [face].Vertex[2] );
-								}
-							}
-							
-							face++;
-						}
 
 			if ( progress > ( finish - position ) / ( float ) size )
 			{
@@ -241,10 +376,15 @@ namespace Raytracing
 				cout << ".";
 			}
 
-			while ( *position++ != ( char ) 0x0A );
+			while ( *position++ != '\n' );
 		}
 
 		cout << endl;
+
+		if ( NULL != group )
+		{
+			model->Groups.push_back ( group );
+		}
 
 		return model;
 	}

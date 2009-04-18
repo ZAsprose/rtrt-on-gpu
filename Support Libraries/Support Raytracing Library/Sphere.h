@@ -33,7 +33,8 @@ namespace Raytracing
 					 int = 25,
 				     Transform * = new Transform ( ),
 					 Material * = new Material ( ),
-					 const char * = "Sphere" );
+					 const char * = "Sphere",
+					 bool = true );
 
 			//---------------------------------- Build Triangles ----------------------------------
 			

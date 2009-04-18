@@ -22,6 +22,8 @@
 
 #include <StaticData.h>
 
+#include <OBJModel.h>
+
 #include <OBJLoader.h>
 
 #include <TextureManager.h>
@@ -31,6 +33,8 @@ using namespace Math;
 using namespace Render;
 
 using namespace Raytracing;
+
+using namespace std;
 
 //=================================================================================================
 
@@ -103,23 +107,9 @@ int main ( void )
 	
 	TextureManager * textureManager = new TextureManager ( );
 
-	textureManager->ImageTextures.push_back (
-		new Texture2D ( TextureData2D :: FromTGA ( "H:/Projects/Support/Textures/Stone - 3.tga" ), 0, GL_TEXTURE_2D ) );
-
-	textureManager->ImageTextures.push_back (
-		new Texture2D ( TextureData2D :: FromTGA ( "H:/Projects/Support/Textures/Stone - 1.tga" ), 1, GL_TEXTURE_2D ) );
-
-	textureManager->ImageTextures.push_back (
-		new Texture2D ( TextureData2D :: FromTGA ( "H:/Projects/Support/Textures/Glass - 1.tga" ), 2, GL_TEXTURE_2D ) );
-
-	textureManager->ImageTextures.push_back (
-		new Texture2D ( TextureData2D :: FromTGA ( "H:/Projects/Support/Models/Duck.tga" ), 3, GL_TEXTURE_2D ) );
-
-	textureManager->SetupTextures ( );
-
 	//---------------------------------------------------------------------------------------------
 
-	Sphere * sphere = new Sphere ( 2.0F, 30, 30, new Transform (), new Material () );
+	Sphere * sphere = new Sphere ( 2.0F, 30, 30, new Transform ( ), new Material ( ) );
 
 	sphere->Transformation->SetScale ( Vector3D ( 1.0F, 2.0F, 3.0F ) );
 
@@ -129,7 +119,7 @@ int main ( void )
 
 	sphere->Properties->Diffuse = Vector3D ( 0.0F, 0.1F, 0.1F );
 
-	sphere->Properties->Reflective = Vector3D ( 0.8F, 0.8F, 0.8F );
+	sphere->Properties->Specular = Vector3D ( 0.8F, 0.8F, 0.8F );
 
 	sphere->Properties->Shininess = 8.0F;
 
@@ -144,8 +134,6 @@ int main ( void )
 
 	plane1->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
 
-	plane1->Properties->Texture = textureManager->ImageTextures [1];
-
 	plane1->Properties->Scale = Vector2D ( 2.0F, 2.0F );
 
 	plane1->Tesselate ( );
@@ -158,8 +146,6 @@ int main ( void )
 	plane2->Transformation->SetOrientation( Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
 	plane2->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane2->Properties->Texture = textureManager->ImageTextures [1];
 
 	plane2->Properties->Scale = Vector2D ( 2.0F, 2.0F );
 
@@ -174,10 +160,6 @@ int main ( void )
 
 	plane3->Properties->Diffuse = Vector3D ( 0.5F, 0.5F, 0.5F );
 
-	plane3->Properties->Texture = textureManager->ImageTextures [0];
-
-	//plane3->Properties->Reflective = Vector3D ( 0.8F, 0.8F, 0.8F );
-
 	plane3->Properties->Scale = Vector2D ( 1.0F, 1.0F );
 
 	plane3->Tesselate ( );
@@ -190,8 +172,6 @@ int main ( void )
 	plane4->Transformation->SetOrientation( Vector3D ( -ONEPI / 2.0F, 0.0F, 0.0F ) );
 
 	plane4->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane4->Properties->Texture = textureManager->ImageTextures [2];
 
 	plane4->Properties->Scale = Vector2D ( 1.0F, 1.0F );
 
@@ -206,8 +186,6 @@ int main ( void )
 
 	plane5->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
 
-	plane5->Properties->Texture = textureManager->ImageTextures [1];
-
 	plane5->Properties->Scale = Vector2D ( 2.0F, 2.0F );
 
 	plane5->Tesselate ( );
@@ -220,8 +198,6 @@ int main ( void )
 	plane6->Transformation->SetOrientation( Vector3D ( 0.0F, -ONEPI / 2.0F, 0.0F ) );
 
 	plane6->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane6->Properties->Texture = textureManager->ImageTextures [1];
 
 	plane6->Properties->Scale = Vector2D ( 2.0F, 2.0F );
 
@@ -236,7 +212,7 @@ int main ( void )
 
 	box1->Properties->Diffuse = Vector3D ( 0.0F, 0.2F, 0.2F );
 
-	box1->Properties->Refractive = Vector3D ( 0.8F, 0.8F, 0.8F );
+	box1->Properties->Refraction = Vector3D ( 0.8F, 0.8F, 0.8F );
 
 	box1->Properties->Shininess = 64.0F;
 
@@ -251,63 +227,80 @@ int main ( void )
 
 	box2->Properties->Diffuse = Vector3D ( 0.0F, 0.2F, 0.2F );
 
-	box2->Properties->Reflective = Vector3D ( 0.6F, 0.6F, 0.6F );
+	box2->Properties->Specular = Vector3D ( 0.6F, 0.6F, 0.6F );
 
 	box2->Properties->Shininess = 64.0F;
 
 	box2->Tesselate ( );
 
 
-	Mesh * mesh1 = new Mesh ( OBJLoader :: LoadModel ( "H:/Projects/Support/Models/Table.obj" ),
-		                     new Transform ( ), new Material ( ) );
-
-	mesh1->Transformation->SetTranslation ( Vector3D ( 0.0F, -7.0F, -18.5F ) );
-	
-	mesh1->Transformation->SetScale ( Vector3D ( 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F ) );
-
-	mesh1->Tesselate ( );
-
-	mesh1->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 0.5F );
-
-	mesh1->Properties->Reflective = Vector3D ( 0.5F, 0.5F, 0.5F );
-
-	mesh1->Properties->Shininess = 32.0F;
+	OBJModel * model = OBJLoader :: LoadOBJ( "C:/test/Story/Story.obj" );
 
 
-	Mesh * mesh2 = new Mesh ( OBJLoader :: LoadModel ( "H:/Projects/Support/Models/Lamp.obj" ),
-		                     new Transform ( ), new Material ( ) );
+	for ( int i = 0; i < model->Textures.size ( ); i++ )
+	{
+		model->Textures [i]->Texture->Unit = i;
 
-	mesh2->Transformation->SetTranslation ( Vector3D ( -3.0F, 5.5F, -15.0F ) );
-	
-	mesh2->Transformation->SetScale ( Vector3D ( 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F ) );
+		model->Textures [i]->Texture->FilterMode.Magnification = GL_LINEAR;
+		model->Textures [i]->Texture->FilterMode.Minification = GL_LINEAR;
 
-	mesh2->Tesselate ( );
+		textureManager->ImageTextures.push_back ( model->Textures [i]->Texture );
+	}
 
-	mesh2->Properties->Diffuse = Vector3D ( 1.0F, 0.5F, 0.0F );
-
-	mesh2->Properties->Shininess = 32.0F;
+	textureManager->SetupTextures ( );
 
 
-	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -20.1F, -20.1F, -20.1F ),
-		                                              Vector3D ( 20.1F, 20.1F, 20.1F ) ) );
+	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
+
+	for ( int i = 0; i < model->Groups.size ( ); i++ )
+	{
+		meshes [i] = new Mesh ( model, i, new Transform ( ), new Material ( ) );
+
+		meshes [i]->Transformation->SetTranslation ( Vector3D ( -0.8F, -3.0F, 2.5F ) );
+		
+		meshes [i]->Transformation->SetScale ( Vector3D ( 1.0F / 400.0F, 1.0F / 400.0F, 1.0F / 400.0F ) );
+
+		meshes [i]->Tesselate ( );
+	}
+
+	//Mesh * mesh2 = new Mesh ( OBJLoader :: LoadModel ( "H:/Projects/Support/Models/Lamp.obj" ),
+	//	                     new Transform ( ), new Material ( ) );
+
+	//mesh2->Transformation->SetTranslation ( Vector3D ( -3.0F, 5.5F, -15.0F ) );
+	//
+	//mesh2->Transformation->SetScale ( Vector3D ( 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F ) );
+
+	//mesh2->Tesselate ( );
+
+	//mesh2->Properties->Diffuse = Vector3D ( 1.0F, 0.5F, 0.0F );
+
+	//mesh2->Properties->Shininess = 32.0F;
+
+
+	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -18.1F, -15.1F, -2.5F ),
+		                                              Vector3D ( 16.1F, 14.1F, 13.5F ) ) );
 
 	//scene->Primitives.push_back ( sphere );
 
-	scene->Primitives.push_back ( plane1 );
-	scene->Primitives.push_back ( plane2 );
-	scene->Primitives.push_back ( plane3 );
-	scene->Primitives.push_back ( plane4 );
-	scene->Primitives.push_back ( plane5 );
-	scene->Primitives.push_back ( plane6 );
+	//scene->Primitives.push_back ( plane1 );
+	//scene->Primitives.push_back ( plane2 );
+	//scene->Primitives.push_back ( plane3 );
+	//scene->Primitives.push_back ( plane4 );
+	//scene->Primitives.push_back ( plane5 );
+	//scene->Primitives.push_back ( plane6 );
 	
-	scene->Primitives.push_back ( box1 );
-	scene->Primitives.push_back ( box2 );
+	//scene->Primitives.push_back ( box1 );
+	//scene->Primitives.push_back ( box2 );
 
-	scene->Primitives.push_back ( mesh1 );
-	scene->Primitives.push_back ( mesh2 );
+	for ( int i = 0; i < model->Groups.size ( ); i++ )
+	{
+		scene->Primitives.push_back ( meshes [i] );
+	}
 
-	scene->Lights.push_back ( new Light (0, Vector3D ( -10.0F, 12.0F, 10.0F ) ) );
-	scene->Lights.push_back ( new Light (1, Vector3D ( 10.0F, 12.0F, -10.0F ) ) );
+	//scene->Primitives.push_back ( mesh2 );
+
+	scene->Lights.push_back ( new Light (0, Vector3D ( -20.0F, -20.0F, 0.0F ) ) );
+	scene->Lights.push_back ( new Light (1, Vector3D ( 20.0F, 20.0F, 0.0F ) ) );
 
 	scene->BuildGrid ( 64, 64, 64 );
 
@@ -439,7 +432,7 @@ int main ( void )
 		{
 			mouse.Step = 0.01F;
 
-			keyboard.Step = 0.01F;
+			keyboard.Step = 0.1F;
 
 			camera.Setup ( );
 
@@ -449,25 +442,35 @@ int main ( void )
 
 			//-------------------------------------------------------------------------------------
 
-			glColor3f ( 1.0F, 0.0F, 0.0F );
+			glColor3f ( 1.0F, 1.0F, 1.0F );
+
+			Vector3D vmin = scene->Box->Minimum;
+
+			Vector3D vmax = scene->Box->Maximum;
 			
-			glBegin ( GL_LINES );
-				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 10, 0, 0 );
+			glBegin ( GL_LINE_LOOP );			
+				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
+				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
+				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
+				glVertex3f ( vmin.X, vmax.Y, vmin.Z );			
 			glEnd ( );
-			
-			glColor3f ( 0.0F, 1.0F, 0.0F );
-			
-			glBegin ( GL_LINES );			
-				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 0, 10, 0 );			
+
+			glBegin ( GL_LINE_LOOP );			
+				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
+				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
+				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
+				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
 			glEnd ( );
-			
-			glColor3f ( 0.0F, 0.0F, 1.0F );
-			
+
 			glBegin ( GL_LINES );			
-				glVertex3f ( 0, 0, 0 );
-				glVertex3f ( 0, 0, 10 );			
+				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
+				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
+				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
+				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
+				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
+				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
+				glVertex3f ( vmin.X, vmax.Y, vmin.Z );
+				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
 			glEnd ( );
 
 			//-------------------------------------------------------------------------------------

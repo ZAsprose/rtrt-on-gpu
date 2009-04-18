@@ -70,37 +70,47 @@ namespace Raytracing
 
 		int offset = 0;
 
+		int unit = 0;
+
 		for ( unsigned i = 0; i < scene->Primitives.size ( ); i++ )
 		{
 			scene->Primitives [i]->Properties->Identifier = offset;
 
+			//---------------------------------------------------------------------------
+
+			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
+				scene->Primitives [i]->Properties->Ambient;
+
+			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
+				scene->Primitives [i]->Properties->Diffuse;
+
+			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+				scene->Primitives [i]->Properties->Specular,
+				scene->Primitives [i]->Properties->Shininess );
+
+			//---------------------------------------------------------------------------
+
+			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+				scene->Primitives [i]->Properties->Reflection,
+				scene->Primitives [i]->Properties->Dissolve );
+
+			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+				scene->Primitives [i]->Properties->Refraction,
+				scene->Primitives [i]->Properties->Density );
+
+			//---------------------------------------------------------------------------
+			
 			if ( scene->Primitives [i]->Properties->Texture == NULL )
 			{
-				MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-					Vector4D ( scene->Primitives [i]->Properties->Ambient, 0 );
+				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+					scene->Primitives [i]->Properties->Scale, 0 );
 			}
 			else
 			{
-				MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-					Vector4D ( scene->Primitives [i]->Properties->Ambient,
-					           scene->Primitives [i]->Properties->Texture->GetUnit ( ) + 1 );
+				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+					scene->Primitives [i]->Properties->Scale,
+					scene->Primitives [i]->Properties->Texture->Unit + 1 );
 			}
-
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-				Vector4D ( scene->Primitives [i]->Properties->Diffuse,
-				           scene->Primitives [i]->Properties->Scale.X );
-
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-				Vector4D ( scene->Primitives [i]->Properties->Specular,
-				           scene->Primitives [i]->Properties->Scale.Y );
-
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-				Vector4D ( scene->Primitives [i]->Properties->Reflective,
-				           scene->Primitives [i]->Properties->Shininess );
-
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) =
-				Vector4D ( scene->Primitives [i]->Properties->Refractive,
-				           scene->Primitives [i]->Properties->RefractIndex );
 		}
 
 		//-------------------------------- Generating geometry data -------------------------------
@@ -188,16 +198,32 @@ namespace Raytracing
 		manager->SetTexture ( "TexCoordTexture", TexCoordTexture );
 
 		manager->SetTexture ( "MaterialTexture", MaterialTexture );
+
+		manager->SetUniformFloat ( "VertexTextureSize", VertexSize );
 		
 		manager->SetUniformVector ( "VoxelTextureStep",
 			                         Vector3D ( 1.0F / VoxelTexture->Data->GetWidth ( ),
 									            1.0F / VoxelTexture->Data->GetHeight ( ),
 												1.0F / VoxelTexture->Data->GetDepth ( ) ) );
 		
-		manager->SetUniformFloat ( "VertexTextureSize", VertexSize );
-		
 		manager->SetUniformFloat ( "VertexTextureStep", 1.0F / VertexSize );
 
 		manager->SetUniformFloat ( "MaterialTextureStep", 1.0F / MaterialSize );
+
+		manager->SetUniformInteger ( "ImageTexture0", 0 );
+
+		manager->SetUniformInteger ( "ImageTexture1", 1 );
+
+		manager->SetUniformInteger ( "ImageTexture2", 2 );
+
+		manager->SetUniformInteger ( "ImageTexture3", 3 );
+
+		manager->SetUniformInteger ( "ImageTexture4", 4 );
+
+		manager->SetUniformInteger ( "ImageTexture5", 5 );
+
+		manager->SetUniformInteger ( "ImageTexture6", 6 );
+
+		manager->SetUniformInteger ( "ImageTexture7", 7 );
 	}
 }

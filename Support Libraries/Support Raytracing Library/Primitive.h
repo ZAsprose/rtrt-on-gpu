@@ -26,9 +26,11 @@ namespace Raytracing
 
 			vector < Triangle * > Triangles;
 
-			//----------------------- Transformation and Material Properties ----------------------
+			//------------------------------ Vertices Transformation ------------------------------
 
 			Transform * Transformation;
+
+			//-------------------------------- Material Properties --------------------------------
 
 			Material * Properties;
 
@@ -40,7 +42,10 @@ namespace Raytracing
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Primitive ( Transform *, Material *, const char * );
+			Primitive ( Transform * = new Transform ( ),
+				        Material * = new Material ( ),
+						const char * = "Primitive",
+						bool = true );
 			
 			virtual ~Primitive ( void );
 

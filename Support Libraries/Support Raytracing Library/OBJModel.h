@@ -4,52 +4,137 @@
 
 #pragma once
 
-#ifndef _MODEL_OBJ_
+#ifndef _OBJ_MODEL_
 
-#define _MODEL_OBJ_
+#define _OBJ_MODEL_
 
 #include "Triangle.h"
 
+#include "Texture2D.h"
+
+#include <vector>
+
+using namespace std;
+
+#define LENGTH 200
+
 namespace Raytracing
 {
-	struct OBJFace
+	//----------------------------------- MTL Material Texture ------------------------------------
+
+	struct MTLTexture
 	{
-		int Vertex[3];
+		//----------------------------- File Name and OpenGL Texture ------------------------------
 
-		int Normal[3];
+		char Name [LENGTH];
 
-		int Texture[3];
+		Texture2D * Texture;
+
+		//------------------------------- Constructor and Destructor ------------------------------
+		
+		MTLTexture ( char [], Texture2D * = NULL );
+
+		~MTLTexture ( void );
 	};
 
-	class OBJModel
+	//---------------------------------- MTL Material Properties ----------------------------------
+
+	struct MTLMaterial
 	{
-		public:
+		//------------------------------- Material Name in MTL File -------------------------------
 
-			//------------------------------ Number of Data Elements ------------------------------
+		char Name [LENGTH];
 
-			int VertexNumber;
+		//------------------------------- Phong Reflectance Coeffs --------------------------------
+
+		Vector3D Ambient;
+
+		Vector3D Diffuse;
+
+		Vector3D Specular;
+
+		float Shininess;
+
+		//------------------------ Transmission Filter and Optical Density ------------------------
+
+		Vector3D Transmission;
+
+		float Density;
+
+		//----------------------------------- Material Dissolve -----------------------------------
 			
-			int NormalNumber;
-			
-			int TextureNumber;
-			
-			int FaceNumber;
+		float Dissolve;
 
-			//------------------------------------ Data Arrays ------------------------------------
+		//---------------------------- Illumination Model for Material ----------------------------
 
-			Vector3D * Vertices;
+		int Model;
 
-			Vector3D * Normals;
+		//------------------------------------ Raster Texture -------------------------------------
 
-			Vector2D * Textures;
+		Texture2D * Texture;
 
-			OBJFace * Faces;
+		//-------------------------------------- Constructor --------------------------------------
+		
+		MTLMaterial ( char [] );
+	};
 
-			//----------------------------- Constructor and Destructor ----------------------------
+	//----------------------------------- OBJ Model Face Element ----------------------------------
 
-			OBJModel ( void );
+	struct OBJFace
+	{
+		int Vertex [3];
 
-			~OBJModel ( void );
+		int Normal [3];
+
+		int Texture [3];
+	};
+
+	//-------------------- OBJ Model Group ( Set of faces with one material ) ---------------------
+
+	struct OBJGroup
+	{
+		//---------------------------------- Material Properties ----------------------------------
+
+		MTLMaterial * Material;
+
+		//-------------------------------------- Group Faces --------------------------------------
+		
+		vector < OBJFace > Faces;
+
+		//------------------------------- Constructor and Destructor ------------------------------
+		
+		OBJGroup ( MTLMaterial * = NULL );
+
+		~OBJGroup ( void );
+	};
+
+	//----------------------------------------- OBJ Model -----------------------------------------
+
+	struct OBJModel
+	{
+		//-------------------------------------- Data Arrays --------------------------------------
+
+		vector < Vector3D > Vertices;
+
+		vector < Vector3D > Normals;
+
+		vector < Vector2D > TexCoords;
+
+		//------------------------------------ Groups of Faces ------------------------------------
+
+		vector < OBJGroup * > Groups;
+
+		//--------------------------- Material Properties from MTL File ---------------------------
+
+		vector < MTLMaterial * > Materials;
+
+		//----------------------------- Raster Textures from MTL File -----------------------------
+
+		vector < MTLTexture * > Textures;
+
+		//------------------------------- Constructor and Destructor ------------------------------
+		
+		~OBJModel ( void );
 	};
 }
 
