@@ -8,7 +8,7 @@ namespace Raytracing
 {
 	//------------------------------------------- Constant Parameters --------------------------------------------
 
-	const unsigned StaticData :: VertexSize = 1024;
+	const unsigned StaticData :: VertexSize = 2048;
 
 	const unsigned StaticData :: MaterialSize = 1024;
 	
