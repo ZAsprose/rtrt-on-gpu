@@ -48,6 +48,8 @@ Mouse mouse ( 0.005F );
 
 Keyboard keyboard ( 0.005F );
 
+float time = 0.0f;
+
 //=================================================================================================
 
 void MouseMove ( int x, int y )
@@ -64,6 +66,7 @@ void KeyButton ( int key, int state )
 {
 	keyboard.StateChange ( key, state );
 }
+
 
 //=================================================================================================
 
@@ -177,6 +180,8 @@ int main ( void )
 
 	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
 
+	//RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
+
 	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
 
 	RayTracingManager->Unbind();
@@ -255,6 +260,12 @@ int main ( void )
 
 		cam->SetShaderData ( PhotonManager );
 
+		//тут ли передаются координате источника света?
+
+		++time;
+
+		RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
+
 		glBegin ( GL_QUADS );
 
 			glVertex2f ( -1.0F, -1.0F );
@@ -276,6 +287,10 @@ int main ( void )
 		glClear ( GL_COLOR_BUFFER_BIT );
 
 		cam->SetShaderData ( RayTracingManager );
+
+		//тут ли это должно передаваться?
+
+		RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
 
 		glBegin ( GL_QUADS );
 
