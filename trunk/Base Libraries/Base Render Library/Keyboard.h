@@ -49,7 +49,7 @@ namespace Render
 
 			//----------------------------------- Camera Change -----------------------------------
 
-			void Apply ( Camera& );
+			void Apply ( Camera * );
 	};
 }
 

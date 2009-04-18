@@ -36,18 +36,18 @@ namespace Render
 
 	//--------------------------------------- Camera Change ---------------------------------------
 
-	void Keyboard :: Apply ( Camera& camera )
+	void Keyboard :: Apply ( Camera * camera )
 	{
-		if ( State.KeyW ) camera.MoveLocal ( Step, Vector3D :: AxisZ );
+		if ( State.KeyW ) camera->MoveLocal ( Step, Vector3D :: AxisZ );
 
-		if ( State.KeyS ) camera.MoveLocal ( -Step, Vector3D :: AxisZ );
+		if ( State.KeyS ) camera->MoveLocal ( -Step, Vector3D :: AxisZ );
 
-		if ( State.KeyA ) camera.MoveLocal ( Step, Vector3D :: AxisX );
+		if ( State.KeyA ) camera->MoveLocal ( Step, Vector3D :: AxisX );
 
-		if ( State.KeyD ) camera.MoveLocal ( -Step, Vector3D :: AxisX );
+		if ( State.KeyD ) camera->MoveLocal ( -Step, Vector3D :: AxisX );
 
-		if ( State.KeyX ) camera.MoveLocal ( Step, Vector3D :: AxisY );
+		if ( State.KeyX ) camera->MoveLocal ( Step, Vector3D :: AxisY );
 
-		if ( State.KeyZ ) camera.MoveLocal ( -Step, Vector3D :: AxisY );
+		if ( State.KeyZ ) camera->MoveLocal ( -Step, Vector3D :: AxisY );
 	}
 }

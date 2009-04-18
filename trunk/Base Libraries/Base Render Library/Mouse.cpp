@@ -46,18 +46,18 @@ namespace Render
 
 	//--------------------------------------- Camera Change ---------------------------------------
 
-	void Mouse :: Apply ( Camera& camera )
+	void Mouse :: Apply ( Camera * camera )
 	{
 		if ( DeltaX != 0 )
 		{
-			camera.RotateLocal ( -DeltaX * Step, Vector3D :: AxisY );
+			camera->RotateLocal ( -DeltaX * Step, Vector3D :: AxisY );
 
 			DeltaX = 0;
 		}
 		
 		if ( DeltaY != 0 )
 		{
-			camera.RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
+			camera->RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
 
 			DeltaY = 0;
 		}

@@ -42,7 +42,7 @@ FrameBuffer* photonFrameBuffer = NULL;
 
 //=================================================================================================
 
-Camera cam;
+Camera * cam;
 
 Mouse mouse ( 0.005F );
 
@@ -183,11 +183,11 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	cam = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
+	cam = new Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
 
-	cam.SetFrustum ( );
+	cam->SetFrustum ( );
 
-	cam.SetViewport ( width, height );
+	cam->SetViewport ( width, height );
 
 	//---------------------------------------------------------------------------------------------
 
@@ -230,7 +230,7 @@ int main ( void )
 
         height = height > 0 ? height : 1;
 
-        cam.SetViewport ( width, height );
+        cam->SetViewport ( width, height );
 
 		//-----------------------------------------------------------------------------------------
 
@@ -253,7 +253,7 @@ int main ( void )
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam.SetShaderData ( PhotonManager );
+		cam->SetShaderData ( PhotonManager );
 
 		glBegin ( GL_QUADS );
 
@@ -275,7 +275,7 @@ int main ( void )
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam.SetShaderData ( RayTracingManager );
+		cam->SetShaderData ( RayTracingManager );
 
 		glBegin ( GL_QUADS );
 

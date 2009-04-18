@@ -4,10 +4,6 @@
 
 #include <GL/glfw.h>
 
-#include <ShaderManager.h>
-
-#include <Camera.h>
-
 #include <Mouse.h>
 
 #include <Keyboard.h>
@@ -22,8 +18,6 @@
 
 #include <StaticData.h>
 
-#include <OBJModel.h>
-
 #include <OBJLoader.h>
 
 #include <TextureManager.h>
@@ -34,17 +28,11 @@ using namespace Render;
 
 using namespace Raytracing;
 
-using namespace std;
-
 //=================================================================================================
-
-Camera camera;
 
 Mouse mouse ( 0.01F );
 
 Keyboard keyboard ( 0.1F );
-
-Vector3D position ( 4.0F, 4.0F, 4.0F );
 
 bool Mode;
 
@@ -60,27 +48,13 @@ void MouseButton ( int button, int state )
 	mouse.StateChange ( state );
 }
 
-float SPEED = 1.0F;
-
 void KeyButton ( int key, int state )
 {
 	keyboard.StateChange ( key, state );
 
-	switch ( key )
+	if ( key == GLFW_KEY_F5 && state > 0 )
 	{
-		case GLFW_KEY_UP: if ( state > 0 ) position += Vector3D::AxisY / SPEED; break;
-
-		case GLFW_KEY_DOWN: if ( state > 0 ) position -= Vector3D::AxisY / SPEED; break;
-
-		case GLFW_KEY_LEFT: if ( state > 0 ) position += Vector3D::AxisX / SPEED; break;
-
-		case GLFW_KEY_RIGHT: if ( state > 0 ) position -= Vector3D::AxisX / SPEED; break;
-
-		case GLFW_KEY_PAGEUP: if ( state > 0 ) position += Vector3D::AxisZ / SPEED; break;
-
-		case GLFW_KEY_PAGEDOWN: if ( state > 0 ) position -= Vector3D::AxisZ / SPEED; break;
-
-		case GLFW_KEY_F5: if ( state > 0 ) Mode = !Mode; break;
+		Mode = !Mode;
 	}
 }
 
@@ -88,405 +62,218 @@ void KeyButton ( int key, int state )
 
 int main ( void )
 {
-	int     width, height, running, frames;
-    double  t, t0, fps;
-    char    titlestr [ 200 ];
+	int Width = 512;
+	
+	int Height = 512;
+	
+	bool Running = true;
+	
+	int Frames = 0;
 
-	//---------------------------------------------------------------------------------------------
+    double Time = 0.0;
+	
+	double Start = 0.0;
+	
+	double FPS = 0.0;
+
+    char Caption [200];
+
+	//------------------------------------ Init OpenGl and GLFW -----------------------------------
 
     glfwInit();
 
-    if( !glfwOpenWindow( 512, 512, 0, 0, 0, 0, 16, 0, GLFW_WINDOW ) )
+	if( !glfwOpenWindow( Width, Height, 0, 0, 0, 0, 16, 0, GLFW_WINDOW ) )
     {
         glfwTerminate();
 
         return 0;
 	}
-
-	//---------------------------------------------------------------------------------------------
 	
+	glfwSwapInterval ( 0 );
+
+	glfwSetMousePosCallback ( MouseMove );
+
+	glfwSetMouseButtonCallback ( MouseButton );
+	
+	glfwSetKeyCallback ( KeyButton );
+
+	//--------------------------- Setup Camera Position and Orientation ---------------------------
+
+	Camera * camera = new Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ),
+		                           Vector3D ( 0.0F, 0.0F, 0.0F ) );
+
+	camera->SetViewport ( Width, Height );
+
+	camera->SetFrustum ( );
+
+	//------------------------------ Loading Shaders for Ray Tracing ------------------------------
+
+	ShaderManager * shaderManager = new ShaderManager ( );
+
+	shaderManager->LoadVertexShader ( "Vertex.vs" );
+
+	shaderManager->LoadFragmentShader ( "Fragment.fs" );
+
+	shaderManager->BuildProgram ( );
+
+	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
+
+	OBJModel * model = OBJLoader :: LoadOBJ( "C:/test/test.obj" );
+
+	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
+
+	for ( int index = 0; index < model->Groups.size ( ); index++ )
+	{
+		meshes [index] = new Mesh ( model, index, new Transform ( ), new Material ( ) );
+
+		meshes [index]->Transformation->SetTranslation ( Vector3D ( 10.0F, -8.5F, 4.0F ) );
+		
+		meshes [index]->Transformation->SetScale ( Vector3D ( 0.0025F, 0.0025F, 0.0025F ) );
+
+		meshes [index]->Tesselate ( );
+	}
+
+	//-------------------------- Adding All Textures to Texture Manager ---------------------------
+
 	TextureManager * textureManager = new TextureManager ( );
 
-	//---------------------------------------------------------------------------------------------
-
-	Sphere * sphere = new Sphere ( 2.0F, 30, 30, new Transform ( ), new Material ( ) );
-
-	sphere->Transformation->SetScale ( Vector3D ( 1.0F, 2.0F, 3.0F ) );
-
-	sphere->Transformation->SetTranslation ( Vector3D ( 2.0F, -2.0F, 3.0F ) );
-
-	sphere->Transformation->SetOrientation( Vector3D ( 1.5F, 1.0F, 0.75F ) );
-
-	sphere->Properties->Diffuse = Vector3D ( 0.0F, 0.1F, 0.1F );
-
-	sphere->Properties->Specular = Vector3D ( 0.8F, 0.8F, 0.8F );
-
-	sphere->Properties->Shininess = 8.0F;
-
-	sphere->Tesselate ( );
-
-
-	Plane * plane1 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane1->Transformation->SetTranslation ( Vector3D ( 0.0F, 0.0F, 20.0F ) );
-
-	plane1->Transformation->SetOrientation( Vector3D ( ONEPI, 0.0F, 0.0F ) );
-
-	plane1->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane1->Properties->Scale = Vector2D ( 2.0F, 2.0F );
-
-	plane1->Tesselate ( );
-
-
-	Plane * plane2 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane2->Transformation->SetTranslation ( Vector3D ( 0.0F, 0.0F, -20.0F ) );
-
-	plane2->Transformation->SetOrientation( Vector3D ( 0.0F, 0.0F, 0.0F ) );
-
-	plane2->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane2->Properties->Scale = Vector2D ( 2.0F, 2.0F );
-
-	plane2->Tesselate ( );
-
-
-	Plane * plane3 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane3->Transformation->SetTranslation ( Vector3D ( 0.0F, -9.0F, 0.0F ) );
-
-	plane3->Transformation->SetOrientation( Vector3D ( ONEPI / 2.0F, 0.0F, 0.0F ) );
-
-	plane3->Properties->Diffuse = Vector3D ( 0.5F, 0.5F, 0.5F );
-
-	plane3->Properties->Scale = Vector2D ( 1.0F, 1.0F );
-
-	plane3->Tesselate ( );
-
-
-	Plane * plane4 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane4->Transformation->SetTranslation ( Vector3D ( 0.0F, 20.0F, 0.0F ) );
-
-	plane4->Transformation->SetOrientation( Vector3D ( -ONEPI / 2.0F, 0.0F, 0.0F ) );
-
-	plane4->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane4->Properties->Scale = Vector2D ( 1.0F, 1.0F );
-
-	plane4->Tesselate ( );
-
-
-	Plane * plane5 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane5->Transformation->SetTranslation ( Vector3D ( 20.0F, 0.0F, 0.0F ) );
-
-	plane5->Transformation->SetOrientation( Vector3D ( 0.0F, ONEPI / 2.0F, 0.0F ) );
-
-	plane5->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane5->Properties->Scale = Vector2D ( 2.0F, 2.0F );
-
-	plane5->Tesselate ( );
-
-
-	Plane * plane6 = new Plane ( Vector2D ( 20.0F, 20.0F ), new Transform ( ), new Material ( ) );
-
-	plane6->Transformation->SetTranslation ( Vector3D ( -20.0F, 0.0F, 0.0F ) );
-
-	plane6->Transformation->SetOrientation( Vector3D ( 0.0F, -ONEPI / 2.0F, 0.0F ) );
-
-	plane6->Properties->Diffuse = Vector3D ( 1.0F, 1.0F, 1.0F );
-
-	plane6->Properties->Scale = Vector2D ( 2.0F, 2.0F );
-
-	plane6->Tesselate ( );
-
-
-	Box * box1 = new Box ( Vector3D ( 1.0F, 1.0F, 1.0F ), new Transform ( ), new Material ( ) );
-	
-	box1->Transformation->SetTranslation ( Vector3D ( 4.0F, 6.3F, -17.0F ) );
-
-	box1->Transformation->SetOrientation( Vector3D ( 0.0F, 1.0F, 0.0F ) );
-
-	box1->Properties->Diffuse = Vector3D ( 0.0F, 0.2F, 0.2F );
-
-	box1->Properties->Refraction = Vector3D ( 0.8F, 0.8F, 0.8F );
-
-	box1->Properties->Shininess = 64.0F;
-
-	box1->Tesselate ( );
-
-
-	Box * box2 = new Box ( Vector3D ( 1.0F, 2.0F, 1.0F ), new Transform ( ), new Material ( ) );
-	
-	box2->Transformation->SetTranslation ( Vector3D ( 0.0F, 7.3F, -17.0F ) );
-
-	box2->Transformation->SetOrientation( Vector3D ( 0.0F, 0.5F, 0.0F ) );
-
-	box2->Properties->Diffuse = Vector3D ( 0.0F, 0.2F, 0.2F );
-
-	box2->Properties->Specular = Vector3D ( 0.6F, 0.6F, 0.6F );
-
-	box2->Properties->Shininess = 64.0F;
-
-	box2->Tesselate ( );
-
-
-	OBJModel * model = OBJLoader :: LoadOBJ( "C:/test/Story/Story.obj" );
-
-
-	for ( int i = 0; i < model->Textures.size ( ); i++ )
+	for ( int index = 0; index < model->Textures.size ( ); index++ )
 	{
-		model->Textures [i]->Texture->Unit = i;
+		model->Textures [index]->Texture->Unit = index;
 
-		model->Textures [i]->Texture->FilterMode.Magnification = GL_LINEAR;
-		model->Textures [i]->Texture->FilterMode.Minification = GL_LINEAR;
+		model->Textures [index]->Texture->FilterMode.Magnification = GL_LINEAR;
 
-		textureManager->ImageTextures.push_back ( model->Textures [i]->Texture );
+		model->Textures [index]->Texture->FilterMode.Minification = GL_LINEAR;
+
+		textureManager->ImageTextures.push_back ( model->Textures [index]->Texture );
 	}
 
 	textureManager->SetupTextures ( );
 
+	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 
-	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
+	Scene * scene = new Scene ( camera, new Volume ( Vector3D ( -18.1F, -15.1F, -2.5F ),
+		                                             Vector3D ( 16.1F, 14.1F, 13.5F ) ) );
 
-	for ( int i = 0; i < model->Groups.size ( ); i++ )
+	for ( int index = 0; index < model->Groups.size ( ); index++ )
 	{
-		meshes [i] = new Mesh ( model, i, new Transform ( ), new Material ( ) );
-
-		meshes [i]->Transformation->SetTranslation ( Vector3D ( -0.8F, -3.0F, 2.5F ) );
-		
-		meshes [i]->Transformation->SetScale ( Vector3D ( 1.0F / 400.0F, 1.0F / 400.0F, 1.0F / 400.0F ) );
-
-		meshes [i]->Tesselate ( );
+		scene->Primitives.push_back ( meshes [index] );
 	}
-
-	//Mesh * mesh2 = new Mesh ( OBJLoader :: LoadModel ( "H:/Projects/Support/Models/Lamp.obj" ),
-	//	                     new Transform ( ), new Material ( ) );
-
-	//mesh2->Transformation->SetTranslation ( Vector3D ( -3.0F, 5.5F, -15.0F ) );
-	//
-	//mesh2->Transformation->SetScale ( Vector3D ( 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F ) );
-
-	//mesh2->Tesselate ( );
-
-	//mesh2->Properties->Diffuse = Vector3D ( 1.0F, 0.5F, 0.0F );
-
-	//mesh2->Properties->Shininess = 32.0F;
-
-
-	Scene * scene = new Scene ( &camera, new Volume ( Vector3D ( -18.1F, -15.1F, -2.5F ),
-		                                              Vector3D ( 16.1F, 14.1F, 13.5F ) ) );
-
-	//scene->Primitives.push_back ( sphere );
-
-	//scene->Primitives.push_back ( plane1 );
-	//scene->Primitives.push_back ( plane2 );
-	//scene->Primitives.push_back ( plane3 );
-	//scene->Primitives.push_back ( plane4 );
-	//scene->Primitives.push_back ( plane5 );
-	//scene->Primitives.push_back ( plane6 );
-	
-	//scene->Primitives.push_back ( box1 );
-	//scene->Primitives.push_back ( box2 );
-
-	for ( int i = 0; i < model->Groups.size ( ); i++ )
-	{
-		scene->Primitives.push_back ( meshes [i] );
-	}
-
-	//scene->Primitives.push_back ( mesh2 );
 
 	scene->Lights.push_back ( new Light (0, Vector3D ( -20.0F, -20.0F, 0.0F ) ) );
+
 	scene->Lights.push_back ( new Light (1, Vector3D ( 20.0F, 20.0F, 0.0F ) ) );
 
-	scene->BuildGrid ( 64, 64, 64 );
+	scene->BuildGrid ( 128, 128, 128 );
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
-	ShaderManager * manager = new ShaderManager ( );
+	StaticData * staticData = new StaticData ( );
 
-	manager->LoadVertexShader ( "Vertex.vs" );
+	staticData->SetupTextures ( scene );
 
-	manager->LoadFragmentShader ( "Fragment.fs" );
+	//------------------------------- Setup Shader Uniform Variables ------------------------------
 
-	manager->BuildProgram ( );
+	shaderManager->Bind ( );
 
-	//---------------------------------------------------------------------------------------------
+	staticData->SetShaderData ( shaderManager );
 
-	StaticData * data = new StaticData ( );
+	textureManager->SetShaderData ( shaderManager );
 
-	data->SetupTextures ( scene );
-
-	//---------------------------------------------------------------------------------------------
-
-	manager->Bind ( );
-
-	data->SetShaderData ( manager );
-
-	textureManager->SetShaderData ( manager );
-
-	manager->Unbind ( );
-
-	//---------------------------------------------------------------------------------------------
-
-	camera = Camera ( Vector3D ( 0.0F, 0.0F, -18.0F ), Vector3D ( 0.0F, 0.0F, 0.0F ) );
-
-	camera.SetFrustum ( );
-
-	//---------------------------------------------------------------------------------------------
-
-    glfwSwapInterval ( 0 );
-
-	glfwSetMousePosCallback ( MouseMove );
-	glfwSetMouseButtonCallback ( MouseButton );
-	glfwSetKeyCallback ( KeyButton );
+	shaderManager->Unbind ( );
 
 	//---------------------------------------------------------------------------------------------
 	
-	running = GL_TRUE;
+	Start = glfwGetTime ( );
 
-	frames = 0;
+    while ( Running )
+	{
+		//------------------------------------ Calculating FPS ------------------------------------
 
-	t0 = glfwGetTime ( );
+		Time = glfwGetTime ( );
 
-    while ( running )
-    {
-        t = glfwGetTime ( );
-
-        if ( ( t-t0 ) > 1.0 || frames == 0 )
+        if ( ( Time - Start ) > 1.0 || Frames == 0 )
         {
-            fps = ( double ) frames / ( t-t0 );
+            FPS = ( double ) Frames / ( Time - Start );
 
-            sprintf_s ( titlestr, "GPU Ray Tracing Test (%.1f FPS)", fps );
+			sprintf ( Caption, "GPU Ray Tracing [ %.1f FPS ]", FPS );
 
-            glfwSetWindowTitle( titlestr );
+            glfwSetWindowTitle ( Caption );
+			
+			Start = Time;
 
-            t0 = t;
-
-            frames = 0;
+            Frames = 0;
         }
 
-        frames++;
+        Frames++;		
 
-		//-----------------------------------------------------------------------------------------
-
-        glfwGetWindowSize ( &width, &height );
-
-        height = height > 0 ? height : 1;
-
-		camera.SetViewport ( width, height );
-
-		//-----------------------------------------------------------------------------------------
+		//------------------------- Moving Camera with Keyboard and Mouse -------------------------
 
 		mouse.Apply ( camera );
 
 		keyboard.Apply ( camera );
 
+		//-------------------- Rendering Scene ( OpenGL or Ray Tracing Mode ) ---------------------
+
 		if ( Mode )
 		{
-			mouse.Step = 0.01F;
-
-			keyboard.Step = 0.1F;
+			//---------------- Setup Parallel Projection and Disabling Depth Test -----------------
 
 			glDisable ( GL_DEPTH_TEST );
-			
-			glViewport ( 0, 0, width, height );
 
 			glMatrixMode ( GL_PROJECTION );
 
 			glLoadIdentity ( );
 
-			glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+			glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
 			
 			glMatrixMode ( GL_MODELVIEW );
 			
 			glLoadIdentity ( );
 
-			//-------------------------------------------------------------------------------------
-			
+			//------------------------- Setup Shaders for GPU Ray Tracing -------------------------
+
+			shaderManager->Bind ( );
+
+			scene->SetShaderData ( shaderManager );
+
+			camera->SetShaderData ( shaderManager );
+
+			//------------------------------- Draw Screen-Size Quad -------------------------------
+
 			glClear ( GL_COLOR_BUFFER_BIT );
-
-			manager->Bind ( );
-
-			scene->SetShaderData ( manager );
-
-			camera.SetShaderData ( manager );
-
-			//-------------------------------------------------------------------------------------
 
 			glBegin ( GL_QUADS );
 
-				glVertex2f ( -1.0F, -1.0F );
-				glVertex2f ( -1.0F,  1.0F );
-				glVertex2f (  1.0F,  1.0F );
-				glVertex2f (  1.0F, -1.0F );
+				glVertex2f ( -1.0F, -1.0F );   glVertex2f ( -1.0F,  1.0F );
+
+				glVertex2f (  1.0F,  1.0F );   glVertex2f (  1.0F, -1.0F );
 
 			glEnd ( );
 
-			manager->Unbind ( );
+			shaderManager->Unbind ( );
 		}
 		else
 		{
-			mouse.Step = 0.01F;
-
-			keyboard.Step = 0.1F;
-
-			camera.Setup ( );
-
-			glEnable ( GL_DEPTH_TEST );
-
-			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-			//-------------------------------------------------------------------------------------
-
-			glColor3f ( 1.0F, 1.0F, 1.0F );
-
-			Vector3D vmin = scene->Box->Minimum;
-
-			Vector3D vmax = scene->Box->Maximum;
+			//--------- Setup perspective projection ( from camera ) and enable depth test --------
 			
-			glBegin ( GL_LINE_LOOP );			
-				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmin.Z );			
-			glEnd ( );
-
-			glBegin ( GL_LINE_LOOP );			
-				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
-			glEnd ( );
-
-			glBegin ( GL_LINES );			
-				glVertex3f ( vmin.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmin.Y, vmax.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmax.X, vmax.Y, vmax.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmin.Z );
-				glVertex3f ( vmin.X, vmax.Y, vmax.Z );			
-			glEnd ( );
-
-			//-------------------------------------------------------------------------------------
-
+			glEnable ( GL_DEPTH_TEST );
+			
+			camera->Setup ( );
+			
+			//------------------------------ Draw scene with OpenGL -------------------------------
+			
+			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			
 			scene->Draw ( );
-		
 		}
 
-        glfwSwapBuffers();
-
-		//-----------------------------------------------------------------------------------------
+        glfwSwapBuffers ( );
 		
-		running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
+		Running = !glfwGetKey ( GLFW_KEY_ESC ) && glfwGetWindowParam ( GLFW_OPENED );
 	}
 
-    glfwTerminate();
+    glfwTerminate ( );
 
     return 0;
 }
