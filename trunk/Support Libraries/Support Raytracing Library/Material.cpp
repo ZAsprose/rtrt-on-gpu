@@ -14,9 +14,10 @@ namespace Raytracing
 						   const Vector3D& diffuse,
 						   const Vector3D& specular,
 						   float shininess,
-						   const Vector3D& reflective,
-						   const Vector3D& refractive,
-						   float refractIndex,
+						   const Vector3D& reflection,
+						   const Vector3D& refraction,
+						   float density,
+						   float dissolve,
 						   Texture2D * texture,
 						   const Vector2D& scale )
 	{
@@ -30,11 +31,15 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 				
-		Reflective = reflective;
+		Reflection = reflection;
+
+		Refraction = refraction;
 				
-		Refractive = refractive;
-				
-		RefractIndex = refractIndex;
+		Density = density;
+
+		//-------------------------------------------------------------------------------
+
+		Dissolve = dissolve;
 
 		//-------------------------------------------------------------------------------
 

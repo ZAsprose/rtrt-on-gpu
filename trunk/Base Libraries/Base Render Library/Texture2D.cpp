@@ -12,12 +12,12 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture2D :: Texture2D ( unsigned int unit, unsigned int target )
+	Texture2D :: Texture2D ( unsigned unit, unsigned target )
 	{
 		Init ( target, NULL, unit );
 	}
 				
-	Texture2D :: Texture2D ( TextureData2D * data, unsigned int unit, unsigned int target )
+	Texture2D :: Texture2D ( TextureData2D * data, unsigned unit, unsigned target )
 	{
 		Init ( target, data, unit );
 	}
@@ -31,7 +31,7 @@ namespace Render
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture2D :: Init ( unsigned int target, TextureData2D * data, unsigned int unit )
+	void Texture2D :: Init ( unsigned target, TextureData2D * data, unsigned unit )
 	{
 		Target = target;
 

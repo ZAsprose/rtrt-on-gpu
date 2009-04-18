@@ -12,12 +12,12 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture1D :: Texture1D ( unsigned int unit )
+	Texture1D :: Texture1D ( unsigned unit )
 	{
 		Init ( GL_TEXTURE_1D, NULL, unit );
 	}
 				
-	Texture1D :: Texture1D ( TextureData1D * data, unsigned int unit )
+	Texture1D :: Texture1D ( TextureData1D * data, unsigned unit )
 	{
 		Init ( GL_TEXTURE_1D, data, unit );
 	}
@@ -31,7 +31,7 @@ namespace Render
 
 	//--------------------------------------- Texture Init ----------------------------------------
 
-	void Texture1D :: Init ( unsigned int target, TextureData1D * data, unsigned int unit )
+	void Texture1D :: Init ( unsigned target, TextureData1D * data, unsigned unit )
 	{
 		Target = target;
 

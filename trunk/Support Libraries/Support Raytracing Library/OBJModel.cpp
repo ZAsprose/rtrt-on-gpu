@@ -6,35 +6,64 @@
 
 namespace Raytracing
 {
-	//--------------------------------- Constructor and Destructor --------------------------------
+	//-------------------------------- Constructors and Destructors -------------------------------
 
-	OBJModel :: OBJModel ( void )
+	MTLTexture :: MTLTexture ( char name [], Texture2D * texture )
 	{
-		VertexNumber = 0;
+		memcpy ( Name, name, LENGTH );
 
-		NormalNumber = 0;
+		Texture = texture;
+	}
+	
+	MTLTexture :: ~MTLTexture ( void )
+	{
+		delete Texture;
+	}
 
-		TextureNumber = 0;
+	MTLMaterial :: MTLMaterial ( char name [] )
+	{
+		memcpy ( Name, name, LENGTH );
 
-		FaceNumber = 0;
-		
-		Vertices = NULL;
+		Texture = NULL;
+	}
 
-		Normals = NULL;
+	OBJGroup :: OBJGroup ( MTLMaterial * material )
+	{
+		Material = material;
+	}
 
-		Textures = NULL;
-
-		Faces = NULL;
+	OBJGroup :: ~OBJGroup ( void )
+	{
+		delete Material;
 	}
 
 	OBJModel :: ~OBJModel ( void )
 	{
-		delete [] Vertices;
+		for ( int index = 0; index < Groups.size ( ); index++ )
+		{
+			delete Groups [index];
+		}
 
-		delete [] Normals;
+		for ( int index = 0; index < Materials.size ( ); index++ )
+		{
+			delete Materials [index];
+		}
 
-		delete [] Textures;
+		for ( int index = 0; index < Textures.size ( ); index++ )
+		{
+			delete Textures [index];
+		}
 
-		delete [] Faces;
+		Vertices.clear ( );
+		
+		Normals.clear ( );
+		
+		TexCoords.clear ( );
+		
+		Groups.clear ( );
+
+		Materials.clear ( );
+
+		Textures.clear ( );
 	}
 }

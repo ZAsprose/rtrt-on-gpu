@@ -16,16 +16,17 @@ namespace Raytracing
 	{
 		public:
 
-			//------------------------------------- Half Size -------------------------------------
+			//-------------------------------- Half Size ( Radius ) -------------------------------
 
-			Vector3D HalfSize;
+			Vector3D Radius;
 
 			//------------------------------------ Constructor ------------------------------------
 		
 			Box ( const Vector3D& = Vector3D :: Unit,
 				  Transform * = new Transform ( ),
 				  Material * = new Material ( ),
-				  const char * = "Box" );
+				  const char * = "Box",
+				  bool = true );
 
 			//---------------------------------- Build Triangles ----------------------------------
 			

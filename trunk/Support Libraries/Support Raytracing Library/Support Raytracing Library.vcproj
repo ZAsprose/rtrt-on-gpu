@@ -107,6 +107,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Base Libraries\Base Math Library&quot;;&quot;$(SolutionDir)\Base Libraries\Base Render Library&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Include&quot;;&quot;$(SolutionDir)\Dependencies\GLee\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
@@ -239,26 +240,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Mesh"
-				>
-				<Filter
-					Name="Loader"
-					>
-					<File
-						RelativePath=".\OBJLoader.cpp"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Model"
-					>
-					<File
-						RelativePath=".\OBJModel.cpp"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
 				Name="Uniform Grid"
 				>
 				<Filter
@@ -293,6 +274,26 @@
 					RelativePath=".\StaticData.cpp"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="Import"
+				>
+				<Filter
+					Name="Loader"
+					>
+					<File
+						RelativePath=".\OBJLoader.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Model"
+					>
+					<File
+						RelativePath=".\OBJModel.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -377,26 +378,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Mesh"
-				>
-				<Filter
-					Name="Loader"
-					>
-					<File
-						RelativePath=".\OBJLoader.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Model"
-					>
-					<File
-						RelativePath=".\OBJModel.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
 				Name="Uniform Grid"
 				>
 				<Filter
@@ -431,6 +412,26 @@
 					RelativePath=".\StaticData.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="Import"
+				>
+				<Filter
+					Name="Loader"
+					>
+					<File
+						RelativePath=".\OBJLoader.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Model"
+					>
+					<File
+						RelativePath=".\OBJModel.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>

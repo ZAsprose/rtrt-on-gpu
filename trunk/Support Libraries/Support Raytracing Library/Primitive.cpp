@@ -12,27 +12,32 @@ namespace Raytracing
 
 	Primitive :: Primitive ( Transform * transformation,
 		                     Material * properties,
-							 const char * name )
+							 const char * name,
+							 bool visible )
 	{
 		Transformation = transformation;
 
-		Name = name;
-
 		Properties = properties;
 
-		Visible = true;
+		Name = name;
+
+		Visible = visible;
 	}
 
 	Primitive :: ~Primitive ( void )
 	{
-		delete Transformation;
-		
 		for ( unsigned index = 0; index < Triangles.size ( ); index++ )
 		{
 			delete Triangles [ index ];
 		}
 
 		Triangles.clear ( );
+
+		//---------------------------------------------------------------------
+
+		delete Transformation;
+		
+		delete Properties;
 	}
 
 	//-------------------------------------------- Draw -------------------------------------------
@@ -40,7 +45,7 @@ namespace Raytracing
 	void Primitive :: Draw ( void )
 	{
 		Properties->Setup ( );
-		
+
 		glBegin ( GL_TRIANGLES );
 
 			for ( unsigned index = 0; index < Triangles.size ( ); index++ )

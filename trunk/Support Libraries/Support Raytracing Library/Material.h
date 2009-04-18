@@ -22,7 +22,7 @@ namespace Raytracing
 	{
 		public:
 
-			//---------------------------------- Phong Constants ----------------------------------
+			//----------------------------- Phong Reflectance Coeffs ------------------------------
 
 			Vector3D Ambient;
 
@@ -32,19 +32,23 @@ namespace Raytracing
 			
 			float Shininess;
 
-			//----------------------------- Reflection and Refraction -----------------------------
+			//------------------- Reflection and Refraction and Optical Density -------------------
 			
-			Vector3D Reflective;
-			
-			Vector3D Refractive;	
-			
-			float RefractIndex;
+			Vector3D Reflection;
 
-			//----------------------------------- Raster Texture ----------------------------------
+			Vector3D Refraction;
 			
-			Vector2D Scale;
+			float Density;
+
+			//--------------------------------- Material Dissolve ---------------------------------
+			
+			float Dissolve;
+
+			//--------------------------- Raster Texture and Image Scale --------------------------
 
 			Texture2D * Texture;
+
+			Vector2D Scale;
 
 			//-------------------------------- Material Identifier --------------------------------
 
@@ -54,11 +58,12 @@ namespace Raytracing
 			
 			Material ( const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
 					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
-					   const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
+					   const Vector3D& = Vector3D :: Zero,
 					   float = 32.0F,
 					   const Vector3D& = Vector3D :: Zero,
 					   const Vector3D& = Vector3D :: Zero,
 					   float = 1.5F,
+					   float = 1.0F,
 					   Texture2D * = NULL,
 					   const Vector2D& = Vector2D :: Unit );
 			

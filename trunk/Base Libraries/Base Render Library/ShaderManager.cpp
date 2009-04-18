@@ -44,7 +44,7 @@ namespace Render
 	{
 		cout << "Loading shader source..." << endl;
 
-		char ** lines = new char *[count];		
+		char ** lines = new char * [count];		
 
 		//---------------------------------------------------------------------
 
@@ -52,9 +52,9 @@ namespace Render
 
 		for ( int index = 0; index < count; index++ )
 		{
-			cout << "File: \"" << filenames[index] << "\"..." << endl;
+			cout << "File: \"" << filenames [index] << "\"..." << endl;
 
-			ifstream file ( filenames[index] );
+			ifstream file ( filenames [index] );
 
 			//-----------------------------------------------------------------
 			
@@ -84,20 +84,20 @@ namespace Render
 
 			//-----------------------------------------------------------------
 
-			char * source = new char[length + 1];
+			char * source = new char [length + 1];
 
 			unsigned long i = 0;
 			
 			while ( file )
 			{
-				source[i++] = file.get ( );
+				source [i++] = file.get ( );
 			}
 			
-			source[i - 1] = 0;
+			source [i - 1] = 0;
 
 			//-----------------------------------------------------------------
 
-			lines[index] = source;
+			lines [index] = source;
 			
 			file.close();
 		}
@@ -115,7 +115,7 @@ namespace Render
 
 		for ( int index = 0; index < count; index++ )
 		{
-			delete [] lines[index];
+			delete [] lines [index];
 		}
 
 		delete [] lines;
@@ -227,7 +227,7 @@ namespace Render
 
         glGetProgramiv ( Program, GL_INFO_LOG_LENGTH, &capacity );
 
-		char * info = new char[capacity];
+		char * info = new char [capacity];
 
 		memset ( info, 0, capacity );
 
@@ -288,7 +288,7 @@ namespace Render
 			
 	Vector4D ShaderManager :: GetUniformVector ( char * name )
 	{
-		float values[SIZE4D];
+		float values [SIZE4D];
 
 		int location = glGetUniformLocation ( Program, name );
 
@@ -302,7 +302,7 @@ namespace Render
 			
 	Vector4D ShaderManager :: GetUniformVector ( int location )
 	{
-		float values[SIZE4D];
+		float values [SIZE4D];
 
 		glGetUniformfv ( Program, location, values );
 
@@ -316,7 +316,7 @@ namespace Render
 		if ( location < 0 )
 			return Vector4D :: Zero;
 				
-		float values[SIZE4D];
+		float values [SIZE4D];
 
 		glGetVertexAttribfv ( location, GL_CURRENT_VERTEX_ATTRIB, values );
 				
@@ -325,7 +325,7 @@ namespace Render
 			
 	Vector4D ShaderManager :: GetAttributeVector ( int location )
 	{
-		float values[SIZE4D];
+		float values [SIZE4D];
 
 		glGetVertexAttribfv ( location, GL_CURRENT_VERTEX_ATTRIB, values );
 
@@ -434,14 +434,14 @@ namespace Render
 		if ( location < 0 )
 			return false;
 
-		glUniformMatrix2fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix2fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}
 
 	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix2D& value )
 	{
-		glUniformMatrix2fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix2fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}
@@ -453,14 +453,14 @@ namespace Render
 		if ( location < 0 )
 			return false;
 
-		glUniformMatrix3fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix3fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}
 
 	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix3D& value )
 	{
-		glUniformMatrix3fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix3fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}
@@ -472,14 +472,14 @@ namespace Render
 		if ( location < 0 )
 			return false;
 
-		glUniformMatrix4fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix4fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}
 
 	bool ShaderManager :: SetUniformMatrix ( int location, const Matrix4D& value )
 	{
-		glUniformMatrix4fv ( location, 1, GL_FALSE, value[0] );
+		glUniformMatrix4fv ( location, 1, GL_FALSE, value [0] );
 
 		return true;
 	}

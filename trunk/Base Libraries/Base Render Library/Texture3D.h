@@ -22,21 +22,21 @@ namespace Render
 
 			//---------------------------------- Texture Handle -----------------------------------
 
-			unsigned int Handle;
+			unsigned Handle;
 
 			//--------------------------------- OpenGL Identifier ---------------------------------
 			
-			unsigned int Target;
-
-			//---------------------------------- Texture Settings ---------------------------------
-
-			unsigned int Unit;
+			unsigned Target;
 
 			//------------------------------------ Texture Init -----------------------------------
 
-			void Init ( unsigned int, TextureData3D *, unsigned int );
+			void Init ( unsigned, TextureData3D *, unsigned );
 		
 		public:
+
+			//----------------------------------- Texture Unit ------------------------------------
+
+			unsigned Unit;
 
 			//----------------------------------- Texture Data ------------------------------------
 
@@ -50,9 +50,9 @@ namespace Render
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture3D ( unsigned int = 0 );
+			Texture3D ( unsigned = 0 );
 						
-			Texture3D ( TextureData3D *, unsigned int = 0 );
+			Texture3D ( TextureData3D *, unsigned = 0 );
 
 			~Texture3D ( void );
 

@@ -15,7 +15,8 @@ namespace Raytracing
 					   int stacks,
 		               Transform * transformation,
 					   Material * properties,
-					   const char * name ) : Primitive ( transformation, properties, name )
+					   const char * name,
+					   bool visible ) : Primitive ( transformation, properties, name, visible )
 	{
 		Radius = radius;
 
@@ -38,7 +39,7 @@ namespace Raytracing
 			Triangles.clear ( );
 		}
 
-		//-------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
 
 		Vertex *** vertices = new Vertex ** [Slices + 1];
 
@@ -47,7 +48,7 @@ namespace Raytracing
 			vertices [index] = new Vertex * [Stacks + 1];
 		}
 
-		//-------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
 
 		float uStep = TWOPI / Slices;
 			
@@ -73,24 +74,22 @@ namespace Raytracing
 			}
 		}
 
-		//-------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
+
+		Triangle * triangle = NULL;
 
 		for ( int x = 0; x < Slices; x++ )
 		{
 			for ( int y = 0; y < Stacks; y++ )
 			{
-				Triangle * triangle = new Triangle ( vertices [x][y],
-					                                 vertices [x + 1][y],
-													 vertices [x][y + 1],
-													 Properties );
+				triangle = new Triangle ( vertices [x][y], vertices [x + 1][y],
+					                      vertices [x][y + 1], Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );
 
-				triangle = new Triangle ( vertices [x][y + 1],
-					                      vertices [x + 1][y],
-										  vertices [x + 1][y + 1],
-										  Properties );
+				triangle = new Triangle ( vertices [x][y + 1], vertices [x + 1][y],
+					                      vertices [x + 1][y + 1], Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );

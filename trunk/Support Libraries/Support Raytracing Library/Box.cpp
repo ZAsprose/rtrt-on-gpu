@@ -8,12 +8,13 @@ namespace Raytracing
 {	
 	//---------------------------------------- Constructor ----------------------------------------
 
-	Box :: Box ( const Vector3D& halfSize,
+	Box :: Box ( const Vector3D& radius,
 		         Transform * transformation,
 				 Material * properties,
-				 const char * name ) : Primitive ( transformation, properties, name )
+				 const char * name,
+				 bool visible ) : Primitive ( transformation, properties, name, visible )
 	{
-		HalfSize = halfSize;
+		Radius = radius;
 	}
 
 	//-------------------------------------- Build Triangles --------------------------------------
@@ -39,57 +40,57 @@ namespace Raytracing
 		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( sign * HalfSize.X, -HalfSize.Y, -HalfSize.Z ) ),
+				Vector3D ( sign * Radius.X, -Radius.Y, -Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisX ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( sign * HalfSize.X, -HalfSize.Y, HalfSize.Z ) ),
+				Vector3D ( sign * Radius.X, -Radius.Y, Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisX ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( sign * HalfSize.X, HalfSize.Y, HalfSize.Z ) ),
+				Vector3D ( sign * Radius.X, Radius.Y, Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisX ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( sign * HalfSize.X, HalfSize.Y, -HalfSize.Z ) ),
+				Vector3D ( sign * Radius.X, Radius.Y, -Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisX ) ) );
 		}
 
 		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( -HalfSize.X, sign * HalfSize.Y, -HalfSize.Z ) ),
+				Vector3D ( -Radius.X, sign * Radius.Y, -Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisY ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( -HalfSize.X, sign * HalfSize.Y, HalfSize.Z ) ),
+				Vector3D ( -Radius.X, sign * Radius.Y, Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisY ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( HalfSize.X, sign * HalfSize.Y, HalfSize.Z ) ),
+				Vector3D ( Radius.X, sign * Radius.Y, Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisY ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( HalfSize.X, sign * HalfSize.Y, -HalfSize.Z ) ),
+				Vector3D ( Radius.X, sign * Radius.Y, -Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisY ) ) );
 		}
 
 		for ( float sign = -1.0F; sign < 2.0F; sign += 2.0F )
 		{
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( -HalfSize.X, -HalfSize.Y, sign * HalfSize.Z ) ),
+				Vector3D ( -Radius.X, -Radius.Y, sign * Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisZ ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( -HalfSize.X, HalfSize.Y, sign * HalfSize.Z ) ),
+				Vector3D ( -Radius.X, Radius.Y, sign * Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisZ ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( HalfSize.X, HalfSize.Y, sign * HalfSize.Z ) ),
+				Vector3D ( Radius.X, Radius.Y, sign * Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisZ ) ) );
 
 			vertices [index++] = new Vertex ( Transformation->ForwardPoint (
-				Vector3D ( HalfSize.X, -HalfSize.Y, sign * HalfSize.Z ) ),
+				Vector3D ( Radius.X, -Radius.Y, sign * Radius.Z ) ),
 				Normalize ( Transformation->ForwardNormal ( sign * Vector3D :: AxisZ ) ) );
 		}
 
@@ -97,15 +98,13 @@ namespace Raytracing
 
 		for ( int vertex = 0; vertex < 24; vertex  += 4 )
 		{
-			Triangles.push_back ( new Triangle ( vertices [ vertex ],
-				                                 vertices [ vertex + 1 ],
-												 vertices [ vertex + 2 ],
-												 Properties ) );
+			Triangles.push_back (
+				new Triangle ( vertices [vertex], vertices [vertex + 1],
+				               vertices [vertex + 2], Properties ) );
 			
-			Triangles.push_back ( new Triangle ( vertices [ vertex + 2 ],
-				                                 vertices [ vertex + 3 ],
-												 vertices [ vertex ],
-												 Properties ) );
+			Triangles.push_back (
+				new Triangle ( vertices [vertex + 2], vertices [vertex + 3],
+				               vertices [vertex], Properties ) );
 		}
 	}
 }
