@@ -10,6 +10,8 @@
 
 #include <Vector3D.h>
 
+#include <GLee.h>
+
 using namespace Math;
 
 namespace Raytracing
@@ -33,7 +35,13 @@ namespace Raytracing
 			//------------------------------------ Constructor ------------------------------------
 			
 			Volume ( const Vector3D& = Vector3D ( -5.0F, -5.0F, -5.0F ),
-				     const Vector3D& = Vector3D ( 5.0F, 5.0F, 5.0F ) );
+				     const Vector3D& = Vector3D ( 5.0F, 5.0F, 5.0F ),
+					 const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ),
+					 bool = true );
+
+			//--------------------------------------- Draw ----------------------------------------
+			
+			void Draw ( void );
 	};
 }
 

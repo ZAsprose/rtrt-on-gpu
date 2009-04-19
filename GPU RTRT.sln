@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Render Library", "Base
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Support Raytracing Library", "Support Libraries\Support Raytracing Library\Support Raytracing Library.vcproj", "{865F9011-B492-439B-9EC5-AE421C7EBE44}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Raytracing", "Test Suite\Ray Tracing\Ray Tracing.vcproj", "{3545863C-BEAE-4330-B445-A7731E1454D3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ray Tracing", "Test Suite\Ray Tracing\Ray Tracing.vcproj", "{3545863C-BEAE-4330-B445-A7731E1454D3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Photon Mapping", "Test Suite\Photon Mapping\Photon Mapping.vcproj", "{52FE3405-D270-4FD9-BF85-21A0D4157D1F}"
 EndProject
