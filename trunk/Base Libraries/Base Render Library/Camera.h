@@ -8,11 +8,11 @@
 
 #define _CAMERA_
 
-#include <Vector3D.h>
+#include "ShaderManager.h"
 
 #include <Matrix3D.h>
 
-#include "ShaderManager.h"
+#include <GL/glfw.h>
 
 using namespace Math;
 

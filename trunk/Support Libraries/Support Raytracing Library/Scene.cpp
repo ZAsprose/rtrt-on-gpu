@@ -46,6 +46,8 @@ namespace Raytracing
 			
 			Lights [index]->Draw ( );
 		}
+
+		//---------------------------------------------------------------------
 		
 		for ( unsigned index = 0; index < Primitives.size ( ); index++ )
 		{
@@ -54,6 +56,10 @@ namespace Raytracing
 				Primitives [index]->Draw ( );
 			}
 		}
+
+		//---------------------------------------------------------------------
+
+		Box->Draw ( );
 	}
 
 	//------------------------------------- Build Uniform Grid ------------------------------------
@@ -81,7 +87,7 @@ namespace Raytracing
 		Grid->BuildGrid ( Box, triangles );
 	}
 
-	//---------------------------------------- Apply Settings ---------------------------------------
+	//-------------------------------------- Apply Settings ---------------------------------------
 
 	void Scene :: SetShaderData ( ShaderManager * manager )
 	{
