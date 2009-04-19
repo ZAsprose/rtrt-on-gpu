@@ -22,6 +22,8 @@
 
 #include "FrameBuffer.h"
 
+#include "math.h"
+
 using namespace Render;
 
 using namespace Math;
@@ -180,8 +182,6 @@ int main ( void )
 
 	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
 
-	//RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
-
 	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
 
 	RayTracingManager->Unbind();
@@ -252,6 +252,7 @@ int main ( void )
 		keyboard.Apply ( cam );
 
 		//-----------------------------------------------------------------------------------------
+
 		photonFrameBuffer->Bind();
 
 		PhotonManager->Bind ( );
@@ -264,7 +265,10 @@ int main ( void )
 
 		++time;
 
-		RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
+		RayTracingManager->SetUniformVector ( "Light.Position",
+			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			           3.0F + 2.0F * sinf ( time / 500.0F ),
+					   5.0F * cosf ( time / 1500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -290,7 +294,10 @@ int main ( void )
 
 		//тут ли это должно передаваться?
 
-		RayTracingManager->SetUniformVector("Light.Position", Vector3D( (float)(5.0f * sin(time/10.0f)),(float)(5.0f * cos(time/10.0f)),5.0f);
+		RayTracingManager->SetUniformVector ( "Light.Position",
+			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			           3.0F + 2.0F * sinf ( time / 500.0F ),
+					   5.0F * cosf ( time / 1500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -304,8 +311,8 @@ int main ( void )
 		RayTracingManager->Unbind ( );
 
         glfwSwapBuffers();
-
-//---------------------------------------------------------------------------------------------------------
+		
+		//-----------------------------------------------------------------------------------------
 		
 		running = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
 	}
