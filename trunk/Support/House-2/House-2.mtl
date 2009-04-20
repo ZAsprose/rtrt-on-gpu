@@ -1,0 +1,142 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+# Multi/Sub Материал__41 (16) to come 
+#
+newmtl Tejado
+Ka  0.2 0.2 0.2
+Kd  0.2 0.2 0.2
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl D9006Mrc
+Ka  0.9 0.8 0.8
+Kd  0.9 0.8 0.8
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl D9006MB2
+Ka  0.4 0.3 0.3
+Kd  0.4 0.3 0.3
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+map_Kd D9006MA.TGA
+#
+newmtl D9006Lad
+Ka  0.3 0.2 0.2
+Kd  0.3 0.2 0.2
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+map_Kd D9006BRI.TGA
+#
+newmtl D9006MW
+Ka  0.8 0.8 0.7
+Kd  0.8 0.8 0.7
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl Material__6
+Ka  0.7 0.7 0.7
+Kd  0.7 0.7 0.7
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+map_Kd D9006MR.TGA
+#
+newmtl D9006Gla
+Ka  0.1 0.2 0.0
+Kd  0.1 0.2 0.0
+Ks  1.0 1.0 1.0
+d  0.4
+Ns  0.0
+illum 2
+#
+newmtl MadMarc
+Ka  0.9 0.8 0.8
+Kd  0.9 0.8 0.8
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl D9006MR
+Ka  0.7 0.7 0.7
+Kd  0.7 0.7 0.7
+Ks  0.5 0.5 0.5
+d  1.0
+Ns  0.0
+illum 3
+map_Kd D9006MR.TGA
+#
+newmtl D9006GS
+Ka  0.3 0.3 0.3
+Kd  0.3 0.3 0.3
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl D9006Pom
+Ka  0.7 0.6 0.2
+Kd  0.7 0.6 0.2
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl Marco
+Ka  0.1 0.1 0.0
+Kd  0.1 0.1 0.0
+Ks  0.5 0.5 0.5
+d  1.0
+Ns  0.0
+illum 3
+map_Kd D9006M2.TGA
+#
+newmtl Shutter
+Ka  0.1 0.1 0.0
+Kd  0.1 0.1 0.0
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+map_Kd D9006RG.TGA
+#
+newmtl Marc
+Ka  0.9 0.8 0.8
+Kd  0.9 0.8 0.8
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+newmtl MaderaBl
+Ka  0.9 0.9 0.9
+Kd  0.9 0.9 0.9
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+map_Kd D9006MA.TGA
+#
+newmtl MadLines
+Ka  0.6 0.6 0.5
+Kd  0.6 0.6 0.5
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  0.0
+illum 2
+#
+# Multi/Sub Материал__41 done 
+#
+# EOF
