@@ -61,6 +61,8 @@ uniform SSphere Sphere;
 
 uniform SLight Light;
 
+uniform sampler2D NoiseTexture;
+
 varying vec2 ScreenCoords;
 
 //=================================================================================================
@@ -167,6 +169,10 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 			intersection.Point = ray.Origin + intersection.Time * ray.Direction;
 			
 			intersection.Normal = normalize ( intersection.Point - Sphere.Center );
+
+			vec3 noise = 3.0 * vec3(texture2D (NoiseTexture,abs(intersection.Point.xz) / 20.0)) - vec3(1.0);
+
+			intersection.Normal = normalize ( intersection.Normal + 0.1 * noise  );
 			
 			intersection.Color = vec3 ( 0.2 );
 			
