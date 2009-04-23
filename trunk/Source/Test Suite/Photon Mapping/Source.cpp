@@ -171,7 +171,7 @@ int main ( void )
 
 	PhotonManager->SetUniformVector("Light.HalfSize", Vector2D(20.0F, 20.0F));
 
-	PhotonManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
+	PhotonManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) /*/ (20.0F * 20.0F)*/);//делить не надо!!!!
 
 	PhotonManager->SetTexture("Position",positionsTexture);
 
@@ -201,7 +201,7 @@ int main ( void )
 
 	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
 
-	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));//не "съедается" ли здесь весь цвет источника света?
+	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) /*/ (20.0F * 20.0F)*/);
 
 	RayTracingManager->SetTexture("NoiseTexture", noiseTexture);
 
@@ -284,7 +284,7 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		/*photonFrameBuffer->Bind();
+		photonFrameBuffer->Bind();
 
 		PhotonManager->Bind ( );
 
@@ -307,7 +307,7 @@ int main ( void )
 
 		//----------------------------------------------------------------------------------------
 
-		TestManager->Bind();//нет взаимодействия
+		TestManager->Bind();//нет взаимодействия!!!
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
@@ -322,12 +322,12 @@ int main ( void )
 
 		glEnd ( );
 
-		TestManager->Unbind();*/
+		TestManager->Unbind();
 
 
 		//-----------------------------------------------------------------------------------------
 
-		RayTracingManager->Bind ( );
+		/*RayTracingManager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
@@ -352,7 +352,7 @@ int main ( void )
 
 		glEnd ( );
 
-		RayTracingManager->Unbind ( );
+		RayTracingManager->Unbind ( );*/
 
         glfwSwapBuffers();
 		
