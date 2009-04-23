@@ -67,10 +67,17 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 const float PlaneTexScale = 0.25;
 
 //=======================================================================================================================================
+vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 texcoords )
+{
+	return mix ( firstColor,
+	             secondColor,
+				 0.5 * sign ( ( texcoords.x - 0.5 ) * ( texcoords.y - 0.5 ) ) + 0.5 );
+}
+
 
 SRay GenerateRay ( void )
 {
-	vec3 direction = AxisX * ScreenCoords.x * Light.HalfSize.x + AxisZ * ScreenCoords.y * Light.HalfSize.z - AxisY * Ligth.distance;
+	vec3 direction = AxisX * ScreenCoords.x * Light.HalfSize.x + AxisZ * ScreenCoords.y * Light.HalfSize.y - AxisY * Light.distance;
    
 	return SRay ( Light.Position, normalize ( direction ) );
 }
@@ -154,15 +161,12 @@ void main( void )
 		if ( HitSphere ( ray, test ) && ( test.Time < intersect.Time ) )
 		
 		{
-			intens = Light.Intens;
-			
 			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
 			
 			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 			
 			if ( HitSphere ( ray, test ) )
 			{
-				intens = Light.Intens;
 								 
 				//-------------------------------------------------------------
 				
@@ -174,13 +178,14 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens = Light.Intens;			
+					intens += Light.Intens;			
 				}
 			}
 		}
 		else
 		{
-			intens = Light.Intens;
+			intens += Light.Intens;
+
 		}
 	}
 	else
@@ -189,7 +194,6 @@ void main( void )
 		
 		if ( HitSphere ( ray, test ) )
 		{
-			intens = Light.Intens;
 			
 			//-----------------------------------------------------------------
 			
@@ -199,7 +203,6 @@ void main( void )
 			
 			if ( HitSphere ( ray, test ) )
 			{
-				intens = Light.Intens;
 								 
 				//-------------------------------------------------------------
 				
@@ -211,7 +214,7 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens = Light.Intens;		
+					intens += Light.Intens;		
 				}
 			}
 		}
@@ -219,8 +222,8 @@ void main( void )
 	
 	//-------------------------------------------------------------------------
 	
-	gl_Frag_Data[1] = vec4( intens,1.0);
-	gl_Frag_Data[0] = vec4( intersection.Point, 1.0);
+	gl_FragData[1] = vec4( intens,1.0);
+	gl_FragData[0] = vec4( intersect.Point, 1.0);
 }	
 
 

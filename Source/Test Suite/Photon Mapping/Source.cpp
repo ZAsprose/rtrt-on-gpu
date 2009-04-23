@@ -36,9 +36,13 @@ TextureData2D* photonsTextureData = NULL;
 
 TextureData2D* colorTextureData = NULL;
 
+TextureData2D* noiseTextureData = NULL;
+
 Texture2D* positionsTexture = NULL;
 
 Texture2D* colorsTexture = NULL;
+
+Texture2D* noiseTexture = NULL;
 
 FrameBuffer* photonFrameBuffer = NULL;
 
@@ -91,13 +95,20 @@ int main ( void )
 
 	colorTextureData = new TextureData2D(CountX,CountY,4);
 
-	positionsTexture = new Texture2D(photonsTextureData, 1 , GL_TEXTURE_RECTANGLE_ARB);
+	noiseTextureData = TextureData2D :: FromTGA("Noise.tga");
 
-	colorsTexture = new Texture2D(colorTextureData, 2 , GL_TEXTURE_RECTANGLE_ARB);
+	positionsTexture = new Texture2D(photonsTextureData, 0 , GL_TEXTURE_RECTANGLE_ARB);
+
+	colorsTexture = new Texture2D(colorTextureData, 1 , GL_TEXTURE_RECTANGLE_ARB);
+
+	noiseTexture = new Texture2D(noiseTextureData, 2 , GL_TEXTURE_2D);
 
 	positionsTexture->Setup();
 
 	colorsTexture->Setup();
+
+	
+	noiseTexture->Setup();
 
 	
 	//---------------------------------------------------------------------------------------------
@@ -125,6 +136,14 @@ int main ( void )
 	RayTracingManager->LoadFragmentShader( "Fragment.fs" );
 
 	RayTracingManager->BuildProgram();
+
+	ShaderManager * TestManager = new ShaderManager();
+
+	TestManager->LoadVertexShader( "test.vs" );
+
+	TestManager->LoadFragmentShader( "testFX.fs" );
+
+	TestManager->BuildProgram();
 
 	photonFrameBuffer = new FrameBuffer();
 
@@ -182,9 +201,19 @@ int main ( void )
 
 	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
 
-	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));
+	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) / (20.0F * 20.0F));//не "съедается" ли здесь весь цвет источника света?
+
+	RayTracingManager->SetTexture("NoiseTexture", noiseTexture);
 
 	RayTracingManager->Unbind();
+
+	TestManager->Bind();
+	
+	TestManager->SetTexture("PositionTexture",positionsTexture);
+
+	TestManager->SetTexture("IntensityTexture",colorsTexture);
+
+	TestManager->Unbind();
 
 	//---------------------------------------------------------------------------------------------
 
@@ -251,24 +280,17 @@ int main ( void )
 
 		keyboard.Apply ( cam );
 
+		++time;
+
 		//-----------------------------------------------------------------------------------------
 
-		photonFrameBuffer->Bind();
+		/*photonFrameBuffer->Bind();
 
 		PhotonManager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
 		cam->SetShaderData ( PhotonManager );
-
-		//тут ли передаются координате источника света?
-
-		++time;
-
-		RayTracingManager->SetUniformVector ( "Light.Position",
-			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
-			           3.0F + 2.0F * sinf ( time / 500.0F ),
-					   5.0F * cosf ( time / 1500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -283,6 +305,25 @@ int main ( void )
 
 		photonFrameBuffer->Unbind();
 
+		//----------------------------------------------------------------------------------------
+
+		TestManager->Bind();//нет взаимодействия
+
+		glClear ( GL_COLOR_BUFFER_BIT );
+
+		cam->SetShaderData ( TestManager );
+
+		glBegin ( GL_QUADS );
+
+			glVertex2f ( -1.0F, -1.0F );
+			glVertex2f ( -1.0F,  1.0F );
+			glVertex2f (  1.0F,  1.0F );
+			glVertex2f (  1.0F, -1.0F );
+
+		glEnd ( );
+
+		TestManager->Unbind();*/
+
 
 		//-----------------------------------------------------------------------------------------
 
@@ -292,11 +333,14 @@ int main ( void )
 
 		cam->SetShaderData ( RayTracingManager );
 
-		//тут ли это должно передаваться?
-
 		RayTracingManager->SetUniformVector ( "Light.Position",
-			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			Vector3D ( 10.0F * sinf ( time / 1500.0F ),
 			           3.0F + 2.0F * sinf ( time / 500.0F ),
+					   10.0F * cosf ( time / 1500.0F ) ) );
+
+		RayTracingManager->SetUniformVector ( "Sphere.Center",
+			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			           -3.0F,
 					   5.0F * cosf ( time / 1500.0F ) ) );
 
 		glBegin ( GL_QUADS );
