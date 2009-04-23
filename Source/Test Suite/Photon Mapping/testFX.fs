@@ -25,11 +25,11 @@ void main ( void )
 		{
 			temp = vec2( i,j );
 
-			vec3 pos = vec3(texture2DRect(PositionTexture, temp));
+			vec3 pos = vec3(texture2DRect(PositionTexture, temp));//тут не вычисляет текстурные координаты
 
 			if ( length( pos - coords ) < epsilon )
 				
-				color += texture2DRect(IntensityTexture, temp );
+				color += texture2DRect(IntensityTexture, temp );//тут не считает color
 		}
 		
 	gl_FragColor = vec4 ( color, 1.0 );

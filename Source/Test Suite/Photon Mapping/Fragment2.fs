@@ -222,7 +222,7 @@ void main( void )
 	
 	//-------------------------------------------------------------------------
 	
-	gl_FragData[1] = vec4( intens,1.0);
+	gl_FragData[1] = vec4( intens,1.0 );//запись есть
 	gl_FragData[0] = vec4( intersect.Point, 1.0);
 }	
 
