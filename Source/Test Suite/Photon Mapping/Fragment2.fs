@@ -178,7 +178,14 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens += Light.Intens;			
+					intens += Light.Intens;	
+					
+					intersect.Point = test.Point;		
+				}
+				
+				else
+				{
+					intersect.Point = vec3(1000000);
 				}
 			}
 		}
@@ -214,15 +221,25 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens += Light.Intens;		
+					intens += Light.Intens;	
+					
+					intersect.Point = test.Point;	
+				}
+				else
+				{
+					intersect.Point = vec3(1000000);
 				}
 			}
+		}
+		else
+		{
+			intersect.Point = vec3(1000000);
 		}
 	}
 	
 	//-------------------------------------------------------------------------
 	
-	gl_FragData[1] = vec4( intens,1.0 );//запись есть
+	gl_FragData[1] = vec4(intens,1.0 );
 	gl_FragData[0] = vec4( intersect.Point, 1.0);
 }	
 
