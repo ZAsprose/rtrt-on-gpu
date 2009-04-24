@@ -61,6 +61,10 @@ uniform SSphere Sphere;
 
 uniform SLight Light;
 
+uniform sampler2DRect PositionTexture;
+
+uniform sampler2DRect IntensityTexture;
+
 uniform sampler2D NoiseTexture;
 
 varying vec2 ScreenCoords;
@@ -271,6 +275,18 @@ void main ( void )
 				color += Phong ( Light.Position, Camera.Position, intersect.Point,
 							 intersect.Normal, intersect.Color,1.0 );
 			}
+
+			for ( int x = 0; x < 64; ++x )
+			{
+				for ( int y = 0 ; y < 64; ++y )
+				{
+					vec2 temp = vec2 ( x, y );
+
+					vec3 pos = vec3 ( texture2DRect ( PositionTexture, temp ) );
+
+					color += max ( 0.0, 1.0 - length( pos - intersect.Point) ) * vec3 ( texture2DRect ( IntensityTexture, temp ) );
+				}
+			}
 			
 		}
 	}
@@ -323,8 +339,7 @@ void main ( void )
 					
 						color += Phong ( Light.Position, Camera.Position,
 										test.Point, test.Normal, test.Color,1.0 );
-					}		
-							
+					}				
 				}
 			}
 		}
