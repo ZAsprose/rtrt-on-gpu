@@ -28,9 +28,9 @@ using namespace Render;
 
 using namespace Math;
 
-#define CountX  128
+#define CountX  256
 
-#define CountY  128
+#define CountY  256
 
 TextureData2D* photonsTextureData = NULL;
 
@@ -165,7 +165,7 @@ int main ( void )
 
 	PhotonManager->SetUniformFloat ( "Sphere.Radius", 2.0F );
 
-	PhotonManager->SetUniformVector("Light.Position", Vector3D(0.0F, 7.0F, 0.0F));
+	PhotonManager->SetUniformVector("Light.Position", Vector3D(0.0F, 0.0F, 0.0F));
 
 	PhotonManager->SetUniformFloat("Light.distance", 3.0F);
 
@@ -268,14 +268,6 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-        glMatrixMode ( GL_PROJECTION );
-
-        glLoadIdentity ( );
-
-		glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
-
-		//-----------------------------------------------------------------------------------------
-
 		mouse.Apply ( cam );
 
 		keyboard.Apply ( cam );
@@ -284,13 +276,28 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
+		glViewport (0, 0, CountX, CountY);
+
+		glMatrixMode( GL_PROJECTION );
+
+		glLoadIdentity ( );
+
+		glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+
+		glMatrixMode(GL_MODELVIEW);
+
+		glClear ( GL_COLOR_BUFFER_BIT );
+
 		photonFrameBuffer->Bind();
 
 		PhotonManager->Bind ( );
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam->SetShaderData ( PhotonManager );
+		PhotonManager->SetUniformVector ( "Sphere.Center",
+			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			           -3.0F,
+					   5.0F * cosf ( time / 1500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -307,11 +314,21 @@ int main ( void )
 
 		//----------------------------------------------------------------------------------------
 
-		TestManager->Bind();//нет взаимодействия!!!
+		glViewport(0,0,width, height);
+
+		glMatrixMode( GL_PROJECTION );
+
+		glLoadIdentity ( );
+
+		glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+
+		glMatrixMode(GL_MODELVIEW);
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		cam->SetShaderData ( TestManager );
+		TestManager->Bind();
+
+		glClear ( GL_COLOR_BUFFER_BIT );
 
 		glBegin ( GL_QUADS );
 
