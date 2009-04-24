@@ -28,9 +28,9 @@ using namespace Render;
 
 using namespace Math;
 
-#define CountX  256
+#define CountX  64
 
-#define CountY  256
+#define CountY  64
 
 TextureData2D* photonsTextureData = NULL;
 
@@ -52,7 +52,7 @@ Camera * cam;
 
 Mouse mouse ( 0.005F );
 
-Keyboard keyboard ( 0.005F );
+Keyboard keyboard ( 0.05F );
 
 float time = 0.0f;
 
@@ -78,7 +78,7 @@ void KeyButton ( int key, int state )
 
 int main ( void )
 {
-    int width = 512, height = 512, running, frames;
+    int width = 400, height = 400, running, frames;
 
     double t, t0, fps;
 
@@ -199,11 +199,15 @@ int main ( void )
 
 	RayTracingManager->SetUniformFloat ( "Sphere.Radius", 2.0F );
 
-	RayTracingManager->SetUniformVector("Light.Position", Vector3D(1.0f,3.0f,0.0f));
+	RayTracingManager->SetUniformVector("Light.Position", Vector3D(0.0f,0.0f,0.0f));
 
 	RayTracingManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) /*/ (20.0F * 20.0F)*/);
 
 	RayTracingManager->SetTexture("NoiseTexture", noiseTexture);
+
+	RayTracingManager->SetTexture("PositionTexture",positionsTexture);
+
+	RayTracingManager->SetTexture("IntensityTexture",colorsTexture);
 
 	RayTracingManager->Unbind();
 
@@ -295,9 +299,9 @@ int main ( void )
 		glClear ( GL_COLOR_BUFFER_BIT );
 
 		PhotonManager->SetUniformVector ( "Sphere.Center",
-			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			Vector3D ( 5.0F * sinf ( time / 500.0F ),
 			           -3.0F,
-					   5.0F * cosf ( time / 1500.0F ) ) );
+					   5.0F * cosf ( time / 500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -314,7 +318,37 @@ int main ( void )
 
 		//----------------------------------------------------------------------------------------
 
-		glViewport(0,0,width, height);
+		//glViewport(0,0,width, height);
+
+		//glMatrixMode( GL_PROJECTION );
+
+		//glLoadIdentity ( );
+
+		//glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+
+		//glMatrixMode(GL_MODELVIEW);
+
+		//glClear ( GL_COLOR_BUFFER_BIT );
+
+		//TestManager->Bind();
+
+		//glClear ( GL_COLOR_BUFFER_BIT );
+
+		//glBegin ( GL_QUADS );
+
+		//	glVertex2f ( -1.0F, -1.0F );
+		//	glVertex2f ( -1.0F,  1.0F );
+		//	glVertex2f (  1.0F,  1.0F );
+		//	glVertex2f (  1.0F, -1.0F );
+
+		//glEnd ( );
+
+		//TestManager->Unbind();
+
+
+		//-----------------------------------------------------------------------------------------
+
+		glViewport ( 0, 0, width, height );
 
 		glMatrixMode( GL_PROJECTION );
 
@@ -326,39 +360,19 @@ int main ( void )
 
 		glClear ( GL_COLOR_BUFFER_BIT );
 
-		TestManager->Bind();
-
-		glClear ( GL_COLOR_BUFFER_BIT );
-
-		glBegin ( GL_QUADS );
-
-			glVertex2f ( -1.0F, -1.0F );
-			glVertex2f ( -1.0F,  1.0F );
-			glVertex2f (  1.0F,  1.0F );
-			glVertex2f (  1.0F, -1.0F );
-
-		glEnd ( );
-
-		TestManager->Unbind();
-
-
-		//-----------------------------------------------------------------------------------------
-
-		/*RayTracingManager->Bind ( );
-
-		glClear ( GL_COLOR_BUFFER_BIT );
+		RayTracingManager->Bind ( );
 
 		cam->SetShaderData ( RayTracingManager );
 
-		RayTracingManager->SetUniformVector ( "Light.Position",
-			Vector3D ( 10.0F * sinf ( time / 1500.0F ),
-			           3.0F + 2.0F * sinf ( time / 500.0F ),
-					   10.0F * cosf ( time / 1500.0F ) ) );
+		//RayTracingManager->SetUniformVector ( "Light.Position",
+		//	Vector3D ( 10.0F * sinf ( time / 1500.0F ),
+		//	           3.0F + 2.0F * sinf ( time / 500.0F ),
+		//			   10.0F * cosf ( time / 1500.0F ) ) );
 
 		RayTracingManager->SetUniformVector ( "Sphere.Center",
-			Vector3D ( 5.0F * sinf ( time / 1500.0F ),
+			Vector3D ( 5.0F * sinf ( time / 500.0F ),
 			           -3.0F,
-					   5.0F * cosf ( time / 1500.0F ) ) );
+					   5.0F * cosf ( time / 500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -369,7 +383,7 @@ int main ( void )
 
 		glEnd ( );
 
-		RayTracingManager->Unbind ( );*/
+		RayTracingManager->Unbind ( );
 
         glfwSwapBuffers();
 		
