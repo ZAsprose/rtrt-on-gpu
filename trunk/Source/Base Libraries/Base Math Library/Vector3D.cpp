@@ -185,16 +185,44 @@ namespace Math
 
 	//-------------------------------------- Logic Operators --------------------------------------
 
-	bool operator < ( const Vector3D& left, const Vector3D& right )
+	/*bool operator < ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X < right.X && left.Y < right.Y && left.Z < right.Z;
+	}*/
+
+	//--- Переопределим операцию -------------------------------------------------------------------
+
+	bool operator < (const Vector3D& left, const Vector3D& right)
+	{
+		if (left.X < right.X) return true;
+		else
+			if ( (left.X == right.X) && (left.Y < right.Y) ) return true;
+				else
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z <= right.Z)) return true;//убрать равно или нет?
+					else return false;
 	}
 
-	bool operator > ( const Vector3D& left, const Vector3D& right )
+	//-----------------------------------------------------------------------------------------------
+
+	/*bool operator > ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X > right.X && left.Y > right.Y && left.Z > right.Z;
+	}*/
+
+	//---------Переопределим операцию--------------------------------------------------------------
+
+	bool operator > (const Vector3D& left, const Vector3D& right)
+	{
+		if (left.X > right.X) return true;
+		else
+			if ( (left.X == right.X) && (left.Y > right.Y) ) return true;
+				else
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z >= right.Z)) return true;//убрать равно или нет?
+					else return false;
 	}
 
+	//---------------------------------------------------------------------------------------------
+	
 	bool operator < ( const Vector3D& left, float right )
 	{
 		return left.X < right && left.Y < right && left.Z < right;
@@ -215,15 +243,45 @@ namespace Math
 		return left > right.X && left > right.Y && left > right.Z;
 	}
 
-	bool operator <= ( const Vector3D& left, const Vector3D& right )
+	//---------------------------------------------------------------------------------------------
+
+	/*bool operator <= ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X <= right.X && left.Y <= right.Y && left.Z <= right.Z;
+	}*/
+
+	//--------Переопределим операцию-------------------------------------------------------------
+	bool operator <= (const Vector3D& left, const Vector3D& right)
+	{
+		if (left.X <= right.X) return true;
+		else
+			if ( (left.X == right.X) && (left.Y <= right.Y) ) return true;
+				else
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z <= right.Z)) return true;
+					else return false;
 	}
 
-	bool operator >= ( const Vector3D& left, const Vector3D& right )
+	//---------------------------------------------------------------------------------------------
+
+
+	/*bool operator >= ( const Vector3D& left, const Vector3D& right )
 	{
 		return left.X >= right.X && left.Y >= right.Y && left.Z >= right.Z;
+	}*/
+
+	//-----Переопределим операцию-----------------------------------------------------------------
+	bool operator >= (const Vector3D& left, const Vector3D& right)
+	{
+		if (left.X >= right.X) return true;
+		else
+			if ( (left.X == right.X) && (left.Y >= right.Y) ) return true;
+				else
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z >= right.Z)) return true;
+					else return false;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+
 
 	bool operator <= ( const Vector3D& left, float right )
 	{
@@ -244,6 +302,8 @@ namespace Math
 	{
 		return left >= right.X && left >= right.Y && left >= right.Z;
 	}
+
+	//-------------------------------------------------------------------------------------------------
 
 	bool operator == ( const Vector3D& left, const Vector3D& right )
 	{
