@@ -198,7 +198,7 @@ namespace Math
 		else
 			if ( (left.X == right.X) && (left.Y < right.Y) ) return true;
 				else
-					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z <= right.Z)) return true;//убрать равно или нет?
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z < right.Z)) return true;
 					else return false;
 	}
 
@@ -217,7 +217,7 @@ namespace Math
 		else
 			if ( (left.X == right.X) && (left.Y > right.Y) ) return true;
 				else
-					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z >= right.Z)) return true;//убрать равно или нет?
+					if ((left.X == right.X) && (left.Y == right.Y) && (left.Z > right.Z)) return true;
 					else return false;
 	}
 
