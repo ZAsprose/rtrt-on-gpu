@@ -17,9 +17,11 @@ namespace Render
 
 	//-------------------------------------- Event Handlers ---------------------------------------
 	
-	void Mouse :: StateChange ( int state )
+	void Mouse :: StateChange ( int button, int state )
 	{
 		glfwGetMousePos ( &LocationX, &LocationY );
+
+		Button = button;
 
 		Active = state > 0;
 	}
@@ -40,7 +42,7 @@ namespace Render
 				DeltaY += y - LocationY;
 
 				LocationY = y;
-			}					
+			}	
 		}
 	}
 
@@ -57,7 +59,7 @@ namespace Render
 		
 		if ( DeltaY != 0 )
 		{
-			camera->RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
+			//camera->RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
 
 			DeltaY = 0;
 		}

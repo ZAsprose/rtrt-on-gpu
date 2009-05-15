@@ -25,6 +25,14 @@ namespace Render
 		bool KeyX;
 
 		bool KeyZ;
+
+		bool KeyLeft;
+
+		bool KeyRight;
+
+		bool KeyUp;
+
+		bool KeyDown;
 	};
 
 	class Keyboard

@@ -60,6 +60,8 @@ namespace Render
 			
 			void Setup ( void );
 
+			void Update ( void );
+
 			void Bind ( void );
 
 			void Unbind ( void );
