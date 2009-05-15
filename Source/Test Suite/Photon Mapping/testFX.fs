@@ -12,24 +12,10 @@ void main ( void )
 {
 	vec3 coords = vec3(20 * ScreenCoords.x, -5.0, 20 * ScreenCoords.y) ;
 	
-	vec2 temp;
-	
-	vec3 color = vec3(0.0);
+	vec3 pos = vec3 ( texture2DRect ( PositionTexture, 0.5 * 256.0 * ( ScreenCoords + vec2 ( 1.0 ) ) ) );
 
-	for ( int x = 0; x < 128; ++x )
-	{
-		for ( int y = 0 ; y < 128; ++y )
-		{
-			temp = vec2 ( x, y );
+	//vec3 color = vec3 ( texture2DRect ( IntensityTexture, temp ) );
 
-			vec3 pos = vec3(texture2DRect(PositionTexture, temp));
-
-			//if ( length( pos - coords ) < epsilon )
-				
-			color += max ( 0.0, 1.0 - length( pos - coords ) ) *vec3(texture2DRect(IntensityTexture, temp ));
-		}
-	}
-		
-	gl_FragColor = vec4 ( color, 1.0 );
+	gl_FragColor = vec4 ( ( pos + vec3(30.0) ) / 60.0, 1.0 );
 }
 	
