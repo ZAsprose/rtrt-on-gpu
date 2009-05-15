@@ -31,6 +31,13 @@ namespace Render
 
 			case 'Z': State.KeyZ = state > 0; break;
 
+			case GLFW_KEY_LEFT: State.KeyLeft = state > 0; break;
+
+			case GLFW_KEY_RIGHT: State.KeyRight = state > 0; break;
+
+			case GLFW_KEY_UP: State.KeyUp = state > 0; break;
+
+			case GLFW_KEY_DOWN: State.KeyDown = state > 0; break;
 		}
 	}
 
@@ -49,5 +56,9 @@ namespace Render
 		if ( State.KeyX ) camera->MoveLocal ( Step, Vector3D :: AxisY );
 
 		if ( State.KeyZ ) camera->MoveLocal ( -Step, Vector3D :: AxisY );
+
+		if ( State.KeyLeft ) camera->RotateLocal ( 2*Step, Vector3D :: AxisY );
+
+		if ( State.KeyRight ) camera->RotateLocal ( -2*Step, Vector3D :: AxisY );
 	}
 }

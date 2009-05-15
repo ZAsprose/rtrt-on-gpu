@@ -32,6 +32,8 @@ namespace Render
 
 			bool Active;
 
+			int Button;
+
 		public:
 
 			//-------------------------------- Base Rotation Angle --------------------------------
@@ -44,7 +46,7 @@ namespace Render
 
 			//---------------------------------- Event Handlers -----------------------------------
 			
-			void StateChange ( int );
+			void StateChange ( int, int );
 			
 			void MouseMove ( int, int );
 

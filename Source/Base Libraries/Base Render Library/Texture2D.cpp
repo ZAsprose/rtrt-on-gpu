@@ -46,7 +46,7 @@ namespace Render
 			
 	void Texture2D :: Setup ( void )
 	{
-		cout << "Loading texture data [ \"" << Handle << "\" @ " << Unit << " ]" << endl;
+		cout << "Setup texture [ \"" << Handle << "\" @ " << Unit << " ]" << endl;
 	
 		if ( NULL != Data )
 		{
@@ -60,8 +60,22 @@ namespace Render
 		}
 		else
 		{
-			cout << "ERROR: Data is empty" << endl;
+			cout << "ERROR: Texture data is empty" << endl;
 		}			                
+	}
+
+	void Texture2D :: Update ( void )
+	{
+		if ( NULL != Data )
+		{
+			Bind ( );
+			
+			Data->Upload ( Target );
+		}
+		else
+		{
+			cout << "ERROR: Texture data is empty" << endl;
+		}
 	}
 	
 	void Texture2D :: Bind ( void )
