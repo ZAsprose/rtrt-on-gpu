@@ -24,6 +24,10 @@
 
 #include "math.h"
 
+#include <time.h>
+
+#include <stdlib.h>
+
 using namespace Render;
 
 using namespace Math;
@@ -54,7 +58,7 @@ Mouse mouse ( 0.005F );
 
 Keyboard keyboard ( 0.05F );
 
-float time = 0.0f;
+float time1 = 0.0f;
 
 //=================================================================================================
 
@@ -73,6 +77,29 @@ void KeyButton ( int key, int state )
 	keyboard.StateChange ( key, state );
 }
 
+/*int compare(void* a, void* b)//функция сравнения для быстрой сортировки
+{
+	Vector3D A(0.0F,0.0F,0.0F);
+
+	Vector3D B(0.0F,0.0F,0.0F);
+
+	A = *(Vector3D)a;
+
+	B = *(Vector3D)b;
+
+	Vector3D C(0.0f,0.0f,0.0f);
+
+	C = A - B;
+
+	if (C.X > 0) return 1;
+	else if ((C.X == 0) && (C.Y > 0)) return 1;
+	else if ((C.X == 0) && (C.Y == 0) && (C.Z > 0)) return 1;
+	else if ((C.X == 0) && (C.Y == 0) && (C.Z == 0)) return 0;
+	return -1;
+}*///Не видит тип Vector3D!
+
+
+
 
 //=================================================================================================
 
@@ -81,6 +108,8 @@ int main ( void )
     int width = 400, height = 400, running, frames;
 
     double t, t0, fps;
+
+	long start, end;
 
     glfwInit();
 
@@ -106,7 +135,6 @@ int main ( void )
 	positionsTexture->Setup();
 
 	colorsTexture->Setup();
-
 	
 	noiseTexture->Setup();
 
@@ -276,7 +304,7 @@ int main ( void )
 
 		keyboard.Apply ( cam );
 
-		++time;
+		++time1;
 
 		//-----------------------------------------------------------------------------------------
 
@@ -296,12 +324,14 @@ int main ( void )
 
 		PhotonManager->Bind ( );
 
+		
+
 		glClear ( GL_COLOR_BUFFER_BIT );
 
 		PhotonManager->SetUniformVector ( "Sphere.Center",
-			Vector3D ( 5.0F * sinf ( time / 500.0F ),
+			Vector3D ( 5.0F * sinf ( time1 / 500.0F ),
 			           -3.0F,
-					   5.0F * cosf ( time / 500.0F ) ) );
+					   5.0F * cosf ( time1 / 500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -311,6 +341,10 @@ int main ( void )
 			glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
+
+		
+
+		
 
 		PhotonManager->Unbind ( );
 
@@ -364,15 +398,17 @@ int main ( void )
 
 		cam->SetShaderData ( RayTracingManager );
 
+		start = clock();
+
 		//RayTracingManager->SetUniformVector ( "Light.Position",
 		//	Vector3D ( 10.0F * sinf ( time / 1500.0F ),
 		//	           3.0F + 2.0F * sinf ( time / 500.0F ),
 		//			   10.0F * cosf ( time / 1500.0F ) ) );
 
 		RayTracingManager->SetUniformVector ( "Sphere.Center",
-			Vector3D ( 5.0F * sinf ( time / 500.0F ),
+			Vector3D ( 5.0F * sinf ( time1 / 500.0F ),
 			           -3.0F,
-					   5.0F * cosf ( time / 500.0F ) ) );
+					   5.0F * cosf ( time1 / 500.0F ) ) );
 
 		glBegin ( GL_QUADS );
 
@@ -382,6 +418,8 @@ int main ( void )
 			glVertex2f (  1.0F, -1.0F );
 
 		glEnd ( );
+
+		end = clock() - start;
 
 		RayTracingManager->Unbind ( );
 
