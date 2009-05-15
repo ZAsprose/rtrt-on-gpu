@@ -178,7 +178,7 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens += Light.Intens;	
+					//intens += Light.Intens;	
 					
 					intersect.Point = test.Point;		
 				}
@@ -191,7 +191,7 @@ void main( void )
 		}
 		else
 		{
-			intens += Light.Intens;
+			//intens += Light.Intens;
 
 		}
 	}
@@ -201,10 +201,19 @@ void main( void )
 		
 		if ( HitSphere ( ray, test ) )
 		{
+			ivec2 iii = ivec2 ( ( ScreenCoords + 1.0) * 48 );
+
+			int jjj = iii.x + iii.y;
+
+			vec3 inten111; float ri;
+
+			if ( jjj % 3 == 0) { inten111 = vec3 ( 0.05, 0.0, 0.0 ); ri = 1.50; }
+			else if ( jjj % 2 == 0) { inten111 = vec3 ( 0.0, 0.05, 0.0 ); ri = 1.46; }
+				else { inten111 = vec3 ( 0.0, 0.0, 0.05 ); ri = 1.42; }
 			
 			//-----------------------------------------------------------------
 			
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
+			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / ri );
 			
 			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 			
@@ -213,7 +222,7 @@ void main( void )
 								 
 				//-------------------------------------------------------------
 				
-				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
+				refractDir = refract ( ray.Direction, -test.Normal, ri );
 				
 				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
 				
@@ -221,7 +230,7 @@ void main( void )
 				
 				if ( HitPlane ( ray, test ) )
 				{
-					intens += Light.Intens;	
+					intens += inten111;
 					
 					intersect.Point = test.Point;	
 				}
@@ -239,7 +248,7 @@ void main( void )
 	
 	//-------------------------------------------------------------------------
 	
-	gl_FragData[1] = vec4(0.02);
+	gl_FragData[1] = vec4(intens, 1.0);
 	gl_FragData[0] = vec4( intersect.Point, 1.0);
 }	
 
