@@ -67,6 +67,8 @@ uniform sampler2DRect IntensityTexture;
 
 uniform sampler2D NoiseTexture;
 
+uniform vec2 Size;
+
 varying vec2 ScreenCoords;
 
 //=================================================================================================
@@ -96,6 +98,8 @@ vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 texcoords )
 #define SpecularContribution 0.8
 
 #define AmbientContribution 0.2
+
+#define Epsilon	0.5
 
 vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color, float shadow)
 {
@@ -187,6 +191,40 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 	return false;
 }
 
+bool Compare(vec3 a, vec3 b)
+{
+	if (a.x > b.x) return true;
+	
+	else if( (a.x == b.x) && (a.y > b.y) ) return true;
+		
+		 else if ( (a.x == b.x) && (a.y == b.y) && (a.z > b.z ) )return true;
+	
+	return false;
+}
+
+vec2 BinSearch ( vec3 x )
+{
+	vec3 comp;
+	
+	comp.x = 0.0;
+	
+	comp.y = Size.x * Size.x;
+    
+    while( comp.x < comp.y )
+	{
+        comp.z  = ( comp.x + comp.y ) / 2.0;
+
+        if ( Compare ( x, texture2DRect ( PositionTexture, vec2( mod ( comp.z,Size.x ), comp.z * Size.x ) ) ) )
+    
+            comp.x = comp.z + 1;
+        
+        else  comp.y = comp.z - 1;
+        
+     }
+	
+	return vec2( comp.z, 0.0 );
+}
+
 //=================================================================================================
 
 void main ( void )
@@ -275,17 +313,33 @@ void main ( void )
 				color += Phong ( Light.Position, Camera.Position, intersect.Point,
 							 intersect.Normal, intersect.Color,1.0 );
 			}
-
-			for ( int x = 0; x < 64; ++x )
+			
+			vec2 coords;//текстурные координаты найденных точек
+			
+			for ( int x = 0; x < Size.x * Size.y; ++x )	//бинарный поиск
 			{
-				for ( int y = 0 ; y < 64; ++y )
-				{
-					vec2 temp = vec2 ( x, y );
-
-					vec3 pos = vec3 ( texture2DRect ( PositionTexture, temp ) );
-
-					color += max ( 0.0, 1.0 - length( pos - intersect.Point) ) * vec3 ( texture2DRect ( IntensityTexture, temp ) );
-				}
+					
+					vec3 pos = vec3( texture2DRect ( PositionTexture, vec2 ( mod ( (float)x, Size.x ), x * Size.x ) ) ) ;
+					
+					if (  Compare ( pos + vec3 ( Epsilon ) , texture2DRect ( PositionTexture, vec2(0.0) ) ) &&
+						 Compare( texture2DRect ( PositionTexture, vec2(256,256) ) , pos + vec3 ( Epsilon ) ) )
+					{
+						vec2 found;
+					
+						found = BinSearch ( pos + vec3 ( Epsilon ) );
+						
+						coords.x = found.x;
+						
+						found = BinSearch ( pos - vec3( Epsilon ) );
+						
+						coords.y = found.x;
+						
+					}
+					
+					for ( int j = coords.x; j < coords.y; ++j )
+	
+						color += max ( 0.0, 1.0 - length( pos - intersect.Point) ) * vec3 ( texture2DRect ( IntensityTexture, vec2( mod((float)j,Size.x), j * Size.x) ) );
+				
 			}
 			
 		}
