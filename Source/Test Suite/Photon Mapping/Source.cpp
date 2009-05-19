@@ -189,7 +189,7 @@ int main ( void )
 
 	PhotonManager->SetUniformVector("Light.HalfSize", Vector2D(20.0F, 20.0F));
 
-	PhotonManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) /*/ (20.0F * 20.0F)*/);//делить не надо!!!!
+	PhotonManager->SetUniformVector("Light.Intens", Vector3D(1.0f,1.0f,1.0f) );
 
 	PhotonManager->SetTexture("Position",positionsTexture);
 
@@ -219,7 +219,9 @@ int main ( void )
 
 	RayTracingManager->SetUniformVector ( "Light.Position", Vector3D (0.0f,0.0f,0.0f) );
 
-	RayTracingManager->SetUniformVector ( "Light.Intens", Vector3D (1.0f,1.0f,1.0f) /*/ (20.0F * 20.0F)*/ );
+	RayTracingManager->SetUniformVector ( "Light.Intens", Vector3D (1.0f,1.0f,1.0f)  );
+
+	RayTracingManager->SetUniformVector( "Size", Vector2D ( CountX, CountY ) );
 
 	RayTracingManager->SetTexture ( "NoiseTexture", noiseTexture );
 
@@ -360,6 +362,8 @@ int main ( void )
 				sizeof ( Vector4D ),
 				Compare );
 
+		//отсортировать параллельно и текстуру интенсивностей
+
 		//for ( int i = 0; i < photonsTextureData->GetWidth( ); i++ )
 		//{
 		//	for ( int j = 0; j < photonsTextureData->GetHeight( ); j++ )
@@ -372,7 +376,7 @@ int main ( void )
 
 		//-----------------------------------------------------------------------------------------
 
-		glViewport ( 0, 0, width, height );
+		/*glViewport ( 0, 0, width, height );
 		
 		glMatrixMode ( GL_PROJECTION );
 		
@@ -395,46 +399,46 @@ int main ( void )
 			glVertex2f (  1.0F, -1.0F );
 		glEnd ( );
 		
-		TestManager->Unbind();
+		TestManager->Unbind();*/
 
 		//-----------------------------------------------------------------------------------------
 
-		//glViewport ( 0, 0, width, height );
+		glViewport ( 0, 0, width, height );
 
-		//glMatrixMode( GL_PROJECTION );
+		glMatrixMode( GL_PROJECTION );
 
-		//glLoadIdentity ( );
+		glLoadIdentity ( );
 
-		//glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
+		glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F  );
 
-		//glMatrixMode(GL_MODELVIEW);
+		glMatrixMode(GL_MODELVIEW);
 
-		//glClear ( GL_COLOR_BUFFER_BIT );
+		glClear ( GL_COLOR_BUFFER_BIT );
 
-		//RayTracingManager->Bind ( );
+		RayTracingManager->Bind ( );
 
-		//cam->SetShaderData ( RayTracingManager );
+		cam->SetShaderData ( RayTracingManager );
 
-		////RayTracingManager->SetUniformVector ( "Light.Position",
-		////	Vector3D ( 10.0F * sinf ( time / 1500.0F ),
-		////	           3.0F + 2.0F * sinf ( time / 500.0F ),
-		////			   10.0F * cosf ( time / 1500.0F ) ) );
+		//RayTracingManager->SetUniformVector ( "Light.Position",
+		//	Vector3D ( 10.0F * sinf ( time / 1500.0F ),
+		//	           3.0F + 2.0F * sinf ( time / 500.0F ),
+		//			   10.0F * cosf ( time / 1500.0F ) ) );
 
-		//RayTracingManager->SetUniformVector ( "Sphere.Center",
-		//	Vector3D ( 5.0F * sinf ( time1 / 100.0F ),
-		//	           -2.0F + sinf ( time1 / 20.0F ),
-		//			   5.0F * cosf ( time1 / 100.0F ) ) );
+		RayTracingManager->SetUniformVector ( "Sphere.Center",
+			Vector3D ( 5.0F * sinf ( time1 / 100.0F ),
+			           -2.0F + sinf ( time1 / 20.0F ),
+					   5.0F * cosf ( time1 / 100.0F ) ) );
 
-		//glBegin ( GL_QUADS );
+		glBegin ( GL_QUADS );
 
-		//	glVertex2f ( -1.0F, -1.0F );
-		//	glVertex2f ( -1.0F,  1.0F );
-		//	glVertex2f (  1.0F,  1.0F );
-		//	glVertex2f (  1.0F, -1.0F );
+			glVertex2f ( -1.0F, -1.0F );
+			glVertex2f ( -1.0F,  1.0F );
+			glVertex2f (  1.0F,  1.0F );
+			glVertex2f (  1.0F, -1.0F );
 
-		//glEnd ( );
+		glEnd ( );
 
-		//RayTracingManager->Unbind ( );
+		RayTracingManager->Unbind ( );
 
         glfwSwapBuffers();
 		
