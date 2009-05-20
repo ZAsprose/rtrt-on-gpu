@@ -314,31 +314,28 @@ void main ( void )
 							 intersect.Normal, intersect.Color,1.0 );
 			}
 			
-			vec2 coords;//текстурные координаты найденных точек
-			
-			for ( int x = 0; x < Size.x * Size.y; ++x )	//бинарный поиск
+			vec2 coords;//текстурные координаты найденных точек		
+					
+			if (  Compare ( intersect.Point + vec3 ( Epsilon ) , texture2DRect ( PositionTexture, vec2(0.0) ) ) &&
+					Compare( texture2DRect ( PositionTexture, vec2(256,256) ) , intersect.Point + vec3 ( Epsilon ) ) )
 			{
+					vec2 found;
 					
-					vec3 pos = vec3( texture2DRect ( PositionTexture, vec2 ( mod ( (float)x, Size.x ), x * Size.x ) ) ) ;
+					found = BinSearch ( intersect.Point + vec3 ( Epsilon ) );
+						
+					coords.x = found.x;
+						
+					found = BinSearch ( intersect.Point - vec3( Epsilon ) );
+						
+					coords.y = found.x;
+						
+			}
 					
-					if (  Compare ( pos + vec3 ( Epsilon ) , texture2DRect ( PositionTexture, vec2(0.0) ) ) &&
-						 Compare( texture2DRect ( PositionTexture, vec2(256,256) ) , pos + vec3 ( Epsilon ) ) )
-					{
-						vec2 found;
-					
-						found = BinSearch ( pos + vec3 ( Epsilon ) );
-						
-						coords.x = found.x;
-						
-						found = BinSearch ( pos - vec3( Epsilon ) );
-						
-						coords.y = found.x;
-						
-					}
-					
-					for ( int j = coords.x; j < coords.y; ++j )
-	
-						color += max ( 0.0, 1.0 - length( pos - intersect.Point) ) * vec3 ( texture2DRect ( IntensityTexture, vec2( mod((float)j,Size.x), j * Size.x) ) );
+			for ( int j = coords.x; j < coords.y; ++j )
+			{
+				//vec4 position = texture2DRect ( PositionTexture, vec2( mod( (float) j,Size.x ), floor( j * Size.x ) );
+								
+				color += max ( 0.0, 1.0 - length( texture2DRect ( PositionTexture, vec2( mod((float)j,Size.x), j * Size.x) ) - intersect.Point) ) * vec3 ( 0.01 );//нет каустики!!!
 				
 			}
 			
