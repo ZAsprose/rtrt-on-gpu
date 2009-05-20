@@ -36,6 +36,8 @@ Keyboard keyboard ( 0.01F );
 
 bool Mode;
 
+bool Recompile;
+
 //=================================================================================================
 
 void MouseMove ( int x, int y )
@@ -55,6 +57,11 @@ void KeyButton ( int key, int state )
 	if ( key == GLFW_KEY_F5 && state > 0 )
 	{
 		Mode = !Mode;
+	}
+
+	if ( key == GLFW_KEY_F6 && state > 0 )
+	{
+		Recompile = true;
 	}
 }
 
@@ -118,7 +125,7 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "C:/workspace/rtrt-on-gpu/trunk/Support/Girl/Girl.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Girl/Girl.obj" );
 
 	Vector3D minimum = model->GetMinimum ( );
 
@@ -197,6 +204,25 @@ int main ( void )
 
     while ( Running )
 	{
+		if ( Recompile )
+		{
+			shaderManager->LoadVertexShader ( "Vertex.vs" );
+
+			shaderManager->LoadFragmentShader ( "Fragment.fs" );
+
+			shaderManager->BuildProgram ( );
+
+			shaderManager->Bind ( );
+
+			staticData->SetShaderData ( shaderManager );
+
+			textureManager->SetShaderData ( shaderManager );
+
+			shaderManager->Unbind ( );
+
+			Recompile = false;
+		}
+
 		//------------------------------------ Calculating FPS ------------------------------------
 
 		Time = glfwGetTime ( );
