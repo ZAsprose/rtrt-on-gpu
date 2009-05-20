@@ -210,11 +210,14 @@ vec2 BinSearch ( vec3 x )
 	
 	comp.y = Size.x * Size.x;
     
-    while( comp.x < comp.y )
+    while ( comp.x < comp.y )
 	{
-        comp.z  = ( comp.x + comp.y ) / 2.0;
+        comp.z  = floor ( ( comp.x + comp.y ) / 2.0 );
+        
+        vec3 position = vec3 ( texture2DRect ( PositionTexture,
+                                               vec2 ( mod ( comp.z, Size.x ), floor ( comp.z / Size.x ) ) ) ); 
 
-        if ( Compare ( x, texture2DRect ( PositionTexture, vec2( mod ( comp.z,Size.x ), comp.z * Size.x ) ) ) )
+        if ( Compare ( x, position ) )
     
             comp.x = comp.z + 1;
         
@@ -222,7 +225,7 @@ vec2 BinSearch ( vec3 x )
         
      }
 	
-	return vec2( comp.z, 0.0 );
+	return vec2 ( comp.z, 0.0 );
 }
 
 //=================================================================================================
@@ -316,26 +319,27 @@ void main ( void )
 			
 			vec2 coords;//текстурные координаты найденных точек		
 					
-			if (  Compare ( intersect.Point + vec3 ( Epsilon ) , texture2DRect ( PositionTexture, vec2(0.0) ) ) &&
-					Compare( texture2DRect ( PositionTexture, vec2(256,256) ) , intersect.Point + vec3 ( Epsilon ) ) )
-			{
+			//if ( Compare ( intersect.Point + vec3 ( Epsilon ), vec3 ( texture2DRect ( PositionTexture, vec2(0.0) ) ) ) &&
+			//		Compare ( vec3 ( texture2DRect ( PositionTexture, vec2 (256, 256) ) ) , intersect.Point + vec3 ( Epsilon ) ) )
+			//{
 					vec2 found;
 					
-					found = BinSearch ( intersect.Point + vec3 ( Epsilon ) );
-						
-					coords.x = found.x;
-						
-					found = BinSearch ( intersect.Point - vec3( Epsilon ) );
+					found = BinSearch ( intersect.Point + vec3 ( 0.5 ) );
 						
 					coords.y = found.x;
 						
-			}
+					found = BinSearch ( intersect.Point - vec3 ( 0.5 ) );
+						
+					coords.x = found.x;
+						
+			//}
 					
-			for ( int j = coords.x; j < coords.y; ++j )
+			for ( float j = coords.x; j < coords.y; ++j )
+			//for ( float j = 0.0; j < 256.0 * 256.0; ++j )
 			{
-				//vec4 position = texture2DRect ( PositionTexture, vec2( mod( (float) j,Size.x ), floor( j * Size.x ) );
+				vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( j, Size.x ), floor ( j / Size.x ) ) );
 								
-				color += max ( 0.0, 1.0 - length( texture2DRect ( PositionTexture, vec2( mod((float)j,Size.x), j * Size.x) ) - intersect.Point) ) * vec3 ( 0.01 );//нет каустики!!!
+				color += max ( 0.0, 1.0 - 2.0 * length( vec3 ( position ) - intersect.Point ) ) * vec3 ( 0.005 );   //нет каустики!!!
 				
 			}
 			
