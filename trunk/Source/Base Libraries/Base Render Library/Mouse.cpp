@@ -59,7 +59,7 @@ namespace Render
 		
 		if ( DeltaY != 0 )
 		{
-			//camera->RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
+			camera->RotateLocal ( DeltaY * Step, Vector3D :: AxisX );
 
 			DeltaY = 0;
 		}
