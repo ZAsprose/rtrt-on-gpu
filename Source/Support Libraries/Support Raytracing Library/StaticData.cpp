@@ -40,7 +40,7 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 
-		PositionTexture->Data = new TextureData2D ( VertexSize, VertexSize, 3 );
+		PositionTexture->Data = new TextureData2D ( VertexSize, VertexSize, 4 );
 
 		NormalTexture->Data = new TextureData2D ( VertexSize, VertexSize, 4 );
 
@@ -132,6 +132,7 @@ namespace Raytracing
 				for ( int z = 0; z < scene->Grid->GetPartitionsX ( ); z++ )
 				{
 					int trianglesNumber = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
+
 					int emptyRadius = ( trianglesNumber ) ? 0 : scene->Grid->GetVoxel ( x, y, z )->EmptyRadius; // TODO calculate radius
 
 					VoxelTexture->Data->Pixel < Vector3D > ( x, y, z ) =
@@ -139,8 +140,14 @@ namespace Raytracing
 
 					for ( unsigned i = 0; i < scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( ); i++ )
 					{
-						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Position;
+						Vector3D normal =
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->GetNormal ( );
+
+						//-------------------------------------------------------------------------
+						
+						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Position,
+							normal.X );
 
 						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Normal;
@@ -150,8 +157,9 @@ namespace Raytracing
 
 						//-------------------------------------------------------------------------
 						
-						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Position;
+						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Position,
+							normal.Y );
 
 						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Normal;
@@ -161,8 +169,9 @@ namespace Raytracing
 
 						//-------------------------------------------------------------------------
 
-						PositionTexture->Data->Pixel < Vector3D > ( offset ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Position;
+						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Position,
+							normal.Z );
 
 						NormalTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (  
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Normal,

@@ -54,6 +54,14 @@ namespace Raytracing
 		return Square ( cross ) == 0.0F;
 	}
 
+	Vector3D Triangle :: GetNormal ( void ) const
+	{
+		Vector3D cross = Cross ( VertexB->Position - VertexA->Position,
+			                     VertexC->Position - VertexA->Position );
+			
+		return cross;
+	}
+
 	Vector3D Triangle :: GetMinimum ( void ) const
 	{
 		return Min ( Min ( VertexA->Position, VertexB->Position ), VertexC->Position );
