@@ -16,6 +16,8 @@
 
 #define LIGHTING_TWO_SIDED
 
+#define USE_PROXIMITY_GRID
+
 /**********************************************************************************************************************/
 /*************************************************** DATA STRUCTURES **************************************************/
 /**********************************************************************************************************************/
@@ -274,7 +276,7 @@ void InterpolatePoint ( SRay ray, SIntersection intersection, out vec3 point,
 /*********************************************** DATA LOADING FUNCTIONS ***********************************************/
 /**********************************************************************************************************************/
 
-float LoadTriangle ( inout STriangle triangle )
+float LoadTriangle1 ( inout STriangle triangle )
 {
 	//---------------------------------- Reading triangle normals and texture coords ----------------------------------
             
@@ -339,7 +341,7 @@ void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
 {	
 	//------------------------------------- Reading triangle material properties --------------------------------------
 	
-	float offset = LoadTriangle ( triangle );
+	float offset = LoadTriangle1 ( triangle );
 	
 	vec4 ambient =  texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
@@ -432,6 +434,38 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 }
 
 /**********************************************************************************************************************/
+/*********************************************** TRAVERSAL FUNCTIONS **************************************************/
+/**********************************************************************************************************************/
+
+#ifdef USE_PROXIMITY_GRID
+	
+vec3 NextVoxel( vec3 next, vec3 max, vec3 delta )
+{
+	vec3 result;
+	
+	result = AxisZ;
+	
+	if ( max.x + delta.x * next.x < max.y + delta.y * next.y )
+	{
+		if ( max.x + delta.x * next.x < max.z + delta.z * next.z )
+		{
+			result = AxisX;
+		}
+	}
+	else
+	{
+		if ( max.y + delta.y * next.y < max.z + delta.z * next.z )
+		{
+			result = AxisY;
+		}
+	}
+	
+	return result;
+}
+	
+#endif
+
+/**********************************************************************************************************************/
 /*********************************************** RAY TRACING FUNCTIONS ************************************************/
 /**********************************************************************************************************************/
 
@@ -487,6 +521,12 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		float count = content.x;
 				
 		float offset = content.y;
+		
+		#ifdef USE_PROXIMITY_GRID
+		
+		float emptyRadius = content.z;
+		
+		#endif
 				
 		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
 						
@@ -533,6 +573,15 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		}
 		
 		//---------------------------------------------- Go to next voxel ---------------------------------------------
+			
+		#ifdef USE_PROXIMITY_GRID
+		
+		for ( float index = 0; index < emptyRadius; index++ )
+		{
+			next += NextVoxel( next, max, delta );
+		}
+		
+		#endif
 			
 		max += delta * next;
 			
@@ -869,7 +918,7 @@ void main ( void )
 				{
                     //---------------------------------- Loading vertices attributes ----------------------------------
 				
-					LoadTriangle ( intersection.Triangle );
+					LoadTriangle1 ( intersection.Triangle );
 					
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					

@@ -240,11 +240,15 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Uniform Grid"
+				Name="Accelerating Structures"
 				>
 				<Filter
 					Name="Structure"
 					>
+					<File
+						RelativePath=".\ProximityGrid.cpp"
+						>
+					</File>
 					<File
 						RelativePath=".\UniformGrid.cpp"
 						>
@@ -386,11 +390,15 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Uniform Grid"
+				Name="Accelerating Structures"
 				>
 				<Filter
 					Name="Structure"
 					>
+					<File
+						RelativePath=".\ProximityGrid.h"
+						>
+					</File>
 					<File
 						RelativePath=".\UniformGrid.h"
 						>

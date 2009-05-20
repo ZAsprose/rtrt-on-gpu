@@ -131,8 +131,11 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < scene->Grid->GetPartitionsX ( ); z++ )
 				{
-					VoxelTexture->Data->Pixel < Vector2D > ( x, y, z ) =
-						Vector2D ( scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( ), offset );
+					int trianglesNumber = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
+					int emptyRadius = ( trianglesNumber ) ? 0 : scene->Grid->GetVoxel ( x, y, z )->EmptyRadius; // TODO calculate radius
+
+					VoxelTexture->Data->Pixel < Vector3D > ( x, y, z ) =
+						Vector3D ( trianglesNumber, offset, emptyRadius );
 
 					for ( unsigned i = 0; i < scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( ); i++ )
 					{

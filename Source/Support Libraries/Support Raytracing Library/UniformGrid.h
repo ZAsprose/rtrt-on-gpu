@@ -16,7 +16,7 @@ namespace Raytracing
 {
 	class UniformGrid
 	{
-		private:
+		protected:
 
 			//------------------------------ Uniform Grid Dimensions ------------------------------
 
@@ -40,7 +40,7 @@ namespace Raytracing
 
 			//------------------------------- Building Uniform Grid -------------------------------
 
-			void BuildGrid ( Volume *, vector < Triangle * > );
+			virtual void BuildGrid ( Volume *, vector < Triangle * > );
 
 			//-------------------------------- Getting Grid Params --------------------------------
 
