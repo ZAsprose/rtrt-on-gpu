@@ -44,6 +44,8 @@ namespace Raytracing
 			
 			bool IsEmpty ( void ) const;
 
+			Vector3D GetNormal ( void ) const;
+
 			Vector3D GetMinimum ( void ) const;
 
 			Vector3D GetMaximum ( void ) const;
