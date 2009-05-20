@@ -45,7 +45,7 @@ void MouseMove ( int x, int y )
 		
 void MouseButton ( int button, int state )
 {
-	mouse.StateChange ( state );
+	mouse.StateChange ( button, state );
 }
 
 void KeyButton ( int key, int state )
@@ -118,7 +118,7 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/Girl/Girl.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "C:/workspace/rtrt-on-gpu/trunk/Support/Girl/Girl.obj" );
 
 	Vector3D minimum = model->GetMinimum ( );
 

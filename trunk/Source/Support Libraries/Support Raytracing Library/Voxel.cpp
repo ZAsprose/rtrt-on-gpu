@@ -13,5 +13,7 @@ namespace Raytracing
 		Position = position;
 
 		Radius = radius;
+
+		EmptyRadius = 0;
 	}
 }
