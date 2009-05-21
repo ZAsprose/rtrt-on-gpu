@@ -32,19 +32,19 @@ using namespace Render;
 
 using namespace Math;
 
-#define CountX 256
+#define CountX 128
 
-#define CountY 256
+#define CountY 128
 
 TextureData2D* photonsTextureData = NULL;
 
-TextureData2D* colorTextureData = NULL;
+//TextureData2D* colorTextureData = NULL;
 
 TextureData2D* noiseTextureData = NULL;
 
 Texture2D* positionsTexture = NULL;
 
-Texture2D* colorsTexture = NULL;
+//Texture2D* colorsTexture = NULL;
 
 Texture2D* noiseTexture = NULL;
 
@@ -113,19 +113,19 @@ int main ( void )
 	
 	photonsTextureData = new TextureData2D(CountX,CountY,4);
 
-	colorTextureData = new TextureData2D(CountX,CountY,4);
+	//colorTextureData = new TextureData2D(CountX,CountY,4);
 
 	noiseTextureData = TextureData2D :: FromTGA("Noise.tga");
 
 	positionsTexture = new Texture2D(photonsTextureData, 0 , GL_TEXTURE_RECTANGLE_ARB);
 
-	colorsTexture = new Texture2D(colorTextureData, 1 , GL_TEXTURE_RECTANGLE_ARB);
+	//colorsTexture = new Texture2D(colorTextureData, 1 , GL_TEXTURE_RECTANGLE_ARB);
 
 	noiseTexture = new Texture2D(noiseTextureData, 2 , GL_TEXTURE_2D);
 
 	positionsTexture->Setup();
 
-	colorsTexture->Setup();
+	//colorsTexture->Setup();
 
 	noiseTexture->Setup();
 
@@ -143,7 +143,7 @@ int main ( void )
 
 	PhotonManager->SetTexture("Position",positionsTexture);
 
-	PhotonManager->SetTexture("Color",colorsTexture);
+	//PhotonManager->SetTexture("Color",colorsTexture);
 
 	PhotonManager->Unbind();
 
@@ -167,7 +167,7 @@ int main ( void )
 
 	photonFrameBuffer->ColorBuffers.push_back(positionsTexture);
 
-	photonFrameBuffer->ColorBuffers.push_back(colorsTexture);
+	//photonFrameBuffer->ColorBuffers.push_back(colorsTexture);
 
 	photonFrameBuffer->Setup();
 
@@ -193,7 +193,7 @@ int main ( void )
 
 	PhotonManager->SetTexture("Position",positionsTexture);
 
-	PhotonManager->SetTexture("Color",colorsTexture);
+	//PhotonManager->SetTexture("Color",colorsTexture);
 
 	PhotonManager->Unbind ( );
 
@@ -227,7 +227,7 @@ int main ( void )
 
 	RayTracingManager->SetTexture ( "PositionTexture", positionsTexture );
 
-	RayTracingManager->SetTexture ( "IntensityTexture", colorsTexture );
+	//RayTracingManager->SetTexture ( "IntensityTexture", colorsTexture );
 
 	RayTracingManager->Unbind ( );
 
@@ -235,7 +235,7 @@ int main ( void )
 	
 	TestManager->SetTexture ( "PositionTexture", positionsTexture );
 
-	TestManager->SetTexture ( "IntensityTexture", colorsTexture );
+	//TestManager->SetTexture ( "IntensityTexture", colorsTexture );
 
 	TestManager->Unbind ( );
 
@@ -361,8 +361,6 @@ int main ( void )
 			    photonsTextureData->GetWidth ( ) * photonsTextureData->GetHeight ( ),
 				sizeof ( Vector4D ),
 				Compare );
-
-		//отсортировать параллельно и текстуру интенсивностей
 
 		//for ( int i = 0; i < photonsTextureData->GetWidth( ); i++ )
 		//{
