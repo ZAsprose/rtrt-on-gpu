@@ -27,7 +27,7 @@ struct SIntersection
 	
 	vec3 Normal;
 	
-	vec3 Color;
+	vec3 Color;//А нужен ли цвет точки пересечения?
 };
 
 struct SPlane
