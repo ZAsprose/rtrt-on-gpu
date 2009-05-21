@@ -27,7 +27,9 @@ struct SIntersection
 	
 	vec3 Normal;
 	
-	vec3 Color;//А нужен ли цвет точки пересечения?
+
+	//vec3 Color;
+
 };
 
 struct SPlane
@@ -54,7 +56,7 @@ uniform SSphere Sphere;
 
 uniform sampler2DRect Position;
 
-uniform sampler2DRect Color;
+//uniform sampler2DRect Color;
 
 varying vec2 ScreenCoords;
 
@@ -92,9 +94,24 @@ bool HitPlane ( in SRay ray, out SIntersection intersection  )
 		
 	vec2 texcoords = fract ( PlaneTexScale * intersection.Point.xz );
 	
-	intersection.Color = ChessBoardTexture ( vec3 ( 0.8, 0.8, 0.0 ),
-	                                         vec3 ( 0.0, 0.0, 0.8 ),
-						 texcoords );
+	//intersection.Color = ChessBoardTexture ( vec3 ( 0.8, 0.8, 0.0 ),
+	//                                         vec3 ( 0.0, 0.0, 0.8 ),
+	//					 texcoords );
+	
+	return ( intersection.Time >= 0.0 ) &&
+	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
+	       ( abs ( intersection.Point.z ) <= Plane.Size.y );
+}
+
+bool HitPlaneEasy ( in SRay ray, out SIntersection intersection  )
+{
+	intersection.Time = ( Plane.Center.y - ray.Origin.y ) / ray.Direction.y;
+	
+	intersection.Point = ray.Origin + intersection.Time * ray.Direction;
+	
+	//intersection.Color = ChessBoardTexture ( vec3 ( 0.8, 0.8, 0.0 ),
+	//                                         vec3 ( 0.0, 0.0, 0.8 ),
+	//					 texcoords );
 	
 	return ( intersection.Time >= 0.0 ) &&
 	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
@@ -135,7 +152,7 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 			
 			intersection.Normal = normalize ( intersection.Point - Sphere.Center );
 			
-			intersection.Color = vec3 ( 0.2 );
+			//intersection.Color = vec3 ( 0.2 );
 			
 			return true;
 		}
@@ -154,7 +171,7 @@ void main( void )
 	
 	//-------------------------------------------------------------------------
 	
-	if ( HitPlane ( ray, intersect ) )
+	if ( HitPlaneEasy ( ray, intersect ) )
 	{
 		SIntersection test;
 		
@@ -176,7 +193,7 @@ void main( void )
 				
 				//-------------------------------------------------------------
 				
-				if ( HitPlane ( ray, test ) )
+				if ( HitPlaneEasy ( ray, test ) )
 				{
 					//intens += Light.Intens;	
 					
@@ -228,7 +245,7 @@ void main( void )
 				
 				//-------------------------------------------------------------
 				
-				if ( HitPlane ( ray, test ) )
+				if ( HitPlaneEasy ( ray, test ) )
 				{
 					intens += inten111;
 					
@@ -248,8 +265,8 @@ void main( void )
 	
 	//-------------------------------------------------------------------------
 	
-	gl_FragData[1] = vec4(intens, 1.0);
-	gl_FragData[0] = vec4( intersect.Point, 1.0);
+	//gl_FragData[1] = vec4(intens, 1.0);
+	gl_FragData[0] = vec4( intersect.Point, intens.x );
 }	
 
 

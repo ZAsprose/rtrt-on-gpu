@@ -63,7 +63,7 @@ uniform SLight Light;
 
 uniform sampler2DRect PositionTexture;
 
-uniform sampler2DRect IntensityTexture;
+//uniform sampler2DRect IntensityTexture;
 
 uniform sampler2D NoiseTexture;
 
@@ -191,36 +191,40 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 	return false;
 }
 
+
 bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
 {
-	float a = dot ( ray.Direction, ray.Direction );
+	vec4 abc;
 	
-	float b = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
+	abc.x = dot ( ray.Direction, ray.Direction );
 	
-	float c = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
+	abc.y = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
+	
+	abc.z = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
 	          dot ( Sphere.Center, Sphere.Center ) - Sphere.Radius * Sphere.Radius;
 	
-	float det = b * b - a * c;
+	abc.w = abc.y * abc.y - abc.x * abc.z;
 	
-	if ( det > 0.0 )
+	if ( abc.w > 0.0 )
 	{
-		det = sqrt ( det );
+		abc.w = sqrt ( abc.w );
 		
-		float tmin = ( -b - det ) / a;
+		vec2 tmin_max;
 		
-		float tmax = ( -b + det ) / a;
+		tmin_max.x = ( -abc.y - abc.w ) / abc.x;
 		
-		if ( tmax > 0.0 )
+		tmin_max.y = ( -abc.y + abc.w ) / abc.x;
+		
+		if ( tmin_max.y > 0.0 )
 		{
-			if ( tmin > 0.0 )
+			if ( tmin_max.x > 0.0 )
 			{
-				intersection.Time = tmin;
+				intersection.Time = tmin_max.x;
 			}
 			else
 			{
-				intersection.Time = tmax;
+				intersection.Time = tmin_max.y;
 			}
-			
 			
 			return true;
 		}
@@ -228,6 +232,7 @@ bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
 	
 	return false;
 }
+
 
 bool Compare(vec3 a, vec3 b)
 {
@@ -320,7 +325,8 @@ void main ( void )
 					
 					SIntersection testShadow;
 
-					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )//тут можно возвращать только время
+
+					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
 					{
 						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
 					}
@@ -377,7 +383,7 @@ void main ( void )
 			{
 				vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( j, Size.x ), floor ( j / Size.x ) ) );
 								
-				color += max ( 0.0, 1.0 - 2.0 * length( vec3 ( position ) - intersect.Point ) ) * vec3 ( 0.005 );   //нет каустики!!!
+				color += max ( 0.0, 1.0 - 2.0 * length( vec3 ( position ) - intersect.Point ) ) * vec3 ( position.w );
 				
 			}
 			
@@ -423,7 +429,7 @@ void main ( void )
 					
 					SIntersection testShadow;
 					
-					if ( HitSphere(shadowRay,testShadow) && (test.Time < distance))
+					if ( HitSphereEasy(shadowRay,testShadow) && (testShadow.Time < distance))
 					{
 						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
 					}
