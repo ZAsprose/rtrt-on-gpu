@@ -191,6 +191,44 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 	return false;
 }
 
+bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
+{
+	float a = dot ( ray.Direction, ray.Direction );
+	
+	float b = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
+	
+	float c = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
+	          dot ( Sphere.Center, Sphere.Center ) - Sphere.Radius * Sphere.Radius;
+	
+	float det = b * b - a * c;
+	
+	if ( det > 0.0 )
+	{
+		det = sqrt ( det );
+		
+		float tmin = ( -b - det ) / a;
+		
+		float tmax = ( -b + det ) / a;
+		
+		if ( tmax > 0.0 )
+		{
+			if ( tmin > 0.0 )
+			{
+				intersection.Time = tmin;
+			}
+			else
+			{
+				intersection.Time = tmax;
+			}
+			
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 bool Compare(vec3 a, vec3 b)
 {
 	if (a.x > b.x) return true;
@@ -282,7 +320,7 @@ void main ( void )
 					
 					SIntersection testShadow;
 
-					if ( HitSphere ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
+					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )//тут можно возвращать только время
 					{
 						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
 					}
@@ -307,7 +345,7 @@ void main ( void )
 					
 			SIntersection testShadow;
 
-			if ( HitSphere(shadowRay,testShadow) && (testShadow.Time < distance))
+			if ( HitSphereEasy(shadowRay,testShadow) && (testShadow.Time < distance))
 			{
 				color += Phong(Light.Position, Camera.Position, intersect.Point, intersect.Normal,intersect.Color,0.0);
 			}
