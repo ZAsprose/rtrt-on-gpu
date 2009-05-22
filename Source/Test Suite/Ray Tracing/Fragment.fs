@@ -6,17 +6,19 @@
 
 #define RENDER_SHADOWS_
 
-#define RENDER_REFLECTIONS
+#define RENDER_REFLECTIONS_
 
-#define RENDER_REFRACTIONS
+#define RENDER_REFRACTIONS_
 
-#define RENDER_DISSOLVE
+#define RENDER_DISSOLVE_
 
-#define USE_TEXTURES
+#define USE_TEXTURES_
 
 #define LIGHTING_TWO_SIDED
 
-#define USE_PROXIMITY_GRID_
+#define USE_PROXIMITY_GRID
+
+#define SHOW_TRAVERSAL_DEPTH
 
 /**********************************************************************************************************************/
 /*************************************************** DATA STRUCTURES **************************************************/
@@ -49,6 +51,8 @@ struct STriangle
 	SVertex B;
 	
 	SVertex C;
+	
+	vec3 Normal;
     
     float Offset;
 };
@@ -185,6 +189,14 @@ uniform sampler2D ImageTexture5;
 uniform sampler2D ImageTexture6;
 
 uniform sampler2D ImageTexture7;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#ifdef SHOW_TRAVERSAL_DEPTH
+
+float TraversalDepth;
+
+#endif
 
 /**********************************************************************************************************************/
 /************************************************** SHADER CONSTANTS **************************************************/
@@ -433,6 +445,31 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
 }
 
+bool IntersectTriangleS ( SRay ray, STriangle triangle, out vec3 result )
+{
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	vec3 AB = triangle.B.Position - triangle.A.Position;
+	
+	vec3 AC = triangle.A.Position - triangle.C.Position;
+	
+	vec3 AO = triangle.A.Position - ray.Origin;
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	//vec3 P = cross ( ray.Direction, AC );
+
+	vec3 XXX = cross ( ray.Direction, AO );
+	
+	result = vec3 (   dot ( AO, triangle.Normal ),
+	                  dot ( AC, XXX ),
+	                  dot ( AB, XXX ) ) / dot ( ray.Direction, triangle.Normal );
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
+}
+
 /**********************************************************************************************************************/
 /*********************************************** TRAVERSAL FUNCTIONS **************************************************/
 /**********************************************************************************************************************/
@@ -534,32 +571,34 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		{
             //------------------------------------- Reading triangle vertices -----------------------------------------
             
-			vec3 PA = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-																	 floor ( offset * VertexTextureStep ) ) ) );
+			vec4 PA = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+															  floor ( offset * VertexTextureStep ) ) );
 			offset++;
 					
-			vec3 PB = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-																	 floor ( offset * VertexTextureStep ) ) ) );
+			vec4 PB = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+															  floor ( offset * VertexTextureStep ) ) );
 			offset++;
 					
-			vec3 PC = vec3 ( texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-																	 floor ( offset * VertexTextureStep ) ) ) );
+			vec4 PC = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+															  floor ( offset * VertexTextureStep ) ) );
 			
 			STriangle triangle;
 			
-			triangle.A.Position = PA;
+			triangle.A.Position = vec3 ( PA );
 			
-			triangle.B.Position = PB;
+			triangle.B.Position = vec3 ( PB );
 			
-			triangle.C.Position = PC;
+			triangle.C.Position = vec3 ( PC );
+			
+			triangle.Normal = vec3 ( PA.w, PB.w, PC.w );
 			
 			triangle.Offset = offset;
             
             //------------------------------- Testing triangle for ray intersection -----------------------------------
 			
-			vec3 test = vec3 ( 0.0 );
+			vec3 test = Zero;
 			
-			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x && test.x < min )
+			if ( IntersectTriangleS ( ray, triangle, test ) && test.x < intersection.Parameters.x && test.x < min )
 			{
 				intersection = SIntersection ( test, triangle );
 			}
@@ -578,7 +617,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 		for ( float index = 0; index < emptyRadius; index++ )
 		{
-			next += NextVoxel( next, max, delta );
+			next += NextVoxel ( next, max, delta );
 		}
 		
 		#endif
@@ -586,6 +625,12 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		max += delta * next;
 			
 		voxel += step * next;
+		
+		#ifdef SHOW_TRAVERSAL_DEPTH
+
+		TraversalDepth++;
+
+		#endif
 	}	
 	while ( min < final );
 	
@@ -732,6 +777,12 @@ void main ( void )
 	
 	vec3 color = Zero;
 	
+	#ifdef SHOW_TRAVERSAL_DEPTH
+
+	TraversalDepth = 0.0;
+
+	#endif
+	
 	//-------------------------------- Intersecting primary ray with scene bounding box -------------------------------
 	
 	float start = 0.0, final = 0.0;
@@ -786,7 +837,7 @@ void main ( void )
 			//=============================================== DISSOLVE ================================================
 			//=========================================================================================================			
 	
-			//#ifdef RENDER_DISSOLVE 
+			#ifdef RENDER_DISSOLVE 
 			
 			if ( primaryMaterial.Dissolve < 1.0 )
 			{
@@ -836,7 +887,7 @@ void main ( void )
 				}			
 			}
 				
-			//#endif
+			#endif
 			
 			//=========================================================================================================
 			//============================================== REFLECTIONS ==============================================
@@ -998,6 +1049,14 @@ void main ( void )
 			#endif
 		}
 	}
-							 
+	
+	#ifdef SHOW_TRAVERSAL_DEPTH
+
+	gl_FragColor = vec4 ( TraversalDepth / 200.0 );
+
+	#else
+	
 	gl_FragColor = vec4 ( color, 1.0 );
+	
+	#endif
 }
