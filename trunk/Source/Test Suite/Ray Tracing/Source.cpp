@@ -38,6 +38,8 @@ bool Mode;
 
 bool Recompile;
 
+bool Info;
+
 //=================================================================================================
 
 void MouseMove ( int x, int y )
@@ -62,6 +64,11 @@ void KeyButton ( int key, int state )
 	if ( key == GLFW_KEY_F6 && state > 0 )
 	{
 		Recompile = true;
+	}
+
+	if ( key == GLFW_KEY_F10 && state > 0 )
+	{
+		Info = true;
 	}
 }
 
@@ -96,7 +103,7 @@ int main ( void )
         return 0;
 	}
 	
-	//glfwSwapInterval ( 0 );
+	glfwSwapInterval ( 0 );
 
 	glfwSetMousePosCallback ( MouseMove );
 
@@ -125,9 +132,9 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Girl/Girl.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Horse/Horse.obj" );
 
-	Vector3D minimum = model->GetMinimum ( );
+	Vector3D minimum = model->GetMinimum ( ); 
 
 	Vector3D maximum = model->GetMaximum ( );
 
@@ -143,7 +150,7 @@ int main ( void )
 
 		meshes [index]->Transformation->SetScale ( Vector3D ( scale, scale, scale ) );
 
-		meshes [index]->Transformation->SetTranslation ( minimum * scale - Vector3D :: Unit );
+		meshes [index]->Transformation->SetTranslation ( -scale * ( minimum + maximum ) / 2.0F );
 
 		meshes [index]->Tesselate ( );
 	}
@@ -167,16 +174,15 @@ int main ( void )
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 
-	Scene * scene = new Scene ( camera,
-		new Volume ( minimum * scale + minimum * scale - Vector3D :: Unit,
-		             maximum * scale + minimum * scale - Vector3D :: Unit ) );
+	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
+		                                             scale * ( maximum - minimum ) / 2.0F ) );
 
 	for ( int index = 0; index < model->Groups.size ( ); index++ )
 	{
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
-	scene->Lights.push_back ( new Light ( 0, Vector3D ( -1.0F, -1.0F, 1.0F ) ) );
+	scene->Lights.push_back ( new Light ( 0, Vector3D ( -1.0F, -1.0F, -1.0F ) ) );
 
 	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.0F, 1.0F, 1.0F ) ) );
 
@@ -221,6 +227,13 @@ int main ( void )
 			shaderManager->Unbind ( );
 
 			Recompile = false;
+		}
+
+		if ( Info )
+		{
+			cout << "Position = " << camera->GetPosition ( );
+
+			Info = false;
 		}
 
 		//------------------------------------ Calculating FPS ------------------------------------
