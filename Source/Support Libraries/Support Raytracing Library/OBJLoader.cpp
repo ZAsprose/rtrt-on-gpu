@@ -401,15 +401,15 @@ namespace Raytracing
 								{
 									OBJFace face;
 
-									sscanf ( line, "f %d//%d %d//%d %d//%d",
+									sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
 											 &face.Vertex[0],
-											 //&face.Texture[0],
+											 &face.Texture[0],
 											 &face.Normal[0],
 											 &face.Vertex[1],
-											// &face.Texture[1],
+											 &face.Texture[1],
 											 &face.Normal[1],
 											 &face.Vertex[2],
-											 //&face.Texture[2],
+											 &face.Texture[2],
 											 &face.Normal[2] );
 
 									group->Faces.push_back ( face );
