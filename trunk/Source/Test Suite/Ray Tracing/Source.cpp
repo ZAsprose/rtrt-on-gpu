@@ -22,6 +22,8 @@
 
 #include "TextureManager.h"
 
+#include <time.h>
+
 using namespace Math;
 
 using namespace Render;
@@ -113,7 +115,7 @@ int main ( void )
 
 	//--------------------------- Setup Camera Position and Orientation ---------------------------
 
-	Camera * camera = new Camera ( Vector3D ( -10.0F, 0.0F, 0.0F ),
+	Camera * camera = new Camera ( Vector3D ( -2.0F, 0.0F, 0.0F ),
 		                           Vector3D ( ONEPI / 2.0F, ONEPI / 2.0F, 0.0F ) );
 
 	camera->SetViewport ( Width, Height );
@@ -132,7 +134,62 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Horse/Horse.obj" );
+	/*
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/House-1/House-1.obj" );
+
+	OBJModel * model1 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Figurine/Figurine.obj" );
+
+	OBJModel * model2 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Horse/Horse.obj" );
+
+	Vector3D minimum = model->GetMinimum ( ); 
+
+	Vector3D maximum = model->GetMaximum ( );
+
+	Vector3D size = maximum - minimum;
+
+	float scale = 2.0F / max ( size.X, max ( size.Y, size.Z ) );
+
+	Mesh ** meshes = new Mesh * [model->Groups.size ( ) + model1->Groups.size ( ) + model2->Groups.size ( )];
+
+	for ( int index = 0; index < model->Groups.size ( ); index++ )
+	{
+		meshes [index] = new Mesh ( model, index, new Transform ( ), new Material ( ) );
+
+		meshes [index]->Transformation->SetScale ( Vector3D ( scale, scale, scale ) );
+
+		meshes [index]->Transformation->SetTranslation ( -scale * ( minimum + maximum ) / 2.0F );
+
+		meshes [index]->Tesselate ( );
+	}
+
+	{
+		meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ), new Material ( ) );
+
+		meshes [model->Groups.size ( )]->Transformation->SetScale ( Vector3D ( 1.0F / 1000.0F, 1.0F / 1000.0F, 1.0F / 1000.0F ) );
+
+		meshes [model->Groups.size ( )]->Transformation->SetTranslation ( Vector3D ( 0.48F, 0.15F, -0.28F ) );
+
+		meshes [model->Groups.size ( )]->Tesselate ( );
+	}
+
+	{
+		meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ), new Material ( ) );
+
+		meshes [model->Groups.size ( ) + 1]->Transformation->SetScale ( Vector3D ( 1.0F / 300.0F, 1.0F / 300.0F, 1.0F / 300.0F ) );
+
+		meshes [model->Groups.size ( ) + 1]->Transformation->SetTranslation ( Vector3D ( 0.5F, -0.15F, -0.28F ) );
+
+		meshes [model->Groups.size ( ) + 1]->Tesselate ( );
+	}
+	*/
+
+	long start = clock ( );
+
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Conference/Conference.obj" );
+
+	long time = clock ( ) - start;
+
+	cout << "Loading Time" << time << endl;
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
@@ -174,17 +231,22 @@ int main ( void )
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 
+	/*
 	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
 		                                             scale * ( maximum - minimum ) / 2.0F ) );
+	*/
 
-	for ( int index = 0; index < model->Groups.size ( ); index++ )
+	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
+		                                             scale * ( maximum - minimum ) / 2.0F) );
+
+	for ( int index = 0; index < model->Groups.size ( ) ; index++ )
 	{
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
-	scene->Lights.push_back ( new Light ( 0, Vector3D ( -1.0F, -1.0F, -1.0F ) ) );
+	scene->Lights.push_back ( new Light ( 0, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
 
-	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.0F, 1.0F, 1.0F ) ) );
+	scene->Lights.push_back ( new Light ( 1, Vector3D ( -1.5F, 0.0F, 1.5F ) ) );
 
 	scene->BuildGrid ( 128, 128, 128 );
 

@@ -16,9 +16,9 @@
 
 #define LIGHTING_TWO_SIDED
 
-#define USE_PROXIMITY_GRID
+#define USE_PROXIMITY_GRID_
 
-#define SHOW_TRAVERSAL_DEPTH
+#define SHOW_TRAVERSAL_DEPTH_
 
 /**********************************************************************************************************************/
 /*************************************************** DATA STRUCTURES **************************************************/
@@ -512,7 +512,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	
 	vec3 voxel = WorldToVoxel ( ray.Origin );
 	
-	vec3 delta = Grid.VoxelSize / abs ( ray.Direction );
+	vec3 delta = Grid.VoxelSize / abs ( ray.Direction );	
 		
 	vec3 step = sign ( ray.Direction );
 	
@@ -520,11 +520,11 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
-	vec3 next = vec3 ( 0.0 );
+	vec3 next;
 	
-	float min = 0.0;
+	float min;
 	
-	do
+	while ( true )
 	{
 		//---------------------------------- Calc next direction and voxel out time -----------------------------------
 		
@@ -550,6 +550,8 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 				min = max.y;
 			}
 		}
+		
+		if ( min > final ) break;
 		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
@@ -615,13 +617,13 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 		#ifdef USE_PROXIMITY_GRID
 		
-		for ( float index = 0; index < emptyRadius; index++ )
+		if ( emptyRadius > 0 )
 		{
 			next += NextVoxel ( next, max, delta );
 		}
 		
 		#endif
-			
+		
 		max += delta * next;
 			
 		voxel += step * next;
@@ -1052,7 +1054,7 @@ void main ( void )
 	
 	#ifdef SHOW_TRAVERSAL_DEPTH
 
-	gl_FragColor = vec4 ( TraversalDepth / 200.0 );
+	gl_FragColor = vec4 ( TraversalDepth / length ( Grid.VoxelCount ) );
 
 	#else
 	
