@@ -284,9 +284,23 @@ namespace Raytracing
 		
 		//-----------------------------------------------------------------------------------------
 
+		char line [LENGTH];
+
 		while ( position <= finish )
 		{
-			if ( memcmp ( position, "mtllib", 6 ) == 0 )
+			//-------------------------------------------------------------------------------------
+
+			int length = 0;
+
+			while ( position [length++] != '\n' );
+
+			memcpy ( line, position, length );
+
+			line [length - 1] = 0;
+
+			//-------------------------------------------------------------------------------------
+
+			if ( memcmp ( line, "mtllib", 6 ) == 0 )
 			{
 				//-------------------- Groups will be created later ---------------------
 
@@ -296,7 +310,7 @@ namespace Raytracing
 
 				char mtlfile [LENGTH];
 
-				sscanf ( position, "mtllib %s", &mtlfile );
+				sscanf ( line, "mtllib %s", &mtlfile );
 
 				//------------------- Loading materials from MTL file -------------------
 
@@ -306,7 +320,7 @@ namespace Raytracing
 				}
 			}
 			else
-				if ( memcmp ( position, "usemtl", 6 ) == 0 )
+				if ( memcmp ( line, "usemtl", 6 ) == 0 )
 				{
 					//--------------- Adding previous group to the model ----------------
 
@@ -321,7 +335,7 @@ namespace Raytracing
 
 					memset ( name, 0, LENGTH );
 
-					sscanf ( position, "usemtl %s", &name );
+					sscanf ( line, "usemtl %s", &name );
 
 					//---------------- Finding this material in the list ----------------
 
@@ -348,11 +362,11 @@ namespace Raytracing
 					group = new OBJGroup ( material );
 				}
 				else
-					if ( memcmp ( position, "vn", 2 ) == 0 )
+					if ( memcmp ( line, "vn", 2 ) == 0 )
 					{
 						Vector3D normal = Vector3D :: Zero;
 
-						sscanf ( position, "vn %f %f %f",
+						sscanf ( line, "vn %f %f %f",
 								 &normal.X,
 								 &normal.Y,
 								 &normal.Z );
@@ -360,42 +374,42 @@ namespace Raytracing
 						model->Normals.push_back ( normal );
 					}
 					else
-						if ( memcmp ( position, "vt", 2 ) == 0 )
+						if ( memcmp ( line, "vt", 2 ) == 0 )
 						{
 							Vector2D texture = Vector2D :: Zero;
 
-							sscanf ( position, "vt %f %f",
+							sscanf ( line, "vt %f %f",
 									 &texture.X,
 									 &texture.Y );
 
 							model->TexCoords.push_back ( texture );
 						}
 						else
-							if ( memcmp ( position, "v", 1 ) == 0 )
+							if ( memcmp ( line, "v", 1 ) == 0 )
 							{
 								Vector3D vertex = Vector3D :: Zero;
-
-								sscanf ( position, "v %f %f %f",
+								
+								sscanf ( line, "v %f %f %f",
 										 &vertex.X,
 										 &vertex.Y,
 										 &vertex.Z );
-
+								
 								model->Vertices.push_back ( vertex );
 							}
 							else
-								if ( memcmp ( position, "f", 1 ) == 0 )
+								if ( memcmp ( line, "f", 1 ) == 0 )
 								{
 									OBJFace face;
 
-									sscanf ( position, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+									sscanf ( line, "f %d//%d %d//%d %d//%d",
 											 &face.Vertex[0],
-											 &face.Texture[0],
+											 //&face.Texture[0],
 											 &face.Normal[0],
 											 &face.Vertex[1],
-											 &face.Texture[1],
+											// &face.Texture[1],
 											 &face.Normal[1],
 											 &face.Vertex[2],
-											 &face.Texture[2],
+											 //&face.Texture[2],
 											 &face.Normal[2] );
 
 									group->Faces.push_back ( face );
@@ -403,12 +417,10 @@ namespace Raytracing
 
 			if ( progress > ( finish - position ) / ( float ) size )
 			{
-				progress -= 0.02F;
-
-				cout << ".";
+				progress -= 0.02F; cout << ".";
 			}
 
-			while ( *position++ != '\n' );
+			position += length;
 		}
 
 		//-------------------------------------------------------------------------------
