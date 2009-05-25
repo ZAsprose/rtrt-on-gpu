@@ -185,7 +185,7 @@ int main ( void )
 
 	long start = clock ( );
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Conference/Conference.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Lexus/Lexus.obj" );
 
 	long time = clock ( ) - start;
 
@@ -230,23 +230,161 @@ int main ( void )
 	textureManager->SetupTextures ( );
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
+	
+	//Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
+	//	                                             scale * ( maximum - minimum ) / 2.0F ) );
+	
 
-	/*
-	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
-		                                             scale * ( maximum - minimum ) / 2.0F ) );
-	*/
+	Scene * scene = new Scene ( camera,
+		                        new Volume ( -0.65F * scale * size, 0.65F * scale * size ) );
 
-	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
-		                                             scale * ( maximum - minimum ) / 2.0F) );
 
 	for ( int index = 0; index < model->Groups.size ( ) ; index++ )
 	{
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
-	scene->Lights.push_back ( new Light ( 0, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Y ) );
 
-	scene->Lights.push_back ( new Light ( 1, Vector3D ( -1.5F, 0.0F, 1.5F ) ) );
+		plane->Transformation->SetTranslation ( -0.64F * scale * Vector3D ( 0.0F, 0.0F, size.Z ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Wood/Wood - 3.TGA" ), 0 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+
+		plane->Properties->Scale = Vector2D ( 4.0F, 2.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Y ) );
+
+		plane->Transformation->SetTranslation ( 0.64F * scale * Vector3D ( 0.0F, 0.0F, size.Z ) );
+
+		//plane->Transformation->SetOrientation ( Vector3D ( -ONEPI, 0.0F, 0.0F ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Wood/Wood - 5.TGA" ), 1 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+
+		plane->Properties->Scale = Vector2D ( 2.0F, 1.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Z ) );
+
+		plane->Transformation->SetTranslation ( -0.64F * scale * Vector3D ( 0.0F, size.Y, 0.0F ) );
+
+		plane->Transformation->SetOrientation ( Vector3D ( -ONEPI / 2.0F, 0.0F, 0.0F ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Stone/Stone - 2.TGA" ), 2 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+
+		plane->Properties->Scale = Vector2D ( 4.0F, 2.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Z ) );
+
+		plane->Transformation->SetTranslation ( 0.64F * scale * Vector3D ( 0.0F, size.Y, 0.0F ) );
+
+		plane->Transformation->SetOrientation ( Vector3D ( -ONEPI / 2.0F, 0.0F, 0.0F ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Stone/Stone - 2.TGA" ), 3 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+		
+		plane->Properties->Scale = Vector2D ( 4.0F, 2.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.Z, scale * size.Y ) );
+
+		plane->Transformation->SetTranslation ( -0.64F * scale * Vector3D ( size.X, 0.0F, 0.0F ) );
+
+		plane->Transformation->SetOrientation ( Vector3D ( 0.0F, -ONEPI / 2.0F, 0.0F ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Stone/Stone - 2.TGA" ), 4 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+
+		//plane->Properties->Scale = Vector2D ( 4.0F, 4.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+
+	{
+		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.Z, scale * size.Y ) );
+
+		plane->Transformation->SetTranslation ( 0.64F * scale * Vector3D ( size.X, 0.0F, 0.0F ) );
+
+		plane->Transformation->SetOrientation ( Vector3D ( 0.0F, ONEPI / 2.0F, 0.0F ) );
+
+		plane->Tesselate ( );
+
+		plane->Properties->Texture = new Texture2D (
+			TextureData2D :: FromTGA ( "H:/Projects/rtrt-on-gpu/Support/Textures/Stone/Stone - 2.TGA" ), 5 );
+
+		plane->Properties->Texture->FilterMode.Magnification = GL_LINEAR;
+
+		plane->Properties->Texture->FilterMode.Minification = GL_LINEAR;
+
+		//plane->Properties->Scale = Vector2D ( 4.0F, 4.0F );
+
+		textureManager->Textures.push_back ( plane->Properties->Texture );
+
+		scene->Primitives.push_back ( plane );
+	}
+	
+	textureManager->SetupTextures ( );
+
+	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.5F, 1.5F ) ) );
+
+	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
 
 	scene->BuildGrid ( 128, 128, 128 );
 

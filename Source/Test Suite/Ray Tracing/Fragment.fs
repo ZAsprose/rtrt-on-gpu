@@ -6,13 +6,13 @@
 
 #define RENDER_SHADOWS_
 
-#define RENDER_REFLECTIONS_
+#define RENDER_REFLECTIONS
 
 #define RENDER_REFRACTIONS_
 
-#define RENDER_DISSOLVE_
+#define RENDER_DISSOLVE
 
-#define USE_TEXTURES_
+#define USE_TEXTURES
 
 #define LIGHTING_TWO_SIDED
 
@@ -524,7 +524,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	
 	float min;
 	
-	while ( true )
+	do
 	{
 		//---------------------------------- Calc next direction and voxel out time -----------------------------------
 		
@@ -550,8 +550,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 				min = max.y;
 			}
 		}
-		
-		if ( min > final ) break;
 		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
@@ -617,7 +615,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 		#ifdef USE_PROXIMITY_GRID
 		
-		if ( emptyRadius > 0 )
+		for ( int index = 0; index < emptyRadius; index++ )
 		{
 			next += NextVoxel ( next, max, delta );
 		}
@@ -791,7 +789,7 @@ void main ( void )
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + EPSILON ) * ray.Direction;
+		ray.Origin += ( start + EPSILON  + 0.1 ) * ray.Direction;
 				
 		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
 		
