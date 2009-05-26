@@ -16,7 +16,7 @@
 
 #define LIGHTING_TWO_SIDED
 
-#define USE_PROXIMITY_GRID_
+#define USE_PROXIMITY_GRID
 
 #define SHOW_TRAVERSAL_DEPTH_
 
@@ -517,6 +517,8 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	vec3 step = sign ( ray.Direction );
 	
 	vec3 max = delta * max ( step, Zero ) - mod ( ray.Origin - Grid.Minimum, Grid.VoxelSize ) / ray.Direction;
+	
+	float ttt = min ( delta.x, min ( delta.y, delta.z ) );
 		
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
@@ -524,7 +526,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	
 	float min;
 	
-	do
+	while ( true )
 	{
 		//---------------------------------- Calc next direction and voxel out time -----------------------------------
 		
@@ -550,6 +552,8 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 				min = max.y;
 			}
 		}
+		
+		if ( min > final + EPSILON ) break;
 		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
@@ -598,7 +602,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 			vec3 test = Zero;
 			
-			if ( IntersectTriangleS ( ray, triangle, test ) && test.x < intersection.Parameters.x && test.x < min )
+			if ( IntersectTriangleS ( ray, triangle, test ) && test.x < intersection.Parameters.x )
 			{
 				intersection = SIntersection ( test, triangle );
 			}
@@ -606,7 +610,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			offset++;
 		}
 		
-		if ( intersection.Parameters.x < BIG )
+		if ( intersection.Parameters.x < min )
 		{            
 			return true;
 		}
@@ -615,10 +619,14 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 		#ifdef USE_PROXIMITY_GRID
 		
-		for ( int index = 0; index < emptyRadius; index++ )
-		{
-			next += NextVoxel ( next, max, delta );
-		}
+		//for ( int index = 0; index < emptyRadius; index++ )
+		//{
+		//	next += NextVoxel ( next, max, delta );
+		//}
+		
+		vec3 vvv = WorldToVoxel ( ray.Origin + ray.Direction * ( min + ttt * emptyRadius ) );
+		
+		next = abs ( voxel - vvv );
 		
 		#endif
 		
@@ -631,8 +639,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		TraversalDepth++;
 
 		#endif
-	}	
-	while ( min < final );
+	}
 	
 	return false;
 }
@@ -789,7 +796,7 @@ void main ( void )
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + EPSILON  + 0.1 ) * ray.Direction;
+		ray.Origin += ( start + EPSILON ) * ray.Direction;
 				
 		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
 		
