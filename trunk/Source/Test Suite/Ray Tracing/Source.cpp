@@ -185,7 +185,7 @@ int main ( void )
 
 	long start = clock ( );
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Lexus/Lexus.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Lexus/Lexus.obj" );
 
 	long time = clock ( ) - start;
 
@@ -386,7 +386,7 @@ int main ( void )
 
 	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
 
-	scene->BuildGrid ( 128, 128, 128 );
+	scene->BuildGrid ( 128, 128,128 );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
