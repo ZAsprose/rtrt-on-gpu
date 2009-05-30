@@ -526,6 +526,12 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	
 	float min;
 	
+	#ifdef USE_PROXIMITY_GRID
+		
+	float proximity = 0.0;
+		
+	#endif
+	
 	while ( true )
 	{
 		//---------------------------------- Calc next direction and voxel out time -----------------------------------
@@ -555,6 +561,19 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 		if ( min > final + EPSILON ) break;
 		
+		#ifdef USE_PROXIMITY_GRID
+				
+		if ( proximity-- > 2.0 )
+		{
+			max += delta * next;
+				
+			voxel += step * next;
+			
+			continue;
+		}		
+		
+		#endif
+		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
 		vec3 content = vec3 ( texture3D ( VoxelTexture, voxel * VoxelTextureStep ) );
@@ -565,7 +584,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 		#ifdef USE_PROXIMITY_GRID
 		
-		float emptyRadius = content.z;
+		proximity = content.z;
 		
 		#endif
 				
@@ -616,19 +635,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		}
 		
 		//---------------------------------------------- Go to next voxel ---------------------------------------------
-			
-		#ifdef USE_PROXIMITY_GRID
-		
-		//for ( int index = 0; index < emptyRadius; index++ )
-		//{
-		//	next += NextVoxel ( next, max, delta );
-		//}
-		
-		vec3 vvv = WorldToVoxel ( ray.Origin + ray.Direction * ( min + ttt * emptyRadius ) );
-		
-		next = abs ( voxel - vvv );
-		
-		#endif
 		
 		max += delta * next;
 			

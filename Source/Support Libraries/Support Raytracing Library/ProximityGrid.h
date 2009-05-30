@@ -10,21 +10,29 @@ namespace Raytracing
 			
 			//----------------------- Proximity Grid Saito Distance Maps --------------------------
 
-			int ***saitoFirstMap;
+			int *** saitoFirstMap;
 
-			int ***saitoSecondMap;
+			int *** saitoSecondMap;
 
-			int ***saitoDistanceMap;
+			int *** saitoDistanceMap;
+
+			int *** simpleDistanceMap;
 
 			//----------------------- Calculating Saito Distance Maps --------------------------			
 			
-			void CalculateFirstSaitoMap();
+			void CalculateFirstSaitoMap ( void );
 
-			void CalculateSecondSaitoMap();
+			void CalculateSecondSaitoMap ( void );
 
-			void CalculateDistanceSaitoMap();
+			void CalculateDistanceSaitoMap ( void );
 
-			void NormolizeAndApllyDistanceMap();
+			void NormolizeAndApllyDistanceMap ( void );
+
+			//--------------------------------- Test Subroutines ----------------------------------			
+			
+			bool CheckVoxelProximity ( int, int, int, int );
+
+			void BuildDistanceMap ( void );
 
 		public:
 
