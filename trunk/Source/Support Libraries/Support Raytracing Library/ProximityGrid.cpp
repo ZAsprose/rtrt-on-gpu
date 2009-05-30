@@ -11,11 +11,15 @@ namespace Raytracing
 		saitoSecondMap   = new int ** [partitionsX];
 		saitoDistanceMap = new int ** [partitionsX];
 
+		simpleDistanceMap = new int ** [partitionsX];
+
 		for ( int i = 0; i < partitionsX; i++ )
 		{
 			saitoFirstMap[i]    = new int * [partitionsY];
 			saitoSecondMap[i]   = new int * [partitionsY];
 			saitoDistanceMap[i] = new int * [partitionsY];
+
+			simpleDistanceMap[i] = new int * [partitionsY];
 
 			for ( int j = 0; j < partitionsY; j++ )
 			{
@@ -23,11 +27,15 @@ namespace Raytracing
 				saitoSecondMap[i][j]   = new int [partitionsZ];
 				saitoDistanceMap[i][j] = new int [partitionsZ];
 
+				simpleDistanceMap[i][j] = new int [partitionsZ];
+
 				for ( int k = 0; k < partitionsZ; k++ )
 				{
 					saitoFirstMap[i][j][k]    = 0;
 					saitoSecondMap[i][j][k]   = 0;
 					saitoDistanceMap[i][j][k] = 0;
+
+					simpleDistanceMap[i][j][k] = 0;
 				}
 			}
 		}
@@ -42,15 +50,21 @@ namespace Raytracing
 				delete [] saitoFirstMap[i][j];
 				delete [] saitoSecondMap[i][j];
 				delete [] saitoDistanceMap[i][j];
+
+				delete [] simpleDistanceMap[i][j];
 			}
 			delete [] saitoFirstMap[i];
 			delete [] saitoSecondMap[i];
 			delete [] saitoDistanceMap[i];
+
+			delete [] simpleDistanceMap[i];
 		}
 		
 		delete [] saitoFirstMap;
 		delete [] saitoSecondMap;
 		delete [] saitoDistanceMap;
+
+		delete [] simpleDistanceMap;
 	}
 
 	void ProximityGrid :: CalculateFirstSaitoMap()
@@ -175,15 +189,110 @@ namespace Raytracing
 			}
 		}
 	}
+
+	bool ProximityGrid :: CheckVoxelProximity ( int x, int y, int z, int proximity )
+	{
+		int startX = x - proximity < 0 ? 0 : x - proximity;
+
+		int startY = y - proximity < 0 ? 0 : y - proximity;
+
+		int startZ = z - proximity < 0 ? 0 : z - proximity;
+
+
+		int finalX = x + proximity >= PartitionsX ? PartitionsX - 1 : x + proximity;
+
+		int finalY = y + proximity >= PartitionsY ? PartitionsY - 1 : y + proximity;
+
+		int finalZ = z + proximity >= PartitionsZ ? PartitionsZ - 1 : z + proximity;
+
+
+		for ( int i = startX; i <= finalX; i++ )
+		{
+			for ( int j = startY; j <= finalY; j++ )
+			{
+				if ( Voxels [i][j][startZ]->Triangles.size ( ) > 0 )
+					return false;
+
+				if ( Voxels [i][j][finalZ]->Triangles.size ( ) > 0 )
+					return false;
+			}
+		}
+		
+		for ( int i = startX; i <= finalX; i++ )
+		{
+			for ( int k = startZ; k <= finalZ; k++ )
+			{
+				if ( Voxels [i][startY][k]->Triangles.size ( ) > 0 )
+					return false;
+
+				if ( Voxels [i][finalY][k]->Triangles.size ( ) > 0 )
+					return false;
+			}
+		}
+
+		for ( int j = startY; j <= finalY; j++ )
+		{
+			for ( int k = startZ; k <= finalZ; k++ )
+			{
+				if ( Voxels [startX][j][k]->Triangles.size ( ) > 0 )
+					return false;
+
+				if ( Voxels [finalX][j][k]->Triangles.size ( ) > 0 )
+					return false;
+			}
+		}
+
+		return true;
+	}
+
+	void ProximityGrid :: BuildDistanceMap ( void )
+	{
+		for ( int x = 0; x < PartitionsX; x++ )
+		{
+			for ( int y = 0; y < PartitionsY; y++ )
+			{
+				for ( int z = 0; z < PartitionsZ; z++ )
+				{
+					int proximity = 1;
+
+					while ( proximity <= PartitionsX )
+					{
+						if ( !CheckVoxelProximity ( x, y, z, proximity ) )
+							break;
+
+						proximity++;
+					}
+
+					simpleDistanceMap [x][y][z] = proximity - 1;
+				}
+			}
+		}
+	}
 	
 	void ProximityGrid :: BuildGrid (  Volume * box, vector < Triangle * > triangles )
 	{
 		UniformGrid :: BuildGrid ( box, triangles );
 		
-		CalculateFirstSaitoMap();
-		CalculateSecondSaitoMap();
-		CalculateDistanceSaitoMap();
+		CalculateFirstSaitoMap ( );
+		CalculateSecondSaitoMap ( );
+		CalculateDistanceSaitoMap ( );
 
-		NormolizeAndApllyDistanceMap();
+		NormolizeAndApllyDistanceMap ( );
+
+		BuildDistanceMap ( );
+
+		for ( int x = 0; x < PartitionsX; x++ )
+		{
+			for ( int y = 0; y < PartitionsY; y++ )
+			{
+				for ( int z = 0; z < PartitionsZ; z++ )
+				{
+					if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
+					{
+						cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
+					}
+				}
+			}
+		}
 	}
 }

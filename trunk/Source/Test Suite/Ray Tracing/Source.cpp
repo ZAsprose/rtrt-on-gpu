@@ -184,7 +184,7 @@ int main ( void )
 	*/
 
 	long start = clock ( );
-
+	//C:/export/Acura_RSX_All_A_Mat.obj
 	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Lexus/Lexus.obj" );
 
 	long time = clock ( ) - start;
@@ -231,12 +231,12 @@ int main ( void )
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 	
-	//Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
-	//	                                             scale * ( maximum - minimum ) / 2.0F ) );
+	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
+		                                             scale * ( maximum - minimum ) / 2.0F ) );
 	
 
-	Scene * scene = new Scene ( camera,
-		                        new Volume ( -0.65F * scale * size, 0.65F * scale * size ) );
+	//Scene * scene = new Scene ( camera,
+	//	                        new Volume ( -0.65F * scale * size, 0.65F * scale * size ) );
 
 
 	for ( int index = 0; index < model->Groups.size ( ) ; index++ )
@@ -244,6 +244,7 @@ int main ( void )
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
+	/*
 	{
 		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Y ) );
 
@@ -381,12 +382,13 @@ int main ( void )
 	}
 	
 	textureManager->SetupTextures ( );
+	*/
 
 	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.5F, 1.5F ) ) );
 
 	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
 
-	scene->BuildGrid ( 128, 128,128 );
+	scene->BuildGrid ( 128, 128, 128 );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 

@@ -113,6 +113,8 @@ namespace Raytracing
 			}
 		}
 
+		cout << "MATERIAL MEMORY: " << ( int ) ( 100.0F * offset / MaterialTexture->Data->GetWidth ( ) ) << endl;
+
 		//-------------------------------- Generating geometry data -------------------------------
 
 		if ( NULL != VoxelTexture->Data )
@@ -183,6 +185,8 @@ namespace Raytracing
 				}
 			}
 		}
+
+		cout << "VERTEX MEMORY: " << ( int ) ( 100.0F * offset / (PositionTexture->Data->GetWidth ( ) * PositionTexture->Data->GetHeight ( )) ) << endl;
 
 		//---------------------------------- Setup data textures ----------------------------------
 

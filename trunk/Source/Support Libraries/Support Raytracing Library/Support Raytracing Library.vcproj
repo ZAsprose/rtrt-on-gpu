@@ -240,7 +240,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Accelerating Structures"
+				Name="Acceleration Structure"
 				>
 				<Filter
 					Name="Structure"
@@ -390,7 +390,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Accelerating Structures"
+				Name="Acceleration Structure"
 				>
 				<Filter
 					Name="Structure"
