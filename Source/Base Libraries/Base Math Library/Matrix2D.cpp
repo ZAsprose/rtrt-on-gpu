@@ -62,22 +62,6 @@ namespace Math
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
-	Matrix2D operator + ( const Matrix2D& source )
-	{
-		Matrix2D result = Matrix2D :: Zero;
-
-		for ( int i = 0; i < SIZE2D; i++ )
-		{
-			for ( int j = 0; j < SIZE2D; j++ )
-			{
-				//TODO: fix me
-				result[i][j] = source[i][j];
-			}
-		}
-
-		return result;
-	}
-
 	Matrix2D operator - ( const Matrix2D& source )
 	{
 		Matrix2D result = Matrix2D :: Zero;

@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -7,10 +7,6 @@
 #ifndef _MATRIX4D_
 
 #define _MATRIX4D_
-
-#include <iostream>
-
-#include "Util.h"
 
 #include "Vector4D.h"
 
@@ -45,9 +41,7 @@ namespace Math
 			Matrix4D ( const Matrix4D& );
 
 			//-------------------------------- Arithmetic Operators -------------------------------
-
-			friend Matrix4D operator + ( const Matrix4D& );
-			
+		
 			friend Matrix4D operator - ( const Matrix4D& );
 
 			friend Matrix4D operator + ( const Matrix4D&, const Matrix4D& );

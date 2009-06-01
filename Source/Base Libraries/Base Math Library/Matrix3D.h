@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -7,10 +7,6 @@
 #ifndef _MATRIX3D_
 
 #define _MATRIX3D_
-
-#include <iostream>
-
-#include "Util.h"
 
 #include "Vector3D.h"
 
@@ -45,8 +41,6 @@ namespace Math
 			Matrix3D ( const Matrix3D& );
 
 			//------------------------------- Arithmetic Operators --------------------------------
-
-			friend Matrix3D operator + ( const Matrix3D& );
 			
 			friend Matrix3D operator - ( const Matrix3D& );
 
