@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include <stdio.h>
@@ -84,11 +84,6 @@ namespace Math
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
-
-	Vector4D operator + ( const Vector4D& source )
-	{
-		return Vector4D ( source.X, source.Y, source.Z, source.W );
-	}
 
 	Vector4D operator - ( const Vector4D& source )
 	{
@@ -338,16 +333,16 @@ namespace Math
 			              floorf ( source.Z ), floorf ( source.W ) );
 	}
 
-	Vector4D Fract ( const Vector4D& source )
-	{
-		return Vector4D ( Fract ( source.X ), Fract ( source.Y ),
-			              Fract ( source.Z ), Fract ( source.W ) );
-	}
-
 	Vector4D Ceil ( const Vector4D& source )
 	{
 		return Vector4D ( ceilf ( source.X ), ceilf ( source.Y ),
 			              ceilf ( source.Z ), ceilf ( source.W ) );
+	}
+
+	Vector4D Fract ( const Vector4D& source )
+	{
+		return Vector4D ( Fract ( source.X ), Fract ( source.Y ),
+			              Fract ( source.Z ), Fract ( source.W ) );
 	}
 
 	Vector4D Mod ( const Vector4D& left, const Vector4D& right )
@@ -501,7 +496,7 @@ namespace Math
 
 	Vector4D Refract ( const Vector4D& incident, const Vector4D& normal, float index )
 	{
-		float dot = Dot( incident, normal );
+		float dot = Dot ( incident, normal );
 
 		float square = 1.0F - index * index * ( 1.0F - dot * dot );
 
@@ -511,7 +506,7 @@ namespace Math
 		}
 		else
 		{
-			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
+			return index * incident - ( sqrtf ( square ) + index * dot ) * normal;
 		}
 	}
 
