@@ -64,21 +64,6 @@ namespace Math
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
-	Matrix3D operator + ( const Matrix3D& source )
-	{
-		Matrix3D result = Matrix3D :: Zero;
-
-		for ( int i = 0; i < SIZE3D; i++ )
-		{
-			for ( int j = 0; j < SIZE3D; j++ )
-			{
-				result[i][j] = source[i][j];
-			}
-		}
-
-		return result;
-	}
-
 	Matrix3D operator - ( const Matrix3D& source )
 	{
 		Matrix3D result = Matrix3D :: Zero;

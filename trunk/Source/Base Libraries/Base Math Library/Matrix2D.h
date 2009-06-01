@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -7,10 +7,6 @@
 #ifndef _MATRIX2D_
 
 #define _MATRIX2D_
-
-#include <iostream>
-
-#include "Util.h"
 
 #include "Vector2D.h"
 
@@ -45,8 +41,6 @@ namespace Math
 			Matrix2D ( const Matrix2D& );
 
 			//------------------------------- Arithmetic Operators --------------------------------
-
-			friend Matrix2D operator + ( const Matrix2D& );
 			
 			friend Matrix2D operator - ( const Matrix2D& );
 

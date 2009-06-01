@@ -62,21 +62,6 @@ namespace Math
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
 
-	Matrix4D operator + ( const Matrix4D& source )
-	{
-		Matrix4D result = Matrix4D :: Zero;
-
-		for ( int i = 0; i < SIZE4D; i++ )
-		{
-			for ( int j = 0; j < SIZE4D; j++ )
-			{
-				result[i][j] = source[i][j];
-			}
-		}
-
-		return result;
-	}
-
 	Matrix4D operator - ( const Matrix4D& source )
 	{
 		Matrix4D result = Matrix4D :: Zero;

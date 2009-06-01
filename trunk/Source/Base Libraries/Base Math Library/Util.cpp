@@ -1,10 +1,10 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include <math.h>
 
-#include <stdio.h>
+#include <stdlib.h>
 
 #include "Util.h"
 
@@ -22,21 +22,7 @@ namespace Math
 
 	float Sign ( float source )
 	{
-		if ( source < 0.0F )
-		{
-			return -1.0F;
-		}
-		else
-		{
-			if ( source > 0.0F )
-			{
-				return 1.0F;
-			}
-			else
-			{
-				return 0.0F;
-			}			
-		}		
+		return source < 0.0F ? -1.0F : ( source > 0.0F ? 1.0F : 0.0F );		
 	}
 
 	float Fract ( float source )
@@ -51,21 +37,7 @@ namespace Math
 
 	float Clamp ( float source, float min, float max )
 	{
-		if ( source < min )
-		{
-			return min;
-		}
-		else
-		{
-			if ( source > max )
-			{
-				return max;
-			}
-			else
-			{
-				return source;
-			}
-		}
+		return source > min ? ( source < max ? source : max ) : min;
 	}
 	        
 	float Mix ( float left, float right, float value )
@@ -75,14 +47,7 @@ namespace Math
 	     	
 	float Step ( float source, float value )
 	{
-		if ( source < value )
-		{
-			return 0.0F;
-		}
-		else
-		{
-			return 1.0F;
-		}
+		return source < value ? 0.0F : 1.0F;
 	}
 
 	float Smooth ( float source, float left, float right )        	
