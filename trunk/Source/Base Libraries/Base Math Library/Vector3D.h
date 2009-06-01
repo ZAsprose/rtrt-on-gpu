@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -61,8 +61,6 @@ namespace Math
 			Vector3D ( const Vector4D& );
 
 			//-------------------------------- Arithmetic Operators -------------------------------
-
-			friend Vector3D operator + ( const Vector3D& );
 			
 			friend Vector3D operator - ( const Vector3D& );
 
@@ -175,9 +173,9 @@ namespace Math
 
 			friend Vector3D Floor ( const Vector3D& );
 
-			friend Vector3D Fract ( const Vector3D& );
+			friend Vector3D Ceil ( const Vector3D& );
 
-			friend Vector3D Ceiling ( const Vector3D& );
+			friend Vector3D Fract ( const Vector3D& );
 
 			friend Vector3D Mod ( const Vector3D&, const Vector3D& );
 
@@ -251,15 +249,15 @@ namespace Math
 
 			//------------------------------- Exponential Functions -------------------------------
 
-			friend  Vector3D Pow ( const Vector3D&, const Vector3D& );
+			friend Vector3D Pow ( const Vector3D&, const Vector3D& );
 
-			friend  Vector3D Pow ( const Vector3D&, float );
+			friend Vector3D Pow ( const Vector3D&, float );
 
-			friend  Vector3D Exp ( const Vector3D& );
+			friend Vector3D Exp ( const Vector3D& );
 
-			friend  Vector3D Log ( const Vector3D& );
+			friend Vector3D Log ( const Vector3D& );
 
-			friend  Vector3D Sqrt ( const Vector3D& );
+			friend Vector3D Sqrt ( const Vector3D& );
 	};
 }
 

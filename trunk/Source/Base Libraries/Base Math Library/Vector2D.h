@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -57,8 +57,6 @@ namespace Math
 			Vector2D ( const Vector4D& );
 
 			//-------------------------------- Arithmetic Operators -------------------------------
-
-			friend Vector2D operator + ( const Vector2D& );
 			
 			friend Vector2D operator - ( const Vector2D& );
 
@@ -142,9 +140,9 @@ namespace Math
 
 			//----------------------------- Input and Output Operators ----------------------------
 
-			friend istream& operator >> ( istream& is, Vector2D& );
+			friend istream& operator >> ( istream&, Vector2D& );
 
-			friend ostream& operator << ( ostream& os, const Vector2D& );
+			friend ostream& operator << ( ostream&, const Vector2D& );
 
 			//-------------------------------- Auxiliary Operators --------------------------------
 
@@ -171,9 +169,9 @@ namespace Math
 
 			friend Vector2D Floor ( const Vector2D& );
 
-			friend Vector2D Fract ( const Vector2D& );
+			friend Vector2D Ceil ( const Vector2D& );
 
-			friend Vector2D Ceiling ( const Vector2D& );
+			friend Vector2D Fract ( const Vector2D& );
 
 			friend Vector2D Mod ( const Vector2D&, const Vector2D& );
 
@@ -245,15 +243,15 @@ namespace Math
 
 			//------------------------------- Exponential Functions -------------------------------
 
-			friend  Vector2D Pow ( const Vector2D&, const Vector2D& );
+			friend Vector2D Pow ( const Vector2D&, const Vector2D& );
 
-			friend  Vector2D Pow ( const Vector2D&, float );
+			friend Vector2D Pow ( const Vector2D&, float );
 
-			friend  Vector2D Exp ( const Vector2D& );
+			friend Vector2D Exp ( const Vector2D& );
 
-			friend  Vector2D Log ( const Vector2D& );
+			friend Vector2D Log ( const Vector2D& );
 
-			friend  Vector2D Sqrt ( const Vector2D& );
+			friend Vector2D Sqrt ( const Vector2D& );
 	};
 }
 

@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include <iostream>
@@ -72,11 +72,6 @@ namespace Math
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
-
-	Vector3D operator + ( const Vector3D& source )
-	{
-		return Vector3D ( source.X, source.Y, source.Z );
-	}
 
 	Vector3D operator - ( const Vector3D& source )
 	{
@@ -304,14 +299,14 @@ namespace Math
 		return Vector3D ( floorf ( source.X ), floorf ( source.Y ), floorf ( source.Z ) );
 	}
 
-	Vector3D Fract ( const Vector3D& source )
-	{
-		return Vector3D ( Fract ( source.X ), Fract ( source.Y ), Fract ( source.Z ) );
-	}
-
 	Vector3D Ceil ( const Vector3D& source )
 	{
 		return Vector3D ( ceilf ( source.X ), ceilf ( source.Y ), ceilf ( source.Z ) );
+	}
+
+	Vector3D Fract ( const Vector3D& source )
+	{
+		return Vector3D ( Fract ( source.X ), Fract ( source.Y ), Fract ( source.Z ) );
 	}
 
 	Vector3D Mod ( const Vector3D& left, const Vector3D& right )
@@ -468,7 +463,7 @@ namespace Math
 
 	Vector3D Refract ( const Vector3D& incident, const Vector3D& normal, float index )
 	{
-		float dot = Dot( incident, normal );
+		float dot = Dot ( incident, normal );
 
 		float square = 1.0F - index * index * ( 1.0F - dot * dot );
 
@@ -478,7 +473,7 @@ namespace Math
 		}
 		else
 		{
-			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
+			return index * incident - ( sqrtf ( square ) + index * dot ) * normal;
 		}
 	}
 

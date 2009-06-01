@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include <stdio.h>
@@ -58,11 +58,6 @@ namespace Math
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
-
-	Vector2D operator + ( const Vector2D& source )
-	{
-		return Vector2D ( source.X, source.Y );
-	}
 
 	Vector2D operator - ( const Vector2D& source )
 	{
@@ -290,14 +285,14 @@ namespace Math
 		return Vector2D ( floorf ( source.X ), floorf ( source.Y ) );
 	}
 
-	Vector2D Fract ( const Vector2D& source )
-	{
-		return Vector2D ( Fract ( source.X ), Fract ( source.Y ) );
-	}
-
 	Vector2D Ceil ( const Vector2D& source )
 	{
 		return Vector2D ( ceilf ( source.X ), ceilf ( source.Y ) );
+	}
+
+	Vector2D Fract ( const Vector2D& source )
+	{
+		return Vector2D ( Fract ( source.X ), Fract ( source.Y ) );
 	}
 
 	Vector2D Mod ( const Vector2D& left, const Vector2D& right )
@@ -425,7 +420,7 @@ namespace Math
 
 	Vector2D Refract ( const Vector2D& incident, const Vector2D& normal, float index )
 	{
-		float dot = Dot( incident, normal );
+		float dot = Dot ( incident, normal );
 
 		float square = 1.0F - index * index * ( 1.0F - dot * dot );
 
@@ -435,7 +430,7 @@ namespace Math
 		}
 		else
 		{
-			return index * incident - ( sqrtf( square ) + index * dot ) * normal;
+			return index * incident - ( sqrtf ( square ) + index * dot ) * normal;
 		}
 	}
 
