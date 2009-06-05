@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -26,13 +26,13 @@ namespace Render
 
 		bool KeyZ;
 
-		bool KeyLeft;
+		bool ArrowL;
 
-		bool KeyRight;
+		bool ArrowR;
 
-		bool KeyUp;
+		bool ArrowU;
 
-		bool KeyDown;
+		bool ArrowD;
 	};
 
 	class Keyboard
