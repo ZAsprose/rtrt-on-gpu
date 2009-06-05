@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include "Transform.h"
