@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include "Keyboard.h"
@@ -31,13 +31,13 @@ namespace Render
 
 			case 'Z': State.KeyZ = state > 0; break;
 
-			case GLFW_KEY_LEFT: State.KeyLeft = state > 0; break;
+			case GLFW_KEY_LEFT: State.ArrowL = state > 0; break;
 
-			case GLFW_KEY_RIGHT: State.KeyRight = state > 0; break;
+			case GLFW_KEY_RIGHT: State.ArrowR = state > 0; break;
 
-			case GLFW_KEY_UP: State.KeyUp = state > 0; break;
+			case GLFW_KEY_UP: State.ArrowU = state > 0; break;
 
-			case GLFW_KEY_DOWN: State.KeyDown = state > 0; break;
+			case GLFW_KEY_DOWN: State.ArrowD = state > 0; break;
 		}
 	}
 
@@ -57,8 +57,12 @@ namespace Render
 
 		if ( State.KeyZ ) camera->MoveLocal ( -Step, Vector3D :: AxisY );
 
-		if ( State.KeyLeft ) camera->RotateLocal ( 2*Step, Vector3D :: AxisY );
+		if ( State.ArrowU ) camera->RotateLocal ( Step, Vector3D :: AxisX );
 
-		if ( State.KeyRight ) camera->RotateLocal ( -2*Step, Vector3D :: AxisY );
+		if ( State.ArrowD ) camera->RotateLocal ( -Step, Vector3D :: AxisX );
+
+		if ( State.ArrowL ) camera->RotateLocal ( Step, Vector3D :: AxisY );
+
+		if ( State.ArrowR ) camera->RotateLocal ( -Step, Vector3D :: AxisY );
 	}
 }

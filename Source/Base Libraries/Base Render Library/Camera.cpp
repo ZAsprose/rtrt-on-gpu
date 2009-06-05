@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #include "Camera.h"
@@ -65,26 +65,6 @@ namespace Render
 
 		Update ( );
 	}
-	
-	//------------------------------------ Viewport and Frustum -----------------------------------
-	
-	void Camera :: SetViewport ( unsigned int width, unsigned int height )
-	{
-		Width = width;
-
-		Height = height;
-
-		Aspect = Width / ( float ) Height;
-	}
-
-	void Camera :: SetFrustum ( float fieldOfView, float nearPlane, float farPlane )
-	{
-		FieldOfView = fieldOfView;
-
-		NearPlane = nearPlane;
-
-		FarPlane = farPlane;
-	}
 
 	//--------------------------------------- Apply Settings --------------------------------------
 
@@ -128,6 +108,26 @@ namespace Render
 		manager->SetUniformVector ( "Camera.View", View );
 
 		manager->SetUniformVector ( "Camera.Scale", GetScreenScale ( ) );
+	}
+
+	//------------------------------------ Viewport and Frustum -----------------------------------
+	
+	void Camera :: SetViewport ( unsigned int width, unsigned int height )
+	{
+		Width = width;
+
+		Height = height;
+
+		Aspect = Width / ( float ) Height;
+	}
+
+	void Camera :: SetFrustum ( float fieldOfView, float nearPlane, float farPlane )
+	{
+		FieldOfView = fieldOfView;
+
+		NearPlane = nearPlane;
+
+		FarPlane = farPlane;
 	}
 
 	//------------------------------------- Getting Settings --------------------------------------

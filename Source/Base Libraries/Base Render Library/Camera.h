@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -77,17 +77,17 @@ namespace Render
 			
 			void RotateWorld ( float, const Vector3D& );
 
-			//-------------------------------- Viewport and Frustum -------------------------------
-
-			void SetViewport ( unsigned int = 512, unsigned int = 512 );
-
-			void SetFrustum ( float = ONEPI / 3.0F, float = 0.01F, float = 1000000.0F );
-
 			//----------------------------------- Apply Settings ----------------------------------
 
 			void Setup ( void );
 
 			void SetShaderData ( ShaderManager * );
+
+			//-------------------------------- Viewport and Frustum -------------------------------
+
+			void SetViewport ( unsigned int = 512, unsigned int = 512 );
+
+			void SetFrustum ( float = ONEPI / 3.0F, float = 0.01F, float = 1000000.0F );
 
 			//---------------------------------- Getting Settings ---------------------------------
 
