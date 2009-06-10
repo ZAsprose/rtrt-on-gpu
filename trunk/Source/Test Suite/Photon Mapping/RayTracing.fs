@@ -63,11 +63,7 @@ uniform SLight Light;
 
 uniform sampler2DRect PositionTexture;
 
-//uniform sampler2DRect IntensityTexture;
-
-uniform sampler2D NoiseTexture;
-
-uniform vec2 Size;
+const vec2 Size = vec2 ( 256.0 );
 
 varying vec2 ScreenCoords;
 
@@ -117,8 +113,6 @@ vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color,
 	return DiffuseContribution * diffuse * color * shadow + shadow * vec3 ( SpecularContribution * specular ) + vec3 ( AmbientContribution ) * color;
 }
 
-	
-
 //=================================================================================================
 
 const float PlaneTexScale = 0.25;
@@ -163,34 +157,19 @@ bool HitSphere ( in SRay ray, out SIntersection intersection )
 		
 		float tmax = ( -b + det ) / a;
 		
-		if ( tmax > 0.0 )
-		{
-			if ( tmin > 0.0 )
-			{
-				intersection.Time = tmin;
-			}
-			else
-			{
-				intersection.Time = tmax;
-			}
+		intersection.Time = mix ( tmin, tmax, step ( tmin, 0.0 ) );
 			
-			intersection.Point = ray.Origin + intersection.Time * ray.Direction;
+		intersection.Point = ray.Origin + intersection.Time * ray.Direction;
 			
-			intersection.Normal = normalize ( intersection.Point - Sphere.Center );
-
-			vec3 noise = 3.0 * vec3(texture2D (NoiseTexture,abs(intersection.Point.xz) / 20.0)) - vec3(1.0);
-
-			intersection.Normal = normalize ( intersection.Normal + 0.1 * noise  );
+		intersection.Normal = normalize ( intersection.Point - Sphere.Center );
 			
-			intersection.Color = vec3 ( 0.2 );
+		intersection.Color = vec3 ( 0.2 );
 			
-			return true;
-		}
+		return tmax > 0.0;
 	}
 	
 	return false;
 }
-
 
 bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
 {
@@ -215,37 +194,24 @@ bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
 		
 		tmin_max.y = ( -abc.y + abc.w ) / abc.x;
 		
-		if ( tmin_max.y > 0.0 )
-		{
-			if ( tmin_max.x > 0.0 )
-			{
-				intersection.Time = tmin_max.x;
-			}
-			else
-			{
-				intersection.Time = tmin_max.y;
-			}
-			
-			return true;
-		}
+		intersection.Time = mix ( tmin_max.x, tmin_max.y, step ( tmin_max.x, 0.0 ) );
+		
+		return tmin_max.y > 0.0;
 	}
 	
 	return false;
 }
 
-
 bool Compare(vec3 a, vec3 b)
 {
-	if (a.x > b.x) return true;
+	bvec3 c = greaterThan ( a, b );
 	
-	else if( (a.x == b.x) && (a.y > b.y) ) return true;
-		
-		 else if ( (a.x == b.x) && (a.y == b.y) && (a.z > b.z ) )return true;
+	bvec3 d = equal ( a, b );
 	
-	return false;
+	return c.x || ( d.x && c.y ) || ( d.x && d.y && c.z );
 }
 
-vec2 BinSearch ( vec3 x )
+float BinSearch ( vec3 x )
 {
 	vec3 comp;
 	
@@ -268,7 +234,7 @@ vec2 BinSearch ( vec3 x )
         
      }
 	
-	return vec2 ( comp.z, 0.0 );
+	return comp.z;
 }
 
 //=================================================================================================
@@ -325,7 +291,6 @@ void main ( void )
 					
 					SIntersection testShadow;
 
-
 					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
 					{
 						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
@@ -361,32 +326,32 @@ void main ( void )
 							 intersect.Normal, intersect.Color,1.0 );
 			}
 			
-			vec2 coords;//текстурные координаты найденных точек		
+			float eps = 0.3;
+			
+			/*
+			for ( float i = 0.0; i < Size.x; ++i )
+			{
+				for ( float j = 0.0; j < Size.x; ++j )
+				{
+					vec4 position = texture2DRect ( PositionTexture, vec2 ( i, j ) );
+									
+					color += max ( 0.0, 1.0 - length ( vec3 ( position ) - intersect.Point ) / eps ) * vec3 ( position.w );
+				}
+			}
+			*/
 					
-			//if ( Compare ( intersect.Point + vec3 ( Epsilon ), vec3 ( texture2DRect ( PositionTexture, vec2(0.0) ) ) ) &&
-			//		Compare ( vec3 ( texture2DRect ( PositionTexture, vec2 (256, 256) ) ) , intersect.Point + vec3 ( Epsilon ) ) )
-			//{
-					vec2 found;
+			vec2 coords;
 					
-					found = BinSearch ( intersect.Point + vec3 ( 0.5 ) );
+			coords.y = BinSearch ( intersect.Point + vec3 ( eps ) );
 						
-					coords.y = found.x;
-						
-					found = BinSearch ( intersect.Point - vec3 ( 0.5 ) );
-						
-					coords.x = found.x;
-						
-			//}
-					
+			coords.x = BinSearch ( intersect.Point - vec3 ( eps ) );
+
 			for ( float j = coords.x; j < coords.y; ++j )
-			//for ( float j = 0.0; j < 256.0 * 256.0; ++j )
 			{
 				vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( j, Size.x ), floor ( j / Size.x ) ) );
 								
-				color += max ( 0.0, 1.0 - 2.0 * length( vec3 ( position ) - intersect.Point ) ) * vec3 ( position.w );
-				
+				color += max ( 0.0, 1.0 - length ( vec3 ( position ) - intersect.Point ) / eps ) * vec3 ( position.w );
 			}
-			
 		}
 	}
 	else
@@ -429,15 +394,15 @@ void main ( void )
 					
 					SIntersection testShadow;
 					
-					if ( HitSphereEasy(shadowRay,testShadow) && (testShadow.Time < distance))
+					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
 					{
-						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
+						color += Phong ( Light.Position, Camera.Position, test.Point, test.Normal, test.Color, 0.0 );
 					}
 					else
 					{
 					
 						color += Phong ( Light.Position, Camera.Position,
-										test.Point, test.Normal, test.Color,1.0 );
+										 test.Point, test.Normal, test.Color,1.0 );
 					}				
 				}
 			}
