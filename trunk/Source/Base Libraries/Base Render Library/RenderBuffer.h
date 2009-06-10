@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -18,32 +18,32 @@ namespace Render
 
 			//----------------------------------- Buffer Handle -----------------------------------
 
-			unsigned int Handle;
+			unsigned Handle;
 
 		public:
 
 			//------------------------------------ Buffer Size ------------------------------------
 			
-			unsigned int Width;
+			unsigned Width;
 			
-			unsigned int Height;
+			unsigned Height;
 
 			//------------------------------- Buffer Type and Format ------------------------------
 
-			unsigned int Attachment;
+			unsigned Attachment;
 			
-			unsigned int InternalFormat;
+			unsigned InternalFormat;
 
 			//--------------------------------- OpenGL Identifier ---------------------------------
 			
-			static const unsigned int Target = GL_RENDERBUFFER;
+			static const unsigned Target = GL_RENDERBUFFER;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			RenderBuffer ( unsigned int = 512,
-				           unsigned int = 512,
-						   unsigned int = GL_DEPTH_ATTACHMENT,
-						   unsigned int = GL_DEPTH_COMPONENT16 );
+			RenderBuffer ( unsigned = 512,
+				           unsigned = 512,
+						   unsigned = GL_DEPTH_ATTACHMENT,
+						   unsigned = GL_DEPTH_COMPONENT16 );
 
 			~RenderBuffer ( void );
 

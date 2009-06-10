@@ -1,5 +1,5 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+ * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
  */
 
 #pragma once
@@ -55,6 +55,10 @@ namespace Render
 			void Unbind ( void );
 
 			void FetchOutcome ( void );
+
+			//------------------------------------ Buffer Info ------------------------------------
+			
+			int GetHandle ( void ) const { return Handle; }
 	};
 }
 
