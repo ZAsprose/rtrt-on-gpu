@@ -1,16 +1,19 @@
 #extension GL_ARB_texture_rectangle : enable
 
+/**********************************************************************************************************************/
+/*************************************************** DATA STRUCTURES **************************************************/
+/**********************************************************************************************************************/
+
 struct SLight
 {
 	vec3 Position;
 	
-	float distance;
+	vec2 Radius;
 	
-	vec2 HalfSize;
-
-	vec3 Intens;
-	
+	float Distance;	
 };
+
+//---------------------------------------------------------------------------------------------------------------------
 
 struct SRay
 {
@@ -18,6 +21,8 @@ struct SRay
 	
 	vec3 Direction;
 };
+
+//---------------------------------------------------------------------------------------------------------------------
 
 struct SIntersection
 {
@@ -28,29 +33,23 @@ struct SIntersection
 	vec3 Normal;
 };
 
-struct SPlane
-{
-	vec3 Center;
-	
-	vec2 Size;
-};
-
-struct SSphere
-{
-	vec3 Center;
-	
-	float Radius;
-};
-
-//=======================================================================================================================================
+/**********************************************************************************************************************/
+/************************************************** SHADER INTERFACE **************************************************/
+/**********************************************************************************************************************/
 
 uniform SLight Light;
 
-uniform SPlane Plane;
+uniform float Time;
 
-uniform SSphere Sphere;
+/**********************************************************************************************************************/
+/************************************************** SHADER CONSTANTS **************************************************/
+/**********************************************************************************************************************/
 
-varying vec2 ScreenCoords;
+const vec3 Zero = vec3 ( 0.0, 0.0, 0.0 );
+
+const vec3 Unit = vec3 ( 1.0, 1.0, 1.0 );
+
+//---------------------------------------------------------------------------------------------------------------------
 
 const vec3 AxisX = vec3 ( 1.0, 0.0, 0.0 );
 
@@ -58,218 +57,201 @@ const vec3 AxisY = vec3 ( 0.0, 1.0, 0.0 );
 
 const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
-const float PlaneTexScale = 0.25;
+//---------------------------------------------------------------------------------------------------------------------
 
-//=======================================================================================================================================
+const vec3 BoxMinimum = vec3 ( -5.0 );
+
+const vec3 BoxMaximum = vec3 ( 5.0 );
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const float OpticalDensity = 1.5;
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define BIG 1000000.0
+
+#define EPSILON 0.001
+
+/**********************************************************************************************************************/
+/************************************************* SUPPORT FUNCTIONS **************************************************/
+/**********************************************************************************************************************/
 
 SRay GenerateRay ( void )
 {
-	vec3 direction = AxisX * ScreenCoords.x * Light.HalfSize.x + AxisZ * ScreenCoords.y * Light.HalfSize.y - AxisY * Light.distance;
+	vec3 direction = AxisX * gl_TexCoord[0].x * Light.Radius.x +
+	                 AxisY * gl_TexCoord[0].y * Light.Radius.y -
+	                 AxisZ * Light.Distance;
    
 	return SRay ( Light.Position, normalize ( direction ) );
 }
 
-bool HitPlane ( in SRay ray, out SIntersection intersection  )
+/**********************************************************************************************************************/
+/*********************************************** INTERSECTION FUNCTIONS ***********************************************/
+/**********************************************************************************************************************/
+
+float IntersectBox ( SRay ray, vec3 minimum, vec3 maximum )
 {
-	intersection.Time = ( Plane.Center.y - ray.Origin.y ) / ray.Direction.y;
+	vec3 OMAX = ( minimum - ray.Origin ) / ray.Direction;
+   
+	vec3 OMIN = ( maximum - ray.Origin ) / ray.Direction;
 	
-	intersection.Point = ray.Origin + intersection.Time * ray.Direction;
+	vec3 MAX = max ( OMAX, OMIN );
 	
-	intersection.Normal = vec3 ( 0.0, 1.0, 0.0 );
-	
-	return ( intersection.Time >= 0.0 ) &&
-	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
-	       ( abs ( intersection.Point.z ) <= Plane.Size.y );
+	return min ( MAX.x, min ( MAX.y, MAX.z ) );
 }
 
-bool HitPlaneEasy ( in SRay ray, out SIntersection intersection  )
+//---------------------------------------------------------------------------------------------------------------------
+
+bool IntersectBox ( SRay ray, vec3 minimum, vec3 maximum, out float start, out float final )
 {
-	intersection.Time = ( Plane.Center.y - ray.Origin.y ) / ray.Direction.y;
+	vec3 OMAX = ( minimum - ray.Origin ) / ray.Direction;
 	
-	intersection.Point = ray.Origin + intersection.Time * ray.Direction;
+	vec3 OMIN = ( maximum - ray.Origin ) / ray.Direction;
 	
-	return ( intersection.Time >= 0.0 ) &&
-	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
-	       ( abs ( intersection.Point.z ) <= Plane.Size.y );
+	vec3 MAX = max ( OMAX, OMIN );
+	
+	vec3 MIN = min ( OMAX, OMIN );
+	
+	final = min ( MAX.x, min ( MAX.y, MAX.z ) );
+	
+	start = max ( max ( MIN.x, 0.0), max ( MIN.y, MIN.z ) );	
+	
+	return final > start;
 }
 
-bool HitSphere ( in SRay ray, out SIntersection intersection )
+//---------------------------------------------------------------------------------------------------------------------
+
+bool IntersectPlane ( SRay ray, float start, float final, vec3 normal, float distance, out float time )
 {
-	float a = dot ( ray.Direction, ray.Direction );
+	time = ( distance - dot ( normal, ray.Origin ) ) / dot ( normal, ray.Direction );
 	
-	float b = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
+	return time >= start && time <= final;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define intervals 100
+
+float CalcFunction ( vec3 point )
+{
+	float x = point.x,
+	      y = point.y,
+	      z = point.z;
 	
-	float c = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
-	          dot ( Sphere.Center, Sphere.Center ) - Sphere.Radius * Sphere.Radius;
+	//return z - 0.5 * sin ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ) + 2.0;
 	
-	float det = b * b - a * c;
+	return z - sin ( x + y + Time ) * 0.3 - sin ( x - y + Time ) * 0.3 + 2.0;
+}
+
+vec3 CalcNormal ( vec3 point )
+{
+	float x = point.x,
+	      y = point.y,
+	      z = point.z;
 	
-	if ( det > 0.0 )
-	{
-		det = sqrt ( det );
+	//return vec3 ( -0.125 * ( 2.0 + sin ( Time ) ) * x * cos ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ),
+	//              -0.125 * ( 2.0 + sin ( Time ) ) * y * cos ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ),
+	//              1.0 );
+	
+	return vec3 ( -cos ( x + y + Time ) * 0.3 - cos ( x - y + Time ) * 0.3,
+	              -cos ( x + y + Time ) * 0.3 + cos ( x - y + Time ) * 0.3,
+	              1.0 );
+}
+
+bool IntersectSurface ( SRay ray, float tmin, float tmax, out float val )
+{
+	float step = ( tmax - tmin ) / intervals;
+	
+	float left = CalcFunction ( ray.Origin + tmin * ray.Direction );
+
+	float right = 0.0;
+	
+	for ( int i = 0; i < intervals; i++ )
+	{		
+		float t = tmin + i * step;
 		
-		float tmin = ( -b - det ) / a;
+		vec3 point = ray.Origin + t * ray.Direction;
 		
-		float tmax = ( -b + det ) / a;
+		right = CalcFunction ( point );
 		
-		intersection.Time = mix ( tmin, tmax, step ( tmin, 0.0 ) );
+		if ( left * right < 0.0 )
+		{
+			val = t + ( right * step) / ( left - right );
 			
-		intersection.Point = ray.Origin + intersection.Time * ray.Direction;
-			
-		intersection.Normal = normalize ( intersection.Point - Sphere.Center );
-			
-		return tmax > 0.0;
+			return true;
+		}
+		
+		left = right;
 	}
-	
+
 	return false;
 }
 
-const float delta = 0.025 / 4.0;
+/**********************************************************************************************************************/
+/**************************************************** ENTRY POINT *****************************************************/
+/**********************************************************************************************************************/
 
-void main( void )
+void main ( void )
 {
 	SRay ray = GenerateRay ( );
-	
-	SIntersection intersect;
-	
-	float intens = 0.0;
-	
-	//-------------------------------------------------------------------------
-	
-	if ( HitPlaneEasy ( ray, intersect ) )
-	{
-		SIntersection test;
 		
-		if ( HitSphere ( ray, test ) && test.Time < intersect.Time )
+	vec3 point = vec3 ( BIG );
+	
+	//-----------------------------------------------------------------------------------------------------------------
+	
+	float start, final, current, time = BIG;
+    
+	if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
+	{
+		if ( IntersectSurface ( ray, start, final, current ) && current < time )
 		{
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
+			time = current;
 			
-			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-			
-			if ( HitSphere ( ray, test ) )
+			if ( IntersectPlane ( ray, start, final, AxisZ, BoxMinimum.z, current ) && current < time )
 			{
-				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
+				time = current;
 				
-				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-				
-				//-------------------------------------------------------------
-				
-				if ( HitPlaneEasy ( ray, test ) )
-				{
-					intens += delta;	
-					
-					intersect.Point = test.Point;		
-				}
-				else
-				{
-					intersect.Point = vec3 ( 1000000.0 );
-				}
+				point = ray.Origin + time * ray.Direction;
 			}
+			else
+			{
+				point = ray.Origin + time * ray.Direction;
+				
+				vec3 normal = normalize ( CalcNormal ( point ) );
+				                  
+				//-----------------------------------------------------------------------------------------------------
+				                  
+				vec3 refract = refract ( ray.Direction,
+				                         normal,
+				                         1.0 / OpticalDensity );
+				
+				ray = SRay ( point + refract * EPSILON, refract );
+				
+				final = IntersectBox ( ray, BoxMinimum, BoxMaximum );
+				
+				time = BIG;
+				
+				if ( IntersectPlane ( ray, 0.0, final, AxisZ, BoxMinimum.z, current ) && current < time )
+				{
+					time = current;
+					
+					point = ray.Origin + time * ray.Direction;
+				}				               
+			}			
 		}
 		else
 		{
-			intens += delta;
-		}
-	}
-	else
-	{
-		SIntersection test;
-		
-		if ( HitSphere ( ray, test ) )
-		{
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
-			
-			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-			
-			if ( HitSphere ( ray, test ) )
+			if ( IntersectPlane ( ray, start, final, AxisZ, BoxMinimum.z, current ) && current < time )
 			{
-				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
+				time = current;
 				
-				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-				
-				//-------------------------------------------------------------
-				
-				if ( HitPlaneEasy ( ray, test ) )
-				{
-					intens += delta;
-					
-					intersect.Point = test.Point;	
-				}
-				else
-				{
-					intersect.Point = vec3 ( 1000000.0 );
-				}
-			}
-		}
-		else
-		{
-			intersect.Point = vec3 ( 1000000.0 );
+				point = ray.Origin + time * ray.Direction;
+			}		
 		}
 	}
 	
-	//-------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 	
-	gl_FragColor = vec4 ( intersect.Point, intens );
-}	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	gl_FragColor = vec4 ( point, 0.025 );
+}

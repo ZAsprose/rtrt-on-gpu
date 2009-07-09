@@ -202,14 +202,6 @@
 				RelativePath=".\RayTracing.vs"
 				>
 			</File>
-			<File
-				RelativePath=".\test.vs"
-				>
-			</File>
-			<File
-				RelativePath=".\testFX.fs"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Source Files"

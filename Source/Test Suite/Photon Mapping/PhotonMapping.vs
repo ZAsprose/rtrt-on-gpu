@@ -1,8 +1,6 @@
-varying vec2 ScreenCoords;
-
 void main ( void )
 {
-   ScreenCoords = gl_Vertex.xy;
+   gl_TexCoord[0] = gl_Vertex;
 
    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

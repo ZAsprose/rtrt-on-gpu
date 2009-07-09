@@ -1,3 +1,9 @@
+#extension GL_ARB_texture_rectangle : enable
+
+/**********************************************************************************************************************/
+/*************************************************** DATA STRUCTURES **************************************************/
+/**********************************************************************************************************************/
+
 struct SCamera
 {
 	vec3 Position;
@@ -11,12 +17,16 @@ struct SCamera
 	vec2 Scale;
 };
 
+//---------------------------------------------------------------------------------------------------------------------
+
 struct SRay
 {
 	vec3 Origin;
 	
 	vec3 Direction;
 };
+
+//---------------------------------------------------------------------------------------------------------------------
 
 struct SIntersection
 {
@@ -29,65 +39,231 @@ struct SIntersection
 	vec3 Color;
 };
 
-struct SPlane
-{
-	vec3 Center;
-	
-	vec2 Size;
-};
-
-struct SSphere
-{
-	vec3 Center;
-	
-	float Radius;
-};
+//---------------------------------------------------------------------------------------------------------------------
 
 struct SLight
 {
 	vec3 Position;
 
 	vec3 Intens;
-	
 };
 
-//=================================================================================================
+/**********************************************************************************************************************/
+/************************************************** SHADER INTERFACE **************************************************/
+/**********************************************************************************************************************/
 
 uniform SCamera Camera;
 
-uniform SPlane Plane;
-
-uniform SSphere Sphere;
-
 uniform SLight Light;
+
+uniform float Time;
 
 uniform sampler2DRect PositionTexture;
 
+/**********************************************************************************************************************/
+/************************************************** SHADER CONSTANTS **************************************************/
+/**********************************************************************************************************************/
+
+const vec3 Zero = vec3 ( 0.0, 0.0, 0.0 );
+
+const vec3 Unit = vec3 ( 1.0, 1.0, 1.0 );
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const vec3 AxisX = vec3 ( 1.0, 0.0, 0.0 );
+
+const vec3 AxisY = vec3 ( 0.0, 1.0, 0.0 );
+
+const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const vec3 BoxMinimum = vec3 ( -5.0 );
+
+const vec3 BoxMaximum = vec3 ( 5.0 );
+
+//---------------------------------------------------------------------------------------------------------------------
+
+const float OpticalDensity = 1.5;
+
+//---------------------------------------------------------------------------------------------------------------------
+
 const vec2 Size = vec2 ( 256.0 );
 
-varying vec2 ScreenCoords;
+//---------------------------------------------------------------------------------------------------------------------
 
-//=================================================================================================
+#define BIG 1000000.0
+
+#define EPSILON 0.001
+
+/**********************************************************************************************************************/
+/************************************************* SUPPORT FUNCTIONS **************************************************/
+/**********************************************************************************************************************/
 
 SRay GenerateRay ( void )
 {
-	vec2 coords = ScreenCoords * Camera.Scale;
+	vec2 coords = gl_TexCoord[0].xy * Camera.Scale;
 	
 	vec3 direction = Camera.View - Camera.Side * coords.x + Camera.Up * coords.y;
    
 	return SRay ( Camera.Position, normalize ( direction ) );
 }
 
-//=================================================================================================
+//---------------------------------------------------------------------------------------------------------------------
 
-vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 texcoords )
+vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 coord )
 {
 	return mix ( firstColor,
 	             secondColor,
-				 0.5 * sign ( ( texcoords.x - 0.5 ) * ( texcoords.y - 0.5 ) ) + 0.5 );
+				 ( sign ( ( coord.x - 0.5 ) * ( coord.y - 0.5 ) ) + 1.0 ) / 2.0 );
 }
 
-//=================================================================================================
+//---------------------------------------------------------------------------------------------------------------------
+
+bool Compare ( vec3 a, vec3 b )
+{
+	bvec3 c = greaterThan ( a, b );
+	
+	bvec3 d = equal ( a, b );
+	
+	return c.x || ( d.x && c.y ) || ( d.x && d.y && c.z );
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+float BinSearch ( vec3 point )
+{
+	float a = 0.0;
+	
+	float b = Size.x * Size.x;
+	
+	float c;
+    
+    while ( a < b )
+	{
+        c = floor ( ( a + b ) / 2.0 );
+        
+        vec3 position = vec3 ( texture2DRect ( PositionTexture,
+                                               vec2 ( mod ( c, Size.x ), floor ( c / Size.x ) ) ) ); 
+
+        if ( Compare ( point, position ) )
+        {
+			a = c + 1.0;
+		}        
+        else
+        {
+			b = c - 1.0;
+		}        
+     }
+	
+	return c;
+}
+
+/**********************************************************************************************************************/
+/*********************************************** INTERSECTION FUNCTIONS ***********************************************/
+/**********************************************************************************************************************/
+
+float IntersectBox ( SRay ray, vec3 minimum, vec3 maximum )
+{
+	vec3 OMAX = ( minimum - ray.Origin ) / ray.Direction;
+   
+	vec3 OMIN = ( maximum - ray.Origin ) / ray.Direction;
+	
+	vec3 MAX = max ( OMAX, OMIN );
+	
+	return min ( MAX.x, min ( MAX.y, MAX.z ) );
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+bool IntersectBox ( SRay ray, vec3 minimum, vec3 maximum, out float start, out float final )
+{
+	vec3 OMAX = ( minimum - ray.Origin ) / ray.Direction;
+	
+	vec3 OMIN = ( maximum - ray.Origin ) / ray.Direction;
+	
+	vec3 MAX = max ( OMAX, OMIN );
+	
+	vec3 MIN = min ( OMAX, OMIN );
+	
+	final = min ( MAX.x, min ( MAX.y, MAX.z ) );
+	
+	start = max ( max ( MIN.x, 0.0), max ( MIN.y, MIN.z ) );	
+	
+	return final > start;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+bool IntersectPlane ( SRay ray, float start, float final, vec3 normal, float distance, out float time )
+{
+	time = ( distance - dot ( normal, ray.Origin ) ) / dot ( normal, ray.Direction );
+	
+	return time >= start && time <= final;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define intervals 100
+
+float CalcFunction ( vec3 point )
+{
+	float x = point.x,
+	      y = point.y,
+	      z = point.z;
+	
+	//return z - 0.5 * sin ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ) + 2.0;
+	
+	return z - sin ( x + y + Time ) * 0.3 - sin ( x - y + Time ) * 0.3 + 2.0;
+}
+
+vec3 CalcNormal ( vec3 point )
+{
+	float x = point.x,
+	      y = point.y,
+	      z = point.z;
+	
+	//return vec3 ( -0.125 * ( 2.0 + sin ( Time ) ) * x * cos ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ),
+	//              -0.125 * ( 2.0 + sin ( Time ) ) * y * cos ( ( x * x + y * y ) * 0.25 * ( 2.0 + sin ( Time ) ) ),
+	//              1.0 );
+	
+	return vec3 ( -cos ( x + y + Time ) * 0.3 - cos ( x - y + Time ) * 0.3,
+	              -cos ( x + y + Time ) * 0.3 + cos ( x - y + Time ) * 0.3,
+	              1.0 );
+}
+
+bool IntersectSurface ( SRay ray, float tmin, float tmax, out float val )
+{
+	float step = ( tmax - tmin ) / intervals;
+	
+	float left = CalcFunction ( ray.Origin + tmin * ray.Direction );
+
+	float right = 0.0;
+	
+	for ( int i = 0; i < intervals; i++ )
+	{		
+		float t = tmin + i * step;
+		
+		vec3 point = ray.Origin + t * ray.Direction;
+		
+		right = CalcFunction ( point );
+		
+		if ( left * right < 0.0 )
+		{
+			val = t + ( right * step) / ( left - right );
+			
+			return true;
+		}
+		
+		left = right;
+	}
+
+	return false;
+}
+
+/**********************************************************************************************************************/
+/************************************************* LIGHTING FUNCTIONS *************************************************/
+/**********************************************************************************************************************/
 
 #define DiffuseContribution 0.8
 
@@ -97,9 +273,8 @@ vec3 ChessBoardTexture ( vec3 firstColor, vec3 secondColor, vec2 texcoords )
 
 #define Epsilon	0.5
 
-vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color, float shadow)
+vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color )
 {
-
 	vec3 light = normalize ( lightpos - point );
 	
 	vec3 view = normalize ( camerapos - point );
@@ -108,308 +283,140 @@ vec3 Phong ( vec3 lightpos, vec3 camerapos, vec3 point, vec3 normal, vec3 color,
    
 	float diffuse = abs ( dot ( light, normal ) );
 	
-	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), 32.0 );  
+	float specular = pow ( max ( dot ( view, reflect ), 0.0 ), 128.0 );  
 	
-	return DiffuseContribution * diffuse * color * shadow + shadow * vec3 ( SpecularContribution * specular ) + vec3 ( AmbientContribution ) * color;
+	return DiffuseContribution * diffuse * color +
+	       vec3 ( SpecularContribution * specular ) +
+	       vec3 ( AmbientContribution ) * color;
 }
 
-//=================================================================================================
-
-const float PlaneTexScale = 0.25;
-
-bool HitPlane ( in SRay ray, out SIntersection intersection  )
-{
-	intersection.Time = ( Plane.Center.y - ray.Origin.y ) / ray.Direction.y;
-	
-	intersection.Point = ray.Origin + intersection.Time * ray.Direction;
-	
-	intersection.Normal = vec3 ( 0.0, 1.0, 0.0 );
-		
-	vec2 texcoords = fract ( PlaneTexScale * intersection.Point.xz );
-	
-	intersection.Color = ChessBoardTexture ( vec3 ( 0.8, 0.8, 0.0 ),
-	                                         vec3 ( 0.0, 0.0, 0.8 ),
-						 texcoords );
-	
-	return ( intersection.Time >= 0.0 ) &&
-	       ( abs ( intersection.Point.x ) <= Plane.Size.x ) &&
-	       ( abs ( intersection.Point.z ) <= Plane.Size.y );
-}
-
-//=================================================================================================
-
-bool HitSphere ( in SRay ray, out SIntersection intersection )
-{
-	float a = dot ( ray.Direction, ray.Direction );
-	
-	float b = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
-	
-	float c = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
-	          dot ( Sphere.Center, Sphere.Center ) - Sphere.Radius * Sphere.Radius;
-	
-	float det = b * b - a * c;
-	
-	if ( det > 0.0 )
-	{
-		det = sqrt ( det );
-		
-		float tmin = ( -b - det ) / a;
-		
-		float tmax = ( -b + det ) / a;
-		
-		intersection.Time = mix ( tmin, tmax, step ( tmin, 0.0 ) );
-			
-		intersection.Point = ray.Origin + intersection.Time * ray.Direction;
-			
-		intersection.Normal = normalize ( intersection.Point - Sphere.Center );
-			
-		intersection.Color = vec3 ( 0.2 );
-			
-		return tmax > 0.0;
-	}
-	
-	return false;
-}
-
-bool HitSphereEasy ( in SRay ray, out SIntersection intersection )
-{
-	vec4 abc;
-	
-	abc.x = dot ( ray.Direction, ray.Direction );
-	
-	abc.y = dot ( ray.Direction, ray.Origin ) - dot ( ray.Direction, Sphere.Center );
-	
-	abc.z = dot ( ray.Origin, ray.Origin ) - 2.0 * dot ( ray.Origin, Sphere.Center ) +
-	          dot ( Sphere.Center, Sphere.Center ) - Sphere.Radius * Sphere.Radius;
-	
-	abc.w = abc.y * abc.y - abc.x * abc.z;
-	
-	if ( abc.w > 0.0 )
-	{
-		abc.w = sqrt ( abc.w );
-		
-		vec2 tmin_max;
-		
-		tmin_max.x = ( -abc.y - abc.w ) / abc.x;
-		
-		tmin_max.y = ( -abc.y + abc.w ) / abc.x;
-		
-		intersection.Time = mix ( tmin_max.x, tmin_max.y, step ( tmin_max.x, 0.0 ) );
-		
-		return tmin_max.y > 0.0;
-	}
-	
-	return false;
-}
-
-bool Compare(vec3 a, vec3 b)
-{
-	bvec3 c = greaterThan ( a, b );
-	
-	bvec3 d = equal ( a, b );
-	
-	return c.x || ( d.x && c.y ) || ( d.x && d.y && c.z );
-}
-
-float BinSearch ( vec3 x )
-{
-	vec3 comp;
-	
-	comp.x = 0.0;
-	
-	comp.y = Size.x * Size.x;
-    
-    while ( comp.x < comp.y )
-	{
-        comp.z  = floor ( ( comp.x + comp.y ) / 2.0 );
-        
-        vec3 position = vec3 ( texture2DRect ( PositionTexture,
-                                               vec2 ( mod ( comp.z, Size.x ), floor ( comp.z / Size.x ) ) ) ); 
-
-        if ( Compare ( x, position ) )
-    
-            comp.x = comp.z + 1;
-        
-        else  comp.y = comp.z - 1;
-        
-     }
-	
-	return comp.z;
-}
-
-//=================================================================================================
+/**********************************************************************************************************************/
+/**************************************************** ENTRY POINT *****************************************************/
+/**********************************************************************************************************************/
 
 void main ( void )
 {
 	SRay ray = GenerateRay ( );
 	
-	//-------------------------------------------------------------------------
+	vec3 result = Zero;
 	
-	vec3 color = vec3 ( 0.0 );
+	//-----------------------------------------------------------------------------------------------------------------
 	
-	SIntersection intersect;
-	
-	//-------------------------------------------------------------------------
-	
-	if ( HitPlane ( ray, intersect ) )
+	float start, final, current, time = BIG;
+    
+	if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
 	{
-		SIntersection test;
-		
-		if ( HitSphere ( ray, test ) && ( test.Time < intersect.Time ) )
+		if ( IntersectSurface ( ray, start, final, current ) && current < time )
 		{
-			color += Phong ( Light.Position, Camera.Position, test.Point,
-			                 test.Normal, test.Color, 1.0 );
+			time = current;
 			
-			//-----------------------------------------------------------------
-			
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
-			
-			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-			
-			if ( HitSphere ( ray, test ) )
+			if ( IntersectPlane ( ray, start, final, AxisZ, BoxMinimum.z, current ) && current < time )
 			{
-				color += Phong ( Light.Position, Camera.Position,
-				                 test.Point, test.Normal, test.Color, 1.0 );	
-								 
-				//-------------------------------------------------------------
+				time = current;
 				
-				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
+				vec3 point = ray.Origin + time * ray.Direction;
 				
-				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
+				vec3 color = ChessBoardTexture ( vec3 ( 0.0, 0.0, 1.0 ),
+				                                 vec3 ( 1.0, 1.0, 0.0 ),
+				                                 fract ( point.xy ) );
 				
-				//-------------------------------------------------------------
+				result += Phong ( Light.Position, Camera.Position, point, AxisZ, color );
 				
-				if ( HitPlane ( ray, test ) )
-				{
-					vec3 l = Light.Position - test.Point;
+				//-----------------------------------------------------------------------------------------------------
+				
+                float a = BinSearch ( point - vec3 ( 0.2 ) );
+                
+                float b = BinSearch ( point + vec3 ( 0.2 ) );
+                
+                for ( float t = a; t <= b; ++t )
+                {
+					vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( t, Size.x ), floor ( t / Size.x ) ) );
 					
-					float distance = length(l);
-					
-					l /= distance;
-					
-					SRay shadowRay = SRay(test.Point + 0.001 * l, l);
-					
-					SIntersection testShadow;
-
-					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
-					{
-						color += Phong(Light.Position, Camera.Position, test.Point, test.Normal,test.Color,0.0);
-					}
-					else
-					{
-					
-						color += Phong ( Light.Position, Camera.Position,
-					                 test.Point, test.Normal, test.Color,1.0 );		
-					}	
+					result += max ( 0.0, 1.0 - 5.0 * length ( vec3 ( position ) - point ) ) * vec3 ( position.w );
 				}
 			}
+			else
+			{
+				vec3 point = ray.Origin + time * ray.Direction;
+				
+				vec3 normal = normalize ( CalcNormal ( point ) );
+				
+				result += Phong ( Light.Position,
+				                  Camera.Position,
+				                  point,
+				                  normal,
+				                  vec3 ( 0.3, 0.3, 0.6 ) );
+				                  
+				//-----------------------------------------------------------------------------------------------------
+				
+				vec3 refract = refract ( ray.Direction,
+				                         normal,
+				                         1.0 / OpticalDensity );
+				
+				ray = SRay ( point + refract * EPSILON, refract );
+				
+				final = IntersectBox ( ray, BoxMinimum, BoxMaximum );
+				
+				time = BIG;
+				
+				if ( IntersectPlane ( ray, 0.0, final, AxisZ, BoxMinimum.z, current ) && current < time )
+				{
+					time = current;
+					
+					point = ray.Origin + time * ray.Direction;
+					
+					normal = AxisZ;
+					
+					vec3 color = ChessBoardTexture ( vec3 ( 0.0, 0.0, 1.0 ),
+													 vec3 ( 1.0, 1.0, 0.0 ),
+													 fract ( point.xy ) );
+				
+					result += Phong ( Light.Position, Camera.Position, point, AxisZ, color );
+					
+					//-----------------------------------------------------------------------------------------------------
+					
+					float a = BinSearch ( point - vec3 ( 0.2 ) );
+	                
+					float b = BinSearch ( point + vec3 ( 0.2 ) );
+	                
+					for ( float t = a; t <= b; ++t )
+					{
+						vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( t, Size.x ), floor ( t / Size.x ) ) );
+						
+						result += max ( 0.0, 1.0 - 5.0 * length ( vec3 ( position ) - point ) ) * vec3 ( position.w );
+					}
+				}				               
+			}			
 		}
 		else
 		{
-			vec3 l = Light.Position - intersect.Point;
-					
-			float distance = length(l);
-					
-			l /= distance;
-					
-			SRay shadowRay = SRay(intersect.Point + 0.001 * l, l);
-					
-			SIntersection testShadow;
-
-			if ( HitSphereEasy(shadowRay,testShadow) && (testShadow.Time < distance))
+			if ( IntersectPlane ( ray, start, final, AxisZ, BoxMinimum.z, current ) && current < time )
 			{
-				color += Phong(Light.Position, Camera.Position, intersect.Point, intersect.Normal,intersect.Color,0.0);
-			}
-			else
-			{	
-				color += Phong ( Light.Position, Camera.Position, intersect.Point,
-							 intersect.Normal, intersect.Color,1.0 );
-			}
-			
-			float eps = 0.3;
-			
-			/*
-			for ( float i = 0.0; i < Size.x; ++i )
-			{
-				for ( float j = 0.0; j < Size.x; ++j )
-				{
-					vec4 position = texture2DRect ( PositionTexture, vec2 ( i, j ) );
-									
-					color += max ( 0.0, 1.0 - length ( vec3 ( position ) - intersect.Point ) / eps ) * vec3 ( position.w );
+				time = current;
+				
+				vec3 point = ray.Origin + time * ray.Direction;
+				
+				vec3 color = ChessBoardTexture ( vec3 ( 0.0, 0.0, 1.0 ),
+				                                 vec3 ( 1.0, 1.0, 0.0 ),
+				                                 fract ( point.xy ) );
+				
+				result += Phong ( Light.Position, Camera.Position, point, AxisZ, color );
+				
+				//-----------------------------------------------------------------------------------------------------
+				
+                float a = BinSearch ( point - vec3 ( 0.2 ) );
+                
+                float b = BinSearch ( point + vec3 ( 0.2 ) );
+                
+                for ( float t = a; t <= b; ++t )
+                {
+					vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( t, Size.x ), floor ( t / Size.x ) ) );
+					
+					result += max ( 0.0, 1.0 - 5.0 * length ( vec3 ( position ) - point ) ) * vec3 ( position.w );
 				}
-			}
-			*/
-					
-			vec2 coords;
-					
-			coords.y = BinSearch ( intersect.Point + vec3 ( eps ) );
-						
-			coords.x = BinSearch ( intersect.Point - vec3 ( eps ) );
-
-			for ( float j = coords.x; j < coords.y; ++j )
-			{
-				vec4 position = texture2DRect ( PositionTexture, vec2 ( mod ( j, Size.x ), floor ( j / Size.x ) ) );
-								
-				color += max ( 0.0, 1.0 - length ( vec3 ( position ) - intersect.Point ) / eps ) * vec3 ( position.w );
-			}
-		}
-	}
-	else
-	{
-		SIntersection test;
-		
-		if ( HitSphere ( ray, test ) )
-		{
-			color += Phong ( Light.Position, Camera.Position, test.Point,
-			                 test.Normal, test.Color,1.0 );
-			
-			//-----------------------------------------------------------------
-			
-			vec3 refractDir = refract ( ray.Direction, test.Normal, 1.0 / 1.5 );
-			
-			ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-			
-			if ( HitSphere ( ray, test ) )
-			{
-				color += Phong ( Camera.Position, Camera.Position,
-				                 test.Point, test.Normal, test.Color,1.0 );	
-								 
-				//-------------------------------------------------------------
-				
-				refractDir = refract ( ray.Direction, -test.Normal, 1.5 );
-				
-				ray = SRay ( test.Point + refractDir * 0.001, refractDir );
-				
-				//-------------------------------------------------------------
-				
-				if ( HitPlane ( ray, test ) )
-				{
-					vec3 l = Light.Position - test.Point;
-					
-					float distance = length(l);
-					
-					l /= distance;
-					
-					SRay shadowRay = SRay(test.Point + 0.001 * l, l);
-					
-					SIntersection testShadow;
-					
-					if ( HitSphereEasy ( shadowRay, testShadow ) && ( testShadow.Time < distance ) )
-					{
-						color += Phong ( Light.Position, Camera.Position, test.Point, test.Normal, test.Color, 0.0 );
-					}
-					else
-					{
-					
-						color += Phong ( Light.Position, Camera.Position,
-										 test.Point, test.Normal, test.Color,1.0 );
-					}				
-				}
-			}
+			}		
 		}
 	}
 	
-	//-------------------------------------------------------------------------
-	
-	gl_FragColor = vec4 ( color, 1.0 );
+	gl_FragColor = vec4 ( result, 1.0 );
 }
