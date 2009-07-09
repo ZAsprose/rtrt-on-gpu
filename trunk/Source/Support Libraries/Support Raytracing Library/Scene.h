@@ -14,7 +14,6 @@
 
 #include "Volume.h"
 
-//#include "UniformGrid.h"
 #include "ProximityGrid.h"
 
 #include <Camera.h>

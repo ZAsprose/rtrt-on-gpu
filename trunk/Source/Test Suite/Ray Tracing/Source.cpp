@@ -134,12 +134,11 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	/*
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/House-1/House-1.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/House/House.obj" );
 
-	OBJModel * model1 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Figurine/Figurine.obj" );
+	OBJModel * model1 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Figurine/Figurine.obj" );
 
-	OBJModel * model2 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Horse/Horse.obj" );
+	OBJModel * model2 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Horse/Horse.obj" );
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
@@ -181,15 +180,15 @@ int main ( void )
 
 		meshes [model->Groups.size ( ) + 1]->Tesselate ( );
 	}
-	*/
 
+	/*
 	long start = clock ( );
 	//C:/export/Acura_RSX_All_A_Mat.obj
 	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Lexus/Lexus.obj" );
 
 	long time = clock ( ) - start;
 
-	cout << "Loading Time" << time << endl;
+	cout << "Loading Time: " << time << endl;
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
@@ -211,6 +210,8 @@ int main ( void )
 
 		meshes [index]->Tesselate ( );
 	}
+	*/
+
 
 	//-------------------------- Adding All Textures to Texture Manager ---------------------------
 
@@ -244,7 +245,12 @@ int main ( void )
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
+	scene->Primitives.push_back ( meshes [model->Groups.size ( )] );
+
+	scene->Primitives.push_back ( meshes [model->Groups.size ( ) + 1] );
+
 	/*
+	
 	{
 		Plane * plane = new Plane ( 0.64F * Vector2D ( scale * size.X, scale * size.Y ) );
 
@@ -380,9 +386,10 @@ int main ( void )
 
 		scene->Primitives.push_back ( plane );
 	}
+	*/
 	
 	textureManager->SetupTextures ( );
-	*/
+
 
 	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.5F, 1.5F ) ) );
 
