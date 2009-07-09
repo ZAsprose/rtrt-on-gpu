@@ -24,7 +24,7 @@ namespace Raytracing
 			
 			Vector3D Radius;
 
-			float EmptyRadius; // for Proximity Grid
+			float EmptyRadius;
 
 			//------------------------------- Intersected Triangles -------------------------------
 			

@@ -289,7 +289,8 @@ namespace Raytracing
 				{
 					if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
 					{
-						cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
+						Voxels[x][y][z]->EmptyRadius = simpleDistanceMap [x][y][z];
+						//cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
 					}
 				}
 			}

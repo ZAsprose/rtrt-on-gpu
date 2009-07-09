@@ -10,7 +10,7 @@ namespace Raytracing
 {
 	//--------------------------------- Constructor and Destructor --------------------------------
 
-	Light :: Light ( unsigned int number,
+	Light :: Light ( unsigned number,
 		             const Vector3D& position,
 					 const Vector3D& ambient,
 					 const Vector3D& diffuse,

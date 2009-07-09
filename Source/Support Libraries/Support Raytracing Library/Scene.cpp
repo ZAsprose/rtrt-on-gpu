@@ -82,8 +82,8 @@ namespace Raytracing
 			delete Grid;
 		}
 
-		//Grid = new UniformGrid ( partitionsX, partitionsY, partitionsZ );
-		Grid = new ProximityGrid ( partitionsX, partitionsY, partitionsZ );
+		Grid = new UniformGrid ( partitionsX, partitionsY, partitionsZ );
+		//Grid = new ProximityGrid ( partitionsX, partitionsY, partitionsZ );
 
 		Grid->BuildGrid ( Box, triangles );
 	}

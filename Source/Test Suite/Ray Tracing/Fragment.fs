@@ -8,7 +8,7 @@
 
 #define RENDER_REFLECTIONS
 
-#define RENDER_REFRACTIONS_
+#define RENDER_REFRACTIONS
 
 #define RENDER_DISSOLVE
 
@@ -16,7 +16,7 @@
 
 #define LIGHTING_TWO_SIDED
 
-#define USE_PROXIMITY_GRID
+#define USE_PROXIMITY_GRID_
 
 #define SHOW_TRAVERSAL_DEPTH_
 
@@ -561,19 +561,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		
 		if ( min > final + EPSILON ) break;
 		
-		#ifdef USE_PROXIMITY_GRID
-				
-		if ( proximity-- > 2.0 )
-		{
-			max += delta * next;
-				
-			voxel += step * next;
-			
-			continue;
-		}		
-		
-		#endif
-		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
 		vec3 content = vec3 ( texture3D ( VoxelTexture, voxel * VoxelTextureStep ) );
@@ -635,6 +622,25 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		}
 		
 		//---------------------------------------------- Go to next voxel ---------------------------------------------
+		
+		#ifdef USE_PROXIMITY_GRID
+		
+		/*		
+		if ( proximity-- > 0.0 )
+		{
+			max += delta * next;
+				
+			voxel += step * next;
+			
+			continue;
+		}
+		*/
+		
+		vec3 vvv = WorldToVoxel ( ray.Origin + ray.Direction * ( min + ttt * max ( proximity - 0.0, 0.0 ) ) );
+		
+		next += abs ( voxel - vvv );
+		
+		#endif			
 		
 		max += delta * next;
 			
@@ -802,7 +808,7 @@ void main ( void )
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + EPSILON ) * ray.Direction;
+		ray.Origin += ( start + EPSILON + 0.1) * ray.Direction;
 				
 		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
 		
