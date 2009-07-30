@@ -129,7 +129,7 @@ namespace Math
 		{
 			for ( int k = 0; k < SIZE4D; k++ )
 			{
-				result [i] += left[i] [k] * right[k];
+				result [i] += left [i][k] * right[k];
 			}
 		}
 		
