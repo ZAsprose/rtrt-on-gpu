@@ -1,7 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
-
 #include "Matrix4D.h"
 
 namespace Math
@@ -18,15 +14,15 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE4D; i++ )
 		{
-			values[i][i] = diagonal;
+			values [i][i] = diagonal;
 		}
 	}
 
-	Matrix4D :: Matrix4D ( const float diagonal[SIZE4D] )
+	Matrix4D :: Matrix4D ( const float diagonal [SIZE4D] )
 	{
 		for ( int i = 0; i < SIZE4D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
@@ -34,17 +30,17 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE4D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
-	Matrix4D :: Matrix4D ( const float matrix[SIZE4D][SIZE4D] )
+	Matrix4D :: Matrix4D ( const float matrix [SIZE4D][SIZE4D] )
 	{
 		for ( int i = 0; i < SIZE4D; i++ )
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -55,7 +51,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -70,7 +66,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = -source[i][j];
+				result [i][j] = -source [i][j];
 			}
 		}
 
@@ -85,7 +81,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left[i][j] + right[i][j];
+				result [i][j] = left [i][j] + right [i][j];
 			}
 		}
 
@@ -100,7 +96,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left[i][j] - right[i][j];
+				result [i][j] = left [i][j] - right [i][j];
 			}
 		}
 
@@ -117,7 +113,7 @@ namespace Math
 			{
 				for ( int k = 0; k < SIZE4D; k++ )
 				{
-					result[i][j] += left[i][k] * right[k][j];
+					result [i][j] += left [i][k] * right [k][j];
 				}
 			}
 		}
@@ -133,7 +129,7 @@ namespace Math
 		{
 			for ( int k = 0; k < SIZE4D; k++ )
 			{
-				result[i] += left[i][k] * right[k];
+				result [i] += left[i] [k] * right[k];
 			}
 		}
 		
@@ -148,7 +144,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left[i][j] * right;
+				result [i][j] = left [i][j] * right;
 			}
 		}
 
@@ -163,7 +159,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left[i][j] / right;
+				result [i][j] = left [i][j] / right;
 			}
 		}
 
@@ -178,7 +174,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left * right[i][j];
+				result [i][j] = left * right [i][j];
 			}
 		}
 
@@ -193,7 +189,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = left / right[i][j];
+				result [i][j] = left / right [i][j];
 			}
 		}
 
@@ -208,7 +204,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE3D; i++ )
 			{
-				is >> source[i][j];
+				is >> source [i][j];
 			}
 		}
 		return is;
@@ -220,7 +216,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE3D; i++ )
 			{
-				os << source[i][j] << " ";
+				os << source [i][j] << " ";
 			}
 
 			os << endl;
@@ -232,30 +228,30 @@ namespace Math
 
 	float Determinant ( const Matrix4D& source )
 	{
-		return source[A][A] * source[B][B] * source[C][C] * source[D][D] - 
-			   source[A][A] * source[B][B] * source[C][D] * source[D][C] + 
-			   source[A][A] * source[B][C] * source[C][D] * source[D][B] - 
-			   source[A][A] * source[B][C] * source[C][B] * source[D][D] + 
-			   source[A][A] * source[B][D] * source[C][B] * source[D][C] - 
-			   source[A][A] * source[B][D] * source[C][C] * source[D][B] - 
-			   source[A][B] * source[B][C] * source[C][D] * source[D][A] + 
-			   source[A][B] * source[B][C] * source[C][A] * source[D][D] - 
-			   source[A][B] * source[B][D] * source[C][A] * source[D][C] + 
-			   source[A][B] * source[B][D] * source[C][C] * source[D][A] - 
-			   source[A][B] * source[B][A] * source[C][C] * source[D][D] + 
-			   source[A][B] * source[B][A] * source[C][D] * source[D][C] + 
-			   source[A][C] * source[B][D] * source[C][A] * source[D][B] - 
-			   source[A][C] * source[B][D] * source[C][B] * source[D][A] + 
-			   source[A][C] * source[B][A] * source[C][B] * source[D][D] - 
-			   source[A][C] * source[B][A] * source[C][D] * source[D][B] + 
-			   source[A][C] * source[B][B] * source[C][D] * source[D][A] - 
-			   source[A][C] * source[B][B] * source[C][A] * source[D][D] - 
-			   source[A][D] * source[B][A] * source[C][B] * source[D][C] + 
-			   source[A][D] * source[B][A] * source[C][C] * source[D][B] -
-			   source[A][D] * source[B][B] * source[C][C] * source[D][A] + 
-			   source[A][D] * source[B][B] * source[C][A] * source[D][C] - 
-			   source[A][D] * source[B][C] * source[C][A] * source[D][B] + 
-			   source[A][D] * source[B][C] * source[C][B] * source[D][A];
+		return source [A][A] * source [B][B] * source [C][C] * source [D][D] - 
+			   source [A][A] * source [B][B] * source [C][D] * source [D][C] + 
+			   source [A][A] * source [B][C] * source [C][D] * source [D][B] - 
+			   source [A][A] * source [B][C] * source [C][B] * source [D][D] + 
+			   source [A][A] * source [B][D] * source [C][B] * source [D][C] - 
+			   source [A][A] * source [B][D] * source [C][C] * source [D][B] - 
+			   source [A][B] * source [B][C] * source [C][D] * source [D][A] + 
+			   source [A][B] * source [B][C] * source [C][A] * source [D][D] - 
+			   source [A][B] * source [B][D] * source [C][A] * source [D][C] + 
+			   source [A][B] * source [B][D] * source [C][C] * source [D][A] - 
+			   source [A][B] * source [B][A] * source [C][C] * source [D][D] + 
+			   source [A][B] * source [B][A] * source [C][D] * source [D][C] + 
+			   source [A][C] * source [B][D] * source [C][A] * source [D][B] - 
+			   source [A][C] * source [B][D] * source [C][B] * source [D][A] + 
+			   source [A][C] * source [B][A] * source [C][B] * source [D][D] - 
+			   source [A][C] * source [B][A] * source [C][D] * source [D][B] + 
+			   source [A][C] * source [B][B] * source [C][D] * source [D][A] - 
+			   source [A][C] * source [B][B] * source [C][A] * source [D][D] - 
+			   source [A][D] * source [B][A] * source [C][B] * source [D][C] + 
+			   source [A][D] * source [B][A] * source [C][C] * source [D][B] -
+			   source [A][D] * source [B][B] * source [C][C] * source [D][A] + 
+			   source [A][D] * source [B][B] * source [C][A] * source [D][C] - 
+			   source [A][D] * source [B][C] * source [C][A] * source [D][B] + 
+			   source [A][D] * source [B][C] * source [C][B] * source [D][A];
 	}
 
 	Matrix4D Transpose ( const Matrix4D& source )
@@ -266,7 +262,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE4D; j++ )
 			{
-				result[i][j] = source[j][i];
+				result [i][j] = source [j][i];
 			}
 		}
 
@@ -277,117 +273,117 @@ namespace Math
 	{
 		Matrix4D result = Matrix4D :: Zero;
 		
-		result[A][A] = source[B][C] * source[C][D] * source[D][B] -
-			           source[B][D] * source[C][C] * source[D][B] +
-					   source[B][D] * source[C][B] * source[D][C] -
-					   source[B][B] * source[C][D] * source[D][C] -
-					   source[B][C] * source[C][B] * source[D][D] +
-					   source[B][B] * source[C][C] * source[D][D];
+		result [A][A] = source [B][C] * source [C][D] * source [D][B] -
+			            source [B][D] * source [C][C] * source [D][B] +
+					    source [B][D] * source [C][B] * source [D][C] -
+					    source [B][B] * source [C][D] * source [D][C] -
+					    source [B][C] * source [C][B] * source [D][D] +
+					    source [B][B] * source [C][C] * source [D][D];
 
-		result[A][B] = source[A][D] * source[C][C] * source[D][B] -
-			           source[A][C] * source[C][D] * source[D][B] -
-					   source[A][D] * source[C][B] * source[D][C] +
-					   source[A][B] * source[C][D] * source[D][C] +
-					   source[A][C] * source[C][B] * source[D][D] -
-					   source[A][B] * source[C][C] * source[D][D];
+		result [A][B] = source [A][D] * source [C][C] * source [D][B] -
+			            source [A][C] * source [C][D] * source [D][B] -
+					    source [A][D] * source [C][B] * source [D][C] +
+					    source [A][B] * source [C][D] * source [D][C] +
+					    source [A][C] * source [C][B] * source [D][D] -
+					    source [A][B] * source [C][C] * source [D][D];
 
-		result[A][C] = source[A][C] * source[B][D] * source[D][B] -
-			           source[A][D] * source[B][C] * source[D][B] +
-					   source[A][D] * source[B][B] * source[D][C] -
-					   source[A][B] * source[B][D] * source[D][C] -
-					   source[A][C] * source[B][B] * source[D][D] +
-					   source[A][B] * source[B][C] * source[D][D];
+		result [A][C] = source [A][C] * source [B][D] * source [D][B] -
+			            source [A][D] * source [B][C] * source [D][B] +
+					    source [A][D] * source [B][B] * source [D][C] -
+					    source [A][B] * source [B][D] * source [D][C] -
+					    source [A][C] * source [B][B] * source [D][D] +
+					    source [A][B] * source [B][C] * source [D][D];
 
-		result[A][D] = source[A][D] * source[B][C] * source[C][B] -
-			           source[A][C] * source[B][D] * source[C][B] -
-					   source[A][D] * source[B][B] * source[C][C] +
-					   source[A][B] * source[B][D] * source[C][C] +
-					   source[A][C] * source[B][B] * source[C][D] -
-					   source[A][B] * source[B][C] * source[C][D];
+		result [A][D] = source [A][D] * source [B][C] * source [C][B] -
+			            source [A][C] * source [B][D] * source [C][B] -
+					    source [A][D] * source [B][B] * source [C][C] +
+					    source [A][B] * source [B][D] * source [C][C] +
+					    source [A][C] * source [B][B] * source [C][D] -
+					    source [A][B] * source [B][C] * source [C][D];
 
-		result[B][A] = source[B][D] * source[C][C] * source[D][A] -
-			           source[B][C] * source[C][D] * source[D][A] -
-					   source[B][D] * source[C][A] * source[D][C] +
-					   source[B][A] * source[C][D] * source[D][C] +
-					   source[B][C] * source[C][A] * source[D][D] -
-					   source[B][A] * source[C][C] * source[D][D];
+		result [B][A] = source [B][D] * source [C][C] * source [D][A] -
+			            source [B][C] * source [C][D] * source [D][A] -
+					    source [B][D] * source [C][A] * source [D][C] +
+					    source [B][A] * source [C][D] * source [D][C] +
+					    source [B][C] * source [C][A] * source [D][D] -
+					    source [B][A] * source [C][C] * source [D][D];
 
-		result[B][B] = source[A][C] * source[C][D] * source[D][A] -
-			           source[A][D] * source[C][C] * source[D][A] +
-					   source[A][D] * source[C][A] * source[D][C] -
-					   source[A][A] * source[C][D] * source[D][C] -
-					   source[A][C] * source[C][A] * source[D][D] +
-					   source[A][A] * source[C][C] * source[D][D];
+		result [B][B] = source [A][C] * source [C][D] * source [D][A] -
+			            source [A][D] * source [C][C] * source [D][A] +
+					    source [A][D] * source [C][A] * source [D][C] -
+					    source [A][A] * source [C][D] * source [D][C] -
+					    source [A][C] * source [C][A] * source [D][D] +
+					    source [A][A] * source [C][C] * source [D][D];
 
-		result[B][C] = source[A][D] * source[B][C] * source[D][A] -
-			           source[A][C] * source[B][D] * source[D][A] -
-					   source[A][D] * source[B][A] * source[D][C] +
-					   source[A][A] * source[B][D] * source[D][C] +
-					   source[A][C] * source[B][A] * source[D][D] -
-					   source[A][A] * source[B][C] * source[D][D];
+		result [B][C] = source [A][D] * source [B][C] * source [D][A] -
+			            source [A][C] * source [B][D] * source [D][A] -
+					    source [A][D] * source [B][A] * source [D][C] +
+					    source [A][A] * source [B][D] * source [D][C] +
+					    source [A][C] * source [B][A] * source [D][D] -
+					    source [A][A] * source [B][C] * source [D][D];
 
-		result[B][D] = source[A][C] * source[B][D] * source[C][A] -
-			           source[A][D] * source[B][C] * source[C][A] +
-					   source[A][D] * source[B][A] * source[C][C] -
-					   source[A][A] * source[B][D] * source[C][C] -
-					   source[A][C] * source[B][A] * source[C][D] +
-					   source[A][A] * source[B][C] * source[C][D];
+		result [B][D] = source [A][C] * source [B][D] * source [C][A] -
+			            source [A][D] * source [B][C] * source [C][A] +
+					    source [A][D] * source [B][A] * source [C][C] -
+					    source [A][A] * source [B][D] * source [C][C] -
+					    source [A][C] * source [B][A] * source [C][D] +
+					    source [A][A] * source [B][C] * source [C][D];
 
-		result[C][A] = source[B][B] * source[C][D] * source[D][A] -
-			           source[B][D] * source[C][B] * source[D][A] +
-					   source[B][D] * source[C][A] * source[D][B] -
-					   source[B][A] * source[C][D] * source[D][B] -
-					   source[B][B] * source[C][A] * source[D][D] +
-					   source[B][A] * source[C][B] * source[D][D];
+		result [C][A] = source [B][B] * source [C][D] * source [D][A] -
+			            source [B][D] * source [C][B] * source [D][A] +
+					    source [B][D] * source [C][A] * source [D][B] -
+					    source [B][A] * source [C][D] * source [D][B] -
+					    source [B][B] * source [C][A] * source [D][D] +
+					    source [B][A] * source [C][B] * source [D][D];
 
-		result[C][B] = source[A][D] * source[C][B] * source[D][A] -
-			           source[A][B] * source[C][D] * source[D][A] -
-					   source[A][D] * source[C][A] * source[D][B] +
-					   source[A][A] * source[C][D] * source[D][B] +
-					   source[A][B] * source[C][A] * source[D][D] -
-					   source[A][A] * source[C][B] * source[D][D];
+		result [C][B] = source [A][D] * source [C][B] * source [D][A] -
+			            source [A][B] * source [C][D] * source [D][A] -
+					    source [A][D] * source [C][A] * source [D][B] +
+					    source [A][A] * source [C][D] * source [D][B] +
+					    source [A][B] * source [C][A] * source [D][D] -
+					    source [A][A] * source [C][B] * source [D][D];
 
-		result[C][C] = source[A][B] * source[B][D] * source[D][A] -
-			           source[A][D] * source[B][B] * source[D][A] +
-					   source[A][D] * source[B][A] * source[D][B] -
-					   source[A][A] * source[B][D] * source[D][B] -
-					   source[A][B] * source[B][A] * source[D][D] +
-					   source[A][A] * source[B][B] * source[D][D];
+		result [C][C] = source [A][B] * source [B][D] * source [D][A] -
+			            source [A][D] * source [B][B] * source [D][A] +
+					    source [A][D] * source [B][A] * source [D][B] -
+				 	    source [A][A] * source [B][D] * source [D][B] -
+					    source [A][B] * source [B][A] * source [D][D] +
+					    source [A][A] * source [B][B] * source [D][D];
 
-		result[C][D] = source[A][D] * source[B][B] * source[C][A] -
-			           source[A][B] * source[B][D] * source[C][A] -
-					   source[A][D] * source[B][A] * source[C][B] +
-					   source[A][A] * source[B][D] * source[C][B] +
-					   source[A][B] * source[B][A] * source[C][D] -
-					   source[A][A] * source[B][B] * source[C][D];
+		result [C][D] = source [A][D] * source [B][B] * source [C][A] -
+			            source [A][B] * source [B][D] * source [C][A] -
+				  	    source [A][D] * source [B][A] * source [C][B] +
+				 	    source [A][A] * source [B][D] * source [C][B] +
+				 	    source [A][B] * source [B][A] * source [C][D] -
+				 	    source [A][A] * source [B][B] * source [C][D];
 
-		result[D][A] = source[B][C] * source[C][B] * source[D][A] -
-			           source[B][B] * source[C][C] * source[D][A] -
-					   source[B][C] * source[C][A] * source[D][B] +
-					   source[B][A] * source[C][C] * source[D][B] +
-					   source[B][B] * source[C][A] * source[D][C] -
-					   source[B][A] * source[C][B] * source[D][C];
+		result [D][A] = source [B][C] * source [C][B] * source [D][A] -
+			            source [B][B] * source [C][C] * source [D][A] -
+					    source [B][C] * source [C][A] * source [D][B] +
+					    source [B][A] * source [C][C] * source [D][B] +
+					    source [B][B] * source [C][A] * source [D][C] -
+					    source [B][A] * source [C][B] * source [D][C];
 
-		result[D][B] = source[A][B] * source[C][C] * source[D][A] -
-			           source[A][C] * source[C][B] * source[D][A] +
-					   source[A][C] * source[C][A] * source[D][B] -
-					   source[A][A] * source[C][C] * source[D][B] -
-					   source[A][B] * source[C][A] * source[D][C] +
-					   source[A][A] * source[C][B] * source[D][C];
+		result [D][B] = source [A][B] * source [C][C] * source [D][A] -
+			            source [A][C] * source [C][B] * source [D][A] +
+					    source [A][C] * source [C][A] * source [D][B] -
+					    source [A][A] * source [C][C] * source [D][B] -
+					    source [A][B] * source [C][A] * source [D][C] +
+					    source [A][A] * source [C][B] * source [D][C];
 
-		result[D][C] = source[A][C] * source[B][B] * source[D][A] -
-			           source[A][B] * source[B][C] * source[D][A] -
-					   source[A][C] * source[B][A] * source[D][B] +
-					   source[A][A] * source[B][C] * source[D][B] +
-					   source[A][B] * source[B][A] * source[D][C] -
-					   source[A][A] * source[B][B] * source[D][C];
+		result [D][C] = source [A][C] * source [B][B] * source [D][A] -
+			            source [A][B] * source [B][C] * source [D][A] -
+					    source [A][C] * source [B][A] * source [D][B] +
+					    source [A][A] * source [B][C] * source [D][B] +
+					    source [A][B] * source [B][A] * source [D][C] -
+					    source [A][A] * source [B][B] * source [D][C];
 
-		result[D][D] = source[A][B] * source[B][C] * source[C][A] -
-			           source[A][C] * source[B][B] * source[C][A] +
-					   source[A][C] * source[B][A] * source[C][B] -
-					   source[A][A] * source[B][C] * source[C][B] -
-					   source[A][B] * source[B][A] * source[C][C] +
-					   source[A][A] * source[B][B] * source[C][C];
+		result [D][D] = source [A][B] * source [B][C] * source [C][A] -
+			            source [A][C] * source [B][B] * source [C][A] +
+					    source [A][C] * source [B][A] * source [C][B] -
+					    source [A][A] * source [B][C] * source [C][B] -
+					    source [A][B] * source [B][A] * source [C][C] +
+					    source [A][A] * source [B][B] * source [C][C];
 
 		return result;
 	}
