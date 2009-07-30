@@ -1,10 +1,6 @@
-/*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+#include "Matrix3D.h"
 
 #include <math.h>
-
-#include "Matrix3D.h"
 
 namespace Math
 {
@@ -20,15 +16,15 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE3D; i++ )
 		{
-			values[i][i] = diagonal;
+			values [i][i] = diagonal;
 		}
 	}
 
-	Matrix3D :: Matrix3D ( const float diagonal[SIZE3D] )
+	Matrix3D :: Matrix3D ( const float diagonal [SIZE3D] )
 	{
 		for ( int i = 0; i < SIZE3D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
@@ -36,17 +32,17 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE3D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
-	Matrix3D :: Matrix3D ( const float matrix[SIZE3D][SIZE3D] )
+	Matrix3D :: Matrix3D ( const float matrix [SIZE3D][SIZE3D] )
 	{
 		for ( int i = 0; i < SIZE3D; i++ )
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -57,7 +53,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -72,7 +68,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = -source[i][j];
+				result [i][j] = -source [i][j];
 			}
 		}
 
@@ -87,7 +83,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left[i][j] + right[i][j];
+				result [i][j] = left [i][j] + right [i][j];
 			}
 		}
 
@@ -102,7 +98,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left[i][j] - right[i][j];
+				result [i][j] = left [i][j] - right [i][j];
 			}
 		}
 
@@ -119,7 +115,7 @@ namespace Math
 			{
 				for ( int k = 0; k < SIZE3D; k++ )
 				{
-					result[i][j] += left[i][k] * right[k][j];
+					result [i][j] += left [i][k] * right [k][j];
 				}
 			}
 		}
@@ -135,7 +131,7 @@ namespace Math
 		{
 			for ( int k = 0; k < SIZE3D; k++ )
 			{
-				result[i] += left[i][k] * right[k];
+				result [i] += left [i][k] * right [k];
 			}
 		}
 		
@@ -150,7 +146,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left[i][j] * right;
+				result [i][j] = left [i][j] * right;
 			}
 		}
 
@@ -165,7 +161,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left[i][j] / right;
+				result [i][j] = left [i][j] / right;
 			}
 		}
 
@@ -180,7 +176,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left * right[i][j];
+				result [i][j] = left * right [i][j];
 			}
 		}
 
@@ -195,7 +191,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = left / right[i][j];
+				result [i][j] = left / right [i][j];
 			}
 		}
 
@@ -210,7 +206,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE3D; i++ )
 			{
-				is >> source[i][j];
+				is >> source [i][j];
 			}
 		}
 		return is;
@@ -222,7 +218,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE3D; i++ )
 			{
-				os << source[i][j] << " ";
+				os << source [i][j] << " ";
 			}
 
 			os << endl;
@@ -234,12 +230,12 @@ namespace Math
 
 	float Determinant ( const Matrix3D& source )
 	{
-		return source[A][A] * source[B][B] * source[C][C] +
-			   source[B][A] * source[C][B] * source[A][C] +
-			   source[C][A] * source[A][B] * source[B][C] -
-			   source[A][A] * source[C][B] * source[B][C] -
-			   source[C][A] * source[B][B] * source[A][C] -
-			   source[B][A] * source[A][B] * source[C][C];
+		return source [A][A] * source [B][B] * source [C][C] +
+			   source [B][A] * source [C][B] * source [A][C] +
+			   source [C][A] * source [A][B] * source [B][C] -
+			   source [A][A] * source [C][B] * source [B][C] -
+			   source [C][A] * source [B][B] * source [A][C] -
+			   source [B][A] * source [A][B] * source [C][C];
 	}
 
 	Matrix3D Transpose ( const Matrix3D& source )
@@ -250,7 +246,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE3D; j++ )
 			{
-				result[i][j] = source[j][i];
+				result [i][j] = source [j][i];
 			}
 		}
 
@@ -261,23 +257,23 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Zero;
 		
-		result[A][A] = source[B][B] * source[C][C] - source[B][C] * source[C][B];
+		result [A][A] = source [B][B] * source [C][C] - source [B][C] * source [C][B];
 
-		result[A][B] = source[A][C] * source[C][B] - source[A][B] * source[C][C];
+		result [A][B] = source [A][C] * source [C][B] - source [A][B] * source [C][C];
 
-		result[A][C] = source[A][B] * source[B][C] - source[A][C] * source[B][B];
+		result [A][C] = source [A][B] * source [B][C] - source [A][C] * source [B][B];
 
-		result[B][A] = source[B][C] * source[C][A] - source[B][A] * source[C][C];
+		result [B][A] = source [B][C] * source [C][A] - source [B][A] * source [C][C];
 
-		result[B][B] = source[A][A] * source[C][C] - source[A][C] * source[C][A];
+		result [B][B] = source [A][A] * source [C][C] - source [A][C] * source [C][A];
 
-		result[B][C] = source[A][C] * source[B][A] - source[A][A] * source[B][C];
+		result [B][C] = source [A][C] * source [B][A] - source [A][A] * source [B][C];
 
-		result[C][A] = source[B][A] * source[C][B] - source[B][B] * source[C][A];
+		result [C][A] = source [B][A] * source [C][B] - source [B][B] * source [C][A];
 
-		result[C][B] = source[A][B] * source[C][A] - source[A][A] * source[C][B];
+		result [C][B] = source [A][B] * source [C][A] - source [A][A] * source [C][B];
 
-		result[C][C] = source[A][A] * source[B][B] - source[A][B] * source[B][A];
+		result [C][C] = source [A][A] * source [B][B] - source [A][B] * source [B][A];
 		
 		return result;
 	}
@@ -293,7 +289,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[A][A] = -1.0F;		
+		result [A][A] = -1.0F;		
 
 		return result;
 	}
@@ -302,7 +298,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[B][B] = -1.0F;
+		result [B][B] = -1.0F;
 
 		return result;
 	}
@@ -311,7 +307,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[C][C] = -1.0F;
+		result [C][C] = -1.0F;
 		
 		return result;
 	}
@@ -324,13 +320,13 @@ namespace Math
 		
 		float sin = sinf ( angle );
 
-		result[B][B] = cos;
+		result [B][B] = cos;
 		
-		result[B][C] = sin;
+		result [B][C] = sin;
 
-		result[C][B] = -sin;
+		result [C][B] = -sin;
 		
-		result[C][C] = cos;
+		result [C][C] = cos;
 
 		return result;
 	}
@@ -343,13 +339,13 @@ namespace Math
 		
 		float sin = sinf ( angle );
 
-		result[A][A] = cos;
+		result [A][A] = cos;
 		
-		result[A][C] = -sin;
+		result [A][C] = -sin;
 		
-		result[C][A] = sin;
+		result [C][A] = sin;
 		
-		result[C][C] = cos;
+		result [C][C] = cos;
 
 		return result;
 	}
@@ -362,13 +358,13 @@ namespace Math
 		
 		float sin = sinf ( angle );
 
-		result[A][A] = cos;
+		result [A][A] = cos;
 		
-		result[A][B] = sin;
+		result [A][B] = sin;
 		
-		result[B][A] = -sin;
+		result [B][A] = -sin;
 		
-		result[B][B] = cos;
+		result [B][B] = cos;
 		
 		return result;
 	}
@@ -381,23 +377,23 @@ namespace Math
 		
 		float sin = sinf ( angle );
 
-		result[A][A] = direction.X * direction.X + ( 1.0F - direction.X * direction.X) * cos;
+		result [A][A] = direction.X * direction.X + ( 1.0F - direction.X * direction.X) * cos;
 
-		result[A][B] = direction.X * direction.Y * ( 1.0F - cos ) + direction.Z * sin;
+		result [A][B] = direction.X * direction.Y * ( 1.0F - cos ) + direction.Z * sin;
 
-		result[A][C] = direction.X * direction.Z * ( 1.0F - cos ) - direction.Y * sin;
+		result [A][C] = direction.X * direction.Z * ( 1.0F - cos ) - direction.Y * sin;
 
-		result[B][A] = direction.X * direction.Y * ( 1.0F - cos ) - direction.Z * sin;
+		result [B][A] = direction.X * direction.Y * ( 1.0F - cos ) - direction.Z * sin;
 
-		result[B][B] = direction.Y * direction.Y + ( 1.0F - direction.Y * direction.Y ) * cos;
+		result [B][B] = direction.Y * direction.Y + ( 1.0F - direction.Y * direction.Y ) * cos;
 
-		result[B][C] = direction.Y * direction.Z * ( 1.0F - cos ) + direction.X * sin;
+		result [B][C] = direction.Y * direction.Z * ( 1.0F - cos ) + direction.X * sin;
 
-		result[C][A] = direction.X * direction.Z * ( 1.0F - cos ) + direction.Y * sin;
+		result [C][A] = direction.X * direction.Z * ( 1.0F - cos ) + direction.Y * sin;
 
-		result[C][B] = direction.Y * direction.Z * ( 1.0F - cos ) - direction.X * sin;
+		result [C][B] = direction.Y * direction.Z * ( 1.0F - cos ) - direction.X * sin;
 
-		result[C][C] = direction.Z * direction.Z + ( 1.0F - direction.Z * direction.Z ) * cos;
+		result [C][C] = direction.Z * direction.Z + ( 1.0F - direction.Z * direction.Z ) * cos;
 
 		return result;
 	}
@@ -411,7 +407,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[A][A] = scale;		
+		result [A][A] = scale;		
 
 		return result;
 	}
@@ -420,7 +416,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[B][B] = scale;
+		result [B][B] = scale;
 
 		return result;
 	}
@@ -429,7 +425,7 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[C][C] = scale;
+		result [C][C] = scale;
 		
 		return result;
 	}
@@ -438,11 +434,11 @@ namespace Math
 	{
 		Matrix3D result = Matrix3D :: Unit;
 
-		result[A][A] = scaling.X;
+		result [A][A] = scaling.X;
 		
-		result[B][B] = scaling.Y;
+		result [B][B] = scaling.Y;
 		
-		result[C][C] = scaling.Z;
+		result [C][C] = scaling.Z;
 		
 		return result;
 	}

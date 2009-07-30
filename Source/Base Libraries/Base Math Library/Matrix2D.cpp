@@ -1,7 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
-
 #include "Matrix2D.h"
 
 namespace Math
@@ -18,15 +14,15 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
-			values[i][i] = diagonal;
+			values [i][i] = diagonal;
 		}
 	}
 
-	Matrix2D :: Matrix2D ( const float diagonal[SIZE2D] )
+	Matrix2D :: Matrix2D ( const float diagonal [SIZE2D] )
 	{
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
@@ -34,17 +30,17 @@ namespace Math
 	{
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
-			values[i][i] = diagonal[i];
+			values [i][i] = diagonal [i];
 		}
 	}
 	
-	Matrix2D :: Matrix2D ( const float matrix[SIZE2D][SIZE2D] )
+	Matrix2D :: Matrix2D ( const float matrix [SIZE2D][SIZE2D] )
 	{
 		for ( int i = 0; i < SIZE2D; i++ )
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -55,7 +51,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				values[i][j] = matrix[i][j];
+				values [i][j] = matrix [i][j];
 			}
 		}
 	}
@@ -70,7 +66,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = -source[i][j];
+				result [i][j] = -source [i][j];
 			}
 		}
 
@@ -85,7 +81,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left[i][j] + right[i][j];
+				result [i][j] = left [i][j] + right [i][j];
 			}
 		}
 
@@ -100,7 +96,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left[i][j] - right[i][j];
+				result [i][j] = left [i][j] - right [i][j];
 			}
 		}
 
@@ -117,7 +113,7 @@ namespace Math
 			{
 				for ( int k = 0; k < SIZE2D; k++ )
 				{
-					result[i][j] += left[i][k] * right[k][j];
+					result [i][j] += left [i][k] * right [k][j];
 				}
 			}
 		}
@@ -133,7 +129,7 @@ namespace Math
 		{
 			for ( int k = 0; k < SIZE2D; k++ )
 			{
-				result[i] += left[i][k] * right[k];
+				result [i] += left [i][k] * right [k];
 			}
 		}
 		
@@ -148,7 +144,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left[i][j] * right;
+				result [i][j] = left [i][j] * right;
 			}
 		}
 
@@ -163,7 +159,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left[i][j] / right;
+				result [i][j] = left [i][j] / right;
 			}
 		}
 
@@ -178,7 +174,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left * right[i][j];
+				result [i][j] = left * right [i][j];
 			}
 		}
 
@@ -193,7 +189,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = left / right[i][j];
+				result [i][j] = left / right [i][j];
 			}
 		}
 
@@ -208,7 +204,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE2D; i++ )
 			{
-				is >> source[i][j];
+				is >> source [i][j];
 			}
 		}
 		return is;
@@ -220,7 +216,7 @@ namespace Math
 		{
 			for ( int i = 0; i < SIZE2D; i++ )
 			{
-				os << source[i][j] << " ";
+				os << source [i][j] << " ";
 			}
 
 			os << endl;
@@ -232,7 +228,7 @@ namespace Math
 
 	float Determinant ( const Matrix2D& source )
 	{
-		return source[A][A] * source[B][B] - source[A][B] * source[B][A];
+		return source [A][A] * source [B][B] - source [A][B] * source [B][A];
 	}
 
 	Matrix2D Transpose ( const Matrix2D& source )
@@ -243,7 +239,7 @@ namespace Math
 		{
 			for ( int j = 0; j < SIZE2D; j++ )
 			{
-				result[i][j] = source[j][i];
+				result [i][j] = source [j][i];
 			}
 		}
 
@@ -254,13 +250,13 @@ namespace Math
 	{
 		Matrix2D result = Matrix2D :: Zero;
 		
-		result[A][A] = source[B][B];
+		result [A][A] = source [B][B];
 
-		result[A][B] = -source[A][B];
+		result [A][B] = -source [A][B];
 
-		result[B][A] = -source[B][A];
+		result [B][A] = -source [B][A];
 
-		result[B][B] = source[A][A];
+		result [B][B] = source [A][A];
 		
 		return result;
 	}
