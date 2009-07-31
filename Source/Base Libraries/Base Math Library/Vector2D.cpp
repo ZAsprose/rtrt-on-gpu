@@ -1,11 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
-#include <stdio.h>
-
-#include <math.h>
-
 #include "Vector2D.h"
 
 namespace Math
@@ -29,32 +21,32 @@ namespace Math
 		Y = y;
 	}
 
-	Vector2D :: Vector2D ( const float vector[SIZE2D] )
+	Vector2D :: Vector2D ( const float vector [SIZE2D] )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 	}
 
 	Vector2D :: Vector2D ( const Vector2D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 	}
 
 	Vector2D :: Vector2D ( const Vector3D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 	}
 
 	Vector2D :: Vector2D ( const Vector4D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------

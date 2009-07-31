@@ -1,13 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
-#include <stdio.h>
-
-#include <math.h>
-
-#include "Util.h"
-
 #include "Vector4D.h"
 
 namespace Math
@@ -39,22 +29,22 @@ namespace Math
 		W = w;
 	}
 
-	Vector4D :: Vector4D ( const float vector[SIZE4D] )
+	Vector4D :: Vector4D ( const float vector [SIZE4D] )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 
-		W = vector[D];
+		W = vector [D];
 	}
 
 	Vector4D :: Vector4D ( const Vector2D& vector, float z, float w )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
 		Z = z;
 
@@ -63,24 +53,24 @@ namespace Math
 
 	Vector4D :: Vector4D ( const Vector3D& vector, float w )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 		
 		W = w;
 	}
 
 	Vector4D :: Vector4D ( const Vector4D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 
-		W = vector[D];
+		W = vector [D];
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------

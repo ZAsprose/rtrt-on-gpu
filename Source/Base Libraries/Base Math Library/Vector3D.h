@@ -1,5 +1,19 @@
 /*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
+   Base Math Library   
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #pragma once
@@ -8,13 +22,13 @@
 
 #define _VECTOR3D_
 
-#include <iostream>
-
 #include "Util.h"
 
 #include "Vector2D.h"
 
 #include "Vector4D.h"
+
+#include <iostream>
 
 using namespace std;
 
@@ -52,7 +66,7 @@ namespace Math
 
 			Vector3D ( float = 0, float = 0, float = 0 );
 
-			Vector3D ( const float[SIZE3D] );
+			Vector3D ( const float [SIZE3D] );
 
 			Vector3D ( const Vector2D&, float = 0 );
 
@@ -162,7 +176,7 @@ namespace Math
 
 			float& operator [] ( int index )
 			{
-				return * ( index + &X );
+				return *( index + &X );
 			}
 
 			//--------------------------------- Common Functions ----------------------------------

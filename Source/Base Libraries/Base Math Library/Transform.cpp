@@ -1,7 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
 #include "Transform.h"
 
 namespace Math
@@ -19,7 +15,7 @@ namespace Math
 		SetScale ( scale );
 	}
 	
-	//------------------------------ Transformation Functions -----------------------------
+	//---------------------------------- Transformation Functions ---------------------------------
 			
 	Vector3D Transform :: ForwardPoint ( const Vector3D& position )
 	{
