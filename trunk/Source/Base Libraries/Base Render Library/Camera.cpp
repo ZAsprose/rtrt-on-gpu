@@ -1,16 +1,8 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
 #include "Camera.h"
-
-#include <GL/glfw.h>
-
-#include <math.h>
 
 namespace Render
 {
-	//--------------------------------------- Constructors ----------------------------------------
+	//---------------------------------------- Constructor ----------------------------------------
 
 	Camera :: Camera ( const Vector3D& position, const Vector3D& orientation )
 	{
@@ -21,7 +13,7 @@ namespace Render
 		Update ( );		
 	}
 
-	//------------------------------------- Update Directions -------------------------------------
+	//------------------------- Updating Axes of Camera Coordinate System -------------------------
 			
 	void Camera :: Update ( void )
 	{
@@ -34,7 +26,7 @@ namespace Render
 		View = Normalize ( CameraToWorld * Vector3D :: AxisZ );
 	}
 
-	//-------------------------------------- Camera Position --------------------------------------
+	//-------------------- Moving Camera in Local and World Coordinate Systems --------------------
 
 	void Camera :: MoveLocal ( float distance, const Vector3D& direction )
 	{
@@ -48,7 +40,7 @@ namespace Render
 		Position += direction * distance;
 	}
 
-	//------------------------------------- Camera Orientation ------------------------------------
+	//------------------- Rotating Camera in Local and World Coordinate Systems -------------------
 
 	void Camera :: RotateLocal ( float angle, const Vector3D& direction )
 	{
@@ -66,13 +58,13 @@ namespace Render
 		Update ( );
 	}
 
-	//--------------------------------------- Apply Settings --------------------------------------
+	//-------------------------- Applying Settings to OpenGL and Shaders --------------------------
 
 	void Camera :: Setup ( void )
 	{
 		glViewport ( 0, 0, Width, Height );
 
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------
 
         glMatrixMode ( GL_PROJECTION );
 
@@ -80,7 +72,7 @@ namespace Render
 
         gluPerspective ( Degrees ( FieldOfView ), Aspect, NearPlane, FarPlane );
 
-		//---------------------------------------------------------------------
+		//-------------------------------------------------------------------------------
 
 		glMatrixMode ( GL_MODELVIEW );
 
@@ -110,9 +102,9 @@ namespace Render
 		manager->SetUniformVector ( "Camera.Scale", GetScreenScale ( ) );
 	}
 
-	//------------------------------------ Viewport and Frustum -----------------------------------
+	//------------------------------- Setting Viewport and Frustum --------------------------------
 	
-	void Camera :: SetViewport ( unsigned int width, unsigned int height )
+	void Camera :: SetViewport ( unsigned width, unsigned height )
 	{
 		Width = width;
 

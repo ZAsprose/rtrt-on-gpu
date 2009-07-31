@@ -49,6 +49,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				EnablePREfast="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -114,6 +115,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				EnablePREfast="false"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -246,6 +248,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Noise"
+				>
+				<File
+					RelativePath=".\Noise2D.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -339,6 +349,18 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Noise"
+				>
+				<File
+					RelativePath=".\Noise2D.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Noise3D.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 	</Files>
