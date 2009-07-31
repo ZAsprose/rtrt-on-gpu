@@ -1,11 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
-#include <math.h>
-
-#include <stdlib.h>
-
 #include "Util.h"
 
 namespace Math
@@ -27,12 +19,12 @@ namespace Math
 
 	float Fract ( float source )
 	{
-		return source - floorf( source );
+		return source - floorf ( source );
 	}
 	 
 	float Mod ( float left, float right )
 	{
-		return left - right * floorf( left / right );
+		return left - right * floorf ( left / right );
 	}
 
 	float Clamp ( float source, float min, float max )
@@ -52,7 +44,7 @@ namespace Math
 
 	float Smooth ( float source, float left, float right )        	
 	{
-		float result = Clamp( ( source - left ) / ( right - left ), 0.0F, 1.0F );
+		float result = Clamp ( ( source - left ) / ( right - left ), 0.0F, 1.0F );
 
 		return result * result * ( 3.0F - 2.0F * result );
 	} 

@@ -1,13 +1,3 @@
-/*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
- */
-
-#include <iostream>
-
-#include <stdio.h>
-
-#include <math.h>
-
 #include "Vector3D.h"
 
 namespace Math
@@ -35,40 +25,40 @@ namespace Math
 		Z = z;
 	}
 
-	Vector3D :: Vector3D ( const float vector[SIZE3D] )
+	Vector3D :: Vector3D ( const float vector [SIZE3D] )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 	}
 
 	Vector3D :: Vector3D ( const Vector2D& vector, float z )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
 		Z = z;
 	}
 
 	Vector3D :: Vector3D ( const Vector3D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 	}
 
 	Vector3D :: Vector3D ( const Vector4D& vector )
 	{
-		X = vector[A];
+		X = vector [A];
 
-		Y = vector[B];
+		Y = vector [B];
 
-		Z = vector[C];
+		Z = vector [C];
 	}
 
 	//------------------------------------ Arithmetic Operators -----------------------------------
