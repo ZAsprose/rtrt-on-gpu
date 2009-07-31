@@ -1,5 +1,19 @@
 /*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
+   Base Render Library   
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #pragma once
@@ -22,7 +36,7 @@ namespace Render
 	{
 		private:
 
-			//---------------------------------- Camera System ------------------------------------
+			//------------------- Position and Axes of Camera Coordinate System -------------------
 
 			Vector3D Position;
 
@@ -32,13 +46,13 @@ namespace Render
 
 			Vector3D View;
 
-			//--------------------------------- Camera Transform ----------------------------------
+			//------------------ Transform Matrices World Space <-> Camera Space ------------------
 
 			Matrix3D WorldToCamera;
 
 			Matrix3D CameraToWorld;
 
-			//----------------------------------- View Frustum ------------------------------------
+			//------------------------------- View Frustum Settings -------------------------------
 			
 			float FieldOfView;
 
@@ -46,54 +60,54 @@ namespace Render
 			
 			float FarPlane;
 
-			//------------------------------------- Viewport --------------------------------------
+			//--------------------------------- Viewport Settings ---------------------------------
 			
-			unsigned int Width;
+			unsigned Width;
 
-			unsigned int Height;			
+			unsigned Height;			
 			
 			float Aspect;
 
-			//--------------------------------- Update Directions ---------------------------------
+			//--------------------- Updating Axes of Camera Coordinate System ---------------------
 			
 			void Update ( void );
 	       
 		public:			
 
-			//----------------------------------- Constructors ------------------------------------
+			//------------------------------------ Constructor ------------------------------------
 
-			Camera ( const Vector3D& = Vector3D ( 0.0F, 0.0F, -10.0F ),
+			Camera ( const Vector3D& = Vector3D :: Zero,
 				     const Vector3D& = Vector3D :: Zero );
 
-			//---------------------------------- Camera Position ----------------------------------
+			//---------------- Moving Camera in Local and World Coordinate Systems ----------------
 
 			void MoveLocal ( float, const Vector3D& );
 			
 			void MoveWorld ( float, const Vector3D& );
 
-			//--------------------------------- Camera Orientation --------------------------------
+			//--------------- Rotating Camera in Local and World Coordinate Systems ---------------
 
 			void RotateLocal ( float, const Vector3D& );
 			
 			void RotateWorld ( float, const Vector3D& );
 
-			//----------------------------------- Apply Settings ----------------------------------
+			//---------------------- Applying Settings to OpenGL and Shaders ----------------------
 
 			void Setup ( void );
 
 			void SetShaderData ( ShaderManager * );
 
-			//-------------------------------- Viewport and Frustum -------------------------------
+			//--------------------------- Setting Viewport and Frustum ----------------------------
 
-			void SetViewport ( unsigned int = 512, unsigned int = 512 );
+			void SetViewport ( unsigned = 512, unsigned = 512 );
 
 			void SetFrustum ( float = ONEPI / 3.0F, float = 0.01F, float = 1000000.0F );
 
-			//---------------------------------- Getting Settings ---------------------------------
+			//--------------------------------- Getting Settings ----------------------------------
 
-			unsigned int GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) { return Width; }
 
-			unsigned int GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) { return Height; }
 
 			float GetFieldOfView ( void ) { return FieldOfView; }
 
