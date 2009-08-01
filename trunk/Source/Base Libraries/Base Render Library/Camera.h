@@ -24,10 +24,6 @@
 
 #include "ShaderManager.h"
 
-#include <Matrix3D.h>
-
-#include <GL/glfw.h>
-
 using namespace Math;
 
 namespace Render
