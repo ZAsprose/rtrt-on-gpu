@@ -1,19 +1,35 @@
 /*
- * Author: Denis Bogolepov  ( bogdencmc@inbox.ru )
+   Base Render Library   
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #include "Keyboard.h"
 
 namespace Render
 {
-	//--------------------------------------- Constructors ----------------------------------------
+	//---------------------------------------- Constructor ----------------------------------------
 	
-	Keyboard :: Keyboard ( float step )
+	Keyboard :: Keyboard ( float step, bool local )
 	{
 		Step = step;
+
+		Local = local;
 	}
 
-	//-------------------------------------- Event Handlers ---------------------------------------
+	//--------------------------------------- Event Handler ---------------------------------------
 
 	void Keyboard :: StateChange ( int key, int state )
 	{
@@ -41,10 +57,12 @@ namespace Render
 		}
 	}
 
-	//--------------------------------------- Camera Change ---------------------------------------
+	//---------------------- Applying new Position and Orientation to Camera ----------------------
 
 	void Keyboard :: Apply ( Camera * camera )
 	{
+		//-------------------------------- Moving Camera --------------------------------
+
 		if ( State.KeyW ) camera->MoveLocal ( Step, Vector3D :: AxisZ );
 
 		if ( State.KeyS ) camera->MoveLocal ( -Step, Vector3D :: AxisZ );
@@ -57,12 +75,27 @@ namespace Render
 
 		if ( State.KeyZ ) camera->MoveLocal ( -Step, Vector3D :: AxisY );
 
-		if ( State.ArrowU ) camera->RotateLocal ( Step, Vector3D :: AxisX );
+		//------------------------------- Rotating Camera -------------------------------
 
-		if ( State.ArrowD ) camera->RotateLocal ( -Step, Vector3D :: AxisX );
+		if ( Local )
+		{
+			if ( State.ArrowU ) camera->RotateLocal ( Step, Vector3D :: AxisX );
 
-		if ( State.ArrowL ) camera->RotateLocal ( Step, Vector3D :: AxisY );
+			if ( State.ArrowD ) camera->RotateLocal ( -Step, Vector3D :: AxisX );
 
-		if ( State.ArrowR ) camera->RotateLocal ( -Step, Vector3D :: AxisY );
+			if ( State.ArrowL ) camera->RotateLocal ( Step, Vector3D :: AxisY );
+
+			if ( State.ArrowR ) camera->RotateLocal ( -Step, Vector3D :: AxisY );
+		}
+		else
+		{
+			if ( State.ArrowU ) camera->RotateWorld ( Step, Vector3D :: AxisY );
+
+			if ( State.ArrowD ) camera->RotateWorld ( -Step, Vector3D :: AxisY );
+
+			if ( State.ArrowL ) camera->RotateWorld ( Step, Vector3D :: AxisZ );
+
+			if ( State.ArrowR ) camera->RotateWorld ( -Step, Vector3D :: AxisZ );
+		}
 	}
 }
