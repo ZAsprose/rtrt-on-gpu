@@ -12,6 +12,8 @@
 
 #include "Texture2D.h"
 
+#include "Noise2D.h"
+
 #include "Mouse.h"
 
 #include "Keyboard.h"
@@ -34,15 +36,17 @@ using namespace Render;
 
 //-------------------------------------------------------------------------------------------------
 
-const int CountX = 256;
+const int CountX = 128;
 
-const int CountY = 256;
+const int CountY = 128;
 
 //-------------------------------------------------------------------------------------------------
 
 TextureData2D * photonsTextureData = NULL;
 
 Texture2D * positionsTexture = NULL;
+
+Texture2D * noiseTexture = NULL;
 
 FrameBuffer * photonFrameBuffer = NULL;
 
@@ -53,6 +57,10 @@ Camera * camera = NULL;
 Mouse mouse ( 0.005F );
 
 Keyboard keyboard ( 0.1F );
+
+//-------------------------------------------------------------------------------------------------
+
+float Depth = -2.0F;
 
 //-------------------------------------------------------------------------------------------------
 
@@ -69,6 +77,16 @@ void MouseButton ( int button, int state )
 void KeyButton ( int key, int state )
 {
 	keyboard.StateChange ( key, state );
+
+	if ( key == GLFW_KEY_PAGEUP&& state > 0 )
+	{
+		Depth += 0.1;
+	}
+
+	if ( key == GLFW_KEY_PAGEDOWN && state > 0 )
+	{
+		Depth -= 0.1;
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -137,7 +155,7 @@ int main ( void )
 
 	//---------------------------------------------------------------------------------------------
 
-	camera = new Camera ( Vector3D ( -6.0F, 5.0F, 14.0F ), Vector3D ( -0.8F, 3.2F, 0.0F ) );
+	camera = new Camera ( Vector3D ( 8.0F, 8.0F, -1.0F ), Vector3D ( 2.0F, -0.73F, 0.3F ) );
 
 	camera->SetFrustum ( );
 
@@ -161,21 +179,31 @@ int main ( void )
 
 	positionsTexture->Setup ( );
 
+	Noise2D * noise = new Noise2D ( 16 );
+
+	noiseTexture = new Texture2D ( noise->BuildData ( 512, 512 ), 1 , GL_TEXTURE_2D );
+
+	noiseTexture->Setup ( );
+
 	//---------------------------------------------------------------------------------------------
 
 	ShaderManager * PhotonManager = new ShaderManager ( );
 
-	PhotonManager->LoadVertexShader ( "PhotonMapping.vs" );
+	const char * photonFragment [] = { "Common.fs", "PhotonMapping.fs" };
 
-	PhotonManager->LoadFragmentShader ( "PhotonMapping.fs" );
+	PhotonManager->LoadVertexShader ( "Common.vs" );
+
+	PhotonManager->LoadFragmentShader ( photonFragment, 2 );
 
 	PhotonManager->BuildProgram ( );
 
 	ShaderManager * RayTracingManager = new ShaderManager ( );
 
-	RayTracingManager->LoadVertexShader( "RayTracing.vs" );
+	const char * rayTracingFragment [] = { "Common.fs", "RayTracing.fs" };
 
-	RayTracingManager->LoadFragmentShader( "RayTracing.fs" );
+	RayTracingManager->LoadVertexShader ( "Common.vs" );
+
+	RayTracingManager->LoadFragmentShader ( rayTracingFragment, 2 );
 
 	RayTracingManager->BuildProgram ( );
 
@@ -197,6 +225,8 @@ int main ( void )
 
 	PhotonManager->SetUniformFloat ( "Light.Distance", 3.0F );
 
+	PhotonManager->SetTexture ( "NoiseTexture", noiseTexture );
+
 	PhotonManager->Unbind ( );
 
 	//---------------------------------------------------------------------------------------------
@@ -208,6 +238,8 @@ int main ( void )
 	RayTracingManager->SetUniformVector( "Size", Vector2D ( CountX, CountY ) );
 
 	RayTracingManager->SetTexture ( "PositionTexture", positionsTexture );
+
+	RayTracingManager->SetTexture ( "NoiseTexture", noiseTexture );
 
 	RayTracingManager->Unbind ( );
 
@@ -249,6 +281,8 @@ int main ( void )
 		PhotonManager->Bind ( );
 
 		PhotonManager->SetUniformFloat ( "Time", t );
+
+		PhotonManager->SetUniformFloat ( "Depth", Depth );
 		
 		GenerateStream ( CountX, CountY );
 
@@ -274,6 +308,8 @@ int main ( void )
 		camera->SetShaderData ( RayTracingManager );
 
 		RayTracingManager->SetUniformFloat ( "Time", t );
+
+		RayTracingManager->SetUniformFloat ( "Depth", Depth );
 
 		GenerateStream ( width, height );
 
