@@ -15,41 +15,49 @@
    You should have received a copy of the GNU General Public License
    along with this program. If not, see http://www.gnu.org/licenses.
  */
+
 #pragma once
 
-#include <GLee.h>
+#ifndef _NOISE2D_
 
-#ifndef _MAP_MODE_
+#define _NOISE2D_
 
-#define _MAP_MODE_
+#include <Vector2D.h>
+
+#include "Texture2D.h"
+
+using namespace Math;
 
 namespace Render
 {
-	class WrapMode
+	class Noise2D
 	{
+		private:
+
+			//----------------------------------- Noise Density -----------------------------------
+			
+			int Size;
+
+			//------------------------------- Random Values on Grid -------------------------------
+			
+			float ** Values;
+
+			//------------------------------ Calculating Noise Value ------------------------------
+
+			float Noise ( float, float );
+
+			
 		public:
-
-			//---------------------------------- Public Constants ---------------------------------
-
-			static const WrapMode Clamp;
-
-			static const WrapMode Repeat;
-
-			//----------------------------------- Wrap Settings -----------------------------------
 			
-			int WrapS;
-		
-			int WrapT;
-			
-			int WrapR;
+			//---------------------------- Constructor and Destructor -----------------------------
 
-			//------------------------------------ Constructor ------------------------------------
-	
-			WrapMode ( int = GL_CLAMP, int = GL_CLAMP, int = GL_CLAMP );
+			Noise2D ( int = 8 );
 
-			//--------------------------------- Setting Wrap Mode ---------------------------------
-			
-			void Setup ( int );
+			~Noise2D ( );
+
+			//---------------------------- Building Noise Texture Data ----------------------------
+
+			TextureData2D * BuildData ( int, int );			
 	};
 }
 

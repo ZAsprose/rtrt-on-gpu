@@ -18,6 +18,8 @@
 
 #include "Keyboard.h"
 
+#include <GL/glfw.h>
+
 namespace Render
 {
 	//---------------------------------------- Constructor ----------------------------------------
@@ -61,7 +63,7 @@ namespace Render
 
 	void Keyboard :: Apply ( Camera * camera )
 	{
-		//-------------------------------- Moving Camera --------------------------------
+		//--------------------------------------------------------------------------
 
 		if ( State.KeyW ) camera->MoveLocal ( Step, Vector3D :: AxisZ );
 
@@ -75,7 +77,7 @@ namespace Render
 
 		if ( State.KeyZ ) camera->MoveLocal ( -Step, Vector3D :: AxisY );
 
-		//------------------------------- Rotating Camera -------------------------------
+		//--------------------------------------------------------------------------
 
 		if ( Local )
 		{
