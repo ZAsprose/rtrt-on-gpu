@@ -134,11 +134,11 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/House/House.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/rtrt-on-gpu/Support/Models/House/House.obj" );
 
-	OBJModel * model1 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Figurine/Figurine.obj" );
+	OBJModel * model1 = OBJLoader :: LoadOBJ( "D:/Projects/rtrt-on-gpu/Support/Models/Figurine/Figurine.obj" );
 
-	OBJModel * model2 = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Horse/Horse.obj" );
+	OBJModel * model2 = OBJLoader :: LoadOBJ( "D:/Projects/rtrt-on-gpu/Support/Models/Horse/Horse.obj" );
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
