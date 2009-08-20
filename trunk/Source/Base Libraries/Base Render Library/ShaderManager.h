@@ -52,7 +52,7 @@ namespace Render
 
 			//---------------------------------- Private Methods ----------------------------------
 
-			bool Load ( int, const char **, int );
+			bool Load ( int, const char **, int, const char * = "" );
 
 			bool Compile ( int );
 
@@ -68,13 +68,13 @@ namespace Render
 
 			//--------------------------------- Shaders Management --------------------------------
 
-			bool LoadVertexShader ( const char * );
+			bool LoadVertexShader ( const char *, const char * = "" );
 
-			bool LoadFragmentShader ( const char * );
+			bool LoadFragmentShader ( const char *, const char * = "" );
 
-			bool LoadVertexShader ( const char **, int );
+			bool LoadVertexShader ( const char **, int, const char * = "" );
 
-			bool LoadFragmentShader ( const char **, int );
+			bool LoadFragmentShader ( const char **, int, const char * = "" );
 
 			bool BuildProgram ( void );
 

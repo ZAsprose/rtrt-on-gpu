@@ -12,11 +12,19 @@
 
 #define RENDER_DISSOLVE
 
-#define USE_TEXTURES
+#define RENDER_TEXTURES
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define USE_PROXIMITY_GRID_
+
+#define USE_TRIANGLE_NORMALS
+
+//---------------------------------------------------------------------------------------------------------------------
 
 #define LIGHTING_TWO_SIDED
 
-#define USE_PROXIMITY_GRID_
+//---------------------------------------------------------------------------------------------------------------------
 
 #define SHOW_TRAVERSAL_DEPTH_
 
@@ -146,7 +154,7 @@ uniform SGrid Grid;
 
 uniform int LightsCount;
 
-uniform SLight Lights[8];
+uniform SLight Lights [8];
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -253,7 +261,7 @@ SRay GenerateRay ( void )
 	return SRay ( Camera.Position, normalize ( direction ) );
 }
 
-#ifdef USE_TEXTURES
+#ifdef RENDER_TEXTURES
 
 void InterpolatePoint ( SRay ray, SIntersection intersection, out vec3 point,
                         out vec3 normal, out vec3 reflection, out vec2 texcoord )
@@ -274,7 +282,7 @@ void InterpolatePoint ( SRay ray, SIntersection intersection, out vec3 point,
 	                       
 	reflection = reflect ( ray.Direction, normal );
 										   
-	#ifdef USE_TEXTURES
+	#ifdef RENDER_TEXTURES
 
 	texcoord = Interpolate ( intersection.Triangle.A.TexCoord,
 	                         intersection.Triangle.B.TexCoord,
@@ -288,16 +296,14 @@ void InterpolatePoint ( SRay ray, SIntersection intersection, out vec3 point,
 /*********************************************** DATA LOADING FUNCTIONS ***********************************************/
 /**********************************************************************************************************************/
 
-float LoadTriangle1 ( inout STriangle triangle )
+float LoadTriangle ( inout STriangle triangle )
 {
-	//---------------------------------- Reading triangle normals and texture coords ----------------------------------
-            
 	float offset = triangle.Offset;
             
 	vec4 NC = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                floor ( offset * VertexTextureStep ) ) );
 	                                                
-	#ifdef USE_TEXTURES
+	#ifdef RENDER_TEXTURES
 	
 	vec2 TC = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                         floor ( offset * VertexTextureStep ) ) ) );	
@@ -309,7 +315,7 @@ float LoadTriangle1 ( inout STriangle triangle )
 	vec4 NB = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                floor ( offset * VertexTextureStep ) ) );
 	                                                
-	#ifdef USE_TEXTURES
+	#ifdef RENDER_TEXTURES
 	
 	vec2 TB = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                         floor ( offset * VertexTextureStep ) ) ) );	
@@ -321,7 +327,7 @@ float LoadTriangle1 ( inout STriangle triangle )
 	vec4 NA = texture2DRect ( NormalTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                floor ( offset * VertexTextureStep ) ) );      
 	                                                
-	#ifdef USE_TEXTURES
+	#ifdef RENDER_TEXTURES
 	
 	vec2 TA = vec2 ( texture2DRect ( TexCoordTexture, vec2 ( mod ( offset, VertexTextureSize ),
 	                                                         floor ( offset * VertexTextureStep ) ) ) );	
@@ -334,7 +340,7 @@ float LoadTriangle1 ( inout STriangle triangle )
 				
 	triangle.C.Normal = vec3 ( NC );
 	
-	#ifdef USE_TEXTURES
+	#ifdef RENDER_TEXTURES
 	
 	triangle.A.TexCoord = TA; 
 	
@@ -351,9 +357,7 @@ float LoadTriangle1 ( inout STriangle triangle )
 
 void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
 {	
-	//------------------------------------- Reading triangle material properties --------------------------------------
-	
-	float offset = LoadTriangle1 ( triangle );
+	float offset = LoadTriangle ( triangle );
 	
 	vec4 ambient =  texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
 	
@@ -398,24 +402,17 @@ float IntersectBox ( SRay ray )
 
 bool IntersectBox ( SRay ray, out float start, out float final )
 {
-	if ( InsideBox ( ray.Origin ) )
-	{
-		final = IntersectBox ( ray );
-	}
-	else
-	{
-	   vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
-	   
-	   vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
-	   
-	   vec3 MAX = max ( OMAX, OMIN );
-	   
-	   vec3 MIN = min ( OMAX, OMIN );
-	  
-	   final = min ( MAX.x, min ( MAX.y, MAX.z ) );
-	   
-	   start = max ( MIN.x, max ( MIN.y, MIN.z ) );	
-	}
+	vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
+           
+	vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
+           
+	vec3 MAX = max ( OMAX, OMIN );
+           
+	vec3 MIN = min ( OMAX, OMIN );
+          
+	final = min ( MAX.x, min ( MAX.y, MAX.z ) );
+           
+	start = max ( max ( MIN.x, 0.0 ), max ( MIN.y, MIN.z ) ); 
 	
 	return final > start;
 }
@@ -424,8 +421,26 @@ bool IntersectBox ( SRay ray, out float start, out float final )
 
 bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 {
+	#ifdef USE_TRIANGLE_NORMALS
+
+	vec3 AB = triangle.B.Position - triangle.A.Position;
+	
+	vec3 CA = triangle.A.Position - triangle.C.Position;
+	
+	vec3 OA = triangle.A.Position - ray.Origin;
+	
 	//-----------------------------------------------------------------------------------------------------------------
 	
+	vec3 S = cross ( ray.Direction, OA );
+	
+	result = vec3 ( dot ( OA, triangle.Normal ),
+		            dot ( CA, S ),
+		            dot ( AB, S ) ) / dot ( ray.Direction, triangle.Normal );
+
+	#else
+
+	//-----------------------------------------------------------------------------------------------------------------
+
 	vec3 AB = triangle.B.Position - triangle.A.Position;
 	
 	vec3 AC = triangle.C.Position - triangle.A.Position;
@@ -439,68 +454,13 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 	vec3 Q = cross ( AO, AB );
 	
 	result = vec3 ( dot ( Q, AC ), dot ( P, AO ), dot ( Q, ray.Direction ) ) / dot ( P, AB );
-	
+
+	#endif
+
 	//-----------------------------------------------------------------------------------------------------------------
 	
-	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
+	return result.x > 0.0 && result.y > 0.0 && result.z > 0.0 && result.y + result.z < 1.0;
 }
-
-bool IntersectTriangleS ( SRay ray, STriangle triangle, out vec3 result )
-{
-	//-----------------------------------------------------------------------------------------------------------------
-	
-	vec3 AB = triangle.B.Position - triangle.A.Position;
-	
-	vec3 AC = triangle.A.Position - triangle.C.Position;
-	
-	vec3 AO = triangle.A.Position - ray.Origin;
-	
-	//-----------------------------------------------------------------------------------------------------------------
-	
-	//vec3 P = cross ( ray.Direction, AC );
-
-	vec3 XXX = cross ( ray.Direction, AO );
-	
-	result = vec3 (   dot ( AO, triangle.Normal ),
-	                  dot ( AC, XXX ),
-	                  dot ( AB, XXX ) ) / dot ( ray.Direction, triangle.Normal );
-	
-	//-----------------------------------------------------------------------------------------------------------------
-	
-	return ( result.x > 0.0 ) && ( result.y > 0.0 ) && ( result.z > 0.0 ) && ( result.y + result.z ) < 1.0;
-}
-
-/**********************************************************************************************************************/
-/*********************************************** TRAVERSAL FUNCTIONS **************************************************/
-/**********************************************************************************************************************/
-
-#ifdef USE_PROXIMITY_GRID
-	
-vec3 NextVoxel( vec3 next, vec3 max, vec3 delta )
-{
-	vec3 result;
-	
-	result = AxisZ;
-	
-	if ( max.x + delta.x * next.x < max.y + delta.y * next.y )
-	{
-		if ( max.x + delta.x * next.x < max.z + delta.z * next.z )
-		{
-			result = AxisX;
-		}
-	}
-	else
-	{
-		if ( max.y + delta.y * next.y < max.z + delta.z * next.z )
-		{
-			result = AxisY;
-		}
-	}
-	
-	return result;
-}
-	
-#endif
 
 /**********************************************************************************************************************/
 /*********************************************** RAY TRACING FUNCTIONS ************************************************/
@@ -517,20 +477,12 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	vec3 step = sign ( ray.Direction );
 	
 	vec3 max = delta * max ( step, Zero ) - mod ( ray.Origin - Grid.Minimum, Grid.VoxelSize ) / ray.Direction;
-	
-	float ttt = min ( delta.x, min ( delta.y, delta.z ) );
-		
+			
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
 	vec3 next;
 	
 	float min;
-	
-	#ifdef USE_PROXIMITY_GRID
-		
-	float proximity = 0.0;
-		
-	#endif
 	
 	while ( true )
 	{
@@ -568,12 +520,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		float count = content.x;
 				
 		float offset = content.y;
-		
-		#ifdef USE_PROXIMITY_GRID
-		
-		proximity = content.z;
-		
-		#endif
 				
 		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
 						
@@ -608,7 +554,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			
 			vec3 test = Zero;
 			
-			if ( IntersectTriangleS ( ray, triangle, test ) && test.x < intersection.Parameters.x )
+			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x )
 			{
 				intersection = SIntersection ( test, triangle );
 			}
@@ -621,26 +567,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			return true;
 		}
 		
-		//---------------------------------------------- Go to next voxel ---------------------------------------------
-		
-		#ifdef USE_PROXIMITY_GRID
-		
-		/*		
-		if ( proximity-- > 0.0 )
-		{
-			max += delta * next;
-				
-			voxel += step * next;
-			
-			continue;
-		}
-		*/
-		
-		vec3 vvv = WorldToVoxel ( ray.Origin + ray.Direction * ( min + ttt * max ( proximity - 0.0, 0.0 ) ) );
-		
-		next += abs ( voxel - vvv );
-		
-		#endif			
+		//---------------------------------------------- Go to next voxel ---------------------------------------------		
 		
 		max += delta * next;
 			
@@ -660,7 +587,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 /************************************************* LIGHTING FUNCTIONS *************************************************/
 /**********************************************************************************************************************/
 
-#ifdef USE_TEXTURES
+#ifdef RENDER_TEXTURES
 		
 vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, vec2 texcoord, SMaterial material )
 		
@@ -719,7 +646,7 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 		
 		#endif
 		
-		#ifdef USE_TEXTURES
+		#ifdef RENDER_TEXTURES
 
 		vec3 texture = Unit;
 		
@@ -808,7 +735,7 @@ void main ( void )
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + EPSILON + 0.1) * ray.Direction;
+		ray.Origin += ( start + EPSILON ) * ray.Direction;
 				
 		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
 		
@@ -828,7 +755,7 @@ void main ( void )
 			
 			vec3 point = Zero, normal = Zero, reflection = Zero;
 					
-			#ifdef USE_TEXTURES
+			#ifdef RENDER_TEXTURES
 
 			vec2 texcoord = vec2 ( Zero );
 			
@@ -842,7 +769,7 @@ void main ( void )
 			
 			//------------------------------------ Calculating directional lighting -----------------------------------
 			
-			#ifdef USE_TEXTURES
+			#ifdef RENDER_TEXTURES
 
 			color += Lighting ( point, normal, reflection, texcoord, primaryMaterial );					
 							
@@ -880,7 +807,7 @@ void main ( void )
 												
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
 						
@@ -892,7 +819,7 @@ void main ( void )
 					
 					//-------------------------------- Calculating directional lighting -------------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					color += ( 1.0F - primaryMaterial.Dissolve ) * Lighting ( point, normal, reflection,
 					                                                          texcoord, dissolveMaterial );					
@@ -936,7 +863,7 @@ void main ( void )
 												
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
 						
@@ -948,7 +875,7 @@ void main ( void )
 					
 					//-------------------------------- Calculating directional lighting -------------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					color += primaryMaterial.Reflection * Lighting ( point, normal, reflection,
 					                                                 texcoord, reflectMaterial );					
@@ -988,11 +915,11 @@ void main ( void )
 				{
                     //---------------------------------- Loading vertices attributes ----------------------------------
 				
-					LoadTriangle1 ( intersection.Triangle );
+					LoadTriangle ( intersection.Triangle );
 					
 					//--------------------------- Calculating intersection point attributes ---------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
 						
@@ -1004,7 +931,7 @@ void main ( void )
                 
 					//-------------------------------- Calculating directional lighting -------------------------------
 					
-					#ifdef USE_TEXTURES
+					#ifdef RENDER_TEXTURES
 
 					color += primaryMaterial.Refraction * Lighting ( point, normal, reflection,
 					                                                 texcoord, primaryMaterial );					
@@ -1038,7 +965,7 @@ void main ( void )
 						
 						//------------------------- Calculating intersection point attributes -------------------------
 						
-						#ifdef USE_TEXTURES
+						#ifdef RENDER_TEXTURES
 
 						InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
 							
@@ -1050,7 +977,7 @@ void main ( void )
 						
 						//------------------------------ Calculating directional lighting -----------------------------
 						
-						#ifdef USE_TEXTURES
+						#ifdef RENDER_TEXTURES
 
 						color += primaryMaterial.Refraction * Lighting ( point, normal, reflection,
 						                                                 texcoord, refractMaterial );				

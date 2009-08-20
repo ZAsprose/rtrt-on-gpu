@@ -40,7 +40,7 @@ namespace Raytracing
 
 			//------------------------------- Building Uniform Grid -------------------------------
 
-			virtual void BuildGrid ( Volume *, vector < Triangle * > );
+			virtual void BuildGrid ( Volume *, vector <Triangle *> );
 
 			//-------------------------------- Getting Grid Params --------------------------------
 
