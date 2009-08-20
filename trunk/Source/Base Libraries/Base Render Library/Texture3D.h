@@ -64,9 +64,9 @@ namespace Render
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
-			Texture3D ( unsigned = 0 );
+			Texture3D ( unsigned = 0, unsigned = GL_TEXTURE_3D );
 						
-			Texture3D ( TextureData3D *, unsigned = 0 );
+			Texture3D ( TextureData3D *, unsigned = 0, unsigned = GL_TEXTURE_3D );
 
 			~Texture3D ( void );
 

@@ -36,21 +36,21 @@ namespace Render
 
 			//----------------------------------- Texture Size ------------------------------------
 			
-			int Width;
+			unsigned Width;
 			
-			int Height;
+			unsigned Height;
 
-			int Depth;
+			unsigned Depth;
 
 			//--------------------------------- Pixel Components ----------------------------------
 
-			int Components;
+			unsigned Components;
 		
 		public:
 
 			//----------------------------- Constructor and Destructor ----------------------------
 		
-			TextureData3D ( int, int, int, int = 3 );
+			TextureData3D ( unsigned, unsigned, unsigned, unsigned = 3 );
 			
 			~TextureData3D ( void );
 
@@ -62,41 +62,41 @@ namespace Render
 
 			//------------------------------------ Data Access ------------------------------------
 
-			template <class Type> Type& Pixel ( int );
+			template <class Type> Type& Pixel ( unsigned );
 
-			template <class Type> Type& Pixel ( int, int, int );
+			template <class Type> Type& Pixel ( unsigned, unsigned, unsigned );
 
 			//------------------------------------ Data Format ------------------------------------
 			
-			int GetPixelFormat ( void );
+			unsigned GetPixelFormat ( void );
 
-			int GetInternalFormat ( void );
+			unsigned GetInternalFormat ( void );
 
-			int GetType ( void ) { return GL_FLOAT; }
+			unsigned GetType ( void ) { return GL_FLOAT; }
 			
-			int GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) { return Width; }
 
-			int GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) { return Height; }
 
-			int GetDepth ( void ) { return Depth; }
+			unsigned GetDepth ( void ) { return Depth; }
 
-			int GetComponents ( void ) { return Components; }
+			unsigned GetComponents ( void ) { return Components; }
 
 			//------------------------------------ Data Upload ------------------------------------
 
-			void Upload ( int target = GL_TEXTURE_3D );
+			void Upload ( unsigned target = GL_TEXTURE_3D );
 	};
 
 	//------------------------------------- Template Functions ------------------------------------
 	
-	template <class Type> Type& TextureData3D :: Pixel ( int x )
+	template <class Type> Type& TextureData3D :: Pixel ( unsigned x )
 	{
-		return ( Type& ) Pixels [x * Components];
+		return ( Type& ) Pixels [ x * Components ];
 	}
 
-	template <class Type> Type& TextureData3D :: Pixel ( int x, int y, int z )
+	template <class Type> Type& TextureData3D :: Pixel ( unsigned x, unsigned y, unsigned z )
 	{
-		return ( Type& ) Pixels [( x + y * Width + z * Width * Height ) * Components];
+		return ( Type& ) Pixels [ ( x + y * Width + z * Width * Height ) * Components ];
 	}
 }
 

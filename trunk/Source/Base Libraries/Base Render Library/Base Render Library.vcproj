@@ -250,14 +250,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="Noise"
-				>
-				<File
-					RelativePath=".\Noise2D.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -351,14 +343,6 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="Noise"
-				>
-				<File
-					RelativePath=".\Noise2D.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 	</Files>

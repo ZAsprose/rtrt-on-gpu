@@ -650,39 +650,23 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 		vec3 texture = Unit;
 		
-		if ( 0 != material.Texture )
+		switch ( material.Texture )
 		{
-			if ( 1 == material.Texture )
-				texture = vec3 ( texture2D ( ImageTexture0,
-				                             fract ( texcoord * material.Scale ) ) );
-			else
-				if ( 2 == material.Texture )
-					texture = vec3 ( texture2D ( ImageTexture1,
-					                             fract ( texcoord * material.Scale ) ) );
-				else
-					if ( 3 == material.Texture )
-						texture = vec3 ( texture2D ( ImageTexture2,
-						                             fract ( texcoord * material.Scale ) ) );
-					else
-						if ( 4 == material.Texture )
-							texture = vec3 ( texture2D ( ImageTexture3,
-							                             fract ( texcoord * material.Scale ) ) );
-						else
-							if ( 5 == material.Texture )
-								texture = vec3 ( texture2D ( ImageTexture4,
-															 fract ( texcoord * material.Scale ) ) );
-							else
-								if ( 6 == material.Texture )
-									texture = vec3 ( texture2D ( ImageTexture5,
-																 fract ( texcoord * material.Scale ) ) );
-								else
-									if ( 7 == material.Texture )
-										texture = vec3 ( texture2D ( ImageTexture6,
-																	 fract ( texcoord * material.Scale ) ) );
-									else
-										if ( 8 == material.Texture )
-											texture = vec3 ( texture2D ( ImageTexture7,
-																		 fract ( texcoord * material.Scale ) ) );							                             
+			case 1: texture = vec3 ( texture2D ( ImageTexture0, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 2: texture = vec3 ( texture2D ( ImageTexture1, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 3: texture = vec3 ( texture2D ( ImageTexture2, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 4: texture = vec3 ( texture2D ( ImageTexture3, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 5: texture = vec3 ( texture2D ( ImageTexture4, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 6: texture = vec3 ( texture2D ( ImageTexture5, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 7: texture = vec3 ( texture2D ( ImageTexture6, fract ( texcoord * material.Scale ) ) ); break;
+
+			case 8: texture = vec3 ( texture2D ( ImageTexture7, fract ( texcoord * material.Scale ) ) ); break;
 		}
 		
 		color += material.Diffuse * texture * Lights [index].Diffuse * diffuse * shadow;

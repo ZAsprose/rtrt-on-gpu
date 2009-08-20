@@ -38,19 +38,19 @@ namespace Render
 
 			//----------------------------------- Texture Size ------------------------------------
 			
-			int Width;
+			unsigned Width;
 			
-			int Height;
+			unsigned Height;
 
 			//--------------------------------- Pixel Components ----------------------------------
 
-			int Components;
+			unsigned Components;
 		
 		public:
 
 			//----------------------------- Constructor and Destructor ----------------------------
 		
-			TextureData2D ( int, int, int = 3 );
+			TextureData2D ( unsigned, unsigned, unsigned = 3 );
 			
 			~TextureData2D ( void );
 
@@ -62,43 +62,43 @@ namespace Render
 
 			//------------------------------------ Data Access ------------------------------------
 
-			template <class Type> Type& Pixel ( int );
+			template <class Type> Type& Pixel ( unsigned );
 
-			template <class Type> Type& Pixel ( int, int );
+			template <class Type> Type& Pixel ( unsigned, unsigned );
 
 			//------------------------------------ Data Format ------------------------------------
 			
-			int GetPixelFormat ( void );
+			unsigned GetPixelFormat ( void );
 
-			int GetInternalFormat ( void );
+			unsigned GetInternalFormat ( void );
 
-			int GetType ( void ) { return GL_FLOAT; }
+			unsigned GetType ( void ) { return GL_FLOAT; }
 			
-			int GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) { return Width; }
 
-			int GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) { return Height; }
 
-			int GetComponents ( void ) { return Components; }
+			unsigned GetComponents ( void ) { return Components; }
 
 			//------------------------------------ Data Upload ------------------------------------
 
-			void Upload ( int target = GL_TEXTURE_2D );
+			void Upload ( unsigned target = GL_TEXTURE_2D );
 
-			//----------------------------- Load Data from TGA Format -----------------------------
+			//------------------------- Loading Texture Data from TGA File ------------------------
 
 			static TextureData2D * FromTGA ( const char * file );
 	};
 
 	//------------------------------------- Template Functions ------------------------------------
 	
-	template <class Type> Type& TextureData2D :: Pixel ( int x )
+	template <class Type> Type& TextureData2D :: Pixel ( unsigned x )
 	{
-		return ( Type& ) Pixels [x * Components];
+		return ( Type& ) Pixels [ x * Components ];
 	}
 
-	template <class Type> Type& TextureData2D :: Pixel ( int x, int y )
+	template <class Type> Type& TextureData2D :: Pixel ( unsigned x, unsigned y )
 	{
-		return ( Type& ) Pixels [( x + y * Width ) * Components];
+		return ( Type& ) Pixels [ ( x + y * Width ) * Components ];
 	}
 }
 

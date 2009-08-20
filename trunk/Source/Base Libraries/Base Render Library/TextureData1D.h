@@ -36,17 +36,17 @@ namespace Render
 
 			//----------------------------------- Texture Size ------------------------------------
 			
-			int Width;
+			unsigned Width;
 
 			//--------------------------------- Pixel Components ----------------------------------
 
-			int Components;
+			unsigned Components;
 		
 		public:
 
 			//----------------------------- Constructor and Destructor ----------------------------
 		
-			TextureData1D ( int, int = 3 );
+			TextureData1D ( unsigned, unsigned = 3 );
 			
 			~TextureData1D ( void );
 
@@ -58,30 +58,30 @@ namespace Render
 
 			//------------------------------------ Data Access ------------------------------------
 
-			template <class Type> Type& Pixel ( int );
+			template <class Type> Type& Pixel ( unsigned );
 
 			//------------------------------------ Data Format ------------------------------------
 			
-			int GetPixelFormat ( void );
+			unsigned GetPixelFormat ( void );
 
-			int GetInternalFormat ( void );
+			unsigned GetInternalFormat ( void );
 
-			int GetType ( void ) { return GL_FLOAT; }
+			unsigned GetType ( void ) { return GL_FLOAT; }
 			
-			int GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) { return Width; }
 
-			int GetComponents ( void ) { return Components; }
+			unsigned GetComponents ( void ) { return Components; }
 
 			//------------------------------------ Data Upload ------------------------------------
 
-			void Upload ( int target = GL_TEXTURE_1D );
+			void Upload ( unsigned target = GL_TEXTURE_1D );
 	};
 
 	//------------------------------------- Template Functions ------------------------------------
 	
-	template <class Type> Type& TextureData1D :: Pixel ( int x )
+	template <class Type> Type& TextureData1D :: Pixel ( unsigned x )
 	{
-		return ( Type& ) Pixels [x * Components];
+		return ( Type& ) Pixels [ x * Components ];
 	}
 }
 
