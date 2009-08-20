@@ -24,7 +24,7 @@ using namespace std;
 
 namespace Render
 {
-	//--------------------------------- Constructor and Destructor --------------------------------
+	//-------------------------------------- Constructor and Destructor -------------------------------------
 
 	ShaderManager :: ShaderManager ( void )
 	{
@@ -44,13 +44,17 @@ namespace Render
 		glDeleteProgram ( Program );
 	}
 
-	//-------------------------------------- Private Methods --------------------------------------
+	//------------------------------------------- Private Methods -------------------------------------------
 
-	bool ShaderManager :: Load ( int shader, const char ** filenames, int count )
+	bool ShaderManager :: Load ( int shader, const char ** filenames, int count, const char * prefix )
 	{
 		cout << "Loading shader source..." << endl;
 
-		char ** lines = new char * [count];		
+		char ** lines = new char * [count + 1];
+
+		//---------------------------------------------------------------------
+
+		lines [0] = NULL != prefix ? prefix : "";
 
 		//---------------------------------------------------------------------
 
@@ -103,7 +107,7 @@ namespace Render
 
 			//-----------------------------------------------------------------
 
-			lines [index] = source;
+			lines [index + 1] = source;
 			
 			file.close ( );
 		}
@@ -112,14 +116,14 @@ namespace Render
 
 		if ( loaded )
 		{
-			glShaderSource ( shader, count, ( const char ** ) lines, NULL );
+			glShaderSource ( shader, count + 1, ( const char ** ) lines, NULL );
 
 			cout << "SUCCESS!" << endl;
 		}
 
 		//---------------------------------------------------------------------
 
-		for ( int index = 0; index < count; index++ )
+		for ( int index = 0; index < count + 1; index++ )
 		{
 			delete [] lines [index];
 		}
@@ -187,34 +191,34 @@ namespace Render
 		return true;
 	}
 
-	//------------------------------------ Shaders Management -------------------------------------
+	//----------------------------------------- Shaders Management ------------------------------------------
 	
-	bool ShaderManager :: LoadVertexShader ( const char * filename )
+	bool ShaderManager :: LoadVertexShader ( const char * filename, const char * prefix )
 	{        
-		return LoadVertexShader ( &filename, 1 );
+		return LoadVertexShader ( &filename, 1, prefix );
 	}
 
-	bool ShaderManager :: LoadFragmentShader ( const char * filename )
+	bool ShaderManager :: LoadFragmentShader ( const char * filename, const char * prefix )
 	{
-		return LoadFragmentShader ( &filename, 1 );
+		return LoadFragmentShader ( &filename, 1, prefix );
 	}
 
-    bool ShaderManager :: LoadVertexShader ( const char ** filenames, int count )
+    bool ShaderManager :: LoadVertexShader ( const char ** filenames, int count, const char * prefix )
 	{
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
 		cout << "+++                           VERTEX SHADER                          +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( Vertex, filenames, count ) && Compile ( Vertex ) && Attach ( Vertex );
+		return Load ( Vertex, filenames, count, prefix ) && Compile ( Vertex ) && Attach ( Vertex );
 	}
 
-	bool ShaderManager :: LoadFragmentShader ( const char ** filenames, int count )
+	bool ShaderManager :: LoadFragmentShader ( const char ** filenames, int count, const char * prefix )
 	{
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
 		cout << "+++                          FRAGMENT SHADER                         +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
             
-		return Load ( Fragment, filenames, count ) && Compile ( Fragment ) && Attach ( Fragment );
+		return Load ( Fragment, filenames, count, prefix ) && Compile ( Fragment ) && Attach ( Fragment );
 	}
 
 	bool ShaderManager :: BuildProgram ( void )
@@ -280,7 +284,7 @@ namespace Render
 		glUseProgram ( 0 );
 	}
 
-	//----------------------------------- Input and Output Data -----------------------------------
+	//---------------------------------------- Input and Output Data ----------------------------------------
 
 	int ShaderManager :: GetUniformLocation ( char * name )
 	{
