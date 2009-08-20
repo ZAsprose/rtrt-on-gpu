@@ -22,13 +22,13 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	TextureData1D :: TextureData1D ( int width, int components )
+	TextureData1D :: TextureData1D ( unsigned width, unsigned components )
 	{
 		Width = width;
 
 		Components = components;
 
-		Pixels = new float [Width * Components];
+		Pixels = new float [ Width * Components ];
 
 		memset ( Pixels, 0, Width * Components );
 	}
@@ -40,7 +40,7 @@ namespace Render
 
 	//---------------------------------------- Data Upload ----------------------------------------
 
-	void TextureData1D :: Upload ( int target )
+	void TextureData1D :: Upload ( unsigned target )
 	{
 		glTexImage1D ( target,
 			           0,
@@ -54,7 +54,7 @@ namespace Render
 	
 	//--------------------------------------- Texture Format --------------------------------------
 	
-	int TextureData1D :: GetPixelFormat ( void )
+	unsigned TextureData1D :: GetPixelFormat ( void )
 	{
 		switch ( Components )
 		{
@@ -68,11 +68,11 @@ namespace Render
 				return GL_RGBA;
 					
 			default:
-				return -1;
+				return 0;
 		}
 	}
 
-	int TextureData1D :: GetInternalFormat ( void )
+	unsigned TextureData1D :: GetInternalFormat ( void )
 	{
 		switch ( Components )
 		{
@@ -86,7 +86,7 @@ namespace Render
 				return GL_RGBA32F_ARB;
 			
 			default:
-				return -1;
+				return 0;
 		}
 	}
 }

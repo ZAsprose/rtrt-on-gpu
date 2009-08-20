@@ -26,14 +26,14 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	Texture3D :: Texture3D ( unsigned unit )
+	Texture3D :: Texture3D ( unsigned unit, unsigned target )
 	{
-		Init ( GL_TEXTURE_3D, NULL, unit );
+		Init ( target, NULL, unit );
 	}
 				
-	Texture3D :: Texture3D ( TextureData3D * data, unsigned unit )
+	Texture3D :: Texture3D ( TextureData3D * data, unsigned unit, unsigned target )
 	{
-		Init ( GL_TEXTURE_3D, data, unit );
+		Init ( target, data, unit );
 	}
 	
 	Texture3D :: ~Texture3D ( void )

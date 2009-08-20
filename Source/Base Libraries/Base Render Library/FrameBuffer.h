@@ -50,7 +50,7 @@ namespace Render
 
 			//--------------------------------- OpenGL Identifier ---------------------------------
 			
-			static const unsigned Target = GL_FRAMEBUFFER_EXT;
+			static const int Target = GL_FRAMEBUFFER_EXT;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 
@@ -70,7 +70,7 @@ namespace Render
 
 			//------------------------------------ Buffer Info ------------------------------------
 			
-			int GetHandle ( void ) const { return Handle; }
+			unsigned GetHandle ( void ) const { return Handle; }
 	};
 }
 

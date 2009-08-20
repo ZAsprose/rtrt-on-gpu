@@ -12,8 +12,6 @@
 
 #include "Texture2D.h"
 
-#include "Noise2D.h"
-
 #include "Mouse.h"
 
 #include "Keyboard.h"
@@ -178,12 +176,6 @@ int main ( void )
 	positionsTexture = new Texture2D ( photonsTextureData, 0 , GL_TEXTURE_RECTANGLE_ARB );
 
 	positionsTexture->Setup ( );
-
-	Noise2D * noise = new Noise2D ( 16 );
-
-	noiseTexture = new Texture2D ( noise->BuildData ( 512, 512 ), 1 , GL_TEXTURE_2D );
-
-	noiseTexture->Setup ( );
 
 	//---------------------------------------------------------------------------------------------
 

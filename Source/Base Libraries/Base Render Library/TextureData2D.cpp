@@ -22,7 +22,7 @@ namespace Render
 {
 	//-------------------------------- Constructor and Destructor ---------------------------------
 
-	TextureData2D :: TextureData2D ( int width, int height, int components )
+	TextureData2D :: TextureData2D ( unsigned width, unsigned height, unsigned components )
 	{
 		Width = width;
 
@@ -30,7 +30,7 @@ namespace Render
 
 		Components = components;
 
-		Pixels = new float [Width * Height * Components];
+		Pixels = new float [ Width * Height * Components ];
 
 		memset ( Pixels, 0, Width * Height * Components );
 	}
@@ -42,7 +42,7 @@ namespace Render
 
 	//---------------------------------------- Data Upload ----------------------------------------
 
-	void TextureData2D :: Upload ( int target )
+	void TextureData2D :: Upload ( unsigned target )
 	{
 		glTexImage2D ( target,
 			           0,
@@ -57,7 +57,7 @@ namespace Render
 	
 	//--------------------------------------- Texture Format --------------------------------------
 	
-	int TextureData2D :: GetPixelFormat ( void )
+	unsigned TextureData2D :: GetPixelFormat ( void )
 	{
 		switch ( Components )
 		{
@@ -71,11 +71,11 @@ namespace Render
 				return GL_RGBA;
 					
 			default:
-				return -1;
+				return 0;
 		}
 	}
 
-	int TextureData2D :: GetInternalFormat ( void )
+	unsigned TextureData2D :: GetInternalFormat ( void )
 	{
 		switch ( Components )
 		{
@@ -89,11 +89,11 @@ namespace Render
 				return GL_RGBA32F_ARB;
 			
 			default:
-				return -1;
+				return 0;
 		}
 	}
 
-	//--------------------------------- Load Data from TGA Format --------------------------------
+	//----------------------------- Loading Texture Data from TGA File ----------------------------
 
 	TextureData2D * TextureData2D :: FromTGA ( const char * file )
 	{
