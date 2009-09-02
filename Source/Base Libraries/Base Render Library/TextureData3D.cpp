@@ -43,7 +43,7 @@ namespace Render
 		delete [] Pixels;
 	}
 
-	//---------------------------------------- Data Upload ----------------------------------------
+	//--------------------------------- Uploading Data to OpenGL ----------------------------------
 
 	void TextureData3D :: Upload ( unsigned target )
 	{
@@ -59,23 +59,19 @@ namespace Render
 					   Pixels );
 	}
 	
-	//--------------------------------------- Texture Format --------------------------------------
+	//------------------------------------ Getting Data Format ------------------------------------
 	
 	unsigned TextureData3D :: GetPixelFormat ( void )
 	{
 		switch ( Components )
 		{
-			case 1:
-				return GL_ALPHA;
+			case 1: return GL_ALPHA;
 
-			case 3:
-				return GL_RGB;
+			case 3: return GL_RGB;
 					
-			case 4:
-				return GL_RGBA;
+			case 4: return GL_RGBA;
 					
-			default:
-				return 0;
+			default: return 0;
 		}
 	}
 
@@ -83,17 +79,13 @@ namespace Render
 	{
 		switch ( Components )
 		{
-			case 1:
-				return GL_ALPHA32F_ARB;
+			case 1: return GL_ALPHA32F_ARB;
 
-			case 3:
-				return GL_RGB32F_ARB;
+			case 3: return GL_RGB32F_ARB;
 			
-			case 4:
-				return GL_RGBA32F_ARB;
+			case 4: return GL_RGBA32F_ARB;
 			
-			default:
-				return 0;
+			default: return 0;
 		}
 	}
 }

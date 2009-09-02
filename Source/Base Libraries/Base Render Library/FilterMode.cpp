@@ -27,7 +27,7 @@ namespace Render
 
 	//---------------------------------------- Constructor ----------------------------------------
 
-	FilterMode :: FilterMode ( int minification, int magnification )
+	FilterMode :: FilterMode ( unsigned minification, unsigned magnification )
 	{
 		Minification = minification;
 
@@ -36,7 +36,7 @@ namespace Render
 
 	//---------------------------------------- Setup Mode -----------------------------------------
 			
-	void FilterMode :: Setup ( int target )
+	void FilterMode :: Setup ( unsigned target )
 	{
 		glTexParameteri( target, GL_TEXTURE_MIN_FILTER, Minification );
 				

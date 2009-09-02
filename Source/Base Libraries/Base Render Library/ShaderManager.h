@@ -44,19 +44,19 @@ namespace Render
 
 			//---------------------------------- Private Fields -----------------------------------
 
-			int Vertex;
+			unsigned Vertex;
 
-			int Fragment;
+			unsigned Fragment;
 
-			int Program;
+			unsigned Program;
 
 			//---------------------------------- Private Methods ----------------------------------
 
-			bool Load ( int, const char **, int, const char * = "" );
+			bool Load ( unsigned, const char **, int, const char * = "" );
 
-			bool Compile ( int );
+			bool Compile ( unsigned );
 
-			bool Attach ( int );
+			bool Attach ( unsigned );
 
 		public:
 
@@ -75,6 +75,8 @@ namespace Render
 			bool LoadVertexShader ( const char **, int, const char * = "" );
 
 			bool LoadFragmentShader ( const char **, int, const char * = "" );
+
+			//--------------------------------- Program Management --------------------------------
 
 			bool BuildProgram ( void );
 
@@ -157,6 +159,14 @@ namespace Render
 			bool SetAttributeVector ( const char *, const Vector4D& );
 
 			bool SetAttributeVector ( int, const Vector4D& );
+
+			//------------------------------------- Shader Manager Info -------------------------------------
+
+			unsigned GetVertexHandle ( void ) const { return Vertex; }
+
+			unsigned GetFragmentHandle ( void ) const { return Fragment; }
+
+			unsigned GetProgramandle ( void ) const { return Program; }
 	};
 }
 

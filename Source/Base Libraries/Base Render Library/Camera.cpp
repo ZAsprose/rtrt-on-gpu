@@ -142,12 +142,12 @@ namespace Render
 
 	//------------------------------------- Getting Settings --------------------------------------
 	
-	Vector2D Camera :: GetScreenScale ( void )
+	Vector2D Camera :: GetScreenScale ( void ) const
 	{
 		return Vector2D ( tanf ( Aspect * FieldOfView / 2.0F ), tanf ( FieldOfView / 2.0F ) );
 	}
 
-	Vector2D Camera :: GetPixelSize ( void )
+	Vector2D Camera :: GetPixelSize ( void ) const
 	{
 		return Vector2D ( 2.0F / Width, 2.0F / Height );
 	}
