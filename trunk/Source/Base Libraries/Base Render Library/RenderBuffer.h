@@ -71,7 +71,7 @@ namespace Render
 
 			//------------------------------------ Buffer Info ------------------------------------
 			
-			int GetHandle ( void ) const { return Handle; }
+			unsigned GetHandle ( void ) const { return Handle; }
 	};
 }
 

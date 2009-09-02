@@ -38,17 +38,17 @@ namespace Render
 
 			//------------------------------------ Constructor ------------------------------------
 		
-			int Minification;
+			unsigned Minification;
 			
-			int Magnification;
+			unsigned Magnification;
 
 			//------------------------------------ Constructor ------------------------------------		
 
-			FilterMode ( int = GL_NEAREST, int = GL_NEAREST );
+			FilterMode ( unsigned = GL_NEAREST, unsigned = GL_NEAREST );
 
 			//-------------------------------- Setting Filter Mode --------------------------------
 			
-			void Setup ( int );
+			void Setup ( unsigned );
 	};
 }
 

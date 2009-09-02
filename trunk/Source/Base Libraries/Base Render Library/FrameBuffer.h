@@ -50,7 +50,7 @@ namespace Render
 
 			//--------------------------------- OpenGL Identifier ---------------------------------
 			
-			static const int Target = GL_FRAMEBUFFER_EXT;
+			static const unsigned Target = GL_FRAMEBUFFER_EXT;
 
 			//----------------------------- Constructor and Destructor ----------------------------
 

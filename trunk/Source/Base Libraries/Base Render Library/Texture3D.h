@@ -42,15 +42,15 @@ namespace Render
 			
 			unsigned Target;
 
-			//------------------------------------ Texture Init -----------------------------------
+			//----------------------------------- Texture Unit ------------------------------------
+
+			unsigned Unit;
+
+			//----------------------------------- Texture Init ------------------------------------
 
 			void Init ( unsigned, TextureData3D *, unsigned );
 		
 		public:
-
-			//----------------------------------- Texture Unit ------------------------------------
-
-			unsigned Unit;
 
 			//----------------------------------- Texture Data ------------------------------------
 
@@ -80,7 +80,7 @@ namespace Render
 
 			void Unbind ( void );
 
-			//------------------------------------ Texture Info -----------------------------------
+			//-------------------------------- Getting Texture Info --------------------------------
 			
 			unsigned GetHandle ( void ) const { return Handle; }
 

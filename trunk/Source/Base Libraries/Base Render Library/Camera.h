@@ -97,35 +97,35 @@ namespace Render
 
 			void SetViewport ( unsigned = 512, unsigned = 512 );
 
-			void SetFrustum ( float = ONEPI / 3.0F, float = 0.01F, float = 1000000.0F );
+			void SetFrustum ( float = ONEPI / 3.0F, float = 1E-3F, float = 1E6F );
 
 			//--------------------------------- Getting Settings ----------------------------------
 
-			unsigned GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) const { return Width; }
 
-			unsigned GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) const { return Height; }
 
-			float GetFieldOfView ( void ) { return FieldOfView; }
+			float GetFieldOfView ( void ) const { return FieldOfView; }
 
-			float GetNearPlane ( void ) { return NearPlane; }
+			float GetNearPlane ( void ) const { return NearPlane; }
 
-			float GetFarPlane ( void ) { return FarPlane; }
+			float GetFarPlane ( void ) const { return FarPlane; }
 
-			const Vector3D& GetPosition ( void ) { return Position; }
+			const Vector3D& GetPosition ( void ) const { return Position; }
 
-			const Vector3D& GetSide ( void ) { return Side; }
+			const Vector3D& GetSide ( void ) const { return Side; }
 
-			const Vector3D& GetUp ( void ) { return Up; }
+			const Vector3D& GetUp ( void ) const { return Up; }
 
-			const Vector3D& GetView ( void ) { return View; }
+			const Vector3D& GetView ( void ) const { return View; }
 
-			const Matrix3D& GetWorldToCamera ( void ) { return WorldToCamera; }
+			const Matrix3D& GetWorldToCamera ( void ) const { return WorldToCamera; }
 
-			const Matrix3D& GetCameraToWorld ( void ) { return CameraToWorld; }
+			const Matrix3D& GetCameraToWorld ( void ) const { return CameraToWorld; }
 
-			Vector2D GetScreenScale ( void );
+			Vector2D GetScreenScale ( void ) const;
 
-			Vector2D GetPixelSize ( void );
+			Vector2D GetPixelSize ( void ) const;
 	};
 }
 

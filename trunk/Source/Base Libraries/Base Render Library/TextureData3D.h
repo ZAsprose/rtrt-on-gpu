@@ -54,19 +54,23 @@ namespace Render
 			
 			~TextureData3D ( void );
 
-			//---------------------------------- Type Conversion ----------------------------------
+			//---------------------- Converting Data to Arrays Used in OpenGL ---------------------
 
 			operator float * ( void ) { return Pixels; }
 			
 			operator const float * ( void ) const { return Pixels; }
 
-			//------------------------------------ Data Access ------------------------------------
+			//----------------------------- Accessing to Pixels Array -----------------------------
 
-			template <class Type> Type& Pixel ( unsigned );
+			template <class TYPE> TYPE& Pixel ( unsigned );
 
-			template <class Type> Type& Pixel ( unsigned, unsigned, unsigned );
+			template <class TYPE> TYPE& Pixel ( unsigned, unsigned, unsigned );
 
-			//------------------------------------ Data Format ------------------------------------
+			//----------------------------- Uploading Data to OpenGL ------------------------------
+
+			void Upload ( unsigned target = GL_TEXTURE_3D );
+
+			//-------------------------------- Getting Data Format --------------------------------
 			
 			unsigned GetPixelFormat ( void );
 
@@ -81,22 +85,18 @@ namespace Render
 			unsigned GetDepth ( void ) { return Depth; }
 
 			unsigned GetComponents ( void ) { return Components; }
-
-			//------------------------------------ Data Upload ------------------------------------
-
-			void Upload ( unsigned target = GL_TEXTURE_3D );
 	};
 
-	//------------------------------------- Template Functions ------------------------------------
+	//---------------------------- Implementation of Template Functions ---------------------------
 	
-	template <class Type> Type& TextureData3D :: Pixel ( unsigned x )
+	template <class TYPE> TYPE& TextureData3D :: Pixel ( unsigned x )
 	{
-		return ( Type& ) Pixels [ x * Components ];
+		return ( TYPE& ) Pixels [ x * Components ];
 	}
 
-	template <class Type> Type& TextureData3D :: Pixel ( unsigned x, unsigned y, unsigned z )
+	template <class TYPE> TYPE& TextureData3D :: Pixel ( unsigned x, unsigned y, unsigned z )
 	{
-		return ( Type& ) Pixels [ ( x + y * Width + z * Width * Height ) * Components ];
+		return ( TYPE& ) Pixels [ ( x + y * Width + z * Width * Height ) * Components ];
 	}
 }
 

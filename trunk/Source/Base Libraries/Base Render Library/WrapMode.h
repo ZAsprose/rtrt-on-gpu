@@ -38,19 +38,19 @@ namespace Render
 
 			//----------------------------------- Wrap Settings -----------------------------------
 			
-			int WrapS;
+			unsigned WrapS;
 		
-			int WrapT;
+			unsigned WrapT;
 			
-			int WrapR;
+			unsigned WrapR;
 
 			//------------------------------------ Constructor ------------------------------------
 	
-			WrapMode ( int = GL_CLAMP, int = GL_CLAMP, int = GL_CLAMP );
+			WrapMode ( unsigned = GL_CLAMP, unsigned = GL_CLAMP, unsigned = GL_CLAMP );
 
 			//--------------------------------- Setting Wrap Mode ---------------------------------
 			
-			void Setup ( int );
+			void Setup ( unsigned );
 	};
 }
 

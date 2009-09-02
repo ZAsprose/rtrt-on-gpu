@@ -46,7 +46,7 @@ namespace Render
 
 	//------------------------------------------- Private Methods -------------------------------------------
 
-	bool ShaderManager :: Load ( int shader, const char ** filenames, int count, const char * prefix )
+	bool ShaderManager :: Load ( unsigned shader, const char ** filenames, int count, const char * prefix )
 	{
 		cout << "Loading shader source..." << endl;
 
@@ -133,7 +133,7 @@ namespace Render
 		return loaded;
 	}
 
-	bool ShaderManager :: Compile ( int shader )
+	bool ShaderManager :: Compile ( unsigned shader )
 	{
     	cout << "Compiling shader..." << endl;            		
 
@@ -182,7 +182,7 @@ namespace Render
 		}           
 	}
 
-	bool ShaderManager :: Attach ( int shader )
+	bool ShaderManager :: Attach ( unsigned shader )
 	{
 		cout << "Attaching shader to program..." << endl;
 
@@ -220,6 +220,8 @@ namespace Render
             
 		return Load ( Fragment, filenames, count, prefix ) && Compile ( Fragment ) && Attach ( Fragment );
 	}
+
+	//----------------------------------------- Program Management ------------------------------------------
 
 	bool ShaderManager :: BuildProgram ( void )
 	{

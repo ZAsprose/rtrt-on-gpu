@@ -28,7 +28,7 @@ namespace Render
 
 	//---------------------------------------- Constructor ----------------------------------------
 
-	WrapMode :: WrapMode ( int s, int t, int r )
+	WrapMode :: WrapMode ( unsigned s, unsigned t, unsigned r )
 	{
 		WrapS = s;
 
@@ -39,7 +39,7 @@ namespace Render
 
 	//----------------------------------------- Setup Mode ----------------------------------------
 			
-	void WrapMode :: Setup ( int target )
+	void WrapMode :: Setup ( unsigned target )
 	{
 		glTexParameteri ( target, GL_TEXTURE_WRAP_S, WrapS );
 			
