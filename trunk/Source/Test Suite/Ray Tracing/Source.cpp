@@ -36,7 +36,7 @@ Mouse mouse ( 0.01F );
 
 Keyboard keyboard ( 0.01F );
 
-bool Mode;
+bool Mode = true;
 
 bool Recompile;
 
@@ -96,7 +96,7 @@ int main ( void )
 
 	//------------------------------------ Init OpenGl and GLFW -----------------------------------
 
-	glfwInit();
+	glfwInit ( );
 
 	if( !glfwOpenWindow( Width, Height, 0, 0, 0, 0, 16, 0, GLFW_WINDOW ) )
     {
@@ -118,6 +118,16 @@ int main ( void )
 	Camera * camera = new Camera ( Vector3D ( -2.0F, 0.0F, 0.0F ),
 		                           Vector3D ( ONEPI / 2.0F, ONEPI / 2.0F, 0.0F ) );
 
+	//camera->Position = Vector3D (	0.0241486F,		0.392294F,		-0.0682123F );
+	//camera->View = Vector3D (		-0.926735F,		0.375078F,		0.0218659F );
+	//camera->Up = Vector3D (			0.0362941F,		0.0314469F,		0.998846F );
+	//camera->Side = Vector3D (		-0.373961F,		-0.926458F,		0.0427565F );
+
+	//cout << Length(camera->Position) << endl;
+	//cout << Length(camera->View) << endl;
+	//cout << Length(camera->Up) << endl;
+	//cout << Length(camera->Side) << endl;
+
 	camera->SetViewport ( Width, Height );
 
 	camera->SetFrustum ( );
@@ -133,7 +143,7 @@ int main ( void )
 	shaderManager->BuildProgram ( );
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
-
+	
 	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/House/House.obj" );
 
 	OBJModel * model1 = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Figurine/Figurine.obj" );
@@ -152,7 +162,7 @@ int main ( void )
 
 	for ( int index = 0; index < model->Groups.size ( ); index++ )
 	{
-		meshes [index] = new Mesh ( model, index, new Transform ( ), new Material ( ) );
+		meshes [index] = new Mesh ( model, index, new Transform ( ) );
 
 		meshes [index]->Transformation->SetScale ( Vector3D ( scale, scale, scale ) );
 
@@ -162,7 +172,7 @@ int main ( void )
 	}
 
 	{
-		meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ), new Material ( ) );
+		meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ) );
 
 		meshes [model->Groups.size ( )]->Transformation->SetScale ( Vector3D ( 1.0F / 1000.0F, 1.0F / 1000.0F, 1.0F / 1000.0F ) );
 
@@ -172,7 +182,7 @@ int main ( void )
 	}
 
 	{
-		meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ), new Material ( ) );
+		meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ) );
 
 		meshes [model->Groups.size ( ) + 1]->Transformation->SetScale ( Vector3D ( 1.0F / 300.0F, 1.0F / 300.0F, 1.0F / 300.0F ) );
 
@@ -182,53 +192,46 @@ int main ( void )
 	}
 
 	/*
-	long start = clock ( );
-	//C:/export/Acura_RSX_All_A_Mat.obj
-	OBJModel * model = OBJLoader :: LoadOBJ( "H:/Projects/rtrt-on-gpu/Support/Models/Lexus/Lexus.obj" );
-
-	long time = clock ( ) - start;
-
-	cout << "Loading Time: " << time << endl;
-
+	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Lexus/Lexus.obj" );
+	
 	Vector3D minimum = model->GetMinimum ( ); 
-
+	
 	Vector3D maximum = model->GetMaximum ( );
-
+	
 	Vector3D size = maximum - minimum;
-
+	
 	float scale = 2.0F / max ( size.X, max ( size.Y, size.Z ) );
-
+	
 	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
-
+	
 	for ( int index = 0; index < model->Groups.size ( ); index++ )
 	{
 		meshes [index] = new Mesh ( model, index, new Transform ( ), new Material ( ) );
-
+		
 		meshes [index]->Transformation->SetScale ( Vector3D ( scale, scale, scale ) );
-
+		
 		meshes [index]->Transformation->SetTranslation ( -scale * ( minimum + maximum ) / 2.0F );
-
+		
 		meshes [index]->Tesselate ( );
 	}
 	*/
 
-
 	//-------------------------- Adding All Textures to Texture Manager ---------------------------
 
-	TextureManager * textureManager = new TextureManager ( );
+	//TextureManager * textureManager = new TextureManager ( );
 
-	for ( int index = 0; index < model->Textures.size ( ); index++ )
-	{
-		model->Textures [index]->Texture->Unit = index;
+	//for ( int index = 0; index < model->Textures.size ( ); index++ )
+	//{
+	//	//model->Textures [index]->Texture->GetUnit ( ) = index;
 
-		model->Textures [index]->Texture->FilterMode.Magnification = GL_LINEAR;
+	//	model->Textures [index]->Texture->FilterMode.Magnification = GL_LINEAR;
 
-		model->Textures [index]->Texture->FilterMode.Minification = GL_LINEAR;
+	//	model->Textures [index]->Texture->FilterMode.Minification = GL_LINEAR;
 
-		textureManager->Textures.push_back ( model->Textures [index]->Texture );
-	}
+	//	textureManager->Textures.push_back ( model->Textures [index]->Texture );
+	//}
 
-	textureManager->SetupTextures ( );
+	//textureManager->SetupTextures ( );
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 	
@@ -246,11 +249,11 @@ int main ( void )
 	scene->Primitives.push_back ( meshes [model->Groups.size ( ) + 1] );
 
 
-	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.5F, 1.5F ) ) );
+	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.0F, 0.5F ) ) );
 
-	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.5F, 0.0F, 1.5F ) ) );
+	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.0F, 0.0F, 0.5F ) ) );
 
-	scene->BuildGrid ( 128, 128, 128 );
+	scene->BuildGrid ( 64, 64, 64 );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
@@ -264,7 +267,7 @@ int main ( void )
 
 	staticData->SetShaderData ( shaderManager );
 
-	textureManager->SetShaderData ( shaderManager );
+	//textureManager->SetShaderData ( shaderManager );
 
 	shaderManager->Unbind ( );
 
@@ -286,7 +289,7 @@ int main ( void )
 
 			staticData->SetShaderData ( shaderManager );
 
-			textureManager->SetShaderData ( shaderManager );
+			//textureManager->SetShaderData ( shaderManager );
 
 			shaderManager->Unbind ( );
 
@@ -295,7 +298,17 @@ int main ( void )
 
 		if ( Info )
 		{
-			cout << "Position = " << camera->GetPosition ( );
+			//cout << "------------------------------------------" << endl;
+			//cout << "Position = " << camera->GetPosition ( ) << endl;
+			//cout << "View = " << camera->View << endl;
+			//cout << "Up = " << camera->Up << endl;
+			//cout << "Side = " << camera->Side << endl;
+
+			//cout << "------------------------------------------" << endl;
+			//cout << "Position = " << camera->GetPosition ( ) << endl;
+			//cout << "View = " << camera->View << endl;
+			//cout << "Up = " << camera->Up << endl;
+			//cout << "Side = " << camera->Side << endl;
 
 			Info = false;
 		}

@@ -54,7 +54,7 @@ namespace Render
 	
 	//------------------------------------ Getting Data Format ------------------------------------
 	
-	unsigned TextureData1D :: GetPixelFormat ( void )
+	unsigned TextureData1D :: GetPixelFormat ( void ) const
 	{
 		switch ( Components )
 		{
@@ -68,7 +68,7 @@ namespace Render
 		}
 	}
 
-	unsigned TextureData1D :: GetInternalFormat ( void )
+	unsigned TextureData1D :: GetInternalFormat ( void ) const
 	{
 		switch ( Components )
 		{

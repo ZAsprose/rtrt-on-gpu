@@ -1,6 +1,20 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+*/
 
 #pragma once
 
@@ -12,6 +26,8 @@
 
 #include "Texture2D.h"
 
+#include "Material.h"
+
 #include <vector>
 
 using namespace std;
@@ -20,24 +36,22 @@ using namespace std;
 
 namespace Raytracing
 {
-	//----------------------------------- MTL Material Texture ------------------------------------
-
 	struct MTLTexture
 	{
 		//----------------------------- File Name and OpenGL Texture ------------------------------
 
 		char Name [LENGTH];
 
-		Texture2D * Texture;
+		TextureData2D * Data;
 
 		//------------------------------- Constructor and Destructor ------------------------------
 		
-		MTLTexture ( char [], Texture2D * = NULL );
+		MTLTexture ( char [], TextureData2D * = NULL );
 
 		~MTLTexture ( void );
 	};
 
-	//---------------------------------- MTL Material Properties ----------------------------------
+	//---------------------------------------------------------------------------------------------
 
 	struct MTLMaterial
 	{
@@ -45,49 +59,16 @@ namespace Raytracing
 
 		char Name [LENGTH];
 
-		//------------------------------- Phong Reflectance Coeffs --------------------------------
+		//---------------------------------- Material Properties ----------------------------------
 
-		Vector3D Ambient;
-
-		Vector3D Diffuse;
-
-		Vector3D Specular;
-
-		float Shininess;
-
-		//------------------------ Transmission Filter and Optical Density ------------------------
-
-		Vector3D Transmission;
-
-		float Density;
-
-		//----------------------------------- Material Dissolve -----------------------------------
-			
-		float Dissolve;
-
-		//---------------------------- Illumination Model for Material ----------------------------
-
-		int Model;
-
-		//------------------------------------ Raster Texture -------------------------------------
-
-		Texture2D * Texture;
+		Material * Properties;
 
 		//-------------------------------------- Constructor --------------------------------------
 		
-		MTLMaterial ( char [],
-			          const Vector3D& = Vector3D ( 0.2F, 0.2F, 0.2F ),
-					  const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
-					  const Vector3D& = Vector3D ( 0.8F, 0.8F, 0.8F ),
-					  float = 32.0F,
-					  const Vector3D& = Vector3D :: Zero,
-					  float = 1.5F,
-					  float = 1.0F,
-					  int = 2,
-					  Texture2D * = NULL );
+		MTLMaterial ( char [], Material * = NULL );
 	};
 
-	//----------------------------------- OBJ Model Face Element ----------------------------------
+	//---------------------------------------------------------------------------------------------
 
 	struct OBJFace
 	{
@@ -95,57 +76,57 @@ namespace Raytracing
 
 		int Normal [3];
 
-		int Texture [3];
+		int TexCoords [3];
 	};
 
-	//-------------------- OBJ Model Group ( Set of faces with one material ) ---------------------
+	//---------------------------------------------------------------------------------------------
 
 	struct OBJGroup
 	{
-		//---------------------------------- Material Properties ----------------------------------
+		//----------------------------- Material Properties and Name ------------------------------
 
 		MTLMaterial * Material;
 
-		//-------------------------------------- Group Faces --------------------------------------
+		//-------------------------------- List of Faces in Group ---------------------------------
 		
-		vector < OBJFace > Faces;
+		vector <OBJFace> Faces;
 
-		//------------------------------- Constructor and Destructor ------------------------------
+		//------------------------------ Constructor and Destructor -------------------------------
 		
 		OBJGroup ( MTLMaterial * = NULL );
 
 		~OBJGroup ( void );
 	};
 
-	//----------------------------------------- OBJ Model -----------------------------------------
+	//---------------------------------------------------------------------------------------------
 
 	struct OBJModel
 	{
-		//-------------------------------------- Data Arrays --------------------------------------
+		//------------------------------ Lists of Vertex Attributes -------------------------------
 
-		vector < Vector3D > Vertices;
+		vector <Vector3D> Vertices;
 
-		vector < Vector3D > Normals;
+		vector <Vector3D> Normals;
 
-		vector < Vector2D > TexCoords;
+		vector <Vector2D> TexCoords;
 
-		//------------------------------------ Groups of Faces ------------------------------------
+		//---------------- List of Face Groups ( Sets of Faces with Same Material ) ---------------
 
-		vector < OBJGroup * > Groups;
+		vector <OBJGroup *> Groups;
 
-		//--------------------------- Material Properties from MTL File ---------------------------
+		//------------------------------ List of Material Properties ------------------------------
 
-		vector < MTLMaterial * > Materials;
+		vector <MTLMaterial *> Materials;
 
-		//----------------------------- Raster Textures from MTL File -----------------------------
+		//-------------------------------- List of Raster Textures --------------------------------
 
-		vector < MTLTexture * > Textures;
+		vector <MTLTexture *> Textures;
 
 		//-------------------------------------- Destructor ---------------------------------------
 		
 		~OBJModel ( void );
 
-		//----------------------------------- Support Functions -----------------------------------
+		//----------------------------------- Useful Functions ------------------------------------
 		
 		Vector3D GetMinimum ( void ) const;
 		

@@ -72,19 +72,19 @@ namespace Render
 
 			//-------------------------------- Getting Data Format --------------------------------
 			
-			unsigned GetPixelFormat ( void );
+			unsigned GetPixelFormat ( void ) const;
 
-			unsigned GetInternalFormat ( void );
+			unsigned GetInternalFormat ( void ) const;
 
-			unsigned GetType ( void ) { return GL_FLOAT; }
+			unsigned GetType ( void ) const { return GL_FLOAT; }
 			
-			unsigned GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) const { return Width; }
 
-			unsigned GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) const { return Height; }
 
-			unsigned GetDepth ( void ) { return Depth; }
+			unsigned GetDepth ( void ) const { return Depth; }
 
-			unsigned GetComponents ( void ) { return Components; }
+			unsigned GetComponents ( void ) const { return Components; }
 	};
 
 	//---------------------------- Implementation of Template Functions ---------------------------

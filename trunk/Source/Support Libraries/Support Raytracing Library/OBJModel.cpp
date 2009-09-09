@@ -1,66 +1,49 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+*/
 
 #include "OBJModel.h"
 
 namespace Raytracing
 {
-	//-------------------------------- Constructors and Destructors -------------------------------
+	//-------------------------------- MTLTexture Class Subroutines -------------------------------
 
-	MTLTexture :: MTLTexture ( char name [], Texture2D * texture )
+	MTLTexture :: MTLTexture ( char name [], TextureData2D * data )
 	{
 		memcpy ( Name, name, LENGTH );
 
-		Texture = texture;
+		Data = data;
 	}
 	
 	MTLTexture :: ~MTLTexture ( void )
 	{
-		delete Texture;
+		delete Data;
 	}
 
-	MTLMaterial :: MTLMaterial ( char name [],
-		                         const Vector3D& ambient,
-								 const Vector3D& diffuse,
-								 const Vector3D& specular,
-								 float shininess,
-								 const Vector3D& transmission,
-								 float density,
-								 float dissolve,
-								 int model,
-								 Texture2D * texture )
+	//------------------------------- MTLMaterial Class Subroutines -------------------------------
+
+	MTLMaterial :: MTLMaterial ( char name [], Material * properties )
 	{
 		memcpy ( Name, name, LENGTH );
-
-		//---------------------------------------------------------------------
-
-		Ambient = ambient;
-
-		Diffuse = diffuse;
-
-		Specular = specular;
-
-		Shininess = shininess;
-
-		//---------------------------------------------------------------------
 		
-		Transmission = transmission;
-
-		Density = density;
-
-		//---------------------------------------------------------------------
-			
-		Dissolve = dissolve;
-
-		//---------------------------------------------------------------------
-
-		Model = model;
-
-		//---------------------------------------------------------------------
-		
-		Texture = texture;
+		Properties = properties;
 	}
+
+	//--------------------------------- OBJGroup Class Subroutines --------------------------------
 
 	OBJGroup :: OBJGroup ( MTLMaterial * material )
 	{
@@ -71,6 +54,8 @@ namespace Raytracing
 	{
 		delete Material;
 	}
+
+	//--------------------------------- OBJModel Class Subroutines --------------------------------
 
 	OBJModel :: ~OBJModel ( void )
 	{

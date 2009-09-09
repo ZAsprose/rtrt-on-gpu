@@ -10,19 +10,19 @@
 
 #define RENDER_REFRACTIONS
 
-#define RENDER_DISSOLVE
+#define RENDER_DISSOLVE_
 
-#define RENDER_TEXTURES
+#define RENDER_TEXTURES_
 
 //---------------------------------------------------------------------------------------------------------------------
-
-#define USE_PROXIMITY_GRID_
 
 #define USE_TRIANGLE_NORMALS
 
+#define USE_PROXIMITY_GRID
+
 //---------------------------------------------------------------------------------------------------------------------
 
-#define LIGHTING_TWO_SIDED
+#define LIGHTING_ATTENUATION_
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ struct STriangle
 	SVertex B;
 	
 	SVertex C;
-	
+
 	vec3 Normal;
     
     float Offset;
@@ -121,7 +121,7 @@ struct SMaterial
 	float Density;
 	
 	float Dissolve;
-	
+
 	vec2 Scale;
 	
 	int Texture;
@@ -131,13 +131,15 @@ struct SMaterial
 
 struct SLight
 {
+	vec3 Position;
+
 	vec3 Ambient;
 	
 	vec3 Diffuse;
 	
 	vec3 Specular;
 	
-	vec3 Position;
+	vec3 Attenuation;
 };
 
 /**********************************************************************************************************************/
@@ -232,13 +234,15 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define InsideBox( point ) ( all ( lessThan ( point, Grid.Maximum ) ) && all ( greaterThan ( point, Grid.Minimum ) ) )
-
-//---------------------------------------------------------------------------------------------------------------------
-
 #define WorldToVoxel( point ) floor ( ( point - Grid.Minimum ) / Grid.VoxelSize )
 
 #define VoxelToWorld( voxel ) ( Grid.Minimum + voxel * Grid.VoxelSize )
+
+//---------------------------------------------------------------------------------------------------------------------
+
+#define FirstVoxelTime( ray, dir ) ( Grid.Minimum + max ( dir, Zero ) * Grid.VoxelSize - ray.Origin ) / ray.Direction
+
+#define FirstVoxel( ray ) ( ray.Origin + EPSILON * ray.Direction - Grid.Minimum ) / Grid.VoxelSize
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -246,7 +250,7 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 //---------------------------------------------------------------------------------------------------------------------
 
-#define Interpolate( A, B, C, coords ) ( A * ( 1.0 - coords.x - coords.y ) + B * coords.x + C * coords.y )		
+#define Interpolate( A, B, C, value ) ( A * ( 1.0 - value.x - value.y ) + B * value.x + C * value.y )		
 
 /**********************************************************************************************************************/
 /************************************************* SUPPORT FUNCTIONS **************************************************/
@@ -470,59 +474,81 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 {	
 	//------------------------------------------------ Initialization -------------------------------------------------
 	
-	vec3 voxel = WorldToVoxel ( ray.Origin );
+	vec3 VOXEL = WorldToVoxel ( ray.Origin );
 	
-	vec3 delta = Grid.VoxelSize / abs ( ray.Direction );	
+	vec3 DELTA = Grid.VoxelSize / abs ( ray.Direction );	
 		
-	vec3 step = sign ( ray.Direction );
+	vec3 DIR = sign ( ray.Direction );
+
+	#ifndef USE_PROXIMITY_GRID
 	
-	vec3 max = delta * max ( step, Zero ) - mod ( ray.Origin - Grid.Minimum, Grid.VoxelSize ) / ray.Direction;
-			
+	vec3 MAX = ( VoxelToWorld ( VOXEL ) + max ( DIR, Zero ) * Grid.VoxelSize - ray.Origin ) / ray.Direction;
+
+	#else
+
+	vec3 A = FirstVoxel ( ray );
+
+	vec3 B = FirstVoxelTime ( ray, DIR );
+
+	vec3 C = Grid.VoxelSize / ray.Direction;
+
+	vec3 D = ray.Direction / Grid.VoxelSize;
+
+	vec3 MAX = VOXEL * C + B;
+
+	float STEP = min ( DELTA.x, min ( DELTA.y, DELTA.z ) );
+
+	#endif
+
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
-	vec3 next;
-	
-	float min;
-	
-	while ( true )
+	for (int i = 0; i < 256; i++)
 	{
-		//---------------------------------- Calc next direction and voxel out time -----------------------------------
-		
-		next = AxisZ;
-		
-		min = max.z;
-		
-		if ( max.x < max.y )
+		#ifndef USE_PROXIMITY_GRID
+
+		vec3 next = AxisZ;
+
+		float MIN = MAX.z;
+			
+		if ( MAX.x < MAX.y )
 		{
-			if ( max.x < max.z )
+			if ( MAX.x < MAX.z )
 			{
-				next = AxisX;
-				
-				min = max.x;
+				next = AxisX; MIN = MAX.x;
 			}
 		}
 		else
 		{
-			if ( max.y < max.z )
+			if ( MAX.y < MAX.z )
 			{
-				next = AxisY;
-				
-				min = max.y;
+				next = AxisY; MIN = MAX.y;
 			}
 		}
+
+		#else
+
+		float MIN = min ( MAX.x, min ( MAX.y, MAX.z ) );
+
+		#endif
 		
-		if ( min > final + EPSILON ) break;
+		if ( MIN > final ) break;
 		
 		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
 		
-		vec3 content = vec3 ( texture3D ( VoxelTexture, voxel * VoxelTextureStep ) );
+		vec3 data = vec3 ( texture3D ( VoxelTexture, VOXEL * VoxelTextureStep ) );
+
+		float count = data.x;
 				
-		float count = content.x;
-				
-		float offset = content.y;
+		float offset = data.y;
+
+		#ifdef USE_PROXIMITY_GRID
+		
+		float proximity = data.z;
+		
+		#endif
 				
 		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
-						
+
 		for ( float index = 0.0; index < count; index++ )
 		{
             //------------------------------------- Reading triangle vertices -----------------------------------------
@@ -562,17 +588,27 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			offset++;
 		}
 		
-		if ( intersection.Parameters.x < min )
+		if ( intersection.Parameters.x < MIN )
 		{            
 			return true;
 		}
-		
-		//---------------------------------------------- Go to next voxel ---------------------------------------------		
-		
-		max += delta * next;
-			
-		voxel += step * next;
-		
+
+		//---------------------------------------------- Go to next voxel ---------------------------------------------
+
+		#ifndef USE_PROXIMITY_GRID
+
+		VOXEL += DIR * next;
+
+		MAX += DELTA * next;
+
+		#else
+
+		VOXEL = floor ( A + ( MIN + proximity * STEP ) * D );
+
+		MAX = VOXEL * C + B;
+
+		#endif
+
 		#ifdef SHOW_TRAVERSAL_DEPTH
 
 		TraversalDepth++;
@@ -601,17 +637,19 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 	
 	for ( int index = 0; index < LightsCount; index++ )
 	{
-		//-------------------------------- Calculating ligth vector and ligth distance --------------------------------
+		//------------------------------ Calculating direction and distance to the ligth ------------------------------
 		
 		vec3 light = Lights [index].Position - point;
 		
 		float distance = length ( light );
 		
-		light /= distance;
+		light = normalize ( light );
 		
-		//------------------------------------ Checking if point is in the shadow -------------------------------------
+		//-------------------------------- Calculating shadowing and light attenuation --------------------------------
 		
-		float shadow = 1.0;
+		float coefficient = 1.0;
+
+		//-------------------------------------------------------------------------------------------------------------
 		
 		#ifdef RENDER_SHADOWS
 		
@@ -623,11 +661,20 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 		
 		float final = IntersectBox ( ray );
 		
-		if ( Raytrace ( ray, intersection, final ) && intersection.Parameters.x < distance )
+		if ( Raytrace ( ray, intersection, final + EPSILON ) && intersection.Parameters.x < distance )
 		{
-			shadow = 0.0;
+			coefficient = 0.0;
 		}
 		
+		#endif
+
+		//-------------------------------------------------------------------------------------------------------------
+
+		#ifdef LIGHTING_ATTENUATION
+		
+		coefficient /= Lights [index].Attenuation.x +
+			           ( Lights [index].Attenuation.y + Lights [index].Attenuation.z * distance ) * distance;
+
 		#endif
 		
 		//------------------------------------- Calculating ambient contribution --------------------------------------
@@ -636,15 +683,7 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 		//------------------------------------- Calculating diffuse contribution --------------------------------------
 		
-		#ifdef LIGHTING_TWO_SIDED
-		
-		float diffuse = abs ( dot ( light, normal ) );
-		
-		#else
-		
-		float diffuse = max ( dot ( light, normal ), 0.0 );
-		
-		#endif
+		float diffuse = max ( 0.0, dot ( light, normal ) );
 		
 		#ifdef RENDER_TEXTURES
 
@@ -668,28 +707,20 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 			case 8: texture = vec3 ( texture2D ( ImageTexture7, fract ( texcoord * material.Scale ) ) ); break;
 		}
-		
-		color += material.Diffuse * texture * Lights [index].Diffuse * diffuse * shadow;
+
+		color += material.Diffuse * Lights [index].Diffuse * texture * ( diffuse * coefficient );
 		
 		#else
 		
-		color += material.Diffuse * Lights [index].Diffuse * diffuse * shadow;
+		color += material.Diffuse * Lights [index].Diffuse * ( diffuse * coefficient );
 		
 		#endif
 		
 		//------------------------------------- Calculating specular contribution -------------------------------------			
 		
-		#ifdef LIGHTING_TWO_SIDED
+		float specular = pow ( max ( 0.0, dot ( light, reflection ) ), material.Shininess );
 		
-		float specular = pow ( abs ( dot ( light, reflection ) ), material.Shininess );
-		
-		#else
-		
-		float specular = pow ( max ( dot ( light, reflection ), 0.0 ), material.Shininess );
-		
-		#endif
-		
-		color += material.Specular * Lights [index].Specular * specular * shadow;
+		color += material.Specular * Lights [index].Specular * ( specular * coefficient );
 	}
 	
 	return color;
@@ -727,7 +758,7 @@ void main ( void )
 			
 		ClearIntersection ( intersection );
 		
-		if ( Raytrace ( ray, intersection, final - start ) )
+		if ( Raytrace ( ray, intersection, final - start + EPSILON ) )
 		{
             //-------------------------- Loading vertices attributes and material properties --------------------------
 			
@@ -781,7 +812,7 @@ void main ( void )
                 
                 ClearIntersection ( intersection );
 			                
-				if ( Raytrace ( ray, intersection, final ) )
+				if ( Raytrace ( ray, intersection, final + EPSILON ) )
 				{
                     //---------------------- Loading vertices attributes and material properties ----------------------
                     
@@ -837,7 +868,7 @@ void main ( void )
                 
                 ClearIntersection ( intersection );
 			                
-				if ( Raytrace ( ray, intersection, final ) )
+				if ( Raytrace ( ray, intersection, final + EPSILON ) )
 				{
                     //---------------------- Loading vertices attributes and material properties ----------------------
                     
@@ -895,7 +926,7 @@ void main ( void )
                 
                 ClearIntersection ( intersection );
 			                
-				if ( Raytrace ( ray, intersection, final ) )
+				if ( Raytrace ( ray, intersection, final + EPSILON ) )
 				{
                     //---------------------------------- Loading vertices attributes ----------------------------------
 				
@@ -939,7 +970,7 @@ void main ( void )
                     
                     ClearIntersection ( intersection );
 				                
-					if ( Raytrace ( ray, intersection, final ) )
+					if ( Raytrace ( ray, intersection, final + EPSILON ) )
 					{
                         //-------------------- Loading vertices attributes and material properties --------------------
                         

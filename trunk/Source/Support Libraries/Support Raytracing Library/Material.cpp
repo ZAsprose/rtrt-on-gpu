@@ -18,7 +18,7 @@ namespace Raytracing
 						   const Vector3D& refraction,
 						   float density,
 						   float dissolve,
-						   Texture2D * texture,
+						   TextureData2D * data,
 						   const Vector2D& scale )
 	{
 		Ambient = ambiant;
@@ -43,7 +43,7 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 
-		Texture = texture;
+		Data = data;
 
 		Scale = scale;
 	}

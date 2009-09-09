@@ -253,31 +253,42 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					int proximity = 1;
-
-					while ( proximity <= PartitionsX )
+					if ( Voxels [x][y][z]->Triangles.size ( ) > 0 )
 					{
-						if ( !CheckVoxelProximity ( x, y, z, proximity ) )
-							break;
+						simpleDistanceMap [x][y][z] = 0;
+					}
+					else
+					{
+						int proximity = 1;
 
-						proximity++;
+						while ( proximity <= PartitionsX )
+						{
+							if ( !CheckVoxelProximity ( x, y, z, proximity ) )
+								break;
+
+							proximity++;
+						}
+
+						simpleDistanceMap [x][y][z] = proximity - 1;
 					}
 
-					simpleDistanceMap [x][y][z] = proximity - 1;
+					//cout << "[ " << x << " ] [ " << y << " ] [ " << z << " ] = " << simpleDistanceMap [x][y][z] << endl;
 				}
 			}
+
+			cout << "X = " << x << endl;
 		}
 	}
 	
-	void ProximityGrid :: BuildGrid (  Volume * box, vector < Triangle * > triangles )
+	void ProximityGrid :: BuildGrid ( Volume * box, vector < Triangle * > triangles )
 	{
 		UniformGrid :: BuildGrid ( box, triangles );
 		
-		CalculateFirstSaitoMap ( );
-		CalculateSecondSaitoMap ( );
-		CalculateDistanceSaitoMap ( );
+		//CalculateFirstSaitoMap ( );
+		//CalculateSecondSaitoMap ( );
+		//CalculateDistanceSaitoMap ( );
 
-		NormolizeAndApllyDistanceMap ( );
+		//NormolizeAndApllyDistanceMap ( );
 
 		BuildDistanceMap ( );
 
@@ -287,11 +298,11 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
-					{
+					//if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
+					//{
 						Voxels[x][y][z]->EmptyRadius = simpleDistanceMap [x][y][z];
 						//cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
-					}
+					//}
 				}
 			}
 		}

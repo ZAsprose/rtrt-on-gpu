@@ -1,5 +1,19 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #pragma once
@@ -7,8 +21,6 @@
 #ifndef _LIGHT_SOURCE_
 
 #define _LIGHT_SOURCE_
-
-#include <Vector3D.h>
 
 #include <ShaderManager.h>
 
@@ -22,7 +34,7 @@ namespace Raytracing
 	{
 		public:
 
-			//------------------------------------- Intensity -------------------------------------
+			//------------------------------- Intensity Components --------------------------------
 
 			Vector3D Ambient;
 
@@ -30,11 +42,15 @@ namespace Raytracing
 
 			Vector3D Specular;
 
-			//------------------------------------- Position --------------------------------------
+			//---------------- Constant, Linear and Quadratic Attenuation Factors -----------------
+	        
+			Vector3D Attenuation;
+
+			//------------------------------- Light Source Position -------------------------------
 	        
 			Vector3D Position;
 
-			//-------------------------------------- Number ---------------------------------------
+			//------------------------- Light Source Number in OpenGL API -------------------------
 
 			unsigned Number;
 
@@ -44,17 +60,18 @@ namespace Raytracing
 				    const Vector3D& = Vector3D ( 10.0F, 10.0F, 10.0F ),
 					const Vector3D& = Vector3D ( 0.1F, 0.1F, 0.1F ),
 					const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ),
-					const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ) );
+					const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ),
+					const Vector3D& = Vector3D ( 1.5F, 0.6F, 0.3F ) );
 
 			~Light ( void );
 
-			//----------------------------------- Apply Settings ----------------------------------
+			//--------------------------- Applying Light Source Settings --------------------------
 
 			void Setup ( void );
 			
 			void SetShaderData ( ShaderManager * manager );
 
-			//--------------------------------------- Draw ----------------------------------------
+			//------------------------- Drawing Light Source in OpenGL Mode ------------------------
 
 			void Draw ( void );
 	};

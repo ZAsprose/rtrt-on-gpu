@@ -100,17 +100,17 @@ namespace Raytracing
 
 			//---------------------------------------------------------------------------
 			
-			if ( scene->Primitives [i]->Properties->Texture == NULL )
-			{
-				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
-					scene->Primitives [i]->Properties->Scale, 0 );
-			}
-			else
-			{
-				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
-					scene->Primitives [i]->Properties->Scale,
-					scene->Primitives [i]->Properties->Texture->Unit + 1 );
-			}
+			//if ( scene->Primitives [i]->Properties->Texture == NULL )
+			//{
+			//	MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+			//		scene->Primitives [i]->Properties->Scale, 0 );
+			//}
+			//else
+			//{
+			//	MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+			//		scene->Primitives [i]->Properties->Scale,
+			//		scene->Primitives [i]->Properties->Texture );
+			//}
 		}
 
 		cout << "MATERIAL MEMORY: " << ( int ) ( 100.0F * offset / MaterialTexture->Data->GetWidth ( ) ) << endl;
@@ -135,7 +135,7 @@ namespace Raytracing
 				{
 					int trianglesNumber = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
 
-					int emptyRadius = ( trianglesNumber ) ? 0 : scene->Grid->GetVoxel ( x, y, z )->EmptyRadius; // TODO calculate radius
+					int emptyRadius = ( trianglesNumber ) ? 0 : scene->Grid->GetVoxel ( x, y, z )->EmptyRadius;
 
 					VoxelTexture->Data->Pixel < Vector3D > ( x, y, z ) =
 						Vector3D ( trianglesNumber, offset, emptyRadius );
