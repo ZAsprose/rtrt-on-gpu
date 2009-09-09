@@ -72,17 +72,17 @@ namespace Render
 
 			//-------------------------------- Getting Data Format --------------------------------
 			
-			unsigned GetPixelFormat ( void );
+			unsigned GetPixelFormat ( void ) const;
 
-			unsigned GetInternalFormat ( void );
+			unsigned GetInternalFormat ( void ) const;
 
-			unsigned GetType ( void ) { return GL_FLOAT; }
+			unsigned GetType ( void ) const { return GL_FLOAT; }
 			
-			unsigned GetWidth ( void ) { return Width; }
+			unsigned GetWidth ( void ) const { return Width; }
 
-			unsigned GetHeight ( void ) { return Height; }
+			unsigned GetHeight ( void ) const { return Height; }
 
-			unsigned GetComponents ( void ) { return Components; }
+			unsigned GetComponents ( void ) const { return Components; }
 
 			//------------------------- Loading Texture Data from TGA File ------------------------
 

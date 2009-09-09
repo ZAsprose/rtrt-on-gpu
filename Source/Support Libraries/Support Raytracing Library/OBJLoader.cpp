@@ -1,8 +1,24 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+*/
 
 #include "OBJLoader.h"
+
+#include "Material.h"
 
 #include <stdlib.h>
 
@@ -71,7 +87,7 @@ namespace Raytracing
 
 		if ( NULL == memory )
 		{
-			cout << "ERROR: Could not load MTL materials file" << endl;
+			cout << "ERROR: Could not load MTL material file" << endl;
 
 			return false;
 		}
@@ -105,9 +121,9 @@ namespace Raytracing
 				
 				sscanf ( position, "newmtl %s", name );
 
-				//----------------------------- Creating new material -----------------------------
+				//----------------- Creating new material with default properties -----------------
 
-				material = new MTLMaterial ( name );
+				material = new MTLMaterial ( name, new Material ( ) );
 			}
 			else
 				if ( memcmp ( position, "map_Kd", 6 ) == 0 )
@@ -129,6 +145,8 @@ namespace Raytracing
 						if ( memcmp ( model->Textures [i]->Name, name, LENGTH ) == 0 )
 						{
 							texture = model->Textures [i];
+							
+							break;
 						}
 					}
 
@@ -136,71 +154,72 @@ namespace Raytracing
 
 					if ( NULL == texture )
 					{
-						texture = new MTLTexture ( name,
-							new Texture2D ( TextureData2D :: FromTGA ( name ) ) );
+						texture = new MTLTexture ( name, TextureData2D :: FromTGA ( name ) );
 
 						model->Textures.push_back ( texture );
 					}
 
 					//------------------------ Setting texture to material ------------------------
 					
-					material->Texture = texture->Texture;
+					material->Properties->Data = texture->Data;
 				}
 				else
 					if ( memcmp ( position, "Ka", 2 ) == 0 )
 					{
 						sscanf ( position, "Ka %f %f %f",
-								 &material->Ambient.X,
-								 &material->Ambient.Y,
-								 &material->Ambient.Z );
+								 &material->Properties->Ambient.X,
+								 &material->Properties->Ambient.Y,
+								 &material->Properties->Ambient.Z );
 					}
 					else
 						if ( memcmp ( position, "Kd", 2 ) == 0 )
 						{
 							sscanf ( position, "Kd %f %f %f",
-									 &material->Diffuse.X,
-									 &material->Diffuse.Y,
-									 &material->Diffuse.Z );
+									 &material->Properties->Diffuse.X,
+									 &material->Properties->Diffuse.Y,
+									 &material->Properties->Diffuse.Z );
 						}
 						else
 							if ( memcmp ( position, "Ks", 2 ) == 0 )
 							{
 								sscanf ( position, "Ks %f %f %f",
-										 &material->Specular.X,
-										 &material->Specular.Y,
-										 &material->Specular.Z );
+										 &material->Properties->Specular.X,
+										 &material->Properties->Specular.Y,
+										 &material->Properties->Specular.Z );
 							}
 							else
-								if ( memcmp ( position, "Tf", 2 ) == 0 )
+								if ( memcmp ( position, "Ns", 2 ) == 0 )
 								{
-									sscanf ( position, "Tf %f %f %f",
-											 &material->Transmission.X,
-											 &material->Transmission.Y,
-											 &material->Transmission.Z );
+									sscanf ( position, "Ns %f",
+										&material->Properties->Shininess );
 								}
 								else
-									if ( memcmp ( position, "Ns", 2 ) == 0 )
+									if ( memcmp ( position, "Kr", 2 ) == 0 )
 									{
-										sscanf ( position, "Ns %f",
-												 &material->Shininess );
+										sscanf ( position, "Kr %f %f %f",
+											&material->Properties->Reflection.X,
+											&material->Properties->Reflection.Y,
+											&material->Properties->Reflection.Z );
 									}
 									else
-										if ( memcmp ( position, "Ni", 2 ) == 0 )
+										if ( memcmp ( position, "Kt", 2 ) == 0 )
 										{
-											sscanf ( position, "Ni %f",
-													 &material->Density );
+											sscanf ( position, "Kt %f %f %f",
+												&material->Properties->Refraction.X,
+												&material->Properties->Refraction.Y,
+												&material->Properties->Refraction.Z );
 										}
 										else
-											if ( memcmp ( position, "d", 1 ) == 0 )
+											if ( memcmp ( position, "Ni", 2 ) == 0 )
 											{
-												sscanf ( position, "d %f",
-														 &material->Dissolve );
+												sscanf ( position, "Ni %f",
+														 &material->Properties->Density );
 											}
 											else
-												if ( memcmp ( position, "illum", 5 ) == 0 )
+												if ( memcmp ( position, "Nd", 2 ) == 0 )
 												{
-													sscanf ( position, "illum %d",
-															 &material->Model );
+													sscanf ( position, "Nd %f",
+															 &material->Properties->Dissolve );
 												}
 
 			while ( *position++ != '\n' );
@@ -214,25 +233,44 @@ namespace Raytracing
 		return true;
 	}
 
-	//--------------------------------- Loading OBJ Geometry File ---------------------------------
+	//-------------------------------------- Loading OBJ Geometry File --------------------------------------
 
-	void GetDirectory ( const char * filename, char * directory )
+	void GetDirectory ( const char * path, char * directory )
 	{
 		int length = 0;
 
 		int index = 0;
 
-		while ( 0 != filename [index] )
+		while ( 0 != path [index] )
 		{
-			if ( '/' == filename [index] || '\\' == filename [index] )
+			if ( '/' == path [index] || '\\' == path [index] )
 				length = index;
 
 			index++;
 		}
 
-		memcpy ( directory, filename, length );
+		memcpy ( directory, path, length );
 
 		directory [length] = 0;
+	}
+
+	void GetFileName ( const char * path, char * file )
+	{
+		int length = 0;
+
+		int index = 0;
+
+		while ( 0 != path [index] )
+		{
+			if ( '/' == path [index] || '\\' == path [index] )
+				length = index;
+
+			index++;
+		}
+
+		memcpy ( file, path, length );
+
+		file [length] = 0;
 	}
 
 	OBJModel * OBJLoader :: LoadOBJ ( const char * filename )
@@ -302,9 +340,14 @@ namespace Raytracing
 
 			if ( memcmp ( line, "mtllib", 6 ) == 0 )
 			{
-				//-------------------- Groups will be created later ---------------------
+				//-------------------- Groups must be created later ---------------------
 
-				group = NULL;
+				if ( NULL != group )
+				{
+					delete group;
+
+					group = NULL;
+				}
 
 				//----------------------- Getting MTL file path -------------------------
 
@@ -376,13 +419,13 @@ namespace Raytracing
 					else
 						if ( memcmp ( line, "vt", 2 ) == 0 )
 						{
-							Vector2D texture = Vector2D :: Zero;
+							Vector2D texcoords = Vector2D :: Zero;
 
 							sscanf ( line, "vt %f %f",
-									 &texture.X,
-									 &texture.Y );
+									 &texcoords.X,
+									 &texcoords.Y );
 
-							model->TexCoords.push_back ( texture );
+							model->TexCoords.push_back ( texcoords );
 						}
 						else
 							if ( memcmp ( line, "v", 1 ) == 0 )
@@ -403,13 +446,13 @@ namespace Raytracing
 
 									sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
 											 &face.Vertex[0],
-											 &face.Texture[0],
+											 &face.TexCoords[0],
 											 &face.Normal[0],
 											 &face.Vertex[1],
-											 &face.Texture[1],
+											 &face.TexCoords[1],
 											 &face.Normal[1],
 											 &face.Vertex[2],
-											 &face.Texture[2],
+											 &face.TexCoords[2],
 											 &face.Normal[2] );
 
 									group->Faces.push_back ( face );
