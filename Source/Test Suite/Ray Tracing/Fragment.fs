@@ -1,5 +1,7 @@
 #extension GL_ARB_texture_rectangle : enable
 
+#extension GL_EXT_texture_array: enable
+
 /**********************************************************************************************************************/
 /************************************************** RENDERING CONFIG **************************************************/
 /**********************************************************************************************************************/
@@ -12,7 +14,7 @@
 
 #define RENDER_DISSOLVE_
 
-#define RENDER_TEXTURES_
+#define RENDER_TEXTURES
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -184,21 +186,7 @@ uniform float MaterialTextureStep;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-uniform sampler2D ImageTexture0;
-
-uniform sampler2D ImageTexture1;
-
-uniform sampler2D ImageTexture2;
-
-uniform sampler2D ImageTexture3;
-
-uniform sampler2D ImageTexture4;
-
-uniform sampler2D ImageTexture5;
-
-uniform sampler2D ImageTexture6;
-
-uniform sampler2D ImageTexture7;
+uniform sampler2DArray ImageTextures;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -687,26 +675,8 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 		
 		#ifdef RENDER_TEXTURES
 
-		vec3 texture = Unit;
-		
-		switch ( material.Texture )
-		{
-			case 1: texture = vec3 ( texture2D ( ImageTexture0, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 2: texture = vec3 ( texture2D ( ImageTexture1, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 3: texture = vec3 ( texture2D ( ImageTexture2, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 4: texture = vec3 ( texture2D ( ImageTexture3, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 5: texture = vec3 ( texture2D ( ImageTexture4, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 6: texture = vec3 ( texture2D ( ImageTexture5, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 7: texture = vec3 ( texture2D ( ImageTexture6, fract ( texcoord * material.Scale ) ) ); break;
-
-			case 8: texture = vec3 ( texture2D ( ImageTexture7, fract ( texcoord * material.Scale ) ) ); break;
-		}
+		vec3 texture = vec3 ( texture2DArray ( ImageTextures,
+			                                   vec3 ( fract ( texcoord * material.Scale ), material.Texture ) ) );
 
 		color += material.Diffuse * Lights [index].Diffuse * texture * ( diffuse * coefficient );
 		

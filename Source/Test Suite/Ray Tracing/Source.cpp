@@ -218,20 +218,14 @@ int main ( void )
 
 	//-------------------------- Adding All Textures to Texture Manager ---------------------------
 
-	//TextureManager * textureManager = new TextureManager ( );
+	TextureManager * textureManager = new TextureManager ( );
 
-	//for ( int index = 0; index < model->Textures.size ( ); index++ )
-	//{
-	//	//model->Textures [index]->Texture->GetUnit ( ) = index;
+	for ( int index = 0; index < model->Textures.size ( ); index++ )
+	{
+		textureManager->TextureData.push_back ( model->Textures [index]->Data );
+	}
 
-	//	model->Textures [index]->Texture->FilterMode.Magnification = GL_LINEAR;
-
-	//	model->Textures [index]->Texture->FilterMode.Minification = GL_LINEAR;
-
-	//	textureManager->Textures.push_back ( model->Textures [index]->Texture );
-	//}
-
-	//textureManager->SetupTextures ( );
+	textureManager->SetupTextures ( );
 
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 	
@@ -267,7 +261,7 @@ int main ( void )
 
 	staticData->SetShaderData ( shaderManager );
 
-	//textureManager->SetShaderData ( shaderManager );
+	textureManager->SetShaderData ( shaderManager );
 
 	shaderManager->Unbind ( );
 
@@ -289,7 +283,7 @@ int main ( void )
 
 			staticData->SetShaderData ( shaderManager );
 
-			//textureManager->SetShaderData ( shaderManager );
+			textureManager->SetShaderData ( shaderManager );
 
 			shaderManager->Unbind ( );
 

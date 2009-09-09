@@ -12,15 +12,15 @@ namespace Raytracing
 
 	const unsigned StaticData :: MaterialSize = 2048;
 	
-	const unsigned StaticData :: VoxelUnit = 8;
+	const unsigned StaticData :: VoxelUnit = 1;
 	
-	const unsigned StaticData :: PositionUnit = 9;
+	const unsigned StaticData :: PositionUnit = 2;
 	
-	const unsigned StaticData :: NormalUnit = 10;
+	const unsigned StaticData :: NormalUnit = 3;
 
-	const unsigned StaticData :: TexCoordUnit = 11;
+	const unsigned StaticData :: TexCoordUnit = 4;
 
-	const unsigned StaticData :: MaterialUnit = 12;
+	const unsigned StaticData :: MaterialUnit = 5;
 
 	//---------------------------------------- Constructor and Destructor ----------------------------------------
 	
@@ -100,17 +100,17 @@ namespace Raytracing
 
 			//---------------------------------------------------------------------------
 			
-			//if ( scene->Primitives [i]->Properties->Texture == NULL )
-			//{
-			//	MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
-			//		scene->Primitives [i]->Properties->Scale, 0 );
-			//}
-			//else
-			//{
-			//	MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
-			//		scene->Primitives [i]->Properties->Scale,
-			//		scene->Primitives [i]->Properties->Texture );
-			//}
+			if ( scene->Primitives [i]->Properties->Data == NULL )
+			{
+				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+					scene->Primitives [i]->Properties->Scale, 0 );
+			}
+			else
+			{
+				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+					scene->Primitives [i]->Properties->Scale,
+					scene->Primitives [i]->Properties->Data->Identifier );
+			}
 		}
 
 		cout << "MATERIAL MEMORY: " << ( int ) ( 100.0F * offset / MaterialTexture->Data->GetWidth ( ) ) << endl;

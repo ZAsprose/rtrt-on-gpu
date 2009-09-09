@@ -48,6 +48,10 @@ namespace Render
 		
 		public:
 
+			//-------------------------------- Material Identifier --------------------------------
+
+			int Identifier;
+
 			//----------------------------- Constructor and Destructor ----------------------------
 		
 			TextureData3D ( unsigned, unsigned, unsigned, unsigned = 3 );
