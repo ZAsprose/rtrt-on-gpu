@@ -34,9 +34,13 @@ namespace Raytracing
 	{
 		private:
 
-			//------------------------ 3D Texture Used as 2D Texture Array ------------------------
+			//---------------------- 3D Texture Used as Array of 2D Textures ----------------------
 
-			Texture3D * Texture;
+			Texture3D * TextureArray;
+
+			//------------------ Fetching Texture Data with Bilinear Filtration -------------------
+
+			Vector3D FilterData ( TextureData2D *, float, float );
 
 		public:
 
@@ -52,11 +56,9 @@ namespace Raytracing
 
 			vector <TextureData2D *> TextureData;
 
-			//----------------------------- Load Static Texture Data ------------------------------
+			//---------------------- Applying Settings to OpenGL and Shaders ----------------------
 
 			void SetupTextures ( void );
-
-			//---------------------------------- Apply Settings -----------------------------------
 
 			void SetShaderData ( ShaderManager * );
 	};
