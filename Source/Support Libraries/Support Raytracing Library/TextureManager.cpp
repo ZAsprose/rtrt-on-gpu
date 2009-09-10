@@ -28,10 +28,32 @@ namespace Raytracing
 
 	TextureManager :: ~TextureManager  ( void )
 	{
-		delete Texture;
+		delete TextureArray;
 	}
 
-	//--------------------------------- Load Static Texture Data ----------------------------------
+	//---------------------- Fetching Texture Data with Bilinear Filtration -----------------------
+
+	Vector3D TextureManager :: FilterData ( TextureData2D * data, float x, float y )
+	{
+		int xMin = floor ( x ),
+			yMin = floor ( y );
+
+		float xRatio = x - xMin,
+			  yRatio = y - yMin;
+
+		int xMax = min ( xMin + 1, data->GetWidth ( ) - 1 ),
+			yMax = min ( yMin + 1, data->GetHeight ( ) - 1 );
+
+		return Mix ( Mix ( data->Pixel<Vector3D> ( xMin, yMin ),
+			               data->Pixel<Vector3D> ( xMax, yMin ),
+						   xRatio ),
+			         Mix ( data->Pixel<Vector3D> ( xMin, yMax ),
+					       data->Pixel<Vector3D> ( xMax, yMax ),
+						   xRatio ),
+					 yRatio );
+	}
+
+	//-------------------------- Applying Settings to OpenGL and Shaders --------------------------
 
 	void TextureManager :: SetupTextures ( void )
 	{
@@ -66,25 +88,27 @@ namespace Raytracing
 			{
 				for ( int y = 0; y < height; y++ )
 				{
-					data->Pixel<Vector3D> ( x, y, index + 1 ) =
-						TextureData [index]->Pixel<Vector3D> (
-						( int ) ( TextureData [index]->GetWidth ( ) * x / ( float ) width ),
-						( int ) ( TextureData [index]->GetHeight ( ) * y / ( float ) height ) );
+					data->Pixel<Vector3D> ( x, y, index + 1 ) = FilterData (
+						TextureData [index],
+						TextureData [index]->GetWidth ( ) * x / ( float ) width,
+						TextureData [index]->GetHeight ( ) * y / ( float ) height );
 				}
 			}			
 		}
 
 		//------------------------------------------------------------------------------------
 
-		Texture = new Texture3D ( data, TextureUnit, GL_TEXTURE_2D_ARRAY );
+		TextureArray = new Texture3D ( data, TextureUnit, GL_TEXTURE_2D_ARRAY );
 
-		Texture->Setup ( );
+		TextureArray->FilterMode = FilterMode :: Linear;
+
+		TextureArray->WrapMode = WrapMode :: Repeat;
+
+		TextureArray->Setup ( );
 	}
-
-	//-------------------------------------- Apply Settings ---------------------------------------
-
+	
 	void TextureManager :: SetShaderData ( ShaderManager * manager )
 	{
-		manager->SetTexture ( "ImageTextures", Texture );
+		manager->SetTexture ( "ImageTextures", TextureArray );
 	}
 }

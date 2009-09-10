@@ -30,7 +30,7 @@ namespace Render
 {
 	class Camera
 	{
-		public:
+		private:
 
 			//------------------- Position and Axes of Camera Coordinate System -------------------
 
