@@ -301,14 +301,6 @@
 					</File>
 				</Filter>
 			</Filter>
-			<Filter
-				Name="Texture Manager"
-				>
-				<File
-					RelativePath=".\TextureManager.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -450,14 +442,6 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
-			<Filter
-				Name="Texture Manager"
-				>
-				<File
-					RelativePath=".\TextureManager.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 	</Files>

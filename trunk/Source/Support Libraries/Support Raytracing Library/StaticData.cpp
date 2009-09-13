@@ -1,17 +1,33 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+*/
 
 #include "StaticData.h"
 
 namespace Raytracing
 {
-	//------------------------------------------- Constant Parameters --------------------------------------------
+	//----------------------------------------- Constant Parameters -----------------------------------------
 
 	const unsigned StaticData :: VertexSize = 2048;
 
-	const unsigned StaticData :: MaterialSize = 2048;
-	
+	const unsigned StaticData :: MaterialSize = 8192;
+
+	const unsigned StaticData :: TextureUnit = 0;
+
 	const unsigned StaticData :: VoxelUnit = 1;
 	
 	const unsigned StaticData :: PositionUnit = 2;
@@ -22,7 +38,7 @@ namespace Raytracing
 
 	const unsigned StaticData :: MaterialUnit = 5;
 
-	//---------------------------------------- Constructor and Destructor ----------------------------------------
+	//------------------------------------- Constructor and Destructor --------------------------------------
 	
 	StaticData :: StaticData ( void )
 	{
@@ -37,6 +53,14 @@ namespace Raytracing
 		TexCoordTexture = new Texture2D ( TexCoordUnit, GL_TEXTURE_RECTANGLE_ARB );
 
 		MaterialTexture = new Texture1D ( MaterialUnit );
+
+		//-------------------------------------------------------------------------------
+
+		TextureArray = new Texture3D ( TextureUnit, GL_TEXTURE_2D_ARRAY );
+
+		TextureArray->FilterMode = FilterMode :: Linear;
+
+		TextureArray->WrapMode = WrapMode :: Repeat;
 
 		//-------------------------------------------------------------------------------
 
@@ -62,60 +86,132 @@ namespace Raytracing
 		delete MaterialTexture;
 	}
 
-	//--------------------------------------------- Data Generation ----------------------------------------------
+	//--------------------------- Fetching Texture Data with Bilinear Filtration ----------------------------
 
-	void StaticData :: SetupTextures ( Scene * scene )
+	Vector3D StaticData :: FilterData ( TextureData2D * data, float x, float y )
 	{
-		//-------------------------------- Generating material data -------------------------------
+		int xMin = floor ( x ),
+			yMin = floor ( y );
+
+		float xRatio = x - xMin,
+			  yRatio = y - yMin;
+
+		int xMax = min ( xMin + 1, data->GetWidth ( ) - 1 ),
+			yMax = min ( yMin + 1, data->GetHeight ( ) - 1 );
+
+		return Mix ( Mix ( data->Pixel<Vector3D> ( xMin, yMin ),
+			               data->Pixel<Vector3D> ( xMax, yMin ),
+						   xRatio ),
+					 Mix ( data->Pixel<Vector3D> ( xMin, yMax ),
+					       data->Pixel<Vector3D> ( xMax, yMax ),
+						   xRatio ),
+					 yRatio );
+	}
+
+	//------------------------------- Building Static Data for Specified Scene ------------------------------
+
+	void StaticData :: BuildData ( Scene * scene )
+	{
+		//------------------------------ Generating raster textures data -------------------------------
+
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+		cout << "+++                       BUILDING STATIC DATA                       +++" << endl;
+		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+
+		if ( NULL != TextureArray->Data )
+		{
+			delete TextureArray->Data;
+		}
+
+		int width = 0, height = 0;
+
+		for ( int index = 0; index < scene->TextureData.size ( ); index++ )
+		{
+			if ( scene->TextureData [index]->GetWidth ( ) > width )
+				width = scene->TextureData [index]->GetWidth ( );
+
+			if ( scene->TextureData [index]->GetHeight ( ) > height )
+				height = scene->TextureData [index]->GetHeight ( );
+		}
+
+		//----------------------------------------------------------------------------------------------
+
+		TextureArray->Data = new TextureData3D ( width, height, scene->TextureData.size ( ) + 1 );
+
+		for ( int x = 0; x < width; x++ )
+		{
+			for ( int y = 0; y < height; y++ )
+			{
+				TextureArray->Data->Pixel<Vector3D> ( x, y, 0 ) = Vector3D :: Unit;
+			}
+		}
+
+		for ( int index = 0; index < scene->TextureData.size ( ); index++ )
+		{
+			scene->TextureData [index]->Identifier = index + 1;
+
+			for ( int x = 0; x < width; x++ )
+			{
+				for ( int y = 0; y < height; y++ )
+				{
+					TextureArray->Data->Pixel<Vector3D> ( x, y, index + 1 ) = FilterData (
+						scene->TextureData [index],
+						scene->TextureData [index]->GetWidth ( ) * x / ( float ) width,
+						scene->TextureData [index]->GetHeight ( ) * y / ( float ) height );
+				}
+			}			
+		}
+
+		//---------------------------------- Generating material data ----------------------------------
 
 		int offset = 0;
-
-		int unit = 0;
 
 		for ( unsigned i = 0; i < scene->Primitives.size ( ); i++ )
 		{
 			scene->Primitives [i]->Properties->Identifier = offset;
 
-			//---------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------
 
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
+			MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) =
 				scene->Primitives [i]->Properties->Ambient;
 
-			MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) =
+			MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) =
 				scene->Primitives [i]->Properties->Diffuse;
 
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+			MaterialTexture->Data->Pixel <Vector4D> ( offset++ ) = Vector4D (
 				scene->Primitives [i]->Properties->Specular,
 				scene->Primitives [i]->Properties->Shininess );
 
-			//---------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------
 
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+			MaterialTexture->Data->Pixel <Vector4D> ( offset++ ) = Vector4D (
 				scene->Primitives [i]->Properties->Reflection,
 				scene->Primitives [i]->Properties->Dissolve );
 
-			MaterialTexture->Data->Pixel < Vector4D > ( offset++ ) = Vector4D (
+			MaterialTexture->Data->Pixel <Vector4D> ( offset++ ) = Vector4D (
 				scene->Primitives [i]->Properties->Refraction,
 				scene->Primitives [i]->Properties->Density );
 
-			//---------------------------------------------------------------------------
+			//------------------------------------------------------------------------------------------
 			
 			if ( scene->Primitives [i]->Properties->Data == NULL )
 			{
-				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+				MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) = Vector3D (
 					scene->Primitives [i]->Properties->Scale, 0 );
 			}
 			else
 			{
-				MaterialTexture->Data->Pixel < Vector3D > ( offset++ ) = Vector3D (
+				MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) = Vector3D (
 					scene->Primitives [i]->Properties->Scale,
 					scene->Primitives [i]->Properties->Data->Identifier );
 			}
 		}
 
-		cout << "MATERIAL MEMORY: " << ( int ) ( 100.0F * offset / MaterialTexture->Data->GetWidth ( ) ) << endl;
+		float used = floor ( 100.0F * offset / MaterialSize );
 
-		//-------------------------------- Generating geometry data -------------------------------
+		cout << "Material Memory: " << used << "%" << endl;
+
+		//---------------------------------- Generating geometry data ----------------------------------
 
 		if ( NULL != VoxelTexture->Data )
 		{
@@ -133,62 +229,68 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < scene->Grid->GetPartitionsX ( ); z++ )
 				{
-					int trianglesNumber = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
+					int triangles = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
 
-					int emptyRadius = ( trianglesNumber ) ? 0 : scene->Grid->GetVoxel ( x, y, z )->EmptyRadius;
+					int proximity = scene->Grid->GetVoxel ( x, y, z )->Proximity;
 
-					VoxelTexture->Data->Pixel < Vector3D > ( x, y, z ) =
-						Vector3D ( trianglesNumber, offset, emptyRadius );
+					VoxelTexture->Data->Pixel <Vector3D> ( x, y, z ) =
+						Vector3D ( triangles, offset, proximity );
 
-					for ( unsigned i = 0; i < scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( ); i++ )
+					//----------------------------------------------------------------------------------
+
+					for ( unsigned i = 0; i < triangles; i++ )
 					{
 						Vector3D normal =
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->GetNormal ( );
 
-						//-------------------------------------------------------------------------
+						//------------------------------------------------------------------------------
 						
-						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Position,
 							normal.X );
 
-						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
+						NormalTexture->Data->Pixel <Vector3D> ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Normal;
 
-						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) = 
+						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->TexCoord;
 
-						//-------------------------------------------------------------------------
+						//------------------------------------------------------------------------------
 						
-						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Position,
 							normal.Y );
 
-						NormalTexture->Data->Pixel < Vector3D > ( offset ) = 
+						NormalTexture->Data->Pixel <Vector3D> ( offset ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Normal;
 
-						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) = 
+						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) = 
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->TexCoord;
 
-						//-------------------------------------------------------------------------
+						//------------------------------------------------------------------------------
 
-						PositionTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (
+						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Position,
 							normal.Z );
 
-						NormalTexture->Data->Pixel < Vector4D > ( offset ) = Vector4D (  
+						NormalTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (  
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Normal,
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->Properties->Identifier );
 
-						TexCoordTexture->Data->Pixel < Vector2D > ( offset++ ) =
+						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) =
 							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->TexCoord;
 					}
 				}
 			}
 		}
 
-		cout << "VERTEX MEMORY: " << ( int ) ( 100.0F * offset / (PositionTexture->Data->GetWidth ( ) * PositionTexture->Data->GetHeight ( )) ) << endl;
+		used = floor ( 100.0F * offset / ( VertexSize * VertexSize ) );
 
-		//---------------------------------- Setup data textures ----------------------------------
+		cout << "Vertex Memory: " << used << "%" << endl;
+
+		//------------------------------------ Setup data textures -------------------------------------
+
+		TextureArray->Setup ( );
 
 		VoxelTexture->Setup ( );
 
@@ -201,7 +303,7 @@ namespace Raytracing
 		MaterialTexture->Setup ( );
 	}
 
-	//---------------------------------------------- Apply Settings ----------------------------------------------
+	//------------------------------------- Applying Settings to Shaders ------------------------------------
 
 	void StaticData :: SetShaderData ( ShaderManager * manager )
 	{
@@ -225,21 +327,5 @@ namespace Raytracing
 		manager->SetUniformFloat ( "VertexTextureStep", 1.0F / VertexSize );
 
 		manager->SetUniformFloat ( "MaterialTextureStep", 1.0F / MaterialSize );
-
-		manager->SetUniformInteger ( "ImageTexture0", 0 );
-
-		manager->SetUniformInteger ( "ImageTexture1", 1 );
-
-		manager->SetUniformInteger ( "ImageTexture2", 2 );
-
-		manager->SetUniformInteger ( "ImageTexture3", 3 );
-
-		manager->SetUniformInteger ( "ImageTexture4", 4 );
-
-		manager->SetUniformInteger ( "ImageTexture5", 5 );
-
-		manager->SetUniformInteger ( "ImageTexture6", 6 );
-
-		manager->SetUniformInteger ( "ImageTexture7", 7 );
 	}
 }

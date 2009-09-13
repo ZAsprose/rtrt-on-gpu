@@ -184,7 +184,7 @@ namespace Raytracing
 				{
 					float emptyRadius = floor( sqrtf( (float)saitoDistanceMap[i][j][k] ) );
 					emptyRadius -= 1.0f; // because of traversal algorithm
-					Voxels[i][j][k]->EmptyRadius = emptyRadius;
+					Voxels[i][j][k]->Proximity = emptyRadius;
 				}
 			}
 		}
@@ -300,7 +300,7 @@ namespace Raytracing
 				{
 					//if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
 					//{
-						Voxels[x][y][z]->EmptyRadius = simpleDistanceMap [x][y][z];
+						Voxels[x][y][z]->Proximity = simpleDistanceMap [x][y][z];
 						//cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
 					//}
 				}
