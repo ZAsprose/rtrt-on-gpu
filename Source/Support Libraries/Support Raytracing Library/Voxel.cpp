@@ -14,6 +14,6 @@ namespace Raytracing
 
 		Radius = radius;
 
-		EmptyRadius = 0;
+		Proximity = 0;
 	}
 }

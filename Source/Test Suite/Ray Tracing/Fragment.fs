@@ -20,7 +20,7 @@
 
 #define USE_TRIANGLE_NORMALS
 
-#define USE_PROXIMITY_GRID
+#define USE_PROXIMITY_GRID_
 
 //---------------------------------------------------------------------------------------------------------------------
 

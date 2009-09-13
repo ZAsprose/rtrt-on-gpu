@@ -20,7 +20,7 @@
 
 namespace Raytracing
 {
-	//---------------------------------------- Constructor ----------------------------------------
+	//-------------------------------------------- Constructor --------------------------------------------
 
 	Mesh :: Mesh ( const OBJModel * model,
 		           int group,
@@ -28,14 +28,15 @@ namespace Raytracing
 				   const char * name,
 				   bool visible ) : Primitive ( transformation,
 				                                model->Groups [group]->Material->Properties,
-				                                name, visible )
+				                                name,
+												visible )
 	{
 		Model = model;
 
 		Group = group;
 	}
 
-	//-------------------------------------- Build Triangles --------------------------------------
+	//----------------------------------------- Building Triangles ----------------------------------------
 			
 	void Mesh :: Tesselate ( void )
 	{
@@ -48,6 +49,8 @@ namespace Raytracing
 
 			Triangles.clear ( );
 		}
+
+		//-------------------------------------------------------------------------------------------
 
 		if ( 0 != Model->Textures.size ( ) )
 		{

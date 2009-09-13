@@ -46,7 +46,7 @@ namespace Raytracing
 				   const char * = "Mesh",
 				   bool = true );
 
-			//---------------------------------- Build Triangles ----------------------------------
+			//--------------------------------- Building Triangles --------------------------------
 			
 			void Tesselate ( void );
 	};

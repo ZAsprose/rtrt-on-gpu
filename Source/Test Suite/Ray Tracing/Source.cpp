@@ -1,9 +1,3 @@
-#include <stdio.h>
-
-#include <GLee.h>
-
-#include <GL/glfw.h>
-
 #include <Mouse.h>
 
 #include <Keyboard.h>
@@ -19,8 +13,6 @@
 #include <StaticData.h>
 
 #include <OBJLoader.h>
-
-#include "TextureManager.h"
 
 #include <time.h>
 
@@ -171,25 +163,25 @@ int main ( void )
 		meshes [index]->Tesselate ( );
 	}
 
-	{
-		meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ) );
+	//{
+	//	meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ) );
 
-		meshes [model->Groups.size ( )]->Transformation->SetScale ( Vector3D ( 1.0F / 1000.0F, 1.0F / 1000.0F, 1.0F / 1000.0F ) );
+	//	meshes [model->Groups.size ( )]->Transformation->SetScale ( Vector3D ( 1.0F / 1000.0F, 1.0F / 1000.0F, 1.0F / 1000.0F ) );
 
-		meshes [model->Groups.size ( )]->Transformation->SetTranslation ( Vector3D ( 0.48F, 0.15F, -0.28F ) );
+	//	meshes [model->Groups.size ( )]->Transformation->SetTranslation ( Vector3D ( 0.48F, 0.15F, -0.28F ) );
 
-		meshes [model->Groups.size ( )]->Tesselate ( );
-	}
+	//	meshes [model->Groups.size ( )]->Tesselate ( );
+	//}
 
-	{
-		meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ) );
+	//{
+	//	meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ) );
 
-		meshes [model->Groups.size ( ) + 1]->Transformation->SetScale ( Vector3D ( 1.0F / 300.0F, 1.0F / 300.0F, 1.0F / 300.0F ) );
+	//	meshes [model->Groups.size ( ) + 1]->Transformation->SetScale ( Vector3D ( 1.0F / 300.0F, 1.0F / 300.0F, 1.0F / 300.0F ) );
 
-		meshes [model->Groups.size ( ) + 1]->Transformation->SetTranslation ( Vector3D ( 0.5F, -0.15F, -0.28F ) );
+	//	meshes [model->Groups.size ( ) + 1]->Transformation->SetTranslation ( Vector3D ( 0.5F, -0.15F, -0.28F ) );
 
-		meshes [model->Groups.size ( ) + 1]->Tesselate ( );
-	}
+	//	meshes [model->Groups.size ( ) + 1]->Tesselate ( );
+	//}
 
 	/*
 	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Lexus/Lexus.obj" );
@@ -216,17 +208,6 @@ int main ( void )
 	}
 	*/
 
-	//-------------------------- Adding All Textures to Texture Manager ---------------------------
-
-	TextureManager * textureManager = new TextureManager ( );
-
-	for ( int index = 0; index < model->Textures.size ( ); index++ )
-	{
-		textureManager->TextureData.push_back ( model->Textures [index]->Data );
-	}
-
-	textureManager->SetupTextures ( );
-
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 	
 	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
@@ -238,10 +219,16 @@ int main ( void )
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
-	scene->Primitives.push_back ( meshes [model->Groups.size ( )] );
+	//-------------------------- Adding All Textures to Texture Manager ---------------------------
 
-	scene->Primitives.push_back ( meshes [model->Groups.size ( ) + 1] );
+	for ( int index = 0; index < model->Textures.size ( ); index++ )
+	{
+		scene->TextureData.push_back ( model->Textures [index]->Data );
+	}
 
+	//scene->Primitives.push_back ( meshes [model->Groups.size ( )] );
+
+	//scene->Primitives.push_back ( meshes [model->Groups.size ( ) + 1] );
 
 	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.0F, 0.5F ) ) );
 
@@ -253,15 +240,13 @@ int main ( void )
 
 	StaticData * staticData = new StaticData ( );
 
-	staticData->SetupTextures ( scene );
+	staticData->BuildData ( scene );
 
 	//------------------------------- Setup Shader Uniform Variables ------------------------------
 
 	shaderManager->Bind ( );
 
 	staticData->SetShaderData ( shaderManager );
-
-	textureManager->SetShaderData ( shaderManager );
 
 	shaderManager->Unbind ( );
 
@@ -282,8 +267,6 @@ int main ( void )
 			shaderManager->Bind ( );
 
 			staticData->SetShaderData ( shaderManager );
-
-			textureManager->SetShaderData ( shaderManager );
 
 			shaderManager->Unbind ( );
 
@@ -355,8 +338,6 @@ int main ( void )
 			shaderManager->Bind ( );
 
 			scene->SetShaderData ( shaderManager );
-
-			camera->SetShaderData ( shaderManager );
 
 			//------------------------------- Draw Screen-Size Quad -------------------------------
 
