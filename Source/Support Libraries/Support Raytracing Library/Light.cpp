@@ -47,7 +47,7 @@ namespace Raytracing
 		glDisable ( GL_LIGHT0 + Number );
 	}
 
-	//------------------------------- Applying Light Source Settings ------------------------------
+	//-------------------------- Applying Settings to OpenGL and Shaders --------------------------
 	
 	void Light :: Setup ( void ) 
 	{

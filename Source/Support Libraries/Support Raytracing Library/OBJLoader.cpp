@@ -20,11 +20,7 @@
 
 #include "Material.h"
 
-#include <stdlib.h>
-
 #include <stdio.h>
-
-#include <iostream>
 
 #include <fstream>
 
@@ -345,7 +341,7 @@ namespace Raytracing
 				if ( NULL != group )
 				{
 					delete group;
-
+					
 					group = NULL;
 				}
 

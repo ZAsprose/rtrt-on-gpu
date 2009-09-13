@@ -26,13 +26,11 @@
 
 #include "Texture2D.h"
 
-#include "Material.h"
-
 #include <vector>
 
-using namespace std;
-
 #define LENGTH 255
+
+using namespace std;
 
 namespace Raytracing
 {

@@ -22,12 +22,12 @@ namespace Math
 {
     float Degrees ( float radian )
 	{
-		return 180.0F * radian / ONEPI;
+		return 180.0F * radian / ONE_PI;
 	}
     	
 	float Radians ( float degree )
 	{
-		return ONEPI * degree / 180.0F;
+		return ONE_PI * degree / 180.0F;
 	}  
 
 	float Sign ( float source )

@@ -93,7 +93,7 @@ namespace Raytracing
 	{
 		Vector3D minimum = Vertices [0];
 
-		for ( int index = 0; index < Vertices.size ( ); index++ )
+		for ( int index = 1; index < Vertices.size ( ); index++ )
 		{
 			minimum = Min ( minimum, Vertices [index] );
 		}
@@ -105,7 +105,7 @@ namespace Raytracing
 	{
 		Vector3D maximum = Vertices [0];
 
-		for ( int index = 0; index < Vertices.size ( ); index++ )
+		for ( int index = 1; index < Vertices.size ( ); index++ )
 		{
 			maximum = Max ( maximum, Vertices [index] );
 		}
