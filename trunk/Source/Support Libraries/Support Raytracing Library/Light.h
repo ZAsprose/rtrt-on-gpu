@@ -65,13 +65,13 @@ namespace Raytracing
 
 			~Light ( void );
 
-			//--------------------------- Applying Light Source Settings --------------------------
+			//---------------------- Applying Settings to OpenGL and Shaders ----------------------
 
 			void Setup ( void );
 			
 			void SetShaderData ( ShaderManager * manager );
 
-			//------------------------- Drawing Light Source in OpenGL Mode ------------------------
+			//------------------------ Drawing Light Source in OpenGL Mode ------------------------
 
 			void Draw ( void );
 	};

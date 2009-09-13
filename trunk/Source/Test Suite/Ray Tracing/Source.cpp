@@ -116,7 +116,7 @@ int main ( void )
 	//--------------------------- Setup Camera Position and Orientation ---------------------------
 
 	Camera * camera = new Camera ( Vector3D ( -2.0F, 0.0F, 0.0F ),
-		                           Vector3D ( ONEPI / 2.0F, ONEPI / 2.0F, 0.0F ) );
+		                           Vector3D ( ONE_PI / 2.0F, ONE_PI / 2.0F, 0.0F ) );
 
 	//camera->Position = Vector3D (	0.0241486F,		0.392294F,		-0.0682123F );
 	//camera->View = Vector3D (		-0.926735F,		0.375078F,		0.0218659F );

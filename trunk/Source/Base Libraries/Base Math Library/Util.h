@@ -26,9 +26,9 @@
 
 //--------------------------------------- Useful Constants ----------------------------------------
 
-static const float ONEPI = 3.141592653589F;
+static const float ONE_PI = 3.141592653589F;
 		
-static const float TWOPI = 6.283185307179F;
+static const float TWO_PI = 6.283185307179F;
     	
 static const float EXPONENT = 2.718281828459F;
     	

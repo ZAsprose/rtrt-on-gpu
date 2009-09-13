@@ -58,7 +58,7 @@ namespace Raytracing
 			
 			float Dissolve;
 
-			//--------------------------- Raster Texture and Image Scale --------------------------
+			//--------------------------- Texture Data and Texture Scale --------------------------
 
 			TextureData2D * Data;
 

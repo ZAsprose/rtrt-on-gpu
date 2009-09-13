@@ -1,10 +1,22 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
- */
+   Base Render Library   
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+*/
 
 #include "Sphere.h"
-
-#include <math.h>
 
 namespace Raytracing
 {
@@ -25,7 +37,7 @@ namespace Raytracing
 		Stacks = stacks;
 	}
 
-	//-------------------------------------- Build Triangles --------------------------------------
+	//------------------------------------- Building Triangles ------------------------------------
 			
 	void Sphere :: Tesselate ( void )
 	{
@@ -50,9 +62,9 @@ namespace Raytracing
 
 		//------------------------------------------------------------------------------------
 
-		float uStep = TWOPI / Slices;
+		float uStep = TWO_PI / Slices;
 			
-		float vStep = ONEPI / Stacks;
+		float vStep = ONE_PI / Stacks;
 		
 		for ( int x = 0; x <= Slices; x++ )
 		{
@@ -60,7 +72,7 @@ namespace Raytracing
 			
 			for ( int y = 0; y <= Stacks; y++ )
 			{
-				float v = vStep * y - ONEPI / 2.0F;
+				float v = vStep * y - ONE_PI / 2.0F;
 				
 				Vector3D position ( Radius * sinf ( u ) * cosf ( v ),
 					                Radius * cosf ( u ) * cosf ( v ),
@@ -68,8 +80,7 @@ namespace Raytracing
 				
 				Vector3D normal = Normalize ( position );
 				
-				vertices [x][y] = new Vertex (
-					Transformation->ForwardPoint ( position ),
+				vertices [x][y] = new Vertex ( Transformation->ForwardPoint ( position ),
 					Normalize ( Transformation->ForwardNormal ( normal ) ) );
 			}
 		}
@@ -82,14 +93,18 @@ namespace Raytracing
 		{
 			for ( int y = 0; y < Stacks; y++ )
 			{
-				triangle = new Triangle ( vertices [x][y], vertices [x + 1][y],
-					                      vertices [x][y + 1], Properties );
+				triangle = new Triangle ( vertices [x][y],
+					                      vertices [x + 1][y],
+					                      vertices [x][y + 1],
+										  Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );
 
-				triangle = new Triangle ( vertices [x][y + 1], vertices [x + 1][y],
-					                      vertices [x + 1][y + 1], Properties );
+				triangle = new Triangle ( vertices [x][y + 1],
+					                      vertices [x + 1][y],
+					                      vertices [x + 1][y + 1],
+										  Properties );
 
 				if ( !triangle->IsEmpty ( ) )
 					Triangles.push_back ( triangle );
