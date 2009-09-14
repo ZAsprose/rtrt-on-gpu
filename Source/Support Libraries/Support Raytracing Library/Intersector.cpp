@@ -1,5 +1,19 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #include "Intersector.h"
@@ -30,7 +44,7 @@
 
 namespace Raytracing
 {
-	//---------------------------------- Triangle edges -----------------------------------
+	//-------------------------------------- Triangle edges ---------------------------------------
 
 	Vector3D Intersector :: MovedA ( 0.0F, 0.0F, 0.0F );
 				
@@ -38,7 +52,7 @@ namespace Raytracing
 				
 	Vector3D Intersector :: MovedC ( 0.0F, 0.0F, 0.0F );
 			
-	//---------------------------------- Triangle edges -----------------------------------
+	//-------------------------------------- Triangle edges ---------------------------------------
 				
 	Vector3D Intersector :: EdgeAB ( 0.0F, 0.0F, 0.0F );
 						
@@ -46,11 +60,11 @@ namespace Raytracing
 						
 	Vector3D Intersector :: EdgeCA ( 0.0F, 0.0F, 0.0F );		
 						
-	//--------------------------------- Voxel parameters ----------------------------------
+	//------------------------------------- Voxel parameters --------------------------------------
 				
 	Vector3D Intersector :: Radius ( 0.0F, 0.0F, 0.0F );
 
-	//--------------------------------- Voxel parameters ----------------------------------
+	//------------------------------- Support Tests from SAT Theorem ------------------------------
 
 	bool Intersector :: PlaneVoxelOverlap ( const Vector3D& normal, float distance )
 	{
@@ -192,16 +206,20 @@ namespace Raytracing
 		return false;
 	}
 
-	bool Intersector :: TriangleVoxelOverlap ( const Triangle * triangle, const Voxel * voxel )
+	//------------------------------ Testing for Triangle-Box Overlap -----------------------------
+
+	bool Intersector :: TriangleVoxelOverlap ( const Triangle * triangle,
+		                                       Vector3D position,
+											   Vector3D radius )
 	{
 		//----------------------------- Prepare input data ------------------------------
 			
 		{
-			MovedA = triangle->VertexA->Position - voxel->Position;
+			MovedA = triangle->VertexA->Position - position;
 				
-			MovedB = triangle->VertexB->Position - voxel->Position;
+			MovedB = triangle->VertexB->Position - position;
 			
-			MovedC = triangle->VertexC->Position - voxel->Position;
+			MovedC = triangle->VertexC->Position - position;
 			
 			EdgeAB = MovedB - MovedA;
 			
@@ -209,7 +227,7 @@ namespace Raytracing
 			
 			EdgeCA = MovedA - MovedC;
 			
-			Radius = voxel->Radius;
+			Radius = radius;
 		}
 		
 		//-------------- Execute 9 tests for every possible pairs of edges --------------
@@ -222,7 +240,7 @@ namespace Raytracing
 			if ( SeparateAxisZ ( ) ) return false;
 		}
 		
-		//----------------- Execute test for bounding boxes intesection -----------------
+		//----------------- Execute test for bounding boxes intersection ----------------
 		
 		{
 			Vector3D minimum = Min ( Min ( MovedA, MovedB ), MovedC );
@@ -236,7 +254,7 @@ namespace Raytracing
 			if ( minimum.Z > Radius.Z || maximum.Z < -Radius.Z ) return false;
 		}
 		
-		//------------------- Execute test for plane-voxel intesection ------------------
+		//------------------ Execute test for plane-voxel intersection ------------------
 			
 		{
 			Vector3D normal = Cross ( EdgeAB, EdgeBC );

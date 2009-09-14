@@ -97,17 +97,6 @@ namespace Raytracing
 			
 	void Scene :: BuildGrid ( int partitionsX, int partitionsY, int partitionsZ, bool proximity )
 	{
-		vector <Triangle *> triangles;
-
-		for ( unsigned index = 0; index < Primitives.size ( ); index++ )
-		{
-			triangles.insert ( triangles.end ( ),
-				               Primitives [index]->Triangles.begin ( ),
-							   Primitives [index]->Triangles.end ( ) );
-		}
-
-		//-------------------------------------------------------------------------------
-
 		if ( NULL != Grid )
 		{
 			delete Grid;
@@ -115,14 +104,14 @@ namespace Raytracing
 
 		if ( proximity )
 		{
-			Grid = new ProximityGrid ( partitionsX, partitionsY, partitionsZ );
+			Grid = new ProximityGrid ( partitionsX, partitionsY, partitionsZ, Box );
 		}
 		else
 		{
-			Grid = new UniformGrid ( partitionsX, partitionsY, partitionsZ );
+			Grid = new UniformGrid ( partitionsX, partitionsY, partitionsZ, Box );
 		}
 
-		Grid->BuildGrid ( Box, triangles );
+		Grid->BuildGrid ( Primitives );
 	}
 
 	//-------------------------------- Applying Settings to Shaders -------------------------------
