@@ -1,6 +1,31 @@
+/*
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+ */
+
 #pragma once
 
+#ifndef _PROXIMITY_GRID_
+
+#define _PROXIMITY_GRID_
+
 #include "UniformGrid.h"
+
+#define DEBUG_GRID_
 
 namespace Raytracing
 {
@@ -8,42 +33,50 @@ namespace Raytracing
 	{
 		private:
 			
-			//----------------------- Proximity Grid Saito Distance Maps --------------------------
+			//------------------- Distance Maps for Building of Proximity Grid --------------------
 
-			int *** saitoFirstMap;
+			int *** WidthDistanceMap;
 
-			int *** saitoSecondMap;
+			int *** HeightDistanceMap;
 
-			int *** saitoDistanceMap;
+			int *** DepthDistanceMap;
 
-			int *** simpleDistanceMap;
+			#ifdef DEBUG_GRID
 
-			//----------------------- Calculating Saito Distance Maps --------------------------			
+			int *** SimpleDistanceMap;
+
+			#endif
+
+			//------------------------------ Building Distance Maps -------------------------------
 			
-			void CalculateFirstSaitoMap ( void );
+			void BuildWidthDistanceMap ( void );
 
-			void CalculateSecondSaitoMap ( void );
+			void BuildHeightDistanceMap ( void );
 
-			void CalculateDistanceSaitoMap ( void );
+			void BuildDepthDistanceMap ( void );
 
-			void NormolizeAndApllyDistanceMap ( void );
+			//------------------ Building Simple Distance Map ( Only for Debug ) ------------------		
 
-			//--------------------------------- Test Subroutines ----------------------------------			
-			
-			bool CheckVoxelProximity ( int, int, int, int );
+			#ifdef DEBUG_GRID
 
-			void BuildDistanceMap ( void );
+			bool CheckFreeZone ( int, int, int, int );
+
+			void BuildSimpleDistanceMap ( void );
+
+			#endif
 
 		public:
 
 			//---------------------------- Constructor and Destructor -----------------------------
 			
-			ProximityGrid ( int = 16, int = 16, int = 16, Volume * = NULL );
+			ProximityGrid ( int = 32, int = 32, int = 32, Volume * = NULL );
 		
-			~ProximityGrid ();
+			~ProximityGrid ( );
 
-			//------------------------------- Building Proximity Grid -------------------------------
+			//------------------------------ Building Proximity Grid ------------------------------
 
 			virtual void BuildGrid ( vector <Primitive *>& );
 	};
 }
+
+#endif

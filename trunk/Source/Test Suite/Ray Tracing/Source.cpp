@@ -152,7 +152,7 @@ int main ( void )
 	scene->Lights.push_back ( new Light ( 0, Vector3D :: Zero ) );
 	scene->Lights.push_back ( new Light ( 1, Vector3D :: Zero ) );
 
-	scene->BuildGrid ( 128, 128, 128, false );
+	scene->BuildGrid ( 128, 128, 128, true );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
