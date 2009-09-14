@@ -129,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="glfw.lib glee.lib opengl32.lib glu32.lib"
+				AdditionalDependencies="glfw.lib glee.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\GLee\Lib&quot;;&quot;$(SolutionDir)\Dependencies\GLFW\Lib&quot;"
 			/>
 			<Tool
@@ -264,14 +264,6 @@
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="Voxel"
-					>
-					<File
-						RelativePath=".\Voxel.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Static Data"
@@ -403,14 +395,6 @@
 					>
 					<File
 						RelativePath=".\Intersector.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Voxel"
-					>
-					<File
-						RelativePath=".\Voxel.h"
 						>
 					</File>
 				</Filter>

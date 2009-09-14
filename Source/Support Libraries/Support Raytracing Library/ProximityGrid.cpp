@@ -1,210 +1,195 @@
-#include "ProximityGrid.h"
+/*
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
 
-#include <math.h>
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
+ */
+
+#include "ProximityGrid.h"
 
 namespace Raytracing
 {
+	//------------------------------------ Constructor and Destructor -------------------------------------
+
 	ProximityGrid :: ProximityGrid ( int partitionsX, int partitionsY, int partitionsZ, Volume * box ) 
 		: UniformGrid ( partitionsX, partitionsY, partitionsZ, box )
 	{
-		saitoFirstMap    = new int ** [partitionsX];
-		saitoSecondMap   = new int ** [partitionsX];
-		saitoDistanceMap = new int ** [partitionsX];
+		WidthDistanceMap = new int ** [partitionsX];
+		HeightDistanceMap = new int ** [partitionsX];
+		DepthDistanceMap = new int ** [partitionsX];
 
-		simpleDistanceMap = new int ** [partitionsX];
+		#ifdef DEBUG_GRID
 
-		for ( int i = 0; i < partitionsX; i++ )
+		SimpleDistanceMap = new int ** [partitionsX];
+
+		#endif
+
+		for ( int x = 0; x < partitionsX; x++ )
 		{
-			saitoFirstMap[i]    = new int * [partitionsY];
-			saitoSecondMap[i]   = new int * [partitionsY];
-			saitoDistanceMap[i] = new int * [partitionsY];
+			WidthDistanceMap [x] = new int * [partitionsY];
+			HeightDistanceMap [x] = new int * [partitionsY];
+			DepthDistanceMap [x] = new int * [partitionsY];
 
-			simpleDistanceMap[i] = new int * [partitionsY];
+			#ifdef DEBUG_GRID
 
-			for ( int j = 0; j < partitionsY; j++ )
+			SimpleDistanceMap[x] = new int * [partitionsY];
+
+			#endif
+			
+			for ( int y = 0; y < partitionsY; y++ )
 			{
-				saitoFirstMap[i][j]    = new int [partitionsZ];
-				saitoSecondMap[i][j]   = new int [partitionsZ];
-				saitoDistanceMap[i][j] = new int [partitionsZ];
+				WidthDistanceMap [x][y] = new int [partitionsZ];
+				HeightDistanceMap [x][y] = new int [partitionsZ];
+				DepthDistanceMap [x][y] = new int [partitionsZ];
 
-				simpleDistanceMap[i][j] = new int [partitionsZ];
+				#ifdef DEBUG_GRID
 
-				for ( int k = 0; k < partitionsZ; k++ )
-				{
-					saitoFirstMap[i][j][k]    = 0;
-					saitoSecondMap[i][j][k]   = 0;
-					saitoDistanceMap[i][j][k] = 0;
+				SimpleDistanceMap [x][y] = new int [partitionsZ];
 
-					simpleDistanceMap[i][j][k] = 0;
-				}
+				#endif
 			}
 		}
 	}
 
-	ProximityGrid :: ~ProximityGrid ()
+	ProximityGrid :: ~ProximityGrid ( void )
 	{
-		for ( int i = 0; i < PartitionsX; i++ )
+		for ( int x = 0; x < PartitionsX; x++ )
 		{
-			for ( int j = 0; j < PartitionsY; j++ )
+			for ( int y = 0; y < PartitionsY; y++ )
 			{
-				delete [] saitoFirstMap[i][j];
-				delete [] saitoSecondMap[i][j];
-				delete [] saitoDistanceMap[i][j];
+				delete [] WidthDistanceMap [x][y];
+				delete [] HeightDistanceMap [x][y];
+				delete [] DepthDistanceMap [x][y];
 
-				delete [] simpleDistanceMap[i][j];
+				#ifdef DEBUG_GRID
+
+				delete [] SimpleDistanceMap [x][y];
+
+				#endif
 			}
-			delete [] saitoFirstMap[i];
-			delete [] saitoSecondMap[i];
-			delete [] saitoDistanceMap[i];
 
-			delete [] simpleDistanceMap[i];
+			delete [] WidthDistanceMap [x];
+			delete [] HeightDistanceMap [x];
+			delete [] DepthDistanceMap [x];
+
+			#ifdef DEBUG_GRID
+
+			delete [] SimpleDistanceMap [x];
+
+			#endif
 		}
 		
-		delete [] saitoFirstMap;
-		delete [] saitoSecondMap;
-		delete [] saitoDistanceMap;
+		delete [] WidthDistanceMap;
+		delete [] HeightDistanceMap;
+		delete [] DepthDistanceMap;
 
-		delete [] simpleDistanceMap;
+		#ifdef DEBUG_GRID
+
+		delete [] SimpleDistanceMap;
+
+		#endif
 	}
 
-	void ProximityGrid :: CalculateFirstSaitoMap()
+	//-------------------------------------- Building Distance Maps ---------------------------------------
+
+	void ProximityGrid :: BuildWidthDistanceMap ( void )
 	{
-		for ( int i = 0; i < PartitionsX; i++ )
+		for ( int x = 0; x < PartitionsX; x++ )
 		{
-			for ( int j = 0; j < PartitionsY; j++ )
+			for ( int y = 0; y < PartitionsY; y++ )
 			{
-				for ( int k = 0; k < PartitionsZ; k++ )
+				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					// if voxel is not empty then ...
-					if ( Voxels[i][j][k]->Triangles.size() )
+					if ( Voxels [x][y][z]->Triangles.size ( ) > 0 )
 					{
-						saitoFirstMap[i][j][k] = 0;
+						WidthDistanceMap [x][y][z] = 0;
 					}
-					// else calculating independent Z min distance to the object
 					else
 					{
-						int min = PartitionsZ * PartitionsZ;
+						int distance = INT_MAX;
 						
-						for ( int l = 0; l < PartitionsZ; l++ )
+						for ( int i = 0; i < PartitionsX; i++ )
 						{
-							if ( l == k )
+							if ( Voxels [i][y][z]->Triangles.size ( ) > 0 )
 							{
-								continue;
-							}
-							if ( Voxels[i][j][l]->Triangles.size() )
-							{
-								int current_distance = (l - k) * (l - k);
-								if ( current_distance < min )
-								{
-									min = current_distance;
-								}
+								distance = min ( distance, abs ( i - x ) );
 							}
 						}
-						saitoFirstMap[i][j][k] = min;
+
+						WidthDistanceMap [x][y][z] = distance;
 					}
 				}
 			}
 		}
 	}
-
 	
-	void ProximityGrid :: CalculateSecondSaitoMap()
+	void ProximityGrid :: BuildHeightDistanceMap ( void )
 	{
-		for ( int i = 0; i < PartitionsX; i++ )
+		for ( int x = 0; x < PartitionsX; x++ )
 		{
-			for ( int j = 0; j < PartitionsY; j++ )
+			for ( int y = 0; y < PartitionsY; y++ )
 			{
-				for ( int k = 0; k < PartitionsZ; k++ )
+				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					// if voxel is not empty then ...
-					if ( 0 == saitoFirstMap[i][j][k] )
+					int distance = INT_MAX;
+
+					for ( int j = 0; j < PartitionsY; j++ )
 					{
-						saitoSecondMap[i][j][k] = 0;
+						distance = min ( distance, max ( WidthDistanceMap [x][j][z], abs ( j - y ) ) );
 					}
-					// else calculating Y min distance to the object
-					else
-					{
-						int min = PartitionsY * PartitionsY;
-						
-						for ( int l = 0; l < PartitionsY; l++ )
-						{
-							int current_distance = saitoFirstMap[i][l][k] + (j - l) * (j - l);
-							if ( current_distance < min )
-							{
-								min = current_distance;
-							}
-						}
-						saitoSecondMap[i][j][k] = min;
-					}
+
+					HeightDistanceMap [x][y][z] = distance;
 				}
 			}
 		}
 	}
 
-	void ProximityGrid :: CalculateDistanceSaitoMap()
+	void ProximityGrid :: BuildDepthDistanceMap ( void )
 	{
-		for ( int i = 0; i < PartitionsX; i++ )
+		for ( int x = 0; x < PartitionsX; x++ )
 		{
-			for ( int j = 0; j < PartitionsY; j++ )
+			for ( int y = 0; y < PartitionsY; y++ )
 			{
-				for ( int k = 0; k < PartitionsZ; k++ )
+				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					// if voxel is not empty then ...
-					if ( 0 == saitoSecondMap[i][j][k] )
+					int distance = INT_MAX;
+
+					for ( int k = 0; k < PartitionsZ; k++ )
 					{
-						saitoDistanceMap[i][j][k] = 0;
+						distance = min ( distance, max ( HeightDistanceMap [x][y][k], abs ( k - z ) ) );
 					}
-					// else calculating X min distance to the object
-					else
-					{
-						int min = PartitionsX * PartitionsX;
-						
-						for ( int l = 0; l < PartitionsX; l++ )
-						{
-							int current_distance = saitoSecondMap[l][j][k] + (i - l) * (i - l);
-							if ( current_distance < min )
-							{
-								min = current_distance;
-							}
-						}
-						saitoDistanceMap[i][j][k] = min;
-					}
+
+					DepthDistanceMap [x][y][z] = max ( distance - 1, 0 );
 				}
 			}
 		}
 	}
 
-	void ProximityGrid :: NormolizeAndApllyDistanceMap()
-	{
-		for ( int i = 0; i < PartitionsX; i++ )
-		{
-			for ( int j = 0; j < PartitionsY; j++ )
-			{
-				for ( int k = 0; k < PartitionsZ; k++ )
-				{
-					float emptyRadius = floor( sqrtf( (float)saitoDistanceMap[i][j][k] ) );
-					emptyRadius -= 1.0f; // because of traversal algorithm
-					Voxels[i][j][k]->Proximity = emptyRadius;
-				}
-			}
-		}
-	}
+	//-------------------------- Building Simple Distance Map ( Only for Debug ) --------------------------
 
-	bool ProximityGrid :: CheckVoxelProximity ( int x, int y, int z, int proximity )
+	#ifdef DEBUG_GRID
+
+	bool ProximityGrid :: CheckFreeZone ( int x, int y, int z, int proximity )
 	{
 		int startX = x - proximity < 0 ? 0 : x - proximity;
-
 		int startY = y - proximity < 0 ? 0 : y - proximity;
-
 		int startZ = z - proximity < 0 ? 0 : z - proximity;
 
-
 		int finalX = x + proximity >= PartitionsX ? PartitionsX - 1 : x + proximity;
-
 		int finalY = y + proximity >= PartitionsY ? PartitionsY - 1 : y + proximity;
-
 		int finalZ = z + proximity >= PartitionsZ ? PartitionsZ - 1 : z + proximity;
-
 
 		for ( int i = startX; i <= finalX; i++ )
 		{
@@ -245,7 +230,7 @@ namespace Raytracing
 		return true;
 	}
 
-	void ProximityGrid :: BuildDistanceMap ( void )
+	void ProximityGrid :: BuildSimpleDistanceMap ( void )
 	{
 		for ( int x = 0; x < PartitionsX; x++ )
 		{
@@ -255,7 +240,7 @@ namespace Raytracing
 				{
 					if ( Voxels [x][y][z]->Triangles.size ( ) > 0 )
 					{
-						simpleDistanceMap [x][y][z] = 0;
+						SimpleDistanceMap [x][y][z] = 0;
 					}
 					else
 					{
@@ -263,46 +248,55 @@ namespace Raytracing
 
 						while ( proximity <= PartitionsX )
 						{
-							if ( !CheckVoxelProximity ( x, y, z, proximity ) )
+							if ( !CheckFreeZone ( x, y, z, proximity ) )
 								break;
 
 							proximity++;
 						}
 
-						simpleDistanceMap [x][y][z] = proximity - 1;
+						SimpleDistanceMap [x][y][z] = proximity - 1;
 					}
-
-					//cout << "[ " << x << " ] [ " << y << " ] [ " << z << " ] = " << simpleDistanceMap [x][y][z] << endl;
 				}
 			}
-
-			cout << "X = " << x << endl;
 		}
 	}
+
+	#endif
+
+	//-------------------------------------- Building Proximity Grid --------------------------------------
 	
 	void ProximityGrid :: BuildGrid ( vector <Primitive *>& primitives )
 	{
 		UniformGrid :: BuildGrid ( primitives );
 		
-		//CalculateFirstSaitoMap ( );
-		//CalculateSecondSaitoMap ( );
-		//CalculateDistanceSaitoMap ( );
+		BuildWidthDistanceMap ( );
+		BuildHeightDistanceMap ( );
+		BuildDepthDistanceMap ( );
 
-		//NormolizeAndApllyDistanceMap ( );
+		#ifdef DEBUG_GRID
 
-		BuildDistanceMap ( );
+		BuildSimpleDistanceMap ( );
 
+		#endif
+		
 		for ( int x = 0; x < PartitionsX; x++ )
 		{
 			for ( int y = 0; y < PartitionsY; y++ )
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					//if ( Voxels[x][y][z]->EmptyRadius != simpleDistanceMap [x][y][z] )
-					//{
-						Voxels[x][y][z]->Proximity = simpleDistanceMap [x][y][z];
-						//cout << "[ " << x << "	" << y << "	" << z << " ]" << "	" << Voxels[x][y][z]->EmptyRadius << "	" << simpleDistanceMap [x][y][z] << endl;
-					//}
+					Voxels [x][y][z]->Proximity = DepthDistanceMap [x][y][z];
+
+					#ifdef DEBUG_GRID
+
+					if ( SimpleDistanceMap [x][y][z] != DepthDistanceMap [x][y][z] )
+					{
+						cout << "X = " << x << "/t" << "Y = " << y << "/t" << "Z = " << z << "/t";
+
+						cout << "SimpleDistanceMap != DepthDistanceMap" << endl;
+					}
+
+					#endif
 				}
 			}
 		}

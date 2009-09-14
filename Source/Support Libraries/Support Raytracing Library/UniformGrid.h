@@ -1,5 +1,6 @@
 /*
-   Support Raytracing Library  
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -30,6 +31,19 @@
 
 namespace Raytracing
 {
+	struct Voxel
+	{
+		//--------------- Distance to Nearest Non-Empty Voxel ( Chessboard Metric ) ---------------
+
+		int Proximity;
+
+		//--------------------------------- Intersected Triangles ---------------------------------
+
+		vector <Triangle *> Triangles;
+	};
+
+	//---------------------------------------------------------------------------------------------
+
 	class UniformGrid
 	{
 		protected:
