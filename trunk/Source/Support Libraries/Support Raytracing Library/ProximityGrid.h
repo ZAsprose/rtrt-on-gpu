@@ -38,12 +38,12 @@ namespace Raytracing
 
 			//---------------------------- Constructor and Destructor -----------------------------
 			
-			ProximityGrid ( int = 16, int = 16, int = 16 );
+			ProximityGrid ( int = 16, int = 16, int = 16, Volume * = NULL );
 		
 			~ProximityGrid ();
 
 			//------------------------------- Building Proximity Grid -------------------------------
 
-			virtual void BuildGrid ( Volume *, vector < Triangle * > );
+			virtual void BuildGrid ( vector <Primitive *>& );
 	};
 }

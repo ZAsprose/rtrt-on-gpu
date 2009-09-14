@@ -4,8 +4,8 @@
 
 namespace Raytracing
 {
-	ProximityGrid :: ProximityGrid ( int partitionsX, int partitionsY, int partitionsZ ) 
-		: UniformGrid ( partitionsX, partitionsY, partitionsZ )
+	ProximityGrid :: ProximityGrid ( int partitionsX, int partitionsY, int partitionsZ, Volume * box ) 
+		: UniformGrid ( partitionsX, partitionsY, partitionsZ, box )
 	{
 		saitoFirstMap    = new int ** [partitionsX];
 		saitoSecondMap   = new int ** [partitionsX];
@@ -280,9 +280,9 @@ namespace Raytracing
 		}
 	}
 	
-	void ProximityGrid :: BuildGrid ( Volume * box, vector < Triangle * > triangles )
+	void ProximityGrid :: BuildGrid ( vector <Primitive *>& primitives )
 	{
-		UniformGrid :: BuildGrid ( box, triangles );
+		UniformGrid :: BuildGrid ( primitives );
 		
 		//CalculateFirstSaitoMap ( );
 		//CalculateSecondSaitoMap ( );

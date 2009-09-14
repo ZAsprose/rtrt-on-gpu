@@ -1,12 +1,28 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #include "UniformGrid.h"
 
 namespace Raytracing
 {
-	UniformGrid :: UniformGrid ( int partitionsX, int partitionsY, int partitionsZ )
+	//----------------------------------- Constructor and Destructor -----------------------------------
+
+	UniformGrid :: UniformGrid ( int partitionsX, int partitionsY, int partitionsZ, Volume * box )
 	{
 		PartitionsX = partitionsX;
 		
@@ -14,7 +30,9 @@ namespace Raytracing
 		
 		PartitionsZ = partitionsZ;
 
-		//-------------------------------------------------------------------------------
+		Box = box;
+
+		//------------------------------------------------------------------------------------
 		
 		Voxels = new Voxel *** [PartitionsX];
 
@@ -28,7 +46,7 @@ namespace Raytracing
 
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					Voxels [x][y][z] = NULL;
+					Voxels [x][y][z] = new Voxel ( );
 				}
 			}
 		}
@@ -53,82 +71,66 @@ namespace Raytracing
 		
 		delete Voxels;
 	}
-	
-	void UniformGrid :: BuildGrid (  Volume * box, vector < Triangle * > triangles )
-	{
-		//-----------------------------------------------------------------------------------------
 
-		Vector3D size = ( box->Maximum - box->Minimum ) / Vector3D ( ( float ) PartitionsX,
+	//------------------------------------- Building Uniform Grid --------------------------------------
+	
+	void UniformGrid :: BuildGrid ( vector <Primitive *>& primitives )
+	{
+		Vector3D size = ( Box->Maximum - Box->Minimum ) / Vector3D ( ( float ) PartitionsX,
 		                                                             ( float ) PartitionsY,
 																	 ( float ) PartitionsZ );
 
 		Vector3D radius = size / 2.0F;
-		
-		//-----------------------------------------------------------------------------------------
-		
-		{
-			Vector3D position = box->Minimum + radius;
-					
-			for ( int i = 0; i < PartitionsX; i++ )
-			{
-				float x = position.X + size.X * i;
-				
-				for ( int j = 0; j < PartitionsY; j++ )
-				{
-					float y = position.Y + size.Y * j;
-					
-					for ( int k = 0; k < PartitionsZ; k++ )
-					{
-						float z = position.Z + size.Z * k;
-						
-						if ( Voxels [i][j][k] != NULL )
-						{
-							Voxels [i][j][k]->Triangles.clear ( );
-						}
-						else
-						{
-							Voxels [i][j][k] = new Voxel ( Vector3D ( x, y, z ), radius );
-						}
-					}	
-				}
-			}
-		}
 
-		//-----------------------------------------------------------------------------------------
-
+		Vector3D position = Box->Minimum + radius;
+		
 		Vector3D maximum = Vector3D ( ( float ) ( PartitionsX - 1 ),
 			                          ( float ) ( PartitionsY - 1 ),
 									  ( float ) ( PartitionsZ - 1 ) );
 
-		for ( unsigned index = 0; index < triangles.size ( ); index++ )
+		//------------------------------------------------------------------------------------
+
+		vector <Primitive *> :: iterator primitive = primitives.begin ( ); 
+
+		while ( primitive != primitives.end ( ) )
 		{
-			Vector3D start = ( triangles [index]->GetMinimum ( ) - box->Minimum ) / size;
+			vector <Triangle *> :: iterator triangle = ( *primitive )->Triangles.begin ( );
 
-			start = Clamp ( start, Vector3D :: Zero, maximum );
-
-			Vector3D final = ( triangles [index]->GetMaximum ( ) - box->Minimum ) / size;
-
-			final = Clamp ( final, Vector3D :: Zero, maximum );
-				
-			for ( int i = ( int ) start.X; i <= ( int ) final.X; i++ )
+			while ( triangle != ( *primitive )->Triangles.end ( ) )
 			{
-				for ( int j = ( int ) start.Y; j <= ( int ) final.Y; j++ )
+				Vector3D start = ( ( *triangle )->GetMinimum ( ) - Box->Minimum ) / size;
+
+				start = Clamp ( start, Vector3D :: Zero, maximum );
+
+				Vector3D final = ( ( *triangle )->GetMaximum ( ) - Box->Minimum ) / size;
+
+				final = Clamp ( final, Vector3D :: Zero, maximum );
+					
+				for ( int i = ( int ) start.X; i <= ( int ) final.X; i++ )
 				{
-					for ( int k = ( int ) start.Z; k <= ( int ) final.Z; k++ )
+					float x = position.X + size.X * i;
+
+					for ( int j = ( int ) start.Y; j <= ( int ) final.Y; j++ )
 					{
-						if ( Intersector :: TriangleVoxelOverlap ( triangles [index],
-							                                       Voxels [i][j][k] ) )
+						float y = position.Y + size.Y * j;
+
+						for ( int k = ( int ) start.Z; k <= ( int ) final.Z; k++ )
 						{
-							Voxels [i][j][k]->Triangles.push_back ( triangles [index] );
-						}
-					}	
+							float z = position.Z + size.Z * k;
+
+							if ( Intersector :: TriangleVoxelOverlap (
+								*triangle, Vector3D ( x, y, z ), radius ) )
+							{
+								Voxels [i][j][k]->Triangles.push_back ( *triangle );
+							}
+						}	
+					}
 				}
+
+				++triangle;
 			}
+
+			++primitive;
 		}
 	}
-
-	Voxel * UniformGrid :: GetVoxel ( int x, int y, int z )
-	{
-		return Voxels [x][y][z];
-	}	
 }

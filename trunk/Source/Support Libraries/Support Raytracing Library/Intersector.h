@@ -1,5 +1,19 @@
 /*
- * Author: Denis Bogolepov  ( denisbogol@sandy.ru )
+   Support Raytracing Library  
+   Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program. If not, see http://www.gnu.org/licenses.
  */
 
 #pragma once
@@ -16,7 +30,7 @@ namespace Raytracing
 	{
 		public:
 
-			//--------------------------- Translated triangle vertices ----------------------------
+			//--------------------------- Translated Triangle Vertices ----------------------------
 
 			static Vector3D MovedA;
 			
@@ -24,7 +38,7 @@ namespace Raytracing
 			
 			static Vector3D MovedC;
 		
-			//---------------------------------- Triangle edges -----------------------------------
+			//---------------------------------- Triangle Edges -----------------------------------
 			
 			static Vector3D EdgeAB;
 					
@@ -32,9 +46,11 @@ namespace Raytracing
 					
 			static Vector3D EdgeCA;		
 					
-			//--------------------------------- Voxel parameters ----------------------------------
+			//----------------------------- Voxel radius ( Half Size ) ----------------------------
 			
 			static Vector3D Radius;
+
+			//--------------------------- Support Tests from SAT Theorem --------------------------
 
 			static bool PlaneVoxelOverlap ( const Vector3D&, float );
 
@@ -46,7 +62,9 @@ namespace Raytracing
 
 		public:
 
-			static bool TriangleVoxelOverlap ( const Triangle *, const Voxel * );
+			//-------------------------- Testing for Triangle-Box Overlap -------------------------
+
+			static bool TriangleVoxelOverlap ( const Triangle *, Vector3D, Vector3D );
 	};
 }
 

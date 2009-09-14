@@ -6,13 +6,13 @@
 /************************************************** RENDERING CONFIG **************************************************/
 /**********************************************************************************************************************/
 
-#define RENDER_SHADOWS_
+#define RENDER_SHADOWS
 
 #define RENDER_REFLECTIONS
 
 #define RENDER_REFRACTIONS
 
-#define RENDER_DISSOLVE_
+#define RENDER_DISSOLVE
 
 #define RENDER_TEXTURES
 

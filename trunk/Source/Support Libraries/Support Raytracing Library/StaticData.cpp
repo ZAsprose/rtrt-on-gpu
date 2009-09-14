@@ -229,9 +229,9 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < scene->Grid->GetPartitionsX ( ); z++ )
 				{
-					int triangles = scene->Grid->GetVoxel ( x, y, z )->Triangles.size ( );
+					int triangles = scene->Grid->Voxels [x][y][z]->Triangles.size ( );
 
-					int proximity = scene->Grid->GetVoxel ( x, y, z )->Proximity;
+					int proximity = scene->Grid->Voxels [x][y][z]->Proximity;
 
 					VoxelTexture->Data->Pixel <Vector3D> ( x, y, z ) =
 						Vector3D ( triangles, offset, proximity );
@@ -241,44 +241,44 @@ namespace Raytracing
 					for ( unsigned i = 0; i < triangles; i++ )
 					{
 						Vector3D normal =
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->GetNormal ( );
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->GetNormal ( );
 
 						//------------------------------------------------------------------------------
 						
 						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Position,
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexA->Position,
 							normal.X );
 
 						NormalTexture->Data->Pixel <Vector3D> ( offset ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->Normal;
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexA->Normal;
 
 						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexA->TexCoord;
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexA->TexCoord;
 
 						//------------------------------------------------------------------------------
 						
 						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Position,
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexB->Position,
 							normal.Y );
 
 						NormalTexture->Data->Pixel <Vector3D> ( offset ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->Normal;
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexB->Normal;
 
 						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) = 
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexB->TexCoord;
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexB->TexCoord;
 
 						//------------------------------------------------------------------------------
 
 						PositionTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Position,
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexC->Position,
 							normal.Z );
 
 						NormalTexture->Data->Pixel <Vector4D> ( offset ) = Vector4D (  
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->Normal,
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->Properties->Identifier );
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexC->Normal,
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->Properties->Identifier );
 
 						TexCoordTexture->Data->Pixel <Vector2D> ( offset++ ) =
-							scene->Grid->GetVoxel ( x, y, z )->Triangles [i]->VertexC->TexCoord;
+							scene->Grid->Voxels [x][y][z]->Triangles [i]->VertexC->TexCoord;
 					}
 				}
 			}

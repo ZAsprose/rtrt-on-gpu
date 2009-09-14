@@ -30,9 +30,7 @@ Keyboard keyboard ( 0.01F );
 
 bool Mode = true;
 
-bool Recompile;
-
-bool Info;
+bool Recompile = true;
 
 //=================================================================================================
 
@@ -58,11 +56,6 @@ void KeyButton ( int key, int state )
 	if ( key == GLFW_KEY_F6 && state > 0 )
 	{
 		Recompile = true;
-	}
-
-	if ( key == GLFW_KEY_F10 && state > 0 )
-	{
-		Info = true;
 	}
 }
 
@@ -105,42 +98,20 @@ int main ( void )
 	
 	glfwSetKeyCallback ( KeyButton );
 
+	ShaderManager * shaderManager = new ShaderManager ( );
+
 	//--------------------------- Setup Camera Position and Orientation ---------------------------
 
 	Camera * camera = new Camera ( Vector3D ( -2.0F, 0.0F, 0.0F ),
 		                           Vector3D ( ONE_PI / 2.0F, ONE_PI / 2.0F, 0.0F ) );
 
-	//camera->Position = Vector3D (	0.0241486F,		0.392294F,		-0.0682123F );
-	//camera->View = Vector3D (		-0.926735F,		0.375078F,		0.0218659F );
-	//camera->Up = Vector3D (			0.0362941F,		0.0314469F,		0.998846F );
-	//camera->Side = Vector3D (		-0.373961F,		-0.926458F,		0.0427565F );
-
-	//cout << Length(camera->Position) << endl;
-	//cout << Length(camera->View) << endl;
-	//cout << Length(camera->Up) << endl;
-	//cout << Length(camera->Side) << endl;
-
 	camera->SetViewport ( Width, Height );
 
 	camera->SetFrustum ( );
 
-	//------------------------------ Loading Shaders for Ray Tracing ------------------------------
-
-	ShaderManager * shaderManager = new ShaderManager ( );
-
-	shaderManager->LoadVertexShader ( "Vertex.vs" );
-
-	shaderManager->LoadFragmentShader ( "Fragment.fs" );
-
-	shaderManager->BuildProgram ( );
-
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 	
 	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/House/House.obj" );
-
-	OBJModel * model1 = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Figurine/Figurine.obj" );
-
-	OBJModel * model2 = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Horse/Horse.obj" );
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
@@ -150,7 +121,7 @@ int main ( void )
 
 	float scale = 2.0F / max ( size.X, max ( size.Y, size.Z ) );
 
-	Mesh ** meshes = new Mesh * [model->Groups.size ( ) + model1->Groups.size ( ) + model2->Groups.size ( )];
+	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
 
 	for ( int index = 0; index < model->Groups.size ( ); index++ )
 	{
@@ -163,92 +134,31 @@ int main ( void )
 		meshes [index]->Tesselate ( );
 	}
 
-	//{
-	//	meshes [model->Groups.size ( )] = new Mesh ( model1, 0, new Transform ( ) );
-
-	//	meshes [model->Groups.size ( )]->Transformation->SetScale ( Vector3D ( 1.0F / 1000.0F, 1.0F / 1000.0F, 1.0F / 1000.0F ) );
-
-	//	meshes [model->Groups.size ( )]->Transformation->SetTranslation ( Vector3D ( 0.48F, 0.15F, -0.28F ) );
-
-	//	meshes [model->Groups.size ( )]->Tesselate ( );
-	//}
-
-	//{
-	//	meshes [model->Groups.size ( ) + 1] = new Mesh ( model2, 0, new Transform ( ) );
-
-	//	meshes [model->Groups.size ( ) + 1]->Transformation->SetScale ( Vector3D ( 1.0F / 300.0F, 1.0F / 300.0F, 1.0F / 300.0F ) );
-
-	//	meshes [model->Groups.size ( ) + 1]->Transformation->SetTranslation ( Vector3D ( 0.5F, -0.15F, -0.28F ) );
-
-	//	meshes [model->Groups.size ( ) + 1]->Tesselate ( );
-	//}
-
-	/*
-	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Lexus/Lexus.obj" );
-	
-	Vector3D minimum = model->GetMinimum ( ); 
-	
-	Vector3D maximum = model->GetMaximum ( );
-	
-	Vector3D size = maximum - minimum;
-	
-	float scale = 2.0F / max ( size.X, max ( size.Y, size.Z ) );
-	
-	Mesh ** meshes = new Mesh * [model->Groups.size ( )];
-	
-	for ( int index = 0; index < model->Groups.size ( ); index++ )
-	{
-		meshes [index] = new Mesh ( model, index, new Transform ( ), new Material ( ) );
-		
-		meshes [index]->Transformation->SetScale ( Vector3D ( scale, scale, scale ) );
-		
-		meshes [index]->Transformation->SetTranslation ( -scale * ( minimum + maximum ) / 2.0F );
-		
-		meshes [index]->Tesselate ( );
-	}
-	*/
-
 	//----------------------------- Building Scene for GPU Ray Tracing ----------------------------
 	
 	Scene * scene = new Scene ( camera, new Volume ( scale * ( minimum - maximum ) / 2.0F,
 		                                             scale * ( maximum - minimum ) / 2.0F ) );
-
 
 	for ( int index = 0; index < model->Groups.size ( ) ; index++ )
 	{
 		scene->Primitives.push_back ( meshes [index] );
 	}
 
-	//-------------------------- Adding All Textures to Texture Manager ---------------------------
-
 	for ( int index = 0; index < model->Textures.size ( ); index++ )
 	{
 		scene->TextureData.push_back ( model->Textures [index]->Data );
 	}
 
-	//scene->Primitives.push_back ( meshes [model->Groups.size ( )] );
+	scene->Lights.push_back ( new Light ( 0, Vector3D :: Zero ) );
+	scene->Lights.push_back ( new Light ( 1, Vector3D :: Zero ) );
 
-	//scene->Primitives.push_back ( meshes [model->Groups.size ( ) + 1] );
-
-	scene->Lights.push_back ( new Light ( 0, Vector3D ( 0.0F, -1.0F, 0.5F ) ) );
-
-	scene->Lights.push_back ( new Light ( 1, Vector3D ( 1.0F, 0.0F, 0.5F ) ) );
-
-	scene->BuildGrid ( 64, 64, 64 );
+	scene->BuildGrid ( 128, 128, 128, false );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
 	StaticData * staticData = new StaticData ( );
 
 	staticData->BuildData ( scene );
-
-	//------------------------------- Setup Shader Uniform Variables ------------------------------
-
-	shaderManager->Bind ( );
-
-	staticData->SetShaderData ( shaderManager );
-
-	shaderManager->Unbind ( );
 
 	//---------------------------------------------------------------------------------------------
 	
@@ -271,23 +181,6 @@ int main ( void )
 			shaderManager->Unbind ( );
 
 			Recompile = false;
-		}
-
-		if ( Info )
-		{
-			//cout << "------------------------------------------" << endl;
-			//cout << "Position = " << camera->GetPosition ( ) << endl;
-			//cout << "View = " << camera->View << endl;
-			//cout << "Up = " << camera->Up << endl;
-			//cout << "Side = " << camera->Side << endl;
-
-			//cout << "------------------------------------------" << endl;
-			//cout << "Position = " << camera->GetPosition ( ) << endl;
-			//cout << "View = " << camera->View << endl;
-			//cout << "Up = " << camera->Up << endl;
-			//cout << "Side = " << camera->Side << endl;
-
-			Info = false;
 		}
 
 		//------------------------------------ Calculating FPS ------------------------------------
@@ -314,6 +207,14 @@ int main ( void )
 		mouse.Apply ( camera );
 
 		keyboard.Apply ( camera );
+
+		scene->Lights [0]->Position.X = sin ( Time );
+		scene->Lights [0]->Position.Y = cos ( Time );
+		scene->Lights [0]->Position.Z = 1.5F;
+
+		scene->Lights [1]->Position.X = 0.4F * sin ( Time );
+		scene->Lights [1]->Position.Y = 0.0F;
+		scene->Lights [1]->Position.Z = 0.0F;
 
 		//-------------------- Rendering Scene ( OpenGL or Ray Tracing Mode ) ---------------------
 
