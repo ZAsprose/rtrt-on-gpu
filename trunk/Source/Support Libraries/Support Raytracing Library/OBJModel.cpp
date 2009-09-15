@@ -1,5 +1,6 @@
 /*
-   Support Raytracing Library  
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -14,24 +15,19 @@
 
    You should have received a copy of the GNU General Public License
    along with this program. If not, see http://www.gnu.org/licenses.
-*/
+ */
 
 #include "OBJModel.h"
 
 namespace Raytracing
 {
-	//-------------------------------- MTLTexture Class Subroutines -------------------------------
+	//------------------------------ MTLTextureData Class Subroutines -----------------------------
 
-	MTLTexture :: MTLTexture ( char name [], TextureData2D * data )
+	MTLTextureData :: MTLTextureData ( char name [], TextureData2D * data )
 	{
 		memcpy ( Name, name, LENGTH );
 
 		Data = data;
-	}
-	
-	MTLTexture :: ~MTLTexture ( void )
-	{
-		delete Data;
 	}
 
 	//------------------------------- MTLMaterial Class Subroutines -------------------------------
@@ -52,7 +48,7 @@ namespace Raytracing
 
 	OBJGroup :: ~OBJGroup ( void )
 	{
-		delete Material;
+		Faces.clear ( );
 	}
 
 	//--------------------------------- OBJModel Class Subroutines --------------------------------
@@ -74,17 +70,17 @@ namespace Raytracing
 			delete Textures [index];
 		}
 
-		Vertices.clear ( );
-		
-		Normals.clear ( );
-		
-		TexCoords.clear ( );
-		
 		Groups.clear ( );
 
 		Materials.clear ( );
 
 		Textures.clear ( );
+
+		Vertices.clear ( );
+		
+		Normals.clear ( );
+		
+		TexCoords.clear ( );
 	}
 
 	//------------------------------------- Support Functions -------------------------------------
@@ -98,7 +94,7 @@ namespace Raytracing
 			minimum = Min ( minimum, Vertices [index] );
 		}
 
-		return minimum;
+		return minimum - EPSILON;
 	}
 		
 	Vector3D OBJModel :: GetMaximum ( void ) const
@@ -110,6 +106,6 @@ namespace Raytracing
 			maximum = Max ( maximum, Vertices [index] );
 		}
 
-		return maximum;
+		return maximum + EPSILON;
 	}
 }

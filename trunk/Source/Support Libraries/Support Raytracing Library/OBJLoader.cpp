@@ -1,5 +1,6 @@
 /*
-   Support Raytracing Library  
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program. If not, see http://www.gnu.org/licenses.
-*/
+ */
 
 #include "OBJLoader.h"
 
@@ -30,11 +31,11 @@ namespace Raytracing
 {
 	//------------------------------------------ Loading Text File ------------------------------------------
 	
-	char * OBJLoader :: LoadFile ( const char * filename, unsigned& size )
+	char * OBJLoader :: LoadFile ( const char * path, unsigned& size )
 	{
-		FILE * file = fopen ( filename, "rt" );
+		FILE * file = fopen ( path, "rt" );
 
-		if ( file == NULL )
+		if ( NULL == file )
 		{
 			cout << "ERROR: Could not open file" << endl;
 
@@ -75,11 +76,11 @@ namespace Raytracing
 	
 	//-------------------------------------- Loading MTL Material File --------------------------------------
 
-	bool OBJLoader :: LoadMTL ( const char * filename, OBJModel * model )
+	bool OBJLoader :: LoadMTL ( const char * path, OBJModel * model )
 	{
 		unsigned size = 0;
 
-		char * memory = LoadFile ( filename, size );
+		char * memory = LoadFile ( path, size );
 
 		if ( NULL == memory )
 		{
@@ -100,16 +101,16 @@ namespace Raytracing
 
 		while ( position <= finish )
 		{
+			//-------------------------------- NEW MATERIAL TOKEN ---------------------------------
+
 			if ( memcmp ( position, "newmtl", 6 ) == 0 )
 			{
-				//--------------------- Adding previous material to the model ---------------------
-
 				if ( material != NULL )
 				{
 					model->Materials.push_back ( material );
 				}
 
-				//----------------------------- Getting material name -----------------------------
+				//---------------------------------------------------------------------------------
 
 				char name [LENGTH];
 
@@ -117,108 +118,143 @@ namespace Raytracing
 				
 				sscanf ( position, "newmtl %s", name );
 
-				//----------------- Creating new material with default properties -----------------
+				//---------------------------------------------------------------------------------
 
-				material = new MTLMaterial ( name, new Material ( ) );
+				material = new MTLMaterial ( name );
+
+				goto NEWLINE;
 			}
-			else
-				if ( memcmp ( position, "map_Kd", 6 ) == 0 )
+
+			//--------------------------------- DIFFUSE MAP TOKEN ---------------------------------
+
+			if ( memcmp ( position, "map_Kd", 6 ) == 0 )
+			{
+				//---------------------------------------------------------------------------------
+
+				char name [LENGTH];
+
+				memset ( name, 0, LENGTH );
+
+				sscanf ( position, "map_Kd %s", &name );
+
+				//---------------------------------------------------------------------------------
+
+				MTLTextureData * texture = NULL;
+
+				for ( int index = 0; index < model->Textures.size ( ); index++ )
 				{
-					//--------------------------- Getting texture name ----------------------------
-
-					char name [LENGTH];
-
-					memset ( name, 0, LENGTH );
-
-					sscanf ( position, "map_Kd %s", &name );
-
-					//--------------- Trying to search texture in previous textures ---------------
-
-					MTLTexture * texture = NULL;
-
-					for ( int i = 0; i < model->Textures.size ( ); i++ )
+					if ( memcmp ( model->Textures [index]->Name, name, LENGTH ) == 0 )
 					{
-						if ( memcmp ( model->Textures [i]->Name, name, LENGTH ) == 0 )
-						{
-							texture = model->Textures [i];
-							
-							break;
-						}
+						texture = model->Textures [index];
+						
+						break;
 					}
-
-					//---------------- Creating new texture ( if it is necessary ) ----------------
-
-					if ( NULL == texture )
-					{
-						texture = new MTLTexture ( name, TextureData2D :: FromTGA ( name ) );
-
-						model->Textures.push_back ( texture );
-					}
-
-					//------------------------ Setting texture to material ------------------------
-					
-					material->Properties->Data = texture->Data;
 				}
-				else
-					if ( memcmp ( position, "Ka", 2 ) == 0 )
-					{
-						sscanf ( position, "Ka %f %f %f",
-								 &material->Properties->Ambient.X,
-								 &material->Properties->Ambient.Y,
-								 &material->Properties->Ambient.Z );
-					}
-					else
-						if ( memcmp ( position, "Kd", 2 ) == 0 )
-						{
-							sscanf ( position, "Kd %f %f %f",
-									 &material->Properties->Diffuse.X,
-									 &material->Properties->Diffuse.Y,
-									 &material->Properties->Diffuse.Z );
-						}
-						else
-							if ( memcmp ( position, "Ks", 2 ) == 0 )
-							{
-								sscanf ( position, "Ks %f %f %f",
-										 &material->Properties->Specular.X,
-										 &material->Properties->Specular.Y,
-										 &material->Properties->Specular.Z );
-							}
-							else
-								if ( memcmp ( position, "Ns", 2 ) == 0 )
-								{
-									sscanf ( position, "Ns %f",
-										&material->Properties->Shininess );
-								}
-								else
-									if ( memcmp ( position, "Kr", 2 ) == 0 )
-									{
-										sscanf ( position, "Kr %f %f %f",
-											&material->Properties->Reflection.X,
-											&material->Properties->Reflection.Y,
-											&material->Properties->Reflection.Z );
-									}
-									else
-										if ( memcmp ( position, "Kt", 2 ) == 0 )
-										{
-											sscanf ( position, "Kt %f %f %f",
-												&material->Properties->Refraction.X,
-												&material->Properties->Refraction.Y,
-												&material->Properties->Refraction.Z );
-										}
-										else
-											if ( memcmp ( position, "Ni", 2 ) == 0 )
-											{
-												sscanf ( position, "Ni %f",
-														 &material->Properties->Density );
-											}
-											else
-												if ( memcmp ( position, "Nd", 2 ) == 0 )
-												{
-													sscanf ( position, "Nd %f",
-															 &material->Properties->Dissolve );
-												}
 
-			while ( *position++ != '\n' );
+				//---------------------------------------------------------------------------------
+
+				if ( NULL == texture )
+				{
+					texture = new MTLTextureData ( name, TextureData2D :: FromTGA ( name ) );
+
+					model->Textures.push_back ( texture );
+				}
+
+				//---------------------------------------------------------------------------------
+				
+				material->Properties->Data = texture->Data;
+
+				goto NEWLINE;
+			}
+
+			//----------------------------- AMBIENT COEFFICIENT TOKEN -----------------------------
+	
+			if ( memcmp ( position, "Ka", 2 ) == 0 )
+			{
+				sscanf ( position, "Ka %f %f %f",
+						 &material->Properties->Ambient.X,
+						 &material->Properties->Ambient.Y,
+						 &material->Properties->Ambient.Z );
+
+				goto NEWLINE;
+			}
+
+			//----------------------------- DIFFUSE COEFFICIENT TOKEN -----------------------------
+	
+			if ( memcmp ( position, "Kd", 2 ) == 0 )
+			{
+				sscanf ( position, "Kd %f %f %f",
+						 &material->Properties->Diffuse.X,
+						 &material->Properties->Diffuse.Y,
+						 &material->Properties->Diffuse.Z );
+
+				goto NEWLINE;
+			}
+
+			//----------------------------- SPECULAR COEFFICIENT TOKEN ----------------------------
+
+			if ( memcmp ( position, "Ks", 2 ) == 0 )
+			{
+				sscanf ( position, "Ks %f %f %f",
+						 &material->Properties->Specular.X,
+						 &material->Properties->Specular.Y,
+						 &material->Properties->Specular.Z );
+
+				goto NEWLINE;
+			}
+
+			//---------------------------- SHININESS COEFFICIENT TOKEN ----------------------------
+	
+			if ( memcmp ( position, "Ns", 2 ) == 0 )
+			{
+				sscanf ( position, "Ns %f", &material->Properties->Shininess );
+
+				goto NEWLINE;
+			}
+
+			//------------------ REFLECTION COEFFICIENT TOKEN ( !NON STANDARD! ) ------------------
+		
+			if ( memcmp ( position, "Kr", 2 ) == 0 )
+			{
+				sscanf ( position, "Kr %f %f %f",
+					     &material->Properties->Reflection.X,
+						 &material->Properties->Reflection.Y,
+						 &material->Properties->Reflection.Z );
+
+				goto NEWLINE;
+			}
+
+			//------------------ REFRACTION COEFFICIENT TOKEN ( !NON STANDARD! ) ------------------
+
+			if ( memcmp ( position, "Kt", 2 ) == 0 )
+			{
+				sscanf ( position, "Kt %f %f %f",
+					     &material->Properties->Refraction.X,
+						 &material->Properties->Refraction.Y,
+						 &material->Properties->Refraction.Z );
+
+				goto NEWLINE;
+			}
+
+			//---------------- OPTICAL DENSITY COEFFICIENT TOKEN ( !NON STANDARD! ) ---------------
+
+			if ( memcmp ( position, "Ni", 2 ) == 0 )
+			{
+				sscanf ( position, "Ni %f", &material->Properties->Density );
+
+				goto NEWLINE;
+			}
+
+			//------------------- DISSOLVE COEFFICIENT TOKEN ( !NON STANDARD! ) -------------------
+	
+			if ( memcmp ( position, "Nd", 2 ) == 0 )
+			{
+				sscanf ( position, "Nd %f", &material->Properties->Dissolve );
+
+				goto NEWLINE;
+			}
+
+			NEWLINE: while ( *position++ != '\n' );
 		}
 
 		if ( material != NULL )
@@ -233,47 +269,51 @@ namespace Raytracing
 
 	void GetDirectory ( const char * path, char * directory )
 	{
-		int length = 0;
+		int index = 0, length = 0;
 
-		int index = 0;
-
-		while ( 0 != path [index] )
+		while ( 0 != path [length] )
 		{
-			if ( '/' == path [index] || '\\' == path [index] )
-				length = index;
+			if ( '/' == path [length] || '\\' == path [length] )
+				index = length;
 
-			index++;
+			length++;
 		}
 
-		memcpy ( directory, path, length );
+		memcpy ( directory, path, index );
 
-		directory [length] = 0;
+		directory [index] = 0;
 	}
 
 	void GetFileName ( const char * path, char * file )
 	{
-		int length = 0;
+		int index = 0, length = 0;
 
-		int index = 0;
-
-		while ( 0 != path [index] )
+		while ( 0 != path [length] )
 		{
-			if ( '/' == path [index] || '\\' == path [index] )
-				length = index;
+			if ( '/' == path [length] || '\\' == path [length] )
+				index = length + 1;
 
-			index++;
+			length++;
 		}
 
-		memcpy ( file, path, length );
+		memcpy ( file, path + index, length - index );
 
-		file [length] = 0;
+		file [length - index] = 0;
 	}
 
-	OBJModel * OBJLoader :: LoadOBJ ( const char * filename )
+	OBJModel * OBJLoader :: LoadOBJ ( const char * path )
 	{
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
 		cout << "+++                         OBJ MODEL LOADER                         +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
+
+		char file [LENGTH];
+
+		GetFileName ( path, file );
+
+		cout <<  "File: " << file << endl;
+
+		//-----------------------------------------------------------------------------------------
 
 		char current [LENGTH];
 		
@@ -281,7 +321,7 @@ namespace Raytracing
 
 		char directory [LENGTH];
 
-		GetDirectory ( filename, directory );
+		GetDirectory ( path, directory );
 
 		_chdir ( directory );
 
@@ -289,7 +329,7 @@ namespace Raytracing
 
 		unsigned size = 0;
 
-		char * memory = LoadFile ( filename, size );
+		char * memory = LoadFile ( path, size );
 
 		if ( NULL == memory )
 		{
@@ -312,7 +352,7 @@ namespace Raytracing
 
 		//-----------------------------------------------------------------------------------------
 
-		cout << "LOADING: ";
+		cout << "Loading: ";
 
 		float progress = 1.0F;
 		
@@ -322,22 +362,18 @@ namespace Raytracing
 
 		while ( position <= finish )
 		{
-			//-------------------------------------------------------------------------------------
-
 			int length = 0;
 
 			while ( position [length++] != '\n' );
 
 			memcpy ( line, position, length );
 
-			line [length - 1] = 0;
+			line [length] = 0;
 
-			//-------------------------------------------------------------------------------------
+			//-------------------------------- MATERIAL FILE TOKEN --------------------------------
 
 			if ( memcmp ( line, "mtllib", 6 ) == 0 )
 			{
-				//-------------------- Groups must be created later ---------------------
-
 				if ( NULL != group )
 				{
 					delete group;
@@ -345,139 +381,154 @@ namespace Raytracing
 					group = NULL;
 				}
 
-				//----------------------- Getting MTL file path -------------------------
+				//---------------------------------------------------------------------------------
 
 				char mtlfile [LENGTH];
 
 				sscanf ( line, "mtllib %s", &mtlfile );
 
-				//------------------- Loading materials from MTL file -------------------
+				//---------------------------------------------------------------------------------
 
 				if ( !LoadMTL ( mtlfile, model ) )
 				{
 					return NULL;
 				}
+
+				goto NEWLINE;
 			}
-			else
-				if ( memcmp ( line, "usemtl", 6 ) == 0 )
+
+			//-------------------------------- USE MATERIAL TOKEN ---------------------------------
+
+			if ( memcmp ( line, "usemtl", 6 ) == 0 )
+			{
+				if ( NULL != group )
 				{
-					//--------------- Adding previous group to the model ----------------
+					model->Groups.push_back ( group );
+				}
 
-					if ( NULL != group )
+				//---------------------------------------------------------------------------------
+
+				char name [LENGTH];
+
+				memset ( name, 0, LENGTH );
+
+				sscanf ( line, "usemtl %s", &name );
+
+				//---------------------------------------------------------------------------------
+
+				MTLMaterial * material = NULL;
+
+				for ( int index = 0; index < model->Materials.size ( ); index++ )
+				{
+					if ( 0 == memcmp ( model->Materials [index]->Name, name, LENGTH ) )
 					{
-						model->Groups.push_back ( group );
+						material = model->Materials [index];
+						
+						break;
 					}
+				}
 
-					//---------------------- Getting material name ----------------------
+				if ( NULL == material )
+				{
+					cout << "WARNING: Could not find specified material" << endl;
+				}
 
-					char name [LENGTH];
+				//---------------------------------------------------------------------------------
 
-					memset ( name, 0, LENGTH );
+				group = new OBJGroup ( material );
 
-					sscanf ( line, "usemtl %s", &name );
+				goto NEWLINE;
+			}
 
-					//---------------- Finding this material in the list ----------------
+			//-------------------------------- VERTEX NORMAL TOKEN --------------------------------
 
-					MTLMaterial * material = NULL;
+			if ( memcmp ( line, "vn", 2 ) == 0 )
+			{
+				Vector3D normal = Vector3D :: Zero;
 
-					for ( int index = 0; index < model->Materials.size ( ); index++ )
-					{
-						if ( 0 == memcmp (
-							model->Materials [index]->Name,name, LENGTH ) )
-						{
-							material = model->Materials [index];
-							
-							break;
-						}
-					}
+				sscanf ( line, "vn %f %f %f", &normal.X, &normal.Y, &normal.Z );
 
-					if ( NULL == material )
-					{
-						cout << "WARNING: Could not find specified material" << endl;
-					}
+				model->Normals.push_back ( normal );
 
-					//------------ Creating new group with specified material -----------
+				goto NEWLINE;
+			}
 
-					group = new OBJGroup ( material );
+			//------------------------------- VERTEX TEXCOORD TOKEN -------------------------------
+
+			if ( memcmp ( line, "vt", 2 ) == 0 )
+			{
+				Vector2D texcoord = Vector2D :: Zero;
+
+				sscanf ( line, "vt %f %f", &texcoord.X, &texcoord.Y );
+
+				model->TexCoords.push_back ( texcoord );
+
+				goto NEWLINE;
+			}
+
+			//------------------------------- VERTEX POSITION TOKEN -------------------------------
+
+			if ( memcmp ( line, "v", 1 ) == 0 )
+			{
+				Vector3D vertex = Vector3D :: Zero;
+				
+				sscanf ( line, "v %f %f %f", &vertex.X, &vertex.Y, &vertex.Z );
+				
+				model->Vertices.push_back ( vertex );
+
+				goto NEWLINE;
+			}
+
+			//------------------------------------ FACE TOKEN -------------------------------------
+
+			if ( memcmp ( line, "f", 1 ) == 0 )
+			{
+				OBJFace face;
+
+				if ( NULL != group->Material->Properties->Data )
+				{
+					sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+						&face.Vertex[0], &face.TexCoord[0], &face.Normal[0],
+						&face.Vertex[1], &face.TexCoord[1], &face.Normal[1],
+						&face.Vertex[2], &face.TexCoord[2], &face.Normal[2] );
 				}
 				else
-					if ( memcmp ( line, "vn", 2 ) == 0 )
-					{
-						Vector3D normal = Vector3D :: Zero;
+				{
+					sscanf ( line, "f %d//%d %d//%d %d//%d",
+						&face.Vertex[0], &face.Normal[0],
+						&face.Vertex[1], &face.Normal[1],
+						&face.Vertex[2], &face.Normal[2] );
+				}
 
-						sscanf ( line, "vn %f %f %f",
-								 &normal.X,
-								 &normal.Y,
-								 &normal.Z );
+				group->Faces.push_back ( face );
 
-						model->Normals.push_back ( normal );
-					}
-					else
-						if ( memcmp ( line, "vt", 2 ) == 0 )
-						{
-							Vector2D texcoords = Vector2D :: Zero;
+				goto NEWLINE;
+			}
 
-							sscanf ( line, "vt %f %f",
-									 &texcoords.X,
-									 &texcoords.Y );
-
-							model->TexCoords.push_back ( texcoords );
-						}
-						else
-							if ( memcmp ( line, "v", 1 ) == 0 )
-							{
-								Vector3D vertex = Vector3D :: Zero;
-								
-								sscanf ( line, "v %f %f %f",
-										 &vertex.X,
-										 &vertex.Y,
-										 &vertex.Z );
-								
-								model->Vertices.push_back ( vertex );
-							}
-							else
-								if ( memcmp ( line, "f", 1 ) == 0 )
-								{
-									OBJFace face;
-
-									sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-											 &face.Vertex[0],
-											 &face.TexCoords[0],
-											 &face.Normal[0],
-											 &face.Vertex[1],
-											 &face.TexCoords[1],
-											 &face.Normal[1],
-											 &face.Vertex[2],
-											 &face.TexCoords[2],
-											 &face.Normal[2] );
-
-									group->Faces.push_back ( face );
-								}
+			NEWLINE: position += length;
 
 			if ( progress > ( finish - position ) / ( float ) size )
 			{
 				progress -= 0.02F; cout << ".";
 			}
-
-			position += length;
 		}
-
-		//-------------------------------------------------------------------------------
 
 		cout << endl;
 
-		cout << "VERTICES: " << model->Vertices.size ( ) << endl;
-
-		cout << "GROUPS: " << model->Groups.size ( ) << endl;
-
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
 
 		if ( NULL != group )
 		{
 			model->Groups.push_back ( group );
 		}
 
-		//-------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------
+
+		cout << "Vertices: " << model->Vertices.size ( ) << endl;
+
+		cout << "Groups: " << model->Groups.size ( ) << endl;
+
+		//-----------------------------------------------------------------------------------------
 
 		_chdir ( current );
 

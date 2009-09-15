@@ -1,5 +1,6 @@
 /*
-   Support Raytracing Library  
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program. If not, see http://www.gnu.org/licenses.
-*/
+ */
 
 #include "Mesh.h"
 
@@ -60,19 +61,19 @@ namespace Raytracing
 					Model->Vertices [  Model->Groups [Group]->Faces [index].Vertex [A] - 1 ] ),
 					Normalize ( Transformation->ForwardNormal (
 					Model->Normals [ Model->Groups [Group]->Faces [index].Normal [A] - 1 ] ) ),
-					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoords [A] - 1 ] );
+					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoord [A] - 1 ] );
 
 				Vertex * vertexB = new Vertex ( Transformation->ForwardPoint (
 					Model->Vertices [ Model->Groups [Group]->Faces [index].Vertex [B] - 1 ] ),
 					Normalize ( Transformation->ForwardNormal (
 					Model->Normals [ Model->Groups [Group]->Faces [index].Normal [B] - 1 ] ) ),
-					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoords [B] - 1 ] );
+					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoord [B] - 1 ] );
 
 				Vertex * vertexC = new Vertex ( Transformation->ForwardPoint (
 					Model->Vertices [ Model->Groups [Group]->Faces [index].Vertex [C] - 1 ] ),
 					Normalize ( Transformation->ForwardNormal (
 					Model->Normals [ Model->Groups [Group]->Faces [index].Normal [C] - 1 ] ) ),
-					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoords [C] - 1 ] );
+					Model->TexCoords [ Model->Groups [Group]->Faces [index].TexCoord [C] - 1 ] );
 				
 				Triangles.push_back (
 					new Triangle ( vertexA, vertexB, vertexC, Properties ) );
