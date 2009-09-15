@@ -56,9 +56,9 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------
 
-		Data = data;
+		TextureData = data;
 
-		Scale = scale;
+		TextureScale = scale;
 	}
 
 	//--------------------------------------- Apply Settings --------------------------------------

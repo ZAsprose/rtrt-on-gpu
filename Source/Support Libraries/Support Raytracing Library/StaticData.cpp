@@ -195,16 +195,16 @@ namespace Raytracing
 
 			//------------------------------------------------------------------------------------------
 			
-			if ( scene->Primitives [i]->Properties->Data == NULL )
+			if ( scene->Primitives [i]->Properties->TextureData == NULL )
 			{
 				MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) = Vector3D (
-					scene->Primitives [i]->Properties->Scale, 0 );
+					scene->Primitives [i]->Properties->TextureScale, 0 );
 			}
 			else
 			{
 				MaterialTexture->Data->Pixel <Vector3D> ( offset++ ) = Vector3D (
-					scene->Primitives [i]->Properties->Scale,
-					scene->Primitives [i]->Properties->Data->Identifier );
+					scene->Primitives [i]->Properties->TextureScale,
+					scene->Primitives [i]->Properties->TextureData->Identifier );
 			}
 		}
 

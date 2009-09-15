@@ -61,9 +61,9 @@ namespace Raytracing
 
 			//--------------------------- Texture Data and Texture Scale --------------------------
 
-			TextureData2D * Data;
+			TextureData2D * TextureData;
 
-			Vector2D Scale;
+			Vector2D TextureScale;
 
 			//-------------------------------- Material Identifier --------------------------------
 
