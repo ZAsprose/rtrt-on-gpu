@@ -32,7 +32,7 @@ static const float TWO_PI = 6.283185307179F;
     	
 static const float EXPONENT = 2.718281828459F;
     	
-static const float EPSILON = 0.0001F;
+static const float EPSILON = 0.001F;
 
 //-------------------------------------------------------------------------------------------------
 

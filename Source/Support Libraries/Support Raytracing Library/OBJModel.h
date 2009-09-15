@@ -1,5 +1,6 @@
 /*
-   Support Raytracing Library  
+   S U P P O R T   R A Y   T R A C I N G   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -14,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program. If not, see http://www.gnu.org/licenses.
-*/
+ */
 
 #pragma once
 
@@ -24,8 +25,6 @@
 
 #include "Triangle.h"
 
-#include "Texture2D.h"
-
 #include <vector>
 
 #define LENGTH 255
@@ -34,19 +33,19 @@ using namespace std;
 
 namespace Raytracing
 {
-	struct MTLTexture
+	struct MTLTextureData
 	{
-		//----------------------------- File Name and OpenGL Texture ------------------------------
+		//--------------------------------- File Name in MTL File ---------------------------------
 
 		char Name [LENGTH];
 
+		//------------------------ Texture Data ( DELETED IN SCENE CLASS ) ------------------------
+
 		TextureData2D * Data;
 
-		//------------------------------- Constructor and Destructor ------------------------------
+		//-------------------------------------- Constructor --------------------------------------
 		
-		MTLTexture ( char [], TextureData2D * = NULL );
-
-		~MTLTexture ( void );
+		MTLTextureData ( char [], TextureData2D * = NULL );
 	};
 
 	//---------------------------------------------------------------------------------------------
@@ -57,13 +56,13 @@ namespace Raytracing
 
 		char Name [LENGTH];
 
-		//---------------------------------- Material Properties ----------------------------------
+		//------------------ Material Properties ( DELETED IN PRIMITIVE CLASS ) -------------------
 
 		Material * Properties;
 
 		//-------------------------------------- Constructor --------------------------------------
 		
-		MTLMaterial ( char [], Material * = NULL );
+		MTLMaterial ( char [], Material * = new Material ( ) );
 	};
 
 	//---------------------------------------------------------------------------------------------
@@ -74,14 +73,14 @@ namespace Raytracing
 
 		int Normal [3];
 
-		int TexCoords [3];
+		int TexCoord [3];
 	};
 
 	//---------------------------------------------------------------------------------------------
 
 	struct OBJGroup
 	{
-		//----------------------------- Material Properties and Name ------------------------------
+		//--------------- Material Properties and Name ( DELETED IN OBJMODEL CLASS ) --------------
 
 		MTLMaterial * Material;
 
@@ -118,7 +117,7 @@ namespace Raytracing
 
 		//-------------------------------- List of Raster Textures --------------------------------
 
-		vector <MTLTexture *> Textures;
+		vector <MTLTextureData *> Textures;
 
 		//-------------------------------------- Destructor ---------------------------------------
 		

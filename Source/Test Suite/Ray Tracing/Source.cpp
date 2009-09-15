@@ -111,7 +111,7 @@ int main ( void )
 
 	//----------------- Loading OBJ Model and Building Scene Primitives ( Meshes ) ----------------
 	
-	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/House/House.obj" );
+	OBJModel * model = OBJLoader :: LoadOBJ( "D:/Projects/RTRT on GPU/Support/Models/Conference/Conference.obj" );
 
 	Vector3D minimum = model->GetMinimum ( ); 
 
@@ -150,7 +150,7 @@ int main ( void )
 	}
 
 	scene->Lights.push_back ( new Light ( 0, Vector3D :: Zero ) );
-	scene->Lights.push_back ( new Light ( 1, Vector3D :: Zero ) );
+	//scene->Lights.push_back ( new Light ( 1, Vector3D :: Zero ) );
 
 	scene->BuildGrid ( 128, 128, 128, true );
 
@@ -208,13 +208,13 @@ int main ( void )
 
 		keyboard.Apply ( camera );
 
-		scene->Lights [0]->Position.X = sin ( Time );
-		scene->Lights [0]->Position.Y = cos ( Time );
-		scene->Lights [0]->Position.Z = 1.5F;
+		//scene->Lights [0]->Position.X = sin ( Time );
+		//scene->Lights [0]->Position.Y = cos ( Time );
+		//scene->Lights [0]->Position.Z = 1.5F;
 
-		scene->Lights [1]->Position.X = 0.4F * sin ( Time );
-		scene->Lights [1]->Position.Y = 0.0F;
-		scene->Lights [1]->Position.Z = 0.0F;
+		scene->Lights [0]->Position.X = 0.4F * sin ( Time );
+		scene->Lights [0]->Position.Y = 0.0F;
+		scene->Lights [0]->Position.Z = 0.0F;
 
 		//-------------------- Rendering Scene ( OpenGL or Ray Tracing Mode ) ---------------------
 
