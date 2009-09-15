@@ -162,7 +162,7 @@ namespace Raytracing
 
 				//---------------------------------------------------------------------------------
 				
-				material->Properties->Data = texture->Data;
+				material->Properties->TextureData = texture->Data;
 
 				goto NEWLINE;
 			}
@@ -485,7 +485,7 @@ namespace Raytracing
 			{
 				OBJFace face;
 
-				if ( NULL != group->Material->Properties->Data )
+				if ( NULL != group->Material->Properties->TextureData )
 				{
 					sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
 						&face.Vertex[0], &face.TexCoord[0], &face.Normal[0],
