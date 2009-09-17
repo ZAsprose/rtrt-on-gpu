@@ -152,7 +152,7 @@ int main ( void )
 	scene->Lights.push_back ( new Light ( 0, Vector3D :: Zero ) );
 	//scene->Lights.push_back ( new Light ( 1, Vector3D :: Zero ) );
 
-	scene->BuildGrid ( 128, 128, 128, true );
+	scene->BuildGrid ( 256, 128, 128, true );
 
 	//-------------------------- Generating Static Texture Data for Scene -------------------------
 
@@ -212,9 +212,13 @@ int main ( void )
 		//scene->Lights [0]->Position.Y = cos ( Time );
 		//scene->Lights [0]->Position.Z = 1.5F;
 
-		scene->Lights [0]->Position.X = 0.4F * sin ( Time );
+		scene->Lights [0]->Position.X = 0.4F;// * sin ( Time );
 		scene->Lights [0]->Position.Y = 0.0F;
 		scene->Lights [0]->Position.Z = 0.0F;
+
+		//scene->Lights [1]->Position.X = 0.4F * sin ( Time );
+		//scene->Lights [1]->Position.Y = -0.1F;
+		//scene->Lights [1]->Position.Z = 0.0F;
 
 		//-------------------- Rendering Scene ( OpenGL or Ray Tracing Mode ) ---------------------
 
