@@ -228,7 +228,7 @@ namespace Raytracing
 		{
 			for ( int y = 0; y < scene->Grid->GetPartitionsY ( ); y++ )
 			{
-				for ( int z = 0; z < scene->Grid->GetPartitionsX ( ); z++ )
+				for ( int z = 0; z < scene->Grid->GetPartitionsZ ( ); z++ )
 				{
 					int triangles = scene->Grid->Voxels [x][y][z]->Triangles.size ( );
 

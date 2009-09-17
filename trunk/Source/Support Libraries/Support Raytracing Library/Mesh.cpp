@@ -53,7 +53,7 @@ namespace Raytracing
 
 		//-------------------------------------------------------------------------------------------
 
-		if ( NULL != Properties->TextureData )
+		if ( Model->Textures.size() > 0 )// NULL != Properties->TextureData )
 		{
 			for ( int index = 0; index < Model->Groups [Group]->Faces.size ( ); index++ )
 			{

@@ -6,7 +6,7 @@
 /************************************************** RENDERING CONFIG **************************************************/
 /**********************************************************************************************************************/
 
-#define RENDER_SHADOWS
+#define RENDER_SHADOWS_
 
 #define RENDER_REFLECTIONS
 
@@ -14,7 +14,7 @@
 
 #define RENDER_DISSOLVE
 
-#define RENDER_TEXTURES_
+#define RENDER_TEXTURES
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -458,6 +458,10 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 /*********************************************** RAY TRACING FUNCTIONS ************************************************/
 /**********************************************************************************************************************/
 
+#define USE_CONDITIONS_FOR_NEXT
+
+#define USE_PROXIMITY_GRID_
+
 bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 {	
 	//------------------------------------------------ Initialization -------------------------------------------------
@@ -466,35 +470,37 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 	
 	vec3 DELTA = Grid.VoxelSize / abs ( ray.Direction );	
 		
-	vec3 DIR = sign ( ray.Direction );
+	vec3 SIGN = sign ( ray.Direction );
+
+	//-----------------------------------------------------------------------------------------------------------------
 
 	#ifndef USE_PROXIMITY_GRID
 	
-	vec3 MAX = ( VoxelToWorld ( VOXEL ) + max ( DIR, Zero ) * Grid.VoxelSize - ray.Origin ) / ray.Direction;
+	vec3 MAX = ( VoxelToWorld ( VOXEL ) + max ( SIGN, Zero ) * Grid.VoxelSize - ray.Origin ) / ray.Direction;
 
 	#else
-
-	vec3 A = FirstVoxel ( ray );
-
-	vec3 B = FirstVoxelTime ( ray, DIR );
-
-	vec3 C = Grid.VoxelSize / ray.Direction;
+	
+	vec3 O = ( ray.Origin - Grid.Minimum ) / Grid.VoxelSize;
 
 	vec3 D = ray.Direction / Grid.VoxelSize;
 
-	vec3 MAX = VOXEL * C + B;
+	vec3 A = Unit / D;
 
-	float STEP = min ( DELTA.x, min ( DELTA.y, DELTA.z ) );
+	vec3 B = ( step ( Zero, D ) - O ) * A;
+
+	vec3 MAX = A * VOXEL + B;
+
+	float STEP  = min ( DELTA.x, min ( DELTA.y, DELTA.z ) );
 
 	#endif
 
 	//--------------------------------------------------- Traversal ---------------------------------------------------
 	
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < 512; i++)
 	{
-		#ifndef USE_PROXIMITY_GRID
+		#ifdef USE_CONDITIONS_FOR_NEXT
 
-		vec3 next = AxisZ;
+		vec3 NEXT = AxisZ;
 
 		float MIN = MAX.z;
 			
@@ -502,20 +508,24 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		{
 			if ( MAX.x < MAX.z )
 			{
-				next = AxisX; MIN = MAX.x;
+				NEXT = AxisX; MIN = MAX.x;
 			}
 		}
 		else
 		{
 			if ( MAX.y < MAX.z )
 			{
-				next = AxisY; MIN = MAX.y;
+				NEXT = AxisY; MIN = MAX.y;
 			}
 		}
 
 		#else
 
-		float MIN = min ( MAX.x, min ( MAX.y, MAX.z ) );
+		vec3 result = sign ( MAX.xxy - MAX.yzz );
+
+		vec3 NEXT = step ( Unit, vec3 ( -result.x - result.y, result.x - result.z, result.y + result.z ) );
+
+		float MIN  = dot ( MAX, NEXT );
 
 		#endif
 		
@@ -581,19 +591,21 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 			return true;
 		}
 
-		//---------------------------------------------- Go to next voxel ---------------------------------------------
+		//---------------------------------------------- GO TO NEXT VOXEL ---------------------------------------------
 
 		#ifndef USE_PROXIMITY_GRID
-
-		VOXEL += DIR * next;
-
-		MAX += DELTA * next;
+		
+		VOXEL += SIGN * NEXT;
+		
+		MAX += DELTA * NEXT;
 
 		#else
 
-		VOXEL = floor ( A + ( MIN + proximity * STEP ) * D );
+		VOXEL = mix ( VOXEL + SIGN * NEXT,
+			          floor ( O + ( MIN + proximity * STEP ) * D ),
+					  step ( 1.0, proximity ) );
 
-		MAX = VOXEL * C + B;
+		MAX = VOXEL * A + B;
 
 		#endif
 
