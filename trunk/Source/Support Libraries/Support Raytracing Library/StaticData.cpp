@@ -19,6 +19,8 @@
 
 #include "StaticData.h"
 
+#include <time.h>
+
 namespace Raytracing
 {
 	//----------------------------------------- Constant Parameters -----------------------------------------
@@ -119,6 +121,8 @@ namespace Raytracing
 		cout << "+++                       BUILDING STATIC DATA                       +++" << endl;
 		cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << endl;
 
+		clock_t time = clock ( );
+
 		if ( NULL != TextureArray->Data )
 		{
 			delete TextureArray->Data;
@@ -163,7 +167,11 @@ namespace Raytracing
 			}			
 		}
 
+		cout << "Building Texture Array: " << clock ( ) - time << " ms" <<  endl;
+
 		//---------------------------------- Generating material data ----------------------------------
+
+		time = clock ( );
 
 		int offset = 0;
 
@@ -208,11 +216,13 @@ namespace Raytracing
 			}
 		}
 
-		float used = floor ( 100.0F * offset / MaterialSize );
+		float matmem = floor ( 100.0F * offset / MaterialSize );
 
-		cout << "Material Memory: " << used << "%" << endl;
+		cout << "Building Material Data: " << clock ( ) - time << " ms" << endl;
 
 		//---------------------------------- Generating geometry data ----------------------------------
+
+		time  = clock ( ); 
 
 		if ( NULL != VoxelTexture->Data )
 		{
@@ -285,9 +295,15 @@ namespace Raytracing
 			}
 		}
 
-		used = floor ( 100.0F * offset / ( VertexSize * VertexSize ) );
+		float vermem = floor ( 100.0F * offset / ( VertexSize * VertexSize ) );
 
-		cout << "Vertex Memory: " << used << "%" << endl;
+		cout << "Building Vertex Data: " << clock ( ) - time << " ms" << endl << endl;
+
+		//----------------------------------------------------------------------------------------------
+
+		cout << "Material Memory Used: " << matmem << "%" << endl;
+
+		cout << "Vertex Memory Used: " << vermem << "%" << endl << endl;
 
 		//------------------------------------ Setup data textures -------------------------------------
 

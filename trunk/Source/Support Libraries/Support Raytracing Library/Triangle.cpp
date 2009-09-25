@@ -46,6 +46,18 @@ namespace Raytracing
 		delete VertexC;		
 	}
 
+	void Triangle :: Update ( void )
+	{
+		Normal = Cross ( VertexB->Position - VertexA->Position,
+			VertexC->Position - VertexA->Position );
+
+		Minimum = Min ( Min ( VertexA->Position, VertexB->Position ), VertexC->Position );
+
+		Maximum = Max ( Max ( VertexA->Position, VertexB->Position ), VertexC->Position );
+
+		Centroid = ( VertexA->Position + VertexB->Position + VertexC->Position ) / 3.0F;
+	}
+
 	//------------------------------ Drawing Triangle in OpenGL Mode ------------------------------
 	
 	void Triangle :: Draw ( void )
@@ -65,23 +77,5 @@ namespace Raytracing
 			                     VertexC->Position - VertexA->Position );
 			
 		return Square ( cross ) == 0.0F;
-	}
-
-	Vector3D Triangle :: GetNormal ( void ) const
-	{
-		Vector3D cross = Cross ( VertexB->Position - VertexA->Position,
-			                     VertexC->Position - VertexA->Position );
-			
-		return cross;
-	}
-
-	Vector3D Triangle :: GetMinimum ( void ) const
-	{
-		return Min ( Min ( VertexA->Position, VertexB->Position ), VertexC->Position );
-	}
-
-	Vector3D Triangle :: GetMaximum ( void ) const
-	{
-		return Max ( Max ( VertexA->Position, VertexB->Position ), VertexC->Position );
 	}
 }

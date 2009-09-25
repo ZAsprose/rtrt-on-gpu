@@ -264,6 +264,14 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="BVH"
+					>
+					<File
+						RelativePath=".\BVHTree.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Static Data"
@@ -387,6 +395,14 @@
 					</File>
 					<File
 						RelativePath=".\UniformGrid.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="BVH"
+					>
+					<File
+						RelativePath=".\BVHTree.h"
 						>
 					</File>
 				</Filter>

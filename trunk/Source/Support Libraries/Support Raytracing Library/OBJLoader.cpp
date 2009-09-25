@@ -487,17 +487,17 @@ namespace Raytracing
 
 				//if ( NULL != group->Material->Properties->TextureData )
 				//{
-					//sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
-					//	&face.Vertex[0], &face.TexCoord[0], &face.Normal[0],
-					//	&face.Vertex[1], &face.TexCoord[1], &face.Normal[1],
-					//	&face.Vertex[2], &face.TexCoord[2], &face.Normal[2] );
+					sscanf ( line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
+						&face.Vertex[0], &face.TexCoord[0], &face.Normal[0],
+						&face.Vertex[1], &face.TexCoord[1], &face.Normal[1],
+						&face.Vertex[2], &face.TexCoord[2], &face.Normal[2] );
 				//}
 				//else
 				//{
-					sscanf ( line, "f %d//%d %d//%d %d//%d",
-						&face.Vertex[0], &face.Normal[0],
-						&face.Vertex[1], &face.Normal[1],
-						&face.Vertex[2], &face.Normal[2] );
+				//	sscanf ( line, "f %d//%d %d//%d %d//%d",
+				//		&face.Vertex[0], &face.Normal[0],
+				//		&face.Vertex[1], &face.Normal[1],
+				//		&face.Vertex[2], &face.Normal[2] );
 				//}
 
 				group->Faces.push_back ( face );
