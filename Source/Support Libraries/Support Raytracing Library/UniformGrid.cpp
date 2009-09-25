@@ -19,6 +19,8 @@
 
 #include "UniformGrid.h"
 
+#include <time.h>
+
 namespace Raytracing
 {
 	//----------------------------------- Constructor and Destructor -----------------------------------
@@ -91,6 +93,8 @@ namespace Raytracing
 
 		//------------------------------------------------------------------------------------
 
+		clock_t time = clock ( );
+
 		vector <Primitive *> :: iterator primitive = primitives.begin ( ); 
 
 		while ( primitive != primitives.end ( ) )
@@ -133,5 +137,7 @@ namespace Raytracing
 
 			++primitive;
 		}
+
+		cout << "Building Uniform Grid: " << clock ( ) - time << " ms" << endl;
 	}
 }
