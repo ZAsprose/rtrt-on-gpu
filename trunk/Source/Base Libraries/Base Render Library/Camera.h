@@ -87,6 +87,12 @@ namespace Render
 			
 			void RotateWorld ( float, const Vector3D& );
 
+			//------------------------- Loading and Saving Camera to File -------------------------
+
+			void SaveToFile ( const char * path );
+
+			void LoadFromFile ( const char * path );
+
 			//---------------------- Applying Settings to OpenGL and Shaders ----------------------
 
 			void Setup ( void );
@@ -124,8 +130,6 @@ namespace Render
 			const Matrix3D& GetCameraToWorld ( void ) const { return CameraToWorld; }
 
 			Vector2D GetScreenScale ( void ) const;
-
-			Vector2D GetPixelSize ( void ) const;
 	};
 }
 

@@ -6,21 +6,21 @@
 /************************************************** RENDERING CONFIG **************************************************/
 /**********************************************************************************************************************/
 
-#define RENDER_SHADOWS_
+#define RENDER_SHADOWS
 
 #define RENDER_REFLECTIONS
 
-#define RENDER_REFRACTIONS
+#define RENDER_REFRACTIONS_
 
-#define RENDER_DISSOLVE
+#define RENDER_DISSOLVE_
 
-#define RENDER_TEXTURES
+#define RENDER_TEXTURES_
 
 //---------------------------------------------------------------------------------------------------------------------
 
 #define USE_TRIANGLE_NORMALS
 
-#define USE_PROXIMITY_GRID_
+#define USE_PROXIMITY_GRID
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -538,12 +538,6 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		float count = data.x;
 				
 		float offset = data.y;
-
-		#ifdef USE_PROXIMITY_GRID
-		
-		float proximity = data.z;
-		
-		#endif
 				
 		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
 
@@ -601,9 +595,11 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 
 		#else
 
-		VOXEL = mix ( VOXEL + SIGN * NEXT,
-			          floor ( O + ( MIN + proximity * STEP ) * D ),
-					  step ( 1.0, proximity ) );
+		//VOXEL = mix ( VOXEL + SIGN * NEXT,
+		//	          floor ( O + ( MIN + data.z * STEP ) * D ),
+		//			  step ( 1.0, proximity ) );
+
+		VOXEL = floor ( O + ( MIN + 0.001 + data.z * STEP ) * D );
 
 		MAX = VOXEL * A + B;
 

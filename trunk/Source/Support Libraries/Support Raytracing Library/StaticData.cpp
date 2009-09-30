@@ -29,17 +29,17 @@ namespace Raytracing
 
 	const unsigned StaticData :: MaterialSize = 8192;
 
-	const unsigned StaticData :: TextureUnit = 0;
-
-	const unsigned StaticData :: VoxelUnit = 1;
+	const unsigned StaticData :: VoxelUnit = 0;
 	
-	const unsigned StaticData :: PositionUnit = 2;
+	const unsigned StaticData :: PositionUnit = 1;
 	
-	const unsigned StaticData :: NormalUnit = 3;
+	const unsigned StaticData :: NormalUnit = 2;
 
-	const unsigned StaticData :: TexCoordUnit = 4;
+	const unsigned StaticData :: TexCoordUnit = 3;
 
-	const unsigned StaticData :: MaterialUnit = 5;
+	const unsigned StaticData :: MaterialUnit = 4;
+
+	const unsigned StaticData :: TextureUnit = 5;
 
 	//------------------------------------- Constructor and Destructor --------------------------------------
 	

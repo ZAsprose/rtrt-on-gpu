@@ -31,35 +31,15 @@ namespace Raytracing
 {
 	class Triangle
 	{
-		private:
+		public:
 
 			//--------------------------------- Triangle Vertices ---------------------------------
 
 			Vertex * VertexA;
 
 			Vertex * VertexB;
-
+			
 			Vertex * VertexC;
-
-			//------------------------------ Normal to Triangle Plane -----------------------------
-
-			Vector3D Normal;
-
-			//---------------- Minimum and Maximum Points of Bounding Box ( AABB ) ----------------
-
-			Vector3D Minimum;
-
-			Vector3D Maximum;
-
-			//--------------------------------- Triangle Centroid ---------------------------------
-
-			Vector3D Centroid;
-
-			//--------------------------------- Triangle Centroid ---------------------------------
-
-			void Update ( void );
-
-		public:
 
 			//-------------------------- Properties of Triangle Material --------------------------
 
@@ -79,13 +59,11 @@ namespace Raytracing
 			
 			bool IsEmpty ( void ) const;
 
-			Vector3D GetNormal ( void ) const { return Normal; }
+			Vector3D GetNormal ( void ) const;
 
-			Vector3D GetMinimum ( void ) const { return Minimum; }
+			Vector3D GetMinimum ( void ) const;
 
-			Vector3D GetMaximum ( void ) const { return Maximum; }
-
-			Vector3D GetCentroid ( void ) const { return Centroid; }
+			Vector3D GetMaximum ( void ) const;
 	};
 }
 
