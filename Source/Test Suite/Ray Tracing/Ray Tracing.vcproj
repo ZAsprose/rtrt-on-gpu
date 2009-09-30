@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FragmentBVH.fs"
+				>
+			</File>
+			<File
 				RelativePath=".\Vertex.vs"
 				>
 			</File>

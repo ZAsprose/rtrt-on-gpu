@@ -18,6 +18,8 @@
 
 #include "Camera.h"
 
+#include <fstream>
+
 namespace Render
 {
 	//---------------------------------------- Constructor ----------------------------------------
@@ -74,6 +76,30 @@ namespace Render
 		WorldToCamera = Matrix3D :: Rotate ( angle, local ) * WorldToCamera;
 
 		Update ( );
+	}
+
+	//----------------------------- Loading and Saving Camera to File -----------------------------
+
+	void Camera :: SaveToFile ( const char * path )
+	{
+		ofstream file;
+
+		file.open ( path );
+
+		file << Position << " " << Side << " " << Up << " " << View << " ";
+
+		file.close();
+	}
+
+	void Camera :: LoadFromFile ( const char * path )
+	{
+		ifstream file;
+
+		file.open ( path );
+
+		file >> Position >> Side >> Up >> View;
+
+		file.close();
 	}
 
 	//-------------------------- Applying Settings to OpenGL and Shaders --------------------------
@@ -145,10 +171,5 @@ namespace Render
 	Vector2D Camera :: GetScreenScale ( void ) const
 	{
 		return Vector2D ( tanf ( Aspect * FieldOfView / 2.0F ), tanf ( FieldOfView / 2.0F ) );
-	}
-
-	Vector2D Camera :: GetPixelSize ( void ) const
-	{
-		return Vector2D ( 2.0F / Width, 2.0F / Height );
 	}
 }
