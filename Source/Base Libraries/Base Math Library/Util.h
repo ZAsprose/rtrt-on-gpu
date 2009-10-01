@@ -1,5 +1,6 @@
 /*
-   Base Math Library   
+   B A S E   M A T H   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify

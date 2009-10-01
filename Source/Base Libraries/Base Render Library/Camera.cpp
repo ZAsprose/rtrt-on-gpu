@@ -1,5 +1,6 @@
 /*
-   Base Render Library   
+   B A S E   R E N D E R   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
@@ -86,7 +87,7 @@ namespace Render
 
 		file.open ( path );
 
-		file << Position << " " << Side << " " << Up << " " << View << " ";
+		file << Position << " " << WorldToCamera;
 
 		file.close();
 	}
@@ -97,9 +98,11 @@ namespace Render
 
 		file.open ( path );
 
-		file >> Position >> Side >> Up >> View;
+		file >> Position >> WorldToCamera;
 
 		file.close();
+
+		Update ( );
 	}
 
 	//-------------------------- Applying Settings to OpenGL and Shaders --------------------------

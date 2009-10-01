@@ -1,5 +1,6 @@
 /*
-   Base Render Library   
+   B A S E   R E N D E R   L I B R A R Y
+
    Copyright (C) 2009  Denis Bogolepov ( bogdencmc@inbox.ru )
 
    This program is free software: you can redistribute it and/or modify
