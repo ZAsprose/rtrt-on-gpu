@@ -408,14 +408,6 @@
 						>
 					</File>
 				</Filter>
-				<Filter
-					Name="Abstract"
-					>
-					<File
-						RelativePath=".\AccelerationStructure.h"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="Static Data"

@@ -1,6 +1,6 @@
 #extension GL_ARB_texture_rectangle : enable
 
-#extension GL_EXT_texture_array: enable
+//#extension GL_EXT_texture_array: enable
 
 /**********************************************************************************************************************/
 /************************************************** RENDERING CONFIG **************************************************/
@@ -10,7 +10,7 @@
 
 #define RENDER_REFLECTIONS
 
-#define RENDER_REFRACTIONS_
+#define RENDER_REFRACTIONS
 
 #define RENDER_DISSOLVE
 
@@ -20,7 +20,7 @@
 
 #define USE_TRIANGLE_NORMALS
 
-#define USE_PROXIMITY_GRID
+#define USE_PROXIMITY_GRID_
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -77,17 +77,6 @@ struct SIntersection
 };
 
 //---------------------------------------------------------------------------------------------------------------------
-
-struct SGrid
-{
-	vec3 Minimum;
-	
-	vec3 Maximum;
-	
-	vec3 VoxelSize;
-	
-	vec3 VoxelCount;
-};
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -152,21 +141,13 @@ uniform SCamera Camera;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-uniform SGrid Grid;
-
-//---------------------------------------------------------------------------------------------------------------------
-
 uniform int LightsCount;
 
 uniform SLight Lights [8];
 
 //---------------------------------------------------------------------------------------------------------------------
 
-uniform sampler3D VoxelTexture;
-
-uniform vec3 VoxelTextureStep;
-
-//---------------------------------------------------------------------------------------------------------------------
+uniform sampler2DRect VolumeTexture;
 
 uniform sampler2DRect PositionTexture;
 
@@ -180,13 +161,13 @@ uniform float VertexTextureStep;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-uniform sampler1D MaterialTexture;
+//uniform sampler1D MaterialTexture;
 
-uniform float MaterialTextureStep;
+//uniform float MaterialTextureStep;
 
 //---------------------------------------------------------------------------------------------------------------------
 
-uniform sampler2DArray ImageTextures;
+//uniform sampler2DArray ImageTextures;
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -351,63 +332,35 @@ void LoadTriangle ( inout STriangle triangle, out SMaterial properties )
 {	
 	float offset = LoadTriangle ( triangle );
 	
-	vec4 ambient =  texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	vec4 diffuse = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	vec4 specular = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	vec4 reflection = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	vec4 refraction = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	vec4 scale = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
-	
-	properties = SMaterial ( ambient.xyz,
-	                         diffuse.xyz,
-	                         specular.xyz,
-	                         specular.w,
-	                         reflection.xyz,
-	                         refraction.xyz,
-	                         refraction.w,
-	                         reflection.w,
-	                         scale.xy,
-	                         int ( scale.z ) );
+	//vec4 ambient =  texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//vec4 diffuse = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//vec4 specular = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//vec4 reflection = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//vec4 refraction = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//vec4 scale = texture1D ( MaterialTexture, offset++ * MaterialTextureStep );
+	//
+	//properties = SMaterial ( ambient.xyz,
+	//                         diffuse.xyz,
+	//                         specular.xyz,
+	//                         specular.w,
+	//                         reflection.xyz,
+	//                         refraction.xyz,
+	//                         refraction.w,
+	//                         reflection.w,
+	//                         scale.xy,
+	//                         int ( scale.z ) );
 }
 
 /**********************************************************************************************************************/
 /*********************************************** INTERSECTION FUNCTIONS ***********************************************/
 /**********************************************************************************************************************/
 
-float IntersectBox ( SRay ray )
-{
-	vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
-   
-	vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
-	
-	vec3 MAX = max ( OMAX, OMIN );
-	
-	return min ( MAX.x, min ( MAX.y, MAX.z ) );
-}
-
 //---------------------------------------------------------------------------------------------------------------------
-
-bool IntersectBox ( SRay ray, out float start, out float final )
-{
-	vec3 OMAX = ( Grid.Minimum - ray.Origin ) / ray.Direction;
-           
-	vec3 OMIN = ( Grid.Maximum - ray.Origin ) / ray.Direction;
-           
-	vec3 MAX = max ( OMAX, OMIN );
-           
-	vec3 MIN = min ( OMAX, OMIN );
-          
-	final = min ( MAX.x, min ( MAX.y, MAX.z ) );
-           
-	start = max ( max ( MIN.x, 0.0 ), max ( MIN.y, MIN.z ) ); 
-	
-	return final > start;
-}
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -458,159 +411,96 @@ bool IntersectTriangle ( in SRay ray, in STriangle triangle, out vec3 result )
 /*********************************************** RAY TRACING FUNCTIONS ************************************************/
 /**********************************************************************************************************************/
 
-#define USE_CONDITIONS_FOR_NEXT
+bool IntBox ( SRay ray, vec3 minimum, vec3 maximum )
+{
+	vec3 OMAX = ( minimum - ray.Origin ) / ray.Direction;
+           
+	vec3 OMIN = ( maximum - ray.Origin ) / ray.Direction;
+           
+	vec3 MAX = max ( OMAX, OMIN );
+           
+	vec3 MIN = min ( OMAX, OMIN );
+          
+	float final = min ( MAX.x, min ( MAX.y, MAX.z ) );
+           
+	float start = max ( max ( MIN.x, 0.0 ), max ( MIN.y, MIN.z ) ); 
+	
+	return final > start;
+}
 
-#define USE_PROXIMITY_GRID_
-
-bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
+bool Raytrace ( SRay ray, inout SIntersection intersection )
 {	
-	//------------------------------------------------ Initialization -------------------------------------------------
-	
-	vec3 VOXEL = WorldToVoxel ( ray.Origin );
-	
-	vec3 DELTA = Grid.VoxelSize / abs ( ray.Direction );	
-		
-	vec3 SIGN = sign ( ray.Direction );
+	float OFFSET = 0.0;
 
-	//-----------------------------------------------------------------------------------------------------------------
-
-	#ifndef USE_PROXIMITY_GRID
-	
-	vec3 MAX = ( VoxelToWorld ( VOXEL ) + max ( SIGN, Zero ) * Grid.VoxelSize - ray.Origin ) / ray.Direction;
-
-	#else
-	
-	vec3 D = ray.Direction / Grid.VoxelSize;
-	
-	vec3 O = ( ray.Origin - Grid.Minimum ) / Grid.VoxelSize;
-
-	vec3 A = Unit / D;
-
-	vec3 B = ( step ( Zero, D ) - O ) * A;
-
-	vec3 MAX = A * VOXEL + B;
-
-	#endif
-
-	//--------------------------------------------------- Traversal ---------------------------------------------------
-	
-	for (int i = 0; i < 512; i++)
+	do
 	{
-		#ifdef USE_CONDITIONS_FOR_NEXT
+		vec4 data = texture2DRect ( VolumeTexture, vec2 ( mod ( OFFSET, VertexTextureSize ),
+														  floor ( OFFSET * VertexTextureStep ) ) );
 
-		vec3 NEXT = AxisZ;
+		OFFSET++;
 
-		float MIN = MAX.z;
-			
-		if ( MAX.x < MAX.y )
+		vec3 min = texture2DRect ( VolumeTexture, vec2 ( mod ( OFFSET, VertexTextureSize ),
+														 floor ( OFFSET * VertexTextureStep ) ) ).xyz;
+
+		OFFSET++;
+
+		vec3 max = texture2DRect ( VolumeTexture, vec2 ( mod ( OFFSET, VertexTextureSize ),
+														 floor ( OFFSET * VertexTextureStep ) ) ).xyz;
+
+		OFFSET++;
+
+		if ( IntBox ( ray, min, max ) )
 		{
-			if ( MAX.x < MAX.z )
+			if ( 2.0 == data.x )
 			{
-				NEXT = AxisX; MIN = MAX.x;
+				float offset = data.z;
+
+				for ( float index = 0.0; index < data.w; index++ )
+				{
+					vec4 PA = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+																	  floor ( offset * VertexTextureStep ) ) );
+					offset++;
+							
+					vec4 PB = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+																	  floor ( offset * VertexTextureStep ) ) );
+					offset++;
+							
+					vec4 PC = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
+																	  floor ( offset * VertexTextureStep ) ) );
+					
+					STriangle triangle;
+					
+					triangle.A.Position = vec3 ( PA );
+					
+					triangle.B.Position = vec3 ( PB );
+					
+					triangle.C.Position = vec3 ( PC );
+					
+					triangle.Normal = vec3 ( PA.w, PB.w, PC.w );
+					
+					triangle.Offset = offset;
+				
+					vec3 test = Zero;
+					
+					if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x )
+					{
+						intersection = SIntersection ( test, triangle );
+					}
+					
+					offset++;
+				}
+
+				OFFSET = data.y;
 			}
 		}
 		else
 		{
-			if ( MAX.y < MAX.z )
-			{
-				NEXT = AxisY; MIN = MAX.y;
-			}
+			OFFSET = data.y;		
 		}
-
-		#else
-
-		vec3 result = sign ( MAX.xxy - MAX.yzz );
-
-		vec3 NEXT = step ( Unit, vec3 ( -result.x - result.y, result.x - result.z, result.y + result.z ) );
-
-		float MIN  = dot ( MAX, NEXT );
-
-		#endif
-		
-		if ( MIN > final ) break;
-		
-		//---------------------------- Reading voxel content ( triange count and offset ) -----------------------------
-		
-		vec3 data = vec3 ( texture3D ( VoxelTexture, VOXEL * VoxelTextureStep ) );
-
-		float count = data.x;
-				
-		float offset = data.y;
-				
-		//-------------------------------- Testing all triangles for ray intersection ---------------------------------
-
-		for ( float index = 0.0; index < count; index++ )
-		{
-            //------------------------------------- Reading triangle vertices -----------------------------------------
-            
-			vec4 PA = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-															  floor ( offset * VertexTextureStep ) ) );
-			offset++;
-					
-			vec4 PB = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-															  floor ( offset * VertexTextureStep ) ) );
-			offset++;
-					
-			vec4 PC = texture2DRect ( PositionTexture, vec2 ( mod ( offset, VertexTextureSize ),
-															  floor ( offset * VertexTextureStep ) ) );
-			
-			STriangle triangle;
-			
-			triangle.A.Position = vec3 ( PA );
-			
-			triangle.B.Position = vec3 ( PB );
-			
-			triangle.C.Position = vec3 ( PC );
-			
-			triangle.Normal = vec3 ( PA.w, PB.w, PC.w );
-			
-			triangle.Offset = offset;
-            
-            //------------------------------- Testing triangle for ray intersection -----------------------------------
-			
-			vec3 test = Zero;
-			
-			if ( IntersectTriangle ( ray, triangle, test ) && test.x < intersection.Parameters.x )
-			{
-				intersection = SIntersection ( test, triangle );
-			}
-			
-			offset++;
-		}
-		
-		if ( intersection.Parameters.x < MIN )
-		{            
-			return true;
-		}
-
-		//---------------------------------------------- GO TO NEXT VOXEL ---------------------------------------------
-
-		#ifndef USE_PROXIMITY_GRID
-		
-		VOXEL += SIGN * NEXT;
-		
-		MAX += DELTA * NEXT;
-
-		#else
-
-		//VOXEL = mix ( VOXEL + SIGN * NEXT,
-		//	          floor ( O + ( MIN + data.z * STEP ) * D ),
-		//			  step ( 1.0, proximity ) );
-
-		VOXEL = floor ( O + ( MIN + data.z ) * D );
-
-		MAX = VOXEL * A + B;
-
-		#endif
-
-		#ifdef SHOW_TRAVERSAL_DEPTH
-
-		TraversalDepth++;
-
-		#endif
 	}
+	while ( OFFSET > 0.0 );
 	
-	return false;
+	return intersection.Parameters.x < BIG;
 }
 
 /**********************************************************************************************************************/
@@ -653,9 +543,7 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 		SRay ray = SRay ( point + light * EPSILON, light );
 		
-		float final = IntersectBox ( ray );
-		
-		if ( Raytrace ( ray, intersection, final + EPSILON ) && intersection.Parameters.x < distance )
+		if ( Raytrace ( ray, intersection ) && intersection.Parameters.x < distance )
 		{
 			coefficient = 0.0;
 		}
@@ -677,20 +565,20 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 		//------------------------------------- Calculating diffuse contribution --------------------------------------
 		
-		float diffuse = abs ( dot ( light, normal ) );
+		float diffuse = max ( 0.0, dot ( light, normal ) );
 		
-		#ifdef RENDER_TEXTURES
+		//#ifdef RENDER_TEXTURES
 
-		vec3 texture = vec3 ( texture2DArray ( ImageTextures,
-			                                   vec3 ( fract ( texcoord * material.Scale ), material.Texture ) ) );
+		//vec3 texture = vec3 ( texture2DArray ( ImageTextures,
+		//	                                   vec3 ( fract ( texcoord * material.Scale ), material.Texture ) ) );
 
-		color += material.Diffuse * Lights [index].Diffuse * texture * ( diffuse * coefficient );
+		//color += material.Diffuse * Lights [index].Diffuse * texture * ( diffuse * coefficient );
 		
-		#else
+		//#else
 		
-		color += material.Diffuse * Lights [index].Diffuse * ( diffuse * coefficient );
+		color += Lights [index].Diffuse * ( diffuse * coefficient );
 		
-		#endif
+		//#endif
 		
 		//------------------------------------- Calculating specular contribution -------------------------------------			
 		
@@ -722,22 +610,15 @@ void main ( void )
 	
 	//-------------------------------- Intersecting primary ray with scene bounding box -------------------------------
 	
-	float start = 0.0, final = 0.0;
-	
-	if ( IntersectBox ( ray, start, final ) )
+
 	{
-		ray.Origin += ( start + EPSILON ) * ray.Direction;
-				
-		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
-		
 		SIntersection intersection;
 			
 		ClearIntersection ( intersection );
 		
-		if ( Raytrace ( ray, intersection, final - start + EPSILON ) )
+		if ( Raytrace ( ray, intersection ) )
 		{
             //-------------------------- Loading vertices attributes and material properties --------------------------
-			
 			SMaterial primaryMaterial;
 			
 			LoadTriangle ( intersection.Triangle, primaryMaterial );
@@ -746,244 +627,29 @@ void main ( void )
 			
 			vec3 point = Zero, normal = Zero, reflection = Zero;
 					
-			#ifdef RENDER_TEXTURES
+			//#ifdef RENDER_TEXTURES
 
 			vec2 texcoord = vec2 ( Zero );
 			
 			InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
 				
-			#else
+			//#else
 			
-			InterpolatePoint ( ray, intersection, point, normal, reflection );
+			//InterpolatePoint ( ray, intersection, point, normal, reflection );
 				
-			#endif
+			//#endif
 			
 			//------------------------------------ Calculating directional lighting -----------------------------------
 			
-			#ifdef RENDER_TEXTURES
+			//#ifdef RENDER_TEXTURES
 
 			color += Lighting ( point, normal, reflection, texcoord, primaryMaterial );					
 							
-			#else	
+			//#else	
 								
-			color += Lighting ( point, normal, reflection, primaryMaterial );
+			//color += Lighting ( point, normal, reflection, primaryMaterial );
 					
-			#endif
-			
-			//=========================================================================================================
-			//=============================================== DISSOLVE ================================================
-			//=========================================================================================================			
-	
-			#ifdef RENDER_DISSOLVE 
-			
-			if ( primaryMaterial.Dissolve < 1.0 )
-			{
-				//--------------------------- Moving ray origin for a point of intersection ---------------------------
-                
-                ray.Origin = point + ray.Direction * EPSILON;
-			                
-				final -= intersection.Parameters.x;
-				
-				//-------------------------- Testing ray for intersection with scene objects --------------------------                                
-                
-                ClearIntersection ( intersection );
-			                
-				if ( Raytrace ( ray, intersection, final + EPSILON ) )
-				{
-                    //---------------------- Loading vertices attributes and material properties ----------------------
-                    
-					SMaterial dissolveMaterial;
-					
-					LoadTriangle ( intersection.Triangle, dissolveMaterial );
-												
-					//--------------------------- Calculating intersection point attributes ---------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
-						
-					#else
-					
-					InterpolatePoint ( ray, intersection, point, normal, reflection );
-						
-					#endif                 
-					
-					//-------------------------------- Calculating directional lighting -------------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					color += ( 1.0F - primaryMaterial.Dissolve ) * Lighting ( point, normal, reflection,
-					                                                          texcoord, dissolveMaterial );					
-							
-					#else	
-								
-					color += ( 1.0F - primaryMaterial.Dissolve ) * Lighting ( point, normal,
-					                                                          reflection, dissolveMaterial );
-					
-					#endif
-				}			
-			}
-				
-			#endif
-			
-			//=========================================================================================================
-			//============================================== REFLECTIONS ==============================================
-			//=========================================================================================================
-			
-			#ifdef RENDER_REFLECTIONS
-			
-			if ( any ( greaterThan ( primaryMaterial.Reflection, Zero ) ) )
-			{
-                //------------------------------------- Generating reflection ray -------------------------------------
-                
-                ray = SRay ( point + reflection * EPSILON, reflection );
-			                
-				final = IntersectBox ( ray );
-                
-                //--------------------- Testing reflection ray for intersection with scene objects --------------------
-                
-                ClearIntersection ( intersection );
-			                
-				if ( Raytrace ( ray, intersection, final + EPSILON ) )
-				{
-                    //---------------------- Loading vertices attributes and material properties ----------------------
-                    
-					SMaterial reflectMaterial;
-					
-					LoadTriangle ( intersection.Triangle, reflectMaterial );
-												
-					//--------------------------- Calculating intersection point attributes ---------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
-						
-					#else
-					
-					InterpolatePoint ( ray, intersection, point, normal, reflection );
-						
-					#endif                 
-					
-					//-------------------------------- Calculating directional lighting -------------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					color += primaryMaterial.Reflection * Lighting ( point, normal, reflection,
-					                                                 texcoord, reflectMaterial );					
-							
-					#else	
-								
-					color += primaryMaterial.Reflection * Lighting ( point, normal,
-					                                                 reflection, reflectMaterial );
-					
-					#endif
-				}			
-			}
-				
-			#endif
-			
-			//=========================================================================================================
-			//============================================== REFRACTIONS ==============================================
-			//=========================================================================================================
-			
-			#ifdef RENDER_REFRACTIONS
-			
-			if ( any ( greaterThan ( primaryMaterial.Refraction, Zero ) ) )
-			{
-                //---------------------------------- Generating first refraction ray ----------------------------------
-				
-                vec3 refraction = refract ( ray.Direction, normal, 1.0 / primaryMaterial.Density );
-
-				ray = SRay ( point + refraction * EPSILON, refraction );
-			                
-				final = IntersectBox ( ray );
-				
-                //------------------ Testing first refraction ray for intersection with scene objects -----------------
-                
-                ClearIntersection ( intersection );
-			                
-				if ( Raytrace ( ray, intersection, final + EPSILON ) )
-				{
-                    //---------------------------------- Loading vertices attributes ----------------------------------
-				
-					LoadTriangle ( intersection.Triangle );
-					
-					//--------------------------- Calculating intersection point attributes ---------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
-						
-					#else
-					
-					InterpolatePoint ( ray, intersection, point, normal, reflection );
-						
-					#endif
-                
-					//-------------------------------- Calculating directional lighting -------------------------------
-					
-					#ifdef RENDER_TEXTURES
-
-					color += primaryMaterial.Refraction * Lighting ( point, normal, reflection,
-					                                                 texcoord, primaryMaterial );					
-							
-					#else				
-					
-					color += primaryMaterial.Refraction * Lighting ( point, normal,
-					                                                 reflection, primaryMaterial );
-					
-					#endif
-					                                                   
-					//-------------------------------- Generating second refraction ray -------------------------------
-					
-					refraction = refract ( ray.Direction, -normal, primaryMaterial.Density );
-
-					ray = SRay ( point + refraction * EPSILON, refraction );
-				                
-					final = IntersectBox ( ray );
-					
-                    //--------------- Testing second refraction ray for intersection with scene objects ---------------
-                    
-                    ClearIntersection ( intersection );
-				                
-					if ( Raytrace ( ray, intersection, final + EPSILON ) )
-					{
-                        //-------------------- Loading vertices attributes and material properties --------------------
-                        
-						SMaterial refractMaterial;
-						
-						LoadTriangle ( intersection.Triangle, refractMaterial );
-						
-						//------------------------- Calculating intersection point attributes -------------------------
-						
-						#ifdef RENDER_TEXTURES
-
-						InterpolatePoint ( ray, intersection, point, normal, reflection, texcoord );				
-							
-						#else
-						
-						InterpolatePoint ( ray, intersection, point, normal, reflection );
-							
-						#endif
-						
-						//------------------------------ Calculating directional lighting -----------------------------
-						
-						#ifdef RENDER_TEXTURES
-
-						color += primaryMaterial.Refraction * Lighting ( point, normal, reflection,
-						                                                 texcoord, refractMaterial );				
-							
-						#else
-						
-						color += primaryMaterial.Refraction * Lighting ( point, normal,
-						                                                 reflection, refractMaterial );
-								
-						#endif											
-					}
-				}			
-			}
-				
-			#endif
+			//#endif
 		}
 	}
 	
