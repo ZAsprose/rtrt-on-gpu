@@ -29,6 +29,8 @@
 
 #include "Vector4D.h"
 
+#include <xmmintrin.h>
+
 #include <iostream>
 
 using namespace std;

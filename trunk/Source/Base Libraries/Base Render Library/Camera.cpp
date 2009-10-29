@@ -89,7 +89,7 @@ namespace Render
 
 		file << Position << " " << WorldToCamera;
 
-		file.close();
+		file.close ( );
 	}
 
 	void Camera :: LoadFromFile ( const char * path )
@@ -100,7 +100,7 @@ namespace Render
 
 		file >> Position >> WorldToCamera;
 
-		file.close();
+		file.close ( );
 
 		Update ( );
 	}
@@ -109,18 +109,6 @@ namespace Render
 
 	void Camera :: Setup ( void )
 	{
-		glViewport ( 0, 0, Width, Height );
-
-		//-------------------------------------------------------------------------------
-
-        glMatrixMode ( GL_PROJECTION );
-
-        glLoadIdentity ( );
-
-        gluPerspective ( Degrees ( FieldOfView ), Aspect, NearPlane, FarPlane );
-
-		//-------------------------------------------------------------------------------
-
 		glMatrixMode ( GL_MODELVIEW );
 
 		glLoadIdentity ( );
@@ -158,6 +146,10 @@ namespace Render
 		Height = height;
 
 		Aspect = Width / ( float ) Height;
+
+		//-------------------------------------------------------------------------------
+
+		glViewport ( 0, 0, Width, Height );
 	}
 
 	void Camera :: SetFrustum ( float fieldOfView, float nearPlane, float farPlane )
@@ -167,12 +159,20 @@ namespace Render
 		NearPlane = nearPlane;
 
 		FarPlane = farPlane;
+
+		//-------------------------------------------------------------------------------
+
+		glMatrixMode ( GL_PROJECTION );
+
+        glLoadIdentity ( );
+
+        gluPerspective ( Degrees ( FieldOfView ), Aspect, NearPlane, FarPlane );
 	}
 
 	//------------------------------------- Getting Settings --------------------------------------
 	
 	Vector2D Camera :: GetScreenScale ( void ) const
 	{
-		return Vector2D ( tanf ( Aspect * FieldOfView / 2.0F ), tanf ( FieldOfView / 2.0F ) );
+		return Vector2D ( Aspect * tanf ( FieldOfView / 2.0F ), tanf ( FieldOfView / 2.0F ) );
 	}
 }

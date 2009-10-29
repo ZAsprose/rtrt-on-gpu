@@ -58,7 +58,7 @@ namespace Raytracing
 			Light ( unsigned = 0,
 				    const Vector3D& = Vector3D ( 10.0F, 10.0F, 10.0F ),
 					const Vector3D& = Vector3D ( 0.1F, 0.1F, 0.1F ),
-					const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ),
+					const Vector3D& = Vector3D ( 0.9F, 0.9F, 0.9F ),
 					const Vector3D& = Vector3D ( 0.6F, 0.6F, 0.6F ),
 					const Vector3D& = Vector3D ( 1.5F, 0.6F, 0.3F ) );
 

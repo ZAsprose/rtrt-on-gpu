@@ -35,7 +35,7 @@ namespace Raytracing
 	{
 		//--------------- Distance to Nearest Non-Empty Voxel ( Chessboard Metric ) ---------------
 
-		int Proximity;
+		float Proximity;
 
 		//--------------------------------- Intersected Triangles ---------------------------------
 

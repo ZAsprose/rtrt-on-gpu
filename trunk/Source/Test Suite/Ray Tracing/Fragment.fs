@@ -12,9 +12,9 @@
 
 #define RENDER_REFRACTIONS_
 
-#define RENDER_DISSOLVE_
+#define RENDER_DISSOLVE
 
-#define RENDER_TEXTURES_
+#define RENDER_TEXTURES
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -480,17 +480,15 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 
 	#else
 	
-	vec3 O = ( ray.Origin - Grid.Minimum ) / Grid.VoxelSize;
-
 	vec3 D = ray.Direction / Grid.VoxelSize;
+	
+	vec3 O = ( ray.Origin - Grid.Minimum ) / Grid.VoxelSize;
 
 	vec3 A = Unit / D;
 
 	vec3 B = ( step ( Zero, D ) - O ) * A;
 
 	vec3 MAX = A * VOXEL + B;
-
-	float STEP  = min ( DELTA.x, min ( DELTA.y, DELTA.z ) );
 
 	#endif
 
@@ -599,7 +597,7 @@ bool Raytrace ( SRay ray, inout SIntersection intersection, float final )
 		//	          floor ( O + ( MIN + data.z * STEP ) * D ),
 		//			  step ( 1.0, proximity ) );
 
-		VOXEL = floor ( O + ( MIN + 0.001 + data.z * STEP ) * D );
+		VOXEL = floor ( O + ( MIN + data.z ) * D );
 
 		MAX = VOXEL * A + B;
 
@@ -679,7 +677,7 @@ vec3 Lighting ( vec3 point, vec3 normal, vec3 reflection, SMaterial material )
 
 		//------------------------------------- Calculating diffuse contribution --------------------------------------
 		
-		float diffuse = max ( 0.0, dot ( light, normal ) );
+		float diffuse = abs ( dot ( light, normal ) );
 		
 		#ifdef RENDER_TEXTURES
 
@@ -728,7 +726,7 @@ void main ( void )
 	
 	if ( IntersectBox ( ray, start, final ) )
 	{
-		ray.Origin += ( start + EPSILON ) * ray.Direction;
+		ray.Origin += ( start + 0.1 ) * ray.Direction;
 				
 		//-------------------------- Testing primary ray for intersection with scene objects --------------------------
 		

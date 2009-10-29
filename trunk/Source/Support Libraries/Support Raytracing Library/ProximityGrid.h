@@ -27,6 +27,12 @@
 
 #define DEBUG_GRID_
 
+#define METRIC_CITY_BLOCK_
+
+#define METRIC_EUCLIDEAN
+
+#define METRIC_CHESSBOARD_
+
 namespace Raytracing
 {
 	class ProximityGrid : public UniformGrid
@@ -34,6 +40,8 @@ namespace Raytracing
 		private:
 			
 			//------------------- Distance Maps for Building of Proximity Grid --------------------
+
+			bool *** FlagDistanceMap;
 
 			int *** WidthDistanceMap;
 
@@ -49,6 +57,8 @@ namespace Raytracing
 
 			//------------------------------ Building Distance Maps -------------------------------
 			
+			void BuildFlagDistanceMap ( void );
+
 			void BuildWidthDistanceMap ( void );
 
 			void BuildHeightDistanceMap ( void );
