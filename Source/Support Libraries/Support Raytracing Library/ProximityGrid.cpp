@@ -19,6 +19,8 @@
 
 #include "ProximityGrid.h"
 
+#define GRID_MAX 1024
+
 namespace Raytracing
 {
 	//------------------------------------ Constructor and Destructor -------------------------------------
@@ -26,6 +28,7 @@ namespace Raytracing
 	ProximityGrid :: ProximityGrid ( int partitionsX, int partitionsY, int partitionsZ, Volume * box ) 
 		: UniformGrid ( partitionsX, partitionsY, partitionsZ, box )
 	{
+		FlagDistanceMap = new bool ** [partitionsX];
 		WidthDistanceMap = new int ** [partitionsX];
 		HeightDistanceMap = new int ** [partitionsX];
 		DepthDistanceMap = new int ** [partitionsX];
@@ -38,18 +41,20 @@ namespace Raytracing
 
 		for ( int x = 0; x < partitionsX; x++ )
 		{
+			FlagDistanceMap [x] = new bool * [partitionsY];
 			WidthDistanceMap [x] = new int * [partitionsY];
 			HeightDistanceMap [x] = new int * [partitionsY];
 			DepthDistanceMap [x] = new int * [partitionsY];
 
 			#ifdef DEBUG_GRID
 
-			SimpleDistanceMap[x] = new int * [partitionsY];
+			SimpleDistanceMap[x] = new char * [partitionsY];
 
 			#endif
 			
 			for ( int y = 0; y < partitionsY; y++ )
 			{
+				FlagDistanceMap [x][y] = new bool [partitionsZ];
 				WidthDistanceMap [x][y] = new int [partitionsZ];
 				HeightDistanceMap [x][y] = new int [partitionsZ];
 				DepthDistanceMap [x][y] = new int [partitionsZ];
@@ -69,6 +74,7 @@ namespace Raytracing
 		{
 			for ( int y = 0; y < PartitionsY; y++ )
 			{
+				delete [] FlagDistanceMap [x][y];
 				delete [] WidthDistanceMap [x][y];
 				delete [] HeightDistanceMap [x][y];
 				delete [] DepthDistanceMap [x][y];
@@ -80,6 +86,7 @@ namespace Raytracing
 				#endif
 			}
 
+			delete [] FlagDistanceMap [x];
 			delete [] WidthDistanceMap [x];
 			delete [] HeightDistanceMap [x];
 			delete [] DepthDistanceMap [x];
@@ -91,6 +98,7 @@ namespace Raytracing
 			#endif
 		}
 		
+		delete [] FlagDistanceMap;
 		delete [] WidthDistanceMap;
 		delete [] HeightDistanceMap;
 		delete [] DepthDistanceMap;
@@ -104,6 +112,37 @@ namespace Raytracing
 
 	//-------------------------------------- Building Distance Maps ---------------------------------------
 
+	void ProximityGrid :: BuildFlagDistanceMap ( void )
+	{
+		for ( int x = 0; x < PartitionsX; x++ )
+			for ( int y = 0; y < PartitionsY; y++ )
+				for ( int z = 0; z < PartitionsZ; z++ )
+					FlagDistanceMap [x][y][z] = false;
+
+		for ( int x = 0; x < PartitionsX; x++ )
+		{
+			int xmin = max ( x - 1, 0 ), xmax = min ( x + 1, PartitionsX - 1 );
+
+			for ( int y = 0; y < PartitionsY; y++ )
+			{
+				int ymin = max ( y - 1, 0 ), ymax = min ( y + 1, PartitionsY - 1 );
+
+				for ( int z = 0; z < PartitionsZ; z++ )
+				{
+					int zmin = max ( z - 1, 0 ), zmax = min ( z + 1, PartitionsZ - 1 );
+
+					if ( Voxels [x][y][z]->Triangles.size ( ) > 0 )
+					{
+						for ( int i = xmin; i <= xmax; i++ )
+							for ( int j = ymin; j <= ymax; j++ )
+								for ( int k = zmin; k <= zmax; k++ )
+									FlagDistanceMap [i][j][k] = true;
+					}
+				}
+			}
+		}
+	}
+
 	void ProximityGrid :: BuildWidthDistanceMap ( void )
 	{
 		for ( int x = 0; x < PartitionsX; x++ )
@@ -112,19 +151,33 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					if ( Voxels [x][y][z]->Triangles.size ( ) > 0 )
+					if ( FlagDistanceMap [x][y][z] )
 					{
 						WidthDistanceMap [x][y][z] = 0;
 					}
 					else
 					{
-						int distance = INT_MAX;
-						
+						int distance = GRID_MAX;
+							
 						for ( int i = 0; i < PartitionsX; i++ )
 						{
-							if ( Voxels [i][y][z]->Triangles.size ( ) > 0 )
+							if ( FlagDistanceMap [i][y][z] )
 							{
-								distance = min ( distance, abs ( i - x ) );
+								int delta = abs ( i - x );
+
+								#if defined ( METRIC_CITY_BLOCK )
+
+								distance = min ( distance, delta );
+
+								#elif defined ( METRIC_EUCLIDEAN )
+
+								distance = min ( distance, delta * delta );
+
+								#elif defined ( METRIC_CHESSBOARD )
+
+								distance = min ( distance, delta );
+
+								#endif
 							}
 						}
 
@@ -143,11 +196,25 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					int distance = INT_MAX;
+					int distance = GRID_MAX;
 
 					for ( int j = 0; j < PartitionsY; j++ )
 					{
-						distance = min ( distance, max ( WidthDistanceMap [x][j][z], abs ( j - y ) ) );
+						int delta = abs ( j - y );
+
+						#if defined ( METRIC_CITY_BLOCK )
+
+						distance = min ( distance, WidthDistanceMap [x][j][z] + delta );
+
+						#elif defined ( METRIC_EUCLIDEAN )
+
+						distance = min ( distance, WidthDistanceMap [x][j][z] + delta * delta );
+
+						#elif defined ( METRIC_CHESSBOARD )
+
+						distance = min ( distance, max ( WidthDistanceMap [x][j][z], delta ) );
+
+						#endif
 					}
 
 					HeightDistanceMap [x][y][z] = distance;
@@ -164,14 +231,28 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					int distance = INT_MAX;
+					int distance = GRID_MAX;
 
 					for ( int k = 0; k < PartitionsZ; k++ )
 					{
-						distance = min ( distance, max ( HeightDistanceMap [x][y][k], abs ( k - z ) ) );
+						int delta = abs ( k - z );
+
+						#if defined ( METRIC_CITY_BLOCK )
+
+						distance = min ( distance, HeightDistanceMap [x][y][k] + delta );
+
+						#elif defined ( METRIC_EUCLIDEAN )
+
+						distance = min ( distance, HeightDistanceMap [x][y][k] + delta * delta );
+
+						#elif defined ( METRIC_CHESSBOARD )
+
+						distance = min ( distance, max ( HeightDistanceMap [x][y][k], delta ) );
+
+						#endif
 					}
 
-					DepthDistanceMap [x][y][z] = max ( distance - 1, 0 );
+					DepthDistanceMap [x][y][z] = distance;
 				}
 			}
 		}
@@ -267,8 +348,15 @@ namespace Raytracing
 	
 	void ProximityGrid :: BuildGrid ( vector <Primitive *>& primitives )
 	{
+		Vector3D size = ( Box->Maximum - Box->Minimum ) / Vector3D ( ( float ) PartitionsX,
+		                                                             ( float ) PartitionsY,
+																	 ( float ) PartitionsZ );
+
+		float step = min ( size.X, min ( size.Y, size.Z ) );
+
 		UniformGrid :: BuildGrid ( primitives );
 		
+		BuildFlagDistanceMap ( );
 		BuildWidthDistanceMap ( );
 		BuildHeightDistanceMap ( );
 		BuildDepthDistanceMap ( );
@@ -285,7 +373,21 @@ namespace Raytracing
 			{
 				for ( int z = 0; z < PartitionsZ; z++ )
 				{
-					Voxels [x][y][z]->Proximity = DepthDistanceMap [x][y][z];
+					int proximity = DepthDistanceMap [x][y][z];
+
+					#if defined ( METRIC_CITY_BLOCK )
+
+					Voxels [x][y][z]->Proximity = step * proximity + EPSILON;
+
+					#elif defined ( METRIC_EUCLIDEAN )
+
+					Voxels [x][y][z]->Proximity = step * sqrtf ( proximity ) + EPSILON;
+
+					#elif defined ( METRIC_CHESSBOARD )
+
+					Voxels [x][y][z]->Proximity = step * proximity + EPSILON;
+
+					#endif					
 
 					#ifdef DEBUG_GRID
 

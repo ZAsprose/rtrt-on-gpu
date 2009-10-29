@@ -31,7 +31,7 @@ namespace Render
 {
 	class Camera
 	{
-		private:
+		public:
 
 			//------------------- Position and Axes of Camera Coordinate System -------------------
 
@@ -87,6 +87,10 @@ namespace Render
 			void RotateLocal ( float, const Vector3D& );
 			
 			void RotateWorld ( float, const Vector3D& );
+
+			//--------------------------- Clear Camera Rotation Matrix ----------------------------
+
+			void Clear ( void ) { WorldToCamera = Matrix3D :: Rotate ( Vector3D::Zero ); Update ( ); }
 
 			//------------------------- Loading and Saving Camera to File -------------------------
 

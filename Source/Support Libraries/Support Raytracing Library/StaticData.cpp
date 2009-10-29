@@ -29,17 +29,17 @@ namespace Raytracing
 
 	const unsigned StaticData :: MaterialSize = 8192;
 
-	const unsigned StaticData :: VoxelUnit = 0;
+	const unsigned StaticData :: TextureUnit = 0;
+
+	const unsigned StaticData :: VoxelUnit = 1;
 	
-	const unsigned StaticData :: PositionUnit = 1;
+	const unsigned StaticData :: PositionUnit = 2;
 	
-	const unsigned StaticData :: NormalUnit = 2;
+	const unsigned StaticData :: NormalUnit = 3;
 
-	const unsigned StaticData :: TexCoordUnit = 3;
+	const unsigned StaticData :: TexCoordUnit = 4;
 
-	const unsigned StaticData :: MaterialUnit = 4;
-
-	const unsigned StaticData :: TextureUnit = 5;
+	const unsigned StaticData :: MaterialUnit = 5;
 
 	//------------------------------------- Constructor and Destructor --------------------------------------
 	
@@ -242,7 +242,7 @@ namespace Raytracing
 				{
 					int triangles = scene->Grid->Voxels [x][y][z]->Triangles.size ( );
 
-					int proximity = scene->Grid->Voxels [x][y][z]->Proximity;
+					float proximity = scene->Grid->Voxels [x][y][z]->Proximity;
 
 					VoxelTexture->Data->Pixel <Vector3D> ( x, y, z ) =
 						Vector3D ( triangles, offset, proximity );
@@ -324,6 +324,8 @@ namespace Raytracing
 
 	void StaticData :: SetShaderData ( ShaderManager * manager )
 	{
+		manager->SetTexture ( "ImageTextures", TextureArray );
+
 		manager->SetTexture ( "VoxelTexture", VoxelTexture );
 
 		manager->SetTexture ( "PositionTexture", PositionTexture );

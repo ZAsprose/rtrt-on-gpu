@@ -105,7 +105,7 @@ namespace Raytracing
 
 		vector <Vector3D> Normals;
 
-		vector <Vector2D> TexCoords;
+		__declspec(align(16)) vector <Vector2D> TexCoords;
 
 		//---------------- List of Face Groups ( Sets of Faces with Same Material ) ---------------
 
