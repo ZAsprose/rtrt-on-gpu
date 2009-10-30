@@ -12,11 +12,11 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
-CCC=g++
-CXX=g++
+CC=
+CCC=
+CXX=
 FC=
-AS=as
+AS=
 
 # Macros
 CND_PLATFORM=MinGW-Windows

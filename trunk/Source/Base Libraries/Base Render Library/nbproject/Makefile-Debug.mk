@@ -19,7 +19,7 @@ FC=
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
 
@@ -59,13 +59,13 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/MinGW-Windows/libbase_render_library.a
+	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/libbase_render_library.a
 
-dist/Debug/MinGW-Windows/libbase_render_library.a: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/MinGW-Windows
-	${RM} dist/Debug/MinGW-Windows/libbase_render_library.a
+dist/Debug/GNU-Linux-x86/libbase_render_library.a: ${OBJECTFILES}
+	${MKDIR} -p dist/Debug/GNU-Linux-x86
+	${RM} dist/Debug/GNU-Linux-x86/libbase_render_library.a
 	${AR} rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libbase_render_library.a ${OBJECTFILES} 
-	$(RANLIB) dist/Debug/MinGW-Windows/libbase_render_library.a
+	$(RANLIB) dist/Debug/GNU-Linux-x86/libbase_render_library.a
 
 ${OBJECTDIR}/Keyboard.o: nbproject/Makefile-${CND_CONF}.mk Keyboard.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -118,7 +118,7 @@ ${OBJECTDIR}/Texture1D.o: nbproject/Makefile-${CND_CONF}.mk Texture1D.cpp
 # Clean Targets
 .clean-conf:
 	${RM} -r build/Debug
-	${RM} dist/Debug/MinGW-Windows/libbase_render_library.a
+	${RM} dist/Debug/GNU-Linux-x86/libbase_render_library.a
 
 # Subprojects
 .clean-subprojects:
