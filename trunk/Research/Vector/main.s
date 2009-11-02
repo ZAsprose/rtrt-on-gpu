@@ -1,309 +1,401 @@
-	.file	"main.cpp"
+# -- Machine type PW
+# mark_description "Intel(R) C++ Compiler for applications running on IA-32, Version 11.1    Build 20091012 %s";
+# mark_description "-long_double -O2 -msse2 -fpermissive -S";
+	.file "main.cpp"
+	.section .ctors, "wa"
 	.text
-	.p2align 4,,15
-.globl _Z9__rdtsc__v
-	.type	_Z9__rdtsc__v, @function
-_Z9__rdtsc__v:
-.LFB1604:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-#APP
-# 27 "main.cpp" 1
-	rdtsc
-# 0 "" 2
-#NO_APP
-	popl	%ebp
-	ret
-	.cfi_endproc
-.LFE1604:
-	.size	_Z9__rdtsc__v, .-_Z9__rdtsc__v
-	.p2align 4,,15
-	.type	_GLOBAL__I__ZN5smath10del_memoryEPv, @function
-_GLOBAL__I__ZN5smath10del_memoryEPv:
-.LFB1651:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-	subl	$24, %esp
-	movl	$_ZStL8__ioinit, (%esp)
-	call	_ZNSt8ios_base4InitC1Ev
-	movl	$__dso_handle, 8(%esp)
-	movl	$_ZStL8__ioinit, 4(%esp)
-	movl	$_ZNSt8ios_base4InitD1Ev, (%esp)
-	call	__cxa_atexit
-	leave
-	ret
-	.cfi_endproc
-.LFE1651:
-	.size	_GLOBAL__I__ZN5smath10del_memoryEPv, .-_GLOBAL__I__ZN5smath10del_memoryEPv
-	.section	.ctors,"aw",@progbits
-	.align 4
-	.long	_GLOBAL__I__ZN5smath10del_memoryEPv
-	.text
-	.p2align 4,,15
-.globl _ZN5smath7ToColorERNS_6VectorIU8__vectorfLi1EEE
-	.type	_ZN5smath7ToColorERNS_6VectorIU8__vectorfLi1EEE, @function
-_ZN5smath7ToColorERNS_6VectorIU8__vectorfLi1EEE:
-.LFB1590:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-	subl	$32, %esp
-	movl	8(%ebp), %eax
-	movaps	.LC0, %xmm1
-	movaps	(%eax), %xmm0
-	mulps	%xmm1, %xmm0
-	minps	%xmm1, %xmm0
-	movaps	%xmm0, (%eax)
-	fnstcw	-18(%ebp)
-	movups	%xmm0, -16(%ebp)
-	movzwl	-18(%ebp), %eax
-	flds	-16(%ebp)
-	movb	$12, %ah
-	movw	%ax, -20(%ebp)
-	fldcw	-20(%ebp)
-	fistpll	-32(%ebp)
-	fldcw	-18(%ebp)
-	movl	-32(%ebp), %eax
-	flds	-12(%ebp)
-	fldcw	-20(%ebp)
-	fistpll	-32(%ebp)
-	fldcw	-18(%ebp)
-	movl	-32(%ebp), %edx
-	sall	$8, %eax
-	flds	-8(%ebp)
-	addl	%edx, %eax
-	fldcw	-20(%ebp)
-	fistpll	-32(%ebp)
-	fldcw	-18(%ebp)
-	movl	-32(%ebp), %edx
-	sall	$8, %eax
-	leave
-	addl	%edx, %eax
-	ret
-	.cfi_endproc
-.LFE1590:
-	.size	_ZN5smath7ToColorERNS_6VectorIU8__vectorfLi1EEE, .-_ZN5smath7ToColorERNS_6VectorIU8__vectorfLi1EEE
-	.p2align 4,,15
-.globl _ZN5smath5crossERKNS_6VectorIU8__vectorfLi1EEES4_
-	.type	_ZN5smath5crossERKNS_6VectorIU8__vectorfLi1EEES4_, @function
-_ZN5smath5crossERKNS_6VectorIU8__vectorfLi1EEES4_:
-.LFB1589:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-	movl	12(%ebp), %edx
-	movl	8(%ebp), %eax
-	movaps	(%edx), %xmm2
-	movl	16(%ebp), %edx
-	movaps	%xmm2, %xmm0
-	shufps	$201, %xmm2, %xmm0
-	shufps	$210, %xmm2, %xmm2
-	movaps	(%edx), %xmm1
-	movaps	%xmm1, %xmm3
-	shufps	$210, %xmm1, %xmm3
-	shufps	$201, %xmm1, %xmm1
-	mulps	%xmm3, %xmm0
-	mulps	%xmm1, %xmm2
-	subps	%xmm2, %xmm0
-	movaps	%xmm0, (%eax)
-	popl	%ebp
-	ret	$4
-	.cfi_endproc
-.LFE1589:
-	.size	_ZN5smath5crossERKNS_6VectorIU8__vectorfLi1EEES4_, .-_ZN5smath5crossERKNS_6VectorIU8__vectorfLi1EEES4_
-	.p2align 4,,15
-.globl _ZN5smath10del_memoryEPv
-	.type	_ZN5smath10del_memoryEPv, @function
-_ZN5smath10del_memoryEPv:
-.LFB1493:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-	subl	$8, %esp
-	leave
-	jmp	free
-	.cfi_endproc
-.LFE1493:
-	.size	_ZN5smath10del_memoryEPv, .-_ZN5smath10del_memoryEPv
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.LC5:
-	.string	"\ntime: "
-.LC6:
-	.string	"\nresult: "
-.LC7:
-	.string	"\n"
-	.text
-	.p2align 4,,15
-.globl main
-	.type	main, @function
+..TXTST0:
+# -- Begin  main
+# mark_begin;
+       .align    16,0x90
+	.globl main
 main:
-.LFB1605:
-	.cfi_startproc
-	.cfi_personality 0x0,__gxx_personality_v0
-	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	movl	%esp, %ebp
-	.cfi_offset 5, -8
-	.cfi_def_cfa_register 5
-	andl	$-16, %esp
-	subl	$96, %esp
-	movaps	.LC2, %xmm0
-#APP
-# 27 "main.cpp" 1
-	rdtsc
-# 0 "" 2
-#NO_APP
-	movups	%xmm0, 80(%esp)
-	addps	.LC4, %xmm0
-	movl	%eax, 72(%esp)
-	flds	80(%esp)
-	fadds	84(%esp)
-	movl	%edx, 76(%esp)
-	fadds	88(%esp)
-	fadds	92(%esp)
-	fldz
-	fadd	%st, %st(1)
-	fxch	%st(1)
-	fstps	28(%esp)
-	movss	28(%esp), %xmm2
-	shufps	$0, %xmm2, %xmm2
-	movups	%xmm2, 80(%esp)
-	flds	80(%esp)
-	fadds	84(%esp)
-	fadds	88(%esp)
-	fadds	92(%esp)
-	movups	%xmm0, 80(%esp)
-	fadd	%st(1), %st
-	flds	80(%esp)
-	fadds	84(%esp)
-	fadds	88(%esp)
-	fadds	92(%esp)
-	fadd	%st(2), %st
-	fxch	%st(1)
-	fstps	28(%esp)
-	movss	28(%esp), %xmm0
-	fstps	28(%esp)
-	movss	28(%esp), %xmm2
-	shufps	$0, %xmm0, %xmm0
-	shufps	$0, %xmm2, %xmm2
-	movaps	%xmm0, %xmm1
-	movaps	%xmm2, %xmm0
-	mulps	%xmm1, %xmm0
-	movups	%xmm0, 80(%esp)
-	flds	80(%esp)
-	fadds	84(%esp)
-	fadds	88(%esp)
-	fadds	92(%esp)
-	faddp	%st, %st(1)
-	fadd	%st(0), %st
-#APP
-# 27 "main.cpp" 1
-	rdtsc
-# 0 "" 2
-#NO_APP
-	movl	%eax, 16(%esp)
-	movl	%edx, 20(%esp)
-	fstps	48(%esp)
-	movl	$7, 8(%esp)
-	movl	$.LC5, 4(%esp)
-	movl	$_ZSt4cout, (%esp)
-	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_i
-	movl	16(%esp), %edx
-	movl	20(%esp), %ecx
-	subl	72(%esp), %edx
-	sbbl	76(%esp), %ecx
-	movl	$_ZSt4cout, (%esp)
-	movl	%edx, 4(%esp)
-	movl	%ecx, 8(%esp)
-	call	_ZNSo9_M_insertIyEERSoT_
-	movl	$9, 8(%esp)
-	movl	$.LC6, 4(%esp)
-	movl	$_ZSt4cout, (%esp)
-	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_i
-	movl	$_ZSt4cout, (%esp)
-	flds	48(%esp)
-	fstpl	4(%esp)
-	call	_ZNSo9_M_insertIdEERSoT_
-	movl	$1, 8(%esp)
-	movl	$.LC7, 4(%esp)
-	movl	$_ZSt4cout, (%esp)
-	call	_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_i
-	xorl	%eax, %eax
-	leave
-	ret
-	.cfi_endproc
-.LFE1605:
-	.size	main, .-main
-	.local	_ZStL8__ioinit
-	.comm	_ZStL8__ioinit,1,1
-	.weakref	_ZL20__gthrw_pthread_oncePiPFvvE,pthread_once
-	.weakref	_ZL27__gthrw_pthread_getspecificj,pthread_getspecific
-	.weakref	_ZL27__gthrw_pthread_setspecificjPKv,pthread_setspecific
-	.weakref	_ZL22__gthrw_pthread_createPmPK14pthread_attr_tPFPvS3_ES3_,pthread_create
-	.weakref	_ZL20__gthrw_pthread_joinmPPv,pthread_join
-	.weakref	_ZL21__gthrw_pthread_equalmm,pthread_equal
-	.weakref	_ZL20__gthrw_pthread_selfv,pthread_self
-	.weakref	_ZL22__gthrw_pthread_detachm,pthread_detach
-	.weakref	_ZL22__gthrw_pthread_cancelm,pthread_cancel
-	.weakref	_ZL19__gthrw_sched_yieldv,sched_yield
-	.weakref	_ZL26__gthrw_pthread_mutex_lockP15pthread_mutex_t,pthread_mutex_lock
-	.weakref	_ZL29__gthrw_pthread_mutex_trylockP15pthread_mutex_t,pthread_mutex_trylock
-	.weakref	_ZL31__gthrw_pthread_mutex_timedlockP15pthread_mutex_tPK8timespec,pthread_mutex_timedlock
-	.weakref	_ZL28__gthrw_pthread_mutex_unlockP15pthread_mutex_t,pthread_mutex_unlock
-	.weakref	_ZL26__gthrw_pthread_mutex_initP15pthread_mutex_tPK19pthread_mutexattr_t,pthread_mutex_init
-	.weakref	_ZL29__gthrw_pthread_mutex_destroyP15pthread_mutex_t,pthread_mutex_destroy
-	.weakref	_ZL30__gthrw_pthread_cond_broadcastP14pthread_cond_t,pthread_cond_broadcast
-	.weakref	_ZL27__gthrw_pthread_cond_signalP14pthread_cond_t,pthread_cond_signal
-	.weakref	_ZL25__gthrw_pthread_cond_waitP14pthread_cond_tP15pthread_mutex_t,pthread_cond_wait
-	.weakref	_ZL30__gthrw_pthread_cond_timedwaitP14pthread_cond_tP15pthread_mutex_tPK8timespec,pthread_cond_timedwait
-	.weakref	_ZL28__gthrw_pthread_cond_destroyP14pthread_cond_t,pthread_cond_destroy
-	.weakref	_ZL26__gthrw_pthread_key_createPjPFvPvE,pthread_key_create
-	.weakref	_ZL26__gthrw_pthread_key_deletej,pthread_key_delete
-	.weakref	_ZL30__gthrw_pthread_mutexattr_initP19pthread_mutexattr_t,pthread_mutexattr_init
-	.weakref	_ZL33__gthrw_pthread_mutexattr_settypeP19pthread_mutexattr_ti,pthread_mutexattr_settype
-	.weakref	_ZL33__gthrw_pthread_mutexattr_destroyP19pthread_mutexattr_t,pthread_mutexattr_destroy
-	.section	.rodata.cst16,"aM",@progbits,16
+# parameter 1: 8 + %ebp
+# parameter 2: 12 + %ebp
+..B1.1:                         # Preds ..B1.0
+..___tag_value_main.1:                                          #34.1
+        pushl     %ebp                                          #34.1
+..___tag_value_main.2:                                          #
+        movl      %esp, %ebp                                    #34.1
+..___tag_value_main.3:                                          #
+        andl      $-128, %esp                                   #34.1
+        pushl     %edi                                          #34.1
+..___tag_value_main.5:                                          #
+        pushl     %esi                                          #34.1
+..___tag_value_main.6:                                          #
+        pushl     %ebx                                          #34.1
+..___tag_value_main.7:                                          #
+        subl      $244, %esp                                    #34.1
+        pushl     $3                                            #34.1
+..___tag_value_main.8:                                          #34.1
+        call      __intel_new_proc_init                         #34.1
+..___tag_value_main.9:                                          #
+                                # LOE
+..B1.9:                         # Preds ..B1.1
+        movaps    _2il0floatpacket.307, %xmm1                   #42.4
+        movaps    %xmm1, %xmm3                                  #74.56
+        mulps     %xmm1, %xmm3                                  #74.56
+        movaps    %xmm3, %xmm4                                  #74.56
+        stmxcsr   196(%esp)                                     #34.1
+        orl       $32768, 196(%esp)                             #34.1
+        ldmxcsr   196(%esp)                                     #34.1
+        rdtsc                                                   #72.7
+        movaps    _2il0floatpacket.308, %xmm0                   #74.22
+        movups    %xmm3, 148(%esp)                              #74.56
+        addss     152(%esp), %xmm4                              #74.56
+        mulps     %xmm1, %xmm0                                  #74.22
+        movl      %eax, 204(%esp)                               #72.7
+        movl      %edx, %ebx                                    #72.7
+        addps     %xmm1, %xmm0                                  #74.22
+        mulps     %xmm1, %xmm0                                  #74.22
+        movups    %xmm0, 132(%esp)                              #74.22
+        unpckhps  %xmm3, %xmm3                                  #74.56
+        movaps    %xmm0, %xmm2                                  #74.22
+        addss     136(%esp), %xmm2                              #74.22
+        unpckhps  %xmm0, %xmm0                                  #74.22
+        addss     %xmm2, %xmm0                                  #74.22
+        addss     144(%esp), %xmm0                              #74.22
+        addss     %xmm4, %xmm3                                  #74.56
+        addss     160(%esp), %xmm3                              #74.56
+        shufps    $0, %xmm0, %xmm0                              #74.15
+        mulps     %xmm1, %xmm0                                  #74.15
+        shufps    $0, %xmm3, %xmm3                              #74.47
+        mulps     %xmm1, %xmm3                                  #74.47
+        mulps     %xmm1, %xmm3                                  #74.47
+        movups    %xmm3, 164(%esp)                              #74.47
+        movaps    %xmm3, %xmm5                                  #74.47
+        addss     168(%esp), %xmm5                              #74.47
+        unpckhps  %xmm3, %xmm3                                  #74.47
+        addss     %xmm5, %xmm3                                  #74.47
+        addss     176(%esp), %xmm3                              #74.47
+        shufps    $0, %xmm3, %xmm3                              #74.15
+        mulps     %xmm3, %xmm1                                  #74.15
+        mulps     %xmm1, %xmm0                                  #74.15
+        movups    %xmm0, 180(%esp)                              #74.15
+        movaps    %xmm0, %xmm6                                  #74.15
+        addss     184(%esp), %xmm6                              #74.15
+        unpckhps  %xmm0, %xmm0                                  #74.15
+        addss     %xmm6, %xmm0                                  #74.15
+        addss     192(%esp), %xmm0                              #74.15
+        addss     %xmm0, %xmm0                                  #74.15
+        movss     %xmm0, 200(%esp)                              #74.15
+        pushl     $_2__STRING.0                                 #78.7
+        pushl     $_ZSt4cout                                    #78.7
+        rdtsc                                                   #76.7
+        movl      %eax, %esi                                    #76.7
+        movl      %edx, %edi                                    #76.7
+..___tag_value_main.10:                                         #78.7
+        call      _ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc #78.7
+..___tag_value_main.11:                                         #
+                                # LOE eax ebx esi edi
+..B1.2:                         # Preds ..B1.9
+        subl      212(%esp), %esi                               #76.7
+        sbbl      %ebx, %edi                                    #76.7
+        pushl     %edi                                          #78.21
+        pushl     %esi                                          #78.21
+        pushl     %eax                                          #78.21
+..___tag_value_main.12:                                         #78.21
+        call      _ZNSolsEy                                     #78.21
+..___tag_value_main.13:                                         #
+                                # LOE
+..B1.3:                         # Preds ..B1.2
+        pushl     $_2__STRING.1                                 #79.7
+        pushl     $_ZSt4cout                                    #79.7
+..___tag_value_main.14:                                         #79.7
+        call      _ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc #79.7
+..___tag_value_main.15:                                         #
+                                # LOE eax
+..B1.11:                        # Preds ..B1.3
+        addl      $32, %esp                                     #79.7
+                                # LOE eax
+..B1.4:                         # Preds ..B1.11
+        movss     196(%esp), %xmm0                              #74.2
+        movss     %xmm0, 4(%esp)                                #74.2
+        movl      %eax, (%esp)                                  #79.7
+..___tag_value_main.16:                                         #79.23
+        call      _ZNSolsEf                                     #79.23
+..___tag_value_main.17:                                         #
+                                # LOE
+..B1.5:                         # Preds ..B1.4
+        pushl     $_2__STRING.2                                 #80.7
+        pushl     $_ZSt4cout                                    #80.7
+..___tag_value_main.18:                                         #80.7
+        call      _ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc #80.7
+..___tag_value_main.19:                                         #
+                                # LOE
+..B1.6:                         # Preds ..B1.5
+        xorl      %eax, %eax                                    #173.9
+        addl      $252, %esp                                    #173.9
+..___tag_value_main.20:                                         #173.9
+        popl      %ebx                                          #173.9
+..___tag_value_main.21:                                         #173.9
+        popl      %esi                                          #173.9
+..___tag_value_main.22:                                         #173.9
+        popl      %edi                                          #173.9
+        movl      %ebp, %esp                                    #173.9
+        popl      %ebp                                          #173.9
+..___tag_value_main.23:                                         #
+        ret                                                     #173.9
+        .align    16,0x90
+..___tag_value_main.25:                                         #
+                                # LOE
+# mark_end;
+	.type	main,@function
+	.size	main,.-main
+	.data
+# -- End  main
+	.text
+# -- Begin  __sti__$E
+# mark_begin;
+       .align    16,0x90
+__sti__$E:
+..B2.1:                         # Preds ..B2.0
+..___tag_value___sti__$E.26:                                    #
+        pushl     $_ZSt8__ioinit                                #72.25
+..___tag_value___sti__$E.27:                                    #
+        call      _ZNSt8ios_base4InitC1Ev                       #72.25
+..___tag_value___sti__$E.29:                                    #
+                                # LOE ebx ebp esi edi
+..B2.2:                         # Preds ..B2.1
+        pushl     $__dso_handle                                 #72.25
+..___tag_value___sti__$E.30:                                    #
+        pushl     $_ZSt8__ioinit                                #72.25
+..___tag_value___sti__$E.31:                                    #
+        pushl     $_ZNSt8ios_base4InitD1Ev                      #72.25
+..___tag_value___sti__$E.32:                                    #
+        call      __cxa_atexit                                  #72.25
+..___tag_value___sti__$E.34:                                    #
+                                # LOE ebx ebp esi edi
+..B2.6:                         # Preds ..B2.2
+        addl      $16, %esp                                     #72.25
+..___tag_value___sti__$E.35:                                    #
+                                # LOE ebx ebp esi edi
+..B2.3:                         # Preds ..B2.6
+        ret                                                     #72.25
+        .align    16,0x90
+..___tag_value___sti__$E.36:                                    #
+                                # LOE
+# mark_end;
+	.type	__sti__$E,@function
+	.size	__sti__$E,.-__sti__$E
+	.data
+# -- End  __sti__$E
+	.bss
+	.align 4
+	.align 1
+_ZSt8__ioinit:
+	.type	_ZSt8__ioinit,@object
+	.size	_ZSt8__ioinit,1
+	.space 1	# pad
+	.section .rodata, "a"
 	.align 16
-.LC0:
-	.long	1132396544
-	.long	1132396544
-	.long	1132396544
-	.long	1132396544
 	.align 16
-.LC2:
-	.long	1065353216
-	.long	1065353216
-	.long	1065353216
-	.long	1065353216
+_2il0floatpacket.307:
+	.long	0x3f800000,0x3f800000,0x3f800000,0x3f800000
+	.type	_2il0floatpacket.307,@object
+	.size	_2il0floatpacket.307,16
 	.align 16
-.LC4:
-	.long	1056964608
-	.long	1056964608
-	.long	1056964608
-	.long	1056964608
-	.ident	"GCC: (SUSE Linux) 4.4.1 [gcc-4_4-branch revision 150839]"
-	.section	.comment.SUSE.OPTs,"MS",@progbits,1
-	.string	"Ospwg"
-	.section	.note.GNU-stack,"",@progbits
+_2il0floatpacket.308:
+	.long	0x3f000000,0x3f000000,0x3f000000,0x3f000000
+	.type	_2il0floatpacket.308,@object
+	.size	_2il0floatpacket.308,16
+	.section .rodata.str1.4, "aMS",@progbits,1
+	.align 4
+	.align 4
+_2__STRING.0:
+	.byte	10
+	.byte	116
+	.byte	105
+	.byte	109
+	.byte	101
+	.byte	58
+	.byte	32
+	.byte	0
+	.type	_2__STRING.0,@object
+	.size	_2__STRING.0,8
+	.align 4
+_2__STRING.1:
+	.byte	10
+	.byte	114
+	.byte	101
+	.byte	115
+	.byte	117
+	.byte	108
+	.byte	116
+	.byte	58
+	.byte	32
+	.byte	0
+	.type	_2__STRING.1,@object
+	.size	_2__STRING.1,10
+	.space 2	# pad
+	.align 4
+_2__STRING.2:
+	.byte	10
+	.byte	0
+	.type	_2__STRING.2,@object
+	.size	_2__STRING.2,2
+	.section .ctors, "wa"
+	.align 4
+__init_0:
+	.type	__init_0,@object
+	.size	__init_0,4
+	.long	__sti__$E
+	.data
+	.hidden __dso_handle
+# mark_proc_addr_taken __sti__$E;
+# mark_proc_addr_taken _ZNSt8ios_base4InitD1Ev;
+	.weak pthread_setspecific
+	.weak pthread_getspecific
+	.weak pthread_key_delete
+	.weak pthread_key_create
+	.weak pthread_cond_timedwait
+	.weak pthread_cond_wait
+	.weak pthread_cond_broadcast
+	.weak pthread_cond_signal
+	.weak pthread_cond_destroy
+	.weak pthread_mutexattr_settype
+	.weak pthread_mutexattr_destroy
+	.weak pthread_mutexattr_init
+	.weak pthread_mutex_unlock
+	.weak pthread_mutex_timedlock
+	.weak pthread_mutex_lock
+	.weak pthread_mutex_trylock
+	.weak pthread_mutex_destroy
+	.weak pthread_mutex_init
+	.weak pthread_cancel
+	.weak pthread_once
+	.weak pthread_equal
+	.weak pthread_self
+	.weak pthread_detach
+	.weak pthread_join
+	.weak pthread_create
+	.weak sched_yield
+	.section .note.GNU-stack, ""
+// -- Begin DWARF2 SEGMENT .debug_line
+	.section .debug_line
+.debug_line_seg:
+	.align 1
+// -- Begin DWARF2 SEGMENT .eh_frame
+	.section .eh_frame,"a",@progbits
+.eh_frame_seg:
+	.align 1
+	.4byte 0x00000018
+	.4byte 0x00000000
+	.byte 0x01
+	.4byte 0x004c507a
+	.byte 0x01
+	.byte 0x7c
+	.byte 0x08
+	.byte 0x06
+	.byte 0x00
+	.4byte __gxx_personality_v0
+	.byte 0x00
+	.4byte 0x8804040c
+	.byte 0x01
+	.4byte 0x000000b4
+	.4byte 0x00000020
+	.4byte ..___tag_value_main.1
+	.4byte ..___tag_value_main.25-..___tag_value_main.1
+	.byte 0x04
+	.4byte 0x00000000
+	.byte 0x04
+	.4byte ..___tag_value_main.2-..___tag_value_main.1
+	.byte 0x0c
+	.2byte 0x0804
+	.byte 0x04
+	.4byte ..___tag_value_main.3-..___tag_value_main.2
+	.byte 0x0c
+	.2byte 0x0805
+	.byte 0x85
+	.byte 0x02
+	.byte 0x04
+	.4byte ..___tag_value_main.5-..___tag_value_main.3
+	.byte 0x10
+	.8byte 0xffff800d1c380e07
+	.8byte 0x22fffffffc0d1aff
+	.byte 0x04
+	.4byte ..___tag_value_main.6-..___tag_value_main.5
+	.byte 0x10
+	.8byte 0xffff800d1c380e06
+	.8byte 0x22fffffff80d1aff
+	.byte 0x04
+	.4byte ..___tag_value_main.7-..___tag_value_main.6
+	.byte 0x10
+	.8byte 0xffff800d1c380e03
+	.8byte 0x22fffffff40d1aff
+	.byte 0x04
+	.4byte ..___tag_value_main.8-..___tag_value_main.7
+	.byte 0x2e
+	.byte 0x04
+	.byte 0x04
+	.4byte ..___tag_value_main.10-..___tag_value_main.8
+	.byte 0x2e
+	.byte 0x0c
+	.byte 0x04
+	.4byte ..___tag_value_main.12-..___tag_value_main.10
+	.byte 0x2e
+	.byte 0x18
+	.byte 0x04
+	.4byte ..___tag_value_main.14-..___tag_value_main.12
+	.byte 0x2e
+	.byte 0x20
+	.byte 0x04
+	.4byte ..___tag_value_main.16-..___tag_value_main.14
+	.byte 0x2e
+	.byte 0x00
+	.byte 0x04
+	.4byte ..___tag_value_main.18-..___tag_value_main.16
+	.byte 0x2e
+	.byte 0x08
+	.byte 0x04
+	.4byte ..___tag_value_main.20-..___tag_value_main.18
+	.byte 0x09
+	.2byte 0x0303
+	.byte 0x04
+	.4byte ..___tag_value_main.21-..___tag_value_main.20
+	.byte 0x09
+	.2byte 0x0606
+	.byte 0x04
+	.4byte ..___tag_value_main.22-..___tag_value_main.21
+	.byte 0x09
+	.2byte 0x0707
+	.byte 0x04
+	.4byte ..___tag_value_main.23-..___tag_value_main.22
+	.byte 0x0c
+	.2byte 0x0404
+	.byte 0x09
+	.2byte 0x0505
+	.2byte 0x0000
+	.4byte 0x00000040
+	.4byte 0x000000d8
+	.4byte ..___tag_value___sti__$E.26
+	.4byte ..___tag_value___sti__$E.36-..___tag_value___sti__$E.26
+	.byte 0x04
+	.4byte 0x00000000
+	.byte 0x04
+	.4byte ..___tag_value___sti__$E.27-..___tag_value___sti__$E.26
+	.byte 0x0c
+	.2byte 0x0804
+	.byte 0x2e
+	.byte 0x04
+	.byte 0x04
+	.4byte ..___tag_value___sti__$E.30-..___tag_value___sti__$E.27
+	.byte 0x0c
+	.2byte 0x0c04
+	.byte 0x04
+	.4byte ..___tag_value___sti__$E.31-..___tag_value___sti__$E.30
+	.byte 0x0c
+	.2byte 0x1004
+	.byte 0x04
+	.4byte ..___tag_value___sti__$E.32-..___tag_value___sti__$E.31
+	.byte 0x0c
+	.2byte 0x1404
+	.byte 0x2e
+	.byte 0x10
+	.byte 0x04
+	.4byte ..___tag_value___sti__$E.35-..___tag_value___sti__$E.32
+	.byte 0x0c
+	.2byte 0x0404
+	.2byte 0x0000
+	.byte 0x00
+# End

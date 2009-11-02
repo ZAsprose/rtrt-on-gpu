@@ -681,34 +681,34 @@ struct Vector
 		}
 
 
-#ifdef m128_t
 
-		inline void Clump(float & _min, float & _max)
+		inline void Clamp(float & _min, float & _max)
 		{
+
+		#ifdef m128_t
 
 			__m128 min = _mm_setl_ps(_min);
 			__m128 max = _mm_setl_ps(_max);
 
+		#endif
+
 			for (int i = 0; i<size; ++i)
 			{
+
+			#ifdef m128_t
+
 				data[i] = _mm_max_ps(data[i], min);
 				data[i] = _mm_min_ps(data[i], max);
-			}
-		}
 
-#else
+			#else
 
-		inline void Clump(T min, T max)
-		{
-			for (int i = 0; i<size; ++i)
-			{
 				if (data[i] > max) data[i] = max;
 				if (data[i] < min) data[i] = min;
+
+			#endif
+
 			}
 		}
-
-#endif
-
 		
 
 };
@@ -776,49 +776,6 @@ inline precision_t dot(const X<T,Left,Op,Right,size> a, const X<T,Left,Op,Right,
 {
 	return dot(Vector<T,size>(a), Vector<T,size>(b));
 }
-
-// 
-
-/*
-template <typename T, int size>
-inline precision_t dot(const Vector<T, size>& a, const Vector<T, size>& b)
-{
-
-#ifdef m128_t
-
-			precision_t r = 0;
-			precision_t tmp;
-			__m128 t;
-			
-			for (int i=0; i<size; ++i)
-			{
-				t = _mm_mul_ps (a[i], b[i]);
-
-#ifdef use_sse3
-				t = _mm_hadd_ps(t, t);
-				t = _mm_hadd_ps(t, t);
-				_mm_store_ss(&tmp, t);
-#else
-				float p[4];
-				_mm_storeu_ps(p,t);
-				tmp = p[0] + p[1] + p[2] + p[3];
-#endif
-		
-				r += tmp;
-			}
-
-			return r;
-
-#else
-
-	T r = 0;
-	for (int i = 0; i<size; ++i) r += (a[i]*b[i]);
-	return r;
-
-#endif
-}
-*/
-
 
 template <typename T, int size>
 inline precision_t CalcDistance(const Vector<T, size>& a, const Vector<T, size>& b)
