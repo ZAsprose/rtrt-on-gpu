@@ -37,8 +37,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-msse2 -fpermissive
-CXXFLAGS=-msse2 -fpermissive
+CCFLAGS=-fpermissive -msse2
+CXXFLAGS=-fpermissive -msse2
 
 # Fortran Compiler Flags
 FFLAGS=
