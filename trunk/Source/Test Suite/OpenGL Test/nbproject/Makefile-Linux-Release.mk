@@ -60,7 +60,7 @@ dist/Linux-Release/GNU-Linux-x86/opengl_test: ${OBJECTFILES}
 ${OBJECTDIR}/Source.o: nbproject/Makefile-${CND_CONF}.mk Source.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../../Dependencies/GLee/linux -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source.o Source.cpp
+	$(COMPILE.cc) -g -I../../../Dependencies/GLee/Include -I../../../Dependencies/GLFW/Include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source.o Source.cpp
 
 # Subprojects
 .build-subprojects:

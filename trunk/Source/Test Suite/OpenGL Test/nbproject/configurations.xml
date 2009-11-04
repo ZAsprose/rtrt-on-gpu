@@ -90,7 +90,8 @@
       <compileType>
         <ccTool>
           <incDir>
-            <pElem>../../../Dependencies/GLee/linux</pElem>
+            <pElem>../../../Dependencies/GLee/Include</pElem>
+            <pElem>../../../Dependencies/GLFW/Include</pElem>
           </incDir>
           <warningLevel>2</warningLevel>
         </ccTool>
@@ -114,7 +115,8 @@
       <compileType>
         <ccTool>
           <incDir>
-            <pElem>../../../Dependencies/GLee/linux</pElem>
+            <pElem>../../../Dependencies/GLee/Include</pElem>
+            <pElem>../../../Dependencies/GLFW/Include</pElem>
           </incDir>
         </ccTool>
         <linkerTool>
