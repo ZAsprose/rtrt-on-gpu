@@ -687,8 +687,8 @@ struct Vector
 
 		#ifdef m128_t
 
-			__m128 min = _mm_setl_ps(_min);
-			__m128 max = _mm_setl_ps(_max);
+			__m128 min = _mm_set1_ps(_min);
+			__m128 max = _mm_set1_ps(_max);
 
 		#endif
 

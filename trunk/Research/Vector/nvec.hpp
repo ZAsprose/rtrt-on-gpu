@@ -85,6 +85,21 @@ inline vector<T> operator+ (const vector<T> a, const vector<T> b)
     return res;
 }
 
+template <typename T>
+inline vector<T> operator- (const vector<T> a, const vector<T> b)
+{
+    std::size_t size = a.size;
+    vector<T> res(size);
+
+    T* res_d = res.data;
+    T* a_d = a.data;
+    T* b_d = b.data;
+
+    for(std::size_t i = 0; i < size; ++i)
+        res_d[i] = a_d[i] - b_d[i];
+
+    return res;
+}
 
 template <typename T>
 inline vector<T> operator* (const vector<T> a, const T b)
