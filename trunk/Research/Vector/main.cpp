@@ -94,6 +94,12 @@ void test_all()
     te = __rdtsc__();
     cout << "result: " << test << "  ...  " << trytest( test == 32 ) << "\t\t\ttime:" << te-tb << endl;
 
+    cout << "test : ";
+    tb = __rdtsc__();
+    test = 2.0 * dot(c + 2.0f * b, c);
+    te = __rdtsc__();
+    cout << "result: " << test << "  ...  " << trytest( test == 24 ) << "\t\t\ttime:" << te-tb << endl;
+
 
     cout << "test : ";
     tb = __rdtsc__();

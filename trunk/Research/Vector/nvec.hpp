@@ -45,29 +45,14 @@ struct vector
 template <typename T>
 inline T dot (const vector<T> a, const vector<T> b)
 {
-	T r = 0;
-	for (int i = 0; i<a.size; ++i) r += (a.data[i]*b.data[i]);
-	return r;
-}
+    T r = 0;
+    for (std::size_t i = 0; i< a.size; ++i)
+        r += (a.data[i]*b.data[i]);
 
-template <typename T>
-inline T dot (const vector<T> a, const T b)
-{
-	return dot(a , vector<T>(b.size, b.data));
-}
+    //std::cout << "\ncall dot: a = " << a << " b = " << b << " res = " << r;
 
-template <typename T>
-inline T dot (const T a, const vector<T> b)
-{
-	return dot(vector<T>(a.size, a.data), vector<T>(b.size, b.data));
+    return r;
 }
-
-template <typename T>
-inline T dot (const T a, const T b)
-{
-	return dot(vector<T>(a.size, a.data), vector<T>(b.size, b.data));
-}
-
 
 template <typename T>
 inline vector<T> operator+ (const vector<T> a, const vector<T> b)
@@ -81,6 +66,8 @@ inline vector<T> operator+ (const vector<T> a, const vector<T> b)
 
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a_d[i] + b_d[i];
+
+    //std::cout << "\ncall operator+(v,v): a = " << a << " b = " << b << " res = " << res;
 
     return res;
 }
@@ -98,6 +85,8 @@ inline vector<T> operator- (const vector<T> a, const vector<T> b)
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a_d[i] - b_d[i];
 
+    //std::cout << "\ncall operator-(v,v): a = " << a << " b = " << b << " res = " << res;
+
     return res;
 }
 
@@ -111,7 +100,9 @@ inline vector<T> operator* (const vector<T> a, const T b)
     T* a_d = a.data; 
 
     for(std::size_t i = 0; i < size; ++i)
-        res_d[i] = a_d[i] + b;
+        res_d[i] = a_d[i] * b;
+
+    //std::cout << "\ncall operator*(v,t): a = " << a << " b = " << b << " res = " << res;
 
     return res;
 }
@@ -127,7 +118,9 @@ inline vector<T> operator* (const T a, const vector<T> b)
     T* b_d = b.data; 
 
     for(std::size_t i = 0; i < size; ++i)
-        res_d[i] = a + b_d[i];
+        res_d[i] = a * b_d[i];
+
+    //std::cout << "\ncall operator*(t,v): a = " << a << " b = " << b << " res = " << res;
 
     return res;
 }
