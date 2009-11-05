@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=Base Render Library
 
 # Active Configuration
-DEFAULTCONF=Debug
+DEFAULTCONF=Windows-Debug
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release 
+ALLCONFS=Windows-Debug Windows-Release 
 
 
 # build
