@@ -12,14 +12,14 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=
-CCC=
-CXX=
+CC=gcc.exe
+CCC=g++.exe
+CXX=g++.exe
 FC=
-AS=
+AS=as.exe
 
 # Macros
-CND_PLATFORM=MinGW-Linux-x86
+CND_PLATFORM=MinGW-Windows
 CND_CONF=Windows-Release
 CND_DISTDIR=dist
 
@@ -47,31 +47,33 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../../Dependencies/GLFW/Lib/MinGW -L../../../Dependencies/GLee/Lib/MinGW -lglfw -lGLee -lopengl32 -lglu32 -lgdi32 -luser32 -lkernel32
+LDLIBSOPTIONS=-L../../../Dependencies/GLee/Lib/MinGW -L../../../Dependencies/GLFW/Lib/MinGW -L../../Base\ Libraries/Base\ Render\ Library/dist/Windows-Release/MinGW-Windows -lbase_render_library -lglfw -lGLee -lopengl32 -lglu32 -lgdi32 -luser32 -lkernel32
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Windows-Release.mk dist/Windows-Release/MinGW-Linux-x86/opengl_test
+	${MAKE}  -f nbproject/Makefile-Windows-Release.mk dist/Windows-Release/MinGW-Windows/opengl_test.exe
 
-dist/Windows-Release/MinGW-Linux-x86/opengl_test: ${OBJECTFILES}
-	${MKDIR} -p dist/Windows-Release/MinGW-Linux-x86
+dist/Windows-Release/MinGW-Windows/opengl_test.exe: ${OBJECTFILES}
+	${MKDIR} -p dist/Windows-Release/MinGW-Windows
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/opengl_test ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/Source.o: nbproject/Makefile-${CND_CONF}.mk Source.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
-	$(COMPILE.cc) -O3 -I../../../Dependencies/GLFW/Include -I../../../Dependencies/GLee/Include -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source.o Source.cpp
+	$(COMPILE.cc) -O3 -I../../../Dependencies/GLee/Include -I../../../Dependencies/GLFW/Include -I../../Base\ Libraries/Base\ Math\ Library -I../../Base\ Libraries/Base\ Render\ Library -MMD -MP -MF $@.d -o ${OBJECTDIR}/Source.o Source.cpp
 
 # Subprojects
 .build-subprojects:
+	cd ../../Base\ Libraries/Base\ Render\ Library && ${MAKE}  -f Makefile CONF=Windows-Release
 
 # Clean Targets
 .clean-conf:
 	${RM} -r build/Windows-Release
-	${RM} dist/Windows-Release/MinGW-Linux-x86/opengl_test
+	${RM} dist/Windows-Release/MinGW-Windows/opengl_test.exe
 
 # Subprojects
 .clean-subprojects:
+	cd ../../Base\ Libraries/Base\ Render\ Library && ${MAKE}  -f Makefile CONF=Windows-Release clean
 
 # Enable dependency checking
 .dep.inc: .depcheck-impl

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="f1" displayName="Shader Files" projectFiles="true">
+      <itemPath>Fragment.fs</itemPath>
+      <itemPath>Vertex.vs</itemPath>
+    </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
@@ -18,21 +22,26 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>2</platform>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <ccTool>
+          <architecture>1</architecture>
           <incDir>
-            <pElem>../../../Dependencies/GLFW/Include</pElem>
             <pElem>../../../Dependencies/GLee/Include</pElem>
+            <pElem>../../../Dependencies/GLFW/Include</pElem>
+            <pElem>../../Base Libraries/Base Math Library</pElem>
+            <pElem>../../Base Libraries/Base Render Library</pElem>
           </incDir>
         </ccTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>../../../Dependencies/GLFW/Lib/MinGW</pElem>
             <pElem>../../../Dependencies/GLee/Lib/MinGW</pElem>
+            <pElem>../../../Dependencies/GLFW/Lib/MinGW</pElem>
+            <pElem>../../Base Libraries/Base Render Library/dist/Windows-Debug/MinGW-Windows</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>base_render_library</linkerLibLibItem>
             <linkerLibLibItem>glfw</linkerLibLibItem>
             <linkerLibLibItem>GLee</linkerLibLibItem>
             <linkerLibLibItem>opengl32</linkerLibLibItem>
@@ -42,13 +51,25 @@
             <linkerLibLibItem>kernel32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
+        <requiredProjects>
+          <makeArtifact PL="../../Base Libraries/Base Render Library"
+                        CT="3"
+                        CN="Windows-Debug"
+                        AC="true"
+                        BL="true"
+                        WD="../../Base Libraries/Base Render Library"
+                        BC="${MAKE}  -f Makefile CONF=Windows-Debug"
+                        CC="${MAKE}  -f Makefile CONF=Windows-Debug clean"
+                        OP="dist/Windows-Debug/MinGW-Windows/libbase_render_library.a">
+          </makeArtifact>
+        </requiredProjects>
       </compileType>
     </conf>
     <conf name="Windows-Release" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>2</platform>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -57,8 +78,10 @@
         <ccTool>
           <developmentMode>6</developmentMode>
           <incDir>
-            <pElem>../../../Dependencies/GLFW/Include</pElem>
             <pElem>../../../Dependencies/GLee/Include</pElem>
+            <pElem>../../../Dependencies/GLFW/Include</pElem>
+            <pElem>../../Base Libraries/Base Math Library</pElem>
+            <pElem>../../Base Libraries/Base Render Library</pElem>
           </incDir>
         </ccTool>
         <fortranCompilerTool>
@@ -66,10 +89,12 @@
         </fortranCompilerTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>../../../Dependencies/GLFW/Lib/MinGW</pElem>
             <pElem>../../../Dependencies/GLee/Lib/MinGW</pElem>
+            <pElem>../../../Dependencies/GLFW/Lib/MinGW</pElem>
+            <pElem>../../Base Libraries/Base Render Library/dist/Windows-Release/MinGW-Windows</pElem>
           </linkerAddLib>
           <linkerLibItems>
+            <linkerLibLibItem>base_render_library</linkerLibLibItem>
             <linkerLibLibItem>glfw</linkerLibLibItem>
             <linkerLibLibItem>GLee</linkerLibLibItem>
             <linkerLibLibItem>opengl32</linkerLibLibItem>
@@ -79,13 +104,25 @@
             <linkerLibLibItem>kernel32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
+        <requiredProjects>
+          <makeArtifact PL="../../Base Libraries/Base Render Library"
+                        CT="3"
+                        CN="Windows-Release"
+                        AC="false"
+                        BL="true"
+                        WD="../../Base Libraries/Base Render Library"
+                        BC="${MAKE}  -f Makefile CONF=Windows-Release"
+                        CC="${MAKE}  -f Makefile CONF=Windows-Release clean"
+                        OP="dist/Windows-Release/MinGW-Windows/libbase_render_library.a">
+          </makeArtifact>
+        </requiredProjects>
       </compileType>
     </conf>
     <conf name="Linux-Debug" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -109,8 +146,8 @@
     <conf name="Linux-Release" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
+        <compilerSet>MinGW|MinGW</compilerSet>
+        <platform>3</platform>
       </toolsSet>
       <compileType>
         <ccTool>

@@ -12,14 +12,14 @@ MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc
-CCC=g++
-CXX=g++
+CC=gcc.exe
+CCC=g++.exe
+CXX=g++.exe
 FC=
-AS=as
+AS=as.exe
 
 # Macros
-CND_PLATFORM=GNU-Linux-x86
+CND_PLATFORM=MinGW-Windows
 CND_CONF=Linux-Release
 CND_DISTDIR=dist
 
@@ -51,10 +51,10 @@ LDLIBSOPTIONS=-lGL -lGLU -lglut -lglfw -lGLee
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Linux-Release.mk dist/Linux-Release/GNU-Linux-x86/opengl_test
+	${MAKE}  -f nbproject/Makefile-Linux-Release.mk dist/Linux-Release/MinGW-Windows/opengl_test.exe
 
-dist/Linux-Release/GNU-Linux-x86/opengl_test: ${OBJECTFILES}
-	${MKDIR} -p dist/Linux-Release/GNU-Linux-x86
+dist/Linux-Release/MinGW-Windows/opengl_test.exe: ${OBJECTFILES}
+	${MKDIR} -p dist/Linux-Release/MinGW-Windows
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/opengl_test ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/Source.o: nbproject/Makefile-${CND_CONF}.mk Source.cpp 
@@ -68,7 +68,7 @@ ${OBJECTDIR}/Source.o: nbproject/Makefile-${CND_CONF}.mk Source.cpp
 # Clean Targets
 .clean-conf:
 	${RM} -r build/Linux-Release
-	${RM} dist/Linux-Release/GNU-Linux-x86/opengl_test
+	${RM} dist/Linux-Release/MinGW-Windows/opengl_test.exe
 
 # Subprojects
 .clean-subprojects:

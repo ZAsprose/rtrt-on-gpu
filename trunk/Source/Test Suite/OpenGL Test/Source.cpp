@@ -2,6 +2,10 @@
 #include <GLee.h>
 #include <GL/glfw.h>
 
+#include <ShaderManager.h>
+
+using namespace render;
+
 void Init();
 void Shut_Down(int return_code);
 void Main_Loop();
@@ -19,6 +23,8 @@ int VertexShader,FragmentShader;
 int ShaderProgram;
 
 GLfloat angle = 0.0;
+
+ShaderManager * manager = NULL;
 
 int main()
 {
@@ -52,38 +58,15 @@ void Init()
 
 void InitShader (void)
 {
-VertexShader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-FragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+	manager = new ShaderManager();
 
-const char * VS =
-"\
-void main ( void )\
-{\
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\
-}";
+	if (!manager->LoadVertexShader("Vertex.vs")) _exit(-1);
 
-const char * FS =
-"\
-void main ( void )\
-{\
-    gl_FragColor = vec4(0.0, 0.0, 1.0, 0.0);\
-}";
+	if (!manager->LoadFragmentShader("Fragment.fs")) _exit(-1);
 
-glShaderSourceARB(VertexShader, 1, &VS,NULL);
-glShaderSourceARB(FragmentShader, 1, &FS,NULL);
+	if (!manager->BuildProgram()) _exit(-1);
 
-free(VertexShaderSource);free(FragmentShaderSource);
-
-glCompileShaderARB(VertexShader);
-glCompileShaderARB(FragmentShader);
-
-ShaderProgram = glCreateProgramObjectARB();
-
-glAttachObjectARB(ShaderProgram,VertexShader);
-glAttachObjectARB(ShaderProgram,FragmentShader);
-
-glLinkProgramARB(ShaderProgram);
-glUseProgramObjectARB(ShaderProgram);
+	manager->Bind();
 }
 
 void Shut_Down(int return_code)
