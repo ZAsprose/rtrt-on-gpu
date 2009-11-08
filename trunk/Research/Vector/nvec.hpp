@@ -49,8 +49,6 @@ inline T dot (const vector<T> a, const vector<T> b)
     for (std::size_t i = 0; i< a.size; ++i)
         r += (a.data[i]*b.data[i]);
 
-    //std::cout << "\ncall dot: a = " << a << " b = " << b << " res = " << r;
-
     return r;
 }
 
@@ -66,8 +64,6 @@ inline vector<T> operator+ (const vector<T> a, const vector<T> b)
 
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a_d[i] + b_d[i];
-
-    //std::cout << "\ncall operator+(v,v): a = " << a << " b = " << b << " res = " << res;
 
     return res;
 }
@@ -85,8 +81,6 @@ inline vector<T> operator- (const vector<T> a, const vector<T> b)
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a_d[i] - b_d[i];
 
-    //std::cout << "\ncall operator-(v,v): a = " << a << " b = " << b << " res = " << res;
-
     return res;
 }
 
@@ -101,8 +95,6 @@ inline vector<T> operator* (const vector<T> a, const T b)
 
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a_d[i] * b;
-
-    //std::cout << "\ncall operator*(v,t): a = " << a << " b = " << b << " res = " << res;
 
     return res;
 }
@@ -120,8 +112,6 @@ inline vector<T> operator* (const T a, const vector<T> b)
     for(std::size_t i = 0; i < size; ++i)
         res_d[i] = a * b_d[i];
 
-    //std::cout << "\ncall operator*(t,v): a = " << a << " b = " << b << " res = " << res;
-
     return res;
 }
 
@@ -130,8 +120,10 @@ inline vector<T> operator* (const T a, const vector<T> b)
 template <typename T>
 std::ostream& operator << (std::ostream& out, const vector<T>& x)
 {
+
     for(std::size_t i = 0; i < x.size; ++i)
         out << x.data[i] << ' ';
+
     return out;
 }
 

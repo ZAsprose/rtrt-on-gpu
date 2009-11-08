@@ -2,6 +2,8 @@
 #include <malloc.h>
 #include <string>
 
+
+
 #include "vector.hpp"
 #include "nvec.hpp"
 
@@ -106,6 +108,28 @@ void test_all()
     test = 2.0 * dot(c - 2.0f * b , b - 3.0f * c);
     te = __rdtsc__();
     cout << "result: " << test << "  ...  " << trytest( test == 16 ) << "\t\t\ttime:" << te-tb << endl;
+
+
+    cout << "test : ";
+    tb = __rdtsc__();
+    test = 2.0 * dot(c , b*(4.0f-1.0f)) - 1.0f;
+    te = __rdtsc__();
+    cout << "result: " << test << "  ...  " << trytest( test == 23 ) << "\t\t\ttime:" << te-tb << endl;
+
+
+    cout << "test : ";
+    tb = __rdtsc__();
+    test = 2.0 * dot(c * (3.0f - 2.0f) , b*(4.0f-1.0f)) - 1.0f;
+    te = __rdtsc__();
+    cout << "result: " << test << "  ...  " << trytest( test == 23 ) << "\t\t\ttime:" << te-tb << endl;
+
+
+
+    cout << "test : ";
+    tb = __rdtsc__();
+    test = 2.0 * dot(c , b*(4.0f*2.0f - 6.0f+1.0f))*dot(a+c,d+b);
+    te = __rdtsc__();
+    cout << "result: " << test << "  ...  " << trytest( test == 384 ) << "\t\t\ttime:" << te-tb << endl;
 
 }
 
