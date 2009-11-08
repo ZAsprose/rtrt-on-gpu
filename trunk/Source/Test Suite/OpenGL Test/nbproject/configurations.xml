@@ -22,7 +22,7 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>3</platform>
+        <platform>2</platform>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -69,7 +69,7 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>3</platform>
+        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -122,23 +122,34 @@
       <toolsSet>
         <developmentServer>localhost</developmentServer>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>3</platform>
+        <platform>2</platform>
       </toolsSet>
       <compileType>
         <ccTool>
           <incDir>
             <pElem>../../../Dependencies/GLee/Include</pElem>
             <pElem>../../../Dependencies/GLFW/Include</pElem>
+            <pElem>../../Base Libraries/Base Render Library</pElem>
+            <pElem>../../Base Libraries/Base Math Library</pElem>
           </incDir>
           <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
+          <linkerAddLib>
+            <pElem>../../../Dependencies/GLee/Lib/gcc</pElem>
+            <pElem>../../../Dependencies/GLFW/Lib/gcc</pElem>
+            <pElem>../../Base Libraries/Base Render Library/dist/Linux-Debug/GNU-Linux-x86</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>/home/denis/Desktop/RTRT on GPU/Dependencies/GLee/Lib/gcc</pElem>
+            <pElem>/home/denis/Desktop/RTRT on GPU/Dependencies/GLFW/Lib/gcc</pElem>
+          </linkerDynSerch>
           <linkerLibItems>
+            <linkerLibLibItem>GLee</linkerLibLibItem>
+            <linkerLibLibItem>glfw</linkerLibLibItem>
             <linkerLibLibItem>GL</linkerLibLibItem>
             <linkerLibLibItem>GLU</linkerLibLibItem>
-            <linkerLibLibItem>glut</linkerLibLibItem>
-            <linkerLibLibItem>glfw</linkerLibLibItem>
-            <linkerLibLibItem>GLee</linkerLibLibItem>
+            <linkerLibLibItem>base_render_library</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -146,23 +157,34 @@
     <conf name="Linux-Release" type="1">
       <toolsSet>
         <developmentServer>localhost</developmentServer>
-        <compilerSet>MinGW|MinGW</compilerSet>
-        <platform>3</platform>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
       </toolsSet>
       <compileType>
         <ccTool>
           <incDir>
             <pElem>../../../Dependencies/GLee/Include</pElem>
             <pElem>../../../Dependencies/GLFW/Include</pElem>
+            <pElem>../../Base Libraries/Base Render Library</pElem>
+            <pElem>../../Base Libraries/Base Math Library</pElem>
           </incDir>
         </ccTool>
         <linkerTool>
+          <linkerAddLib>
+            <pElem>../../../Dependencies/GLee/Lib/gcc</pElem>
+            <pElem>../../../Dependencies/GLFW/Lib/gcc</pElem>
+            <pElem>../../Base Libraries/Base Render Library/dist/Linux-Debug/GNU-Linux-x86</pElem>
+          </linkerAddLib>
+          <linkerDynSerch>
+            <pElem>/home/denis/Desktop/RTRT on GPU/Dependencies/GLee/Lib/gcc</pElem>
+            <pElem>/home/denis/Desktop/RTRT on GPU/Dependencies/GLFW/Lib/gcc</pElem>
+          </linkerDynSerch>
           <linkerLibItems>
+            <linkerLibLibItem>GLee</linkerLibLibItem>
+            <linkerLibLibItem>glfw</linkerLibLibItem>
             <linkerLibLibItem>GL</linkerLibLibItem>
             <linkerLibLibItem>GLU</linkerLibLibItem>
-            <linkerLibLibItem>glut</linkerLibLibItem>
-            <linkerLibLibItem>glfw</linkerLibLibItem>
-            <linkerLibLibItem>GLee</linkerLibLibItem>
+            <linkerLibLibItem>base_render_library</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>

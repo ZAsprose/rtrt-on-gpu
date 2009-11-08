@@ -60,11 +60,11 @@ void InitShader (void)
 {
 	manager = new ShaderManager();
 
-	if (!manager->LoadVertexShader("Vertex.vs")) _exit(-1);
+	if (!manager->LoadVertexShader("Vertex.vs")) exit(-1);
 
-	if (!manager->LoadFragmentShader("Fragment.fs")) _exit(-1);
+	if (!manager->LoadFragmentShader("Fragment.fs")) exit(-1);
 
-	if (!manager->BuildProgram()) _exit(-1);
+	if (!manager->BuildProgram()) exit(-1);
 
 	manager->Bind();
 }
