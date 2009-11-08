@@ -21,6 +21,8 @@
 
 #include <fstream>
 
+#include <string.h>
+
 #include "ShaderManager.h"
 
 using namespace std;
@@ -73,13 +75,13 @@ namespace render
 
         for ( int index = 0; index < count; index++ )
 		{
-			cout << "File: \"" << files [index] << "\"..." << endl;
+			cout << "File: \"" << files [index] << "\"...";
 
 			ifstream file ( files [index] );
 
 			if ( !file )
 			{
-				cout << "ERROR: Could not open file" << endl;
+				cout << endl << "ERROR: Could not open file" << endl;
 
 				loaded = false; break;
 			}
@@ -94,7 +96,7 @@ namespace render
 
 			if ( 0 == length )
 			{
-				cout << "WARNING: File is empty" << endl;
+				cout << endl << "WARNING: File is empty" << endl;
 			}
 
 			//-----------------------------------------------------------------
@@ -109,7 +111,11 @@ namespace render
 			
 			file.close ( );
 
+			//-----------------------------------------------------------------
+
 			lines [index + 1] = source;
+
+			cout << "OK" << endl;
 		}
 
 		//---------------------------------------------------------------------
