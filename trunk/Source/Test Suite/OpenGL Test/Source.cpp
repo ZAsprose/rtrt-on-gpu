@@ -1,7 +1,9 @@
 #include <cstdlib>
+#include <stdio.h>
+#include <iostream>
 #include <GLee.h>
 #include <GL/glfw.h>
-
+#include <CL/cl.h>
 #include <ShaderManager.h>
 
 using namespace render;
@@ -56,17 +58,81 @@ void Init()
   InitShader ( );
 }
 
-void InitShader (void)
+void InitOpenCl ( void )
+{
+	cl_int clerr;
+
+	cl_uint numplatforms;
+
+	cl_platform_id * platformlist;
+
+	clerr=clGetPlatformIDs ( 0, NULL, &numplatforms );
+
+	platformlist = (cl_platform_id *) malloc(sizeof(cl_platform_id)*numplatforms);
+
+	clerr=clGetPlatformIDs(numplatforms, platformlist, NULL);
+
+	cl_uint i;
+
+	for (i=0; i<numplatforms; i++)
+	{
+	  char platname[80];
+
+	  clerr=clGetPlatformInfo ( platformlist [i],
+							    CL_PLATFORM_NAME,
+							    sizeof(platname),
+							    (void *) platname,
+							    NULL );
+
+	  char platprofile[80];
+
+	  clerr = clGetPlatformInfo ( platformlist [i],
+							      CL_PLATFORM_PROFILE,
+							      sizeof ( platprofile ),
+							      (void *) platprofile,
+							      NULL );
+
+	  char platvendor[80];
+
+	  clerr = clGetPlatformInfo ( platformlist [i],
+							      CL_PLATFORM_VENDOR,
+							      sizeof ( platvendor ),
+							      (void *) platvendor,
+							      NULL );
+
+	  cl_uint numdevs;
+
+	  clerr = clGetDeviceIDs ( platformlist [i],
+						       CL_DEVICE_TYPE_ALL,
+						       0,
+						       NULL,
+						       &numdevs );
+
+	  char platforminfo[4096];
+
+	  sprintf ( platforminfo, "OpenCL Platform[%d]: %s, %s  Devices: %u\n",
+			    i, platname, platprofile, numdevs);
+
+	  std::cout << platforminfo << std::endl;
+
+	}
+
+	free ( platformlist );
+}
+
+void InitShader ( void )
 {
 	manager = new ShaderManager();
 
-	if (!manager->LoadVertexShader("Vertex.vs")) exit(-1);
+	if (!manager->LoadVertexShader("Vertex.vert")) exit(-1);
 
-	if (!manager->LoadFragmentShader("Fragment.fs")) exit(-1);
+	if (!manager->LoadFragmentShader("Fragment.frag")) exit(-1);
 
 	if (!manager->BuildProgram()) exit(-1);
 
 	manager->Bind();
+
+	InitOpenCl ( );
 }
 
 void Shut_Down(int return_code)

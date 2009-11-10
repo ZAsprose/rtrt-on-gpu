@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurationDescriptor version="62">
   <projectmakefile>Makefile</projectmakefile>
-  <defaultConf>3</defaultConf>
+  <defaultConf>2</defaultConf>
   <confs>
-    <conf name="Windows-Debug" type="1">
+    <conf name="AMD-Windows-Debug" type="1">
       <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
         <array_repeat_threshold>10</array_repeat_threshold>
@@ -20,7 +20,7 @@
         </environment>
       </runprofile>
     </conf>
-    <conf name="Windows-Release" type="1">
+    <conf name="AMD-Windows-Release" type="1">
       <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
         <array_repeat_threshold>10</array_repeat_threshold>
@@ -37,7 +37,7 @@
         </environment>
       </runprofile>
     </conf>
-    <conf name="Linux-Debug" type="1">
+    <conf name="AMD-Linux-Debug" type="1">
       <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
         <array_repeat_threshold>10</array_repeat_threshold>
@@ -54,7 +54,75 @@
         </environment>
       </runprofile>
     </conf>
-    <conf name="Linux-Release" type="1">
+    <conf name="AMD-Linux-Release" type="1">
+      <gdbdebugger version="2">
+        <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
+      </gdbdebugger>
+      <gizmo_options version="1">
+      </gizmo_options>
+      <runprofile version="5">
+        <args></args>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <console-type>0</console-type>
+        <terminal-type>0</terminal-type>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="NVIDIA-Windows-Debug" type="1">
+      <gdbdebugger version="2">
+        <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
+      </gdbdebugger>
+      <gizmo_options version="1">
+      </gizmo_options>
+      <runprofile version="5">
+        <args></args>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <console-type>2</console-type>
+        <terminal-type>0</terminal-type>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="NVIDIA-Windows-Release" type="1">
+      <gdbdebugger version="2">
+        <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
+      </gdbdebugger>
+      <gizmo_options version="1">
+      </gizmo_options>
+      <runprofile version="5">
+        <args></args>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <console-type>2</console-type>
+        <terminal-type>0</terminal-type>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="NVIDIA-Linux-Debug" type="1">
+      <gdbdebugger version="2">
+        <gdb_command>gdb</gdb_command>
+        <array_repeat_threshold>10</array_repeat_threshold>
+      </gdbdebugger>
+      <gizmo_options version="1">
+      </gizmo_options>
+      <runprofile version="5">
+        <args></args>
+        <rundir></rundir>
+        <buildfirst>true</buildfirst>
+        <console-type>0</console-type>
+        <terminal-type>0</terminal-type>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+    <conf name="NVIDIA-Linux-Release" type="1">
       <gdbdebugger version="2">
         <gdb_command>gdb</gdb_command>
         <array_repeat_threshold>10</array_repeat_threshold>
