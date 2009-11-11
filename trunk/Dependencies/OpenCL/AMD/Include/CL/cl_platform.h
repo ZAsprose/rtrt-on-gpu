@@ -93,9 +93,9 @@ jurisdiction and venue of these courts.
 #ifndef CL_PLATFORM_H_
 #define CL_PLATFORM_H_
 
-#if !defined(_WIN32)
+//#if !defined(_WIN32)
 # include <stdint.h>
-#endif /* !_WIN32 */
+//#endif /* !_WIN32 */
 #include <stddef.h>
 #include <float.h>
 
