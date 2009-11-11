@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <ShaderManager.h>
+
 #include <GL/glfw.h>
 
+using namespace render;
 
 
 
@@ -56,7 +59,7 @@ void Init()
 
   InitShader ( );
 }
-
+/*
 void InitOpenCl ( void )
 {
 	cl_int clerr;
@@ -118,14 +121,15 @@ void InitOpenCl ( void )
 
 	free ( platformlist );
 }
+*/
 
 void InitShader ( void )
 {
-	manager = new ShaderManager();
+	manager = new ShaderManager ( );
 
-	if (!manager->LoadVertexShader("Vertex.vert")) exit(-1);
+	if (!manager->LoadVertexShader("../../../Source/Test Suite/OpenGL Test/Vertex.vert")) exit(-1);
 
-	if (!manager->LoadFragmentShader("Fragment.frag")) exit(-1);
+	if (!manager->LoadFragmentShader("../../../Source/Test Suite/OpenGL Test/Fragment.frag")) exit(-1);
 
 	if (!manager->BuildProgram()) exit(-1);
 

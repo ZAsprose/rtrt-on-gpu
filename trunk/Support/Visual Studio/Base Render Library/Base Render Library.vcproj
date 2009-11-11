@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="...\...\...\Dependencies\GLee\Include;...\...\...\Dependencies\GLFW\Include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,6 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\GLee\Include;..\..\..\Dependencies\GLFW\Include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -148,84 +150,116 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.cpp"
+			<Filter
+				Name="Camera Control"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.cpp"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Offscreen Rendering"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.cpp"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Shader Manager"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.cpp"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Wrappers"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.cpp"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.h"
+			<Filter
+				Name="Camera Control"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.h"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Offscreen Rendering"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.h"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Wrappers"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.h"
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Shader Manager"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.h"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

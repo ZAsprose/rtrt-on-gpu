@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\GLee\Include;..\..\..\Dependencies\GLFW\Include;&quot;..\..\..\Source\Base Libraries\Base Math Library&quot;;&quot;..\..\..\Source\Base Libraries\Base Render Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -60,7 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="GLee.lib glfw.lib OpenGL32.lib"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="..\..\..\Dependencies\GLee\Lib\Windows;..\..\..\Dependencies\GLFW\Lib\Windows"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -114,6 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\GLee\Include;..\..\..\Dependencies\GLFW\Include;&quot;..\..\..\Source\Base Libraries\Base Math Library&quot;;&quot;..\..\..\Source\Base Libraries\Base Render Library&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -132,7 +136,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="GLee.lib GLFW.lib OpenGL32.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="..\..\..\Dependencies\GLee\Lib\Windows;..\..\..\Dependencies\GLFW\Lib\Windows"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -163,6 +169,14 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AE01A350-F727-46DA-87D9-803838599A29}"
+			RelativePathToProject=".\Base Math Library\Base Math Library.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{63184D42-634C-4CD5-BACC-BEFE2BD6A850}"
+			RelativePathToProject=".\Base Render Library\Base Render Library.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
