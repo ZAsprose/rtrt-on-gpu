@@ -1,12 +1,11 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <iostream>
-#include <GLee.h>
-#include <GL/glfw.h>
-#include <CL/cl.h>
-#include <ShaderManager.h>
 
-using namespace render;
+#include <GL/glfw.h>
+
+
+
 
 void Init();
 void Shut_Down(int return_code);
@@ -132,7 +131,7 @@ void InitShader ( void )
 
 	manager->Bind();
 
-	InitOpenCl ( );
+	//InitOpenCl ( );
 }
 
 void Shut_Down(int return_code)
