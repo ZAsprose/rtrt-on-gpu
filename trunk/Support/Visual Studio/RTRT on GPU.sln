@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base Libraries", "Base Libraries", "{96967118-3CF3-42B5-A1C6-A3D170559A68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Suite", "Test Suite", "{2AA5FAF9-3008-4D0C-B556-4C0383DC3482}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Math Library", "Base Math Library\Base Math Library.vcproj", "{AE01A350-F727-46DA-87D9-803838599A29}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL Test", "OpenGL Test\OpenGL Test.vcproj", "{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Render Library", "Base Render Library\Base Render Library.vcproj", "{63184D42-634C-4CD5-BACC-BEFE2BD6A850}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE01A350-F727-46DA-87D9-803838599A29}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AE01A350-F727-46DA-87D9-803838599A29}.Debug|Win32.Build.0 = Debug|Win32
+		{AE01A350-F727-46DA-87D9-803838599A29}.Release|Win32.ActiveCfg = Release|Win32
+		{AE01A350-F727-46DA-87D9-803838599A29}.Release|Win32.Build.0 = Release|Win32
+		{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7}.Debug|Win32.Build.0 = Debug|Win32
+		{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7}.Release|Win32.ActiveCfg = Release|Win32
+		{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7}.Release|Win32.Build.0 = Release|Win32
+		{63184D42-634C-4CD5-BACC-BEFE2BD6A850}.Debug|Win32.ActiveCfg = Debug|Win32
+		{63184D42-634C-4CD5-BACC-BEFE2BD6A850}.Debug|Win32.Build.0 = Debug|Win32
+		{63184D42-634C-4CD5-BACC-BEFE2BD6A850}.Release|Win32.ActiveCfg = Release|Win32
+		{63184D42-634C-4CD5-BACC-BEFE2BD6A850}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AE01A350-F727-46DA-87D9-803838599A29} = {96967118-3CF3-42B5-A1C6-A3D170559A68}
+		{63184D42-634C-4CD5-BACC-BEFE2BD6A850} = {96967118-3CF3-42B5-A1C6-A3D170559A68}
+		{3330B1F8-7ECD-4815-8EF0-68D84DA1CAC7} = {2AA5FAF9-3008-4D0C-B556-4C0383DC3482}
+	EndGlobalSection
+EndGlobal
