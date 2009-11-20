@@ -118,7 +118,7 @@ namespace compute
 
 		cl_bool error_correction_support;
 
-		device.GetInfo ( CL_DEVICE_ERROR_CORRECTION_SUPPORT, &error_correction_support );
+		error |= device.GetInfo ( CL_DEVICE_ERROR_CORRECTION_SUPPORT, &error_correction_support );
 
 		printf ( "CL_DEVICE_ERROR_CORRECTION_SUPPORT:\t%s\n",
 			     error_correction_support == CL_TRUE ? "Yes" : "No" );
@@ -127,7 +127,7 @@ namespace compute
 
 		cl_ulong max_mem_alloc_size;
 
-		device.GetInfo ( CL_DEVICE_MAX_MEM_ALLOC_SIZE, &max_mem_alloc_size );
+		error |= device.GetInfo ( CL_DEVICE_MAX_MEM_ALLOC_SIZE, &max_mem_alloc_size );
 
 		printf ( "\nCL_DEVICE_MAX_MEM_ALLOC_SIZE:\t\t%u MB\n", max_mem_alloc_size / ( 1024 * 1024 ) );
 
@@ -135,7 +135,7 @@ namespace compute
 
 		cl_ulong global_mem_size;
 
-		device.GetInfo ( CL_DEVICE_GLOBAL_MEM_SIZE, &global_mem_size );
+		error |= device.GetInfo ( CL_DEVICE_GLOBAL_MEM_SIZE, &global_mem_size );
 
 		printf ( "CL_DEVICE_GLOBAL_MEM_SIZE:\t\t%u MB\n", global_mem_size / ( 1024 * 1024 ) );
 
@@ -143,7 +143,7 @@ namespace compute
 
 		cl_device_local_mem_type local_mem_type;
 
-		device.GetInfo ( CL_DEVICE_LOCAL_MEM_TYPE, &local_mem_type );
+		error |= device.GetInfo ( CL_DEVICE_LOCAL_MEM_TYPE, &local_mem_type );
 
 		printf ( "CL_DEVICE_LOCAL_MEM_TYPE:\t\t%s\n",
 			     local_mem_type == CL_LOCAL ? "Local" : "Global" );
@@ -152,7 +152,7 @@ namespace compute
 
 		cl_ulong local_mem_size;
 
-		device.GetInfo ( CL_DEVICE_LOCAL_MEM_SIZE, &local_mem_size );
+		error |= device.GetInfo ( CL_DEVICE_LOCAL_MEM_SIZE, &local_mem_size );
 
 		printf ( "CL_DEVICE_LOCAL_MEM_SIZE:\t\t%u KB\n", local_mem_size / 1024 );
 
@@ -160,7 +160,7 @@ namespace compute
 		
 		cl_ulong constant_buffer_size;
 
-		device.GetInfo ( CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size );
+		error |= device.GetInfo ( CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, &constant_buffer_size );
 		
 		printf ( "CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE:\t%u KB\n\n", constant_buffer_size / 1024 );
 
@@ -168,7 +168,7 @@ namespace compute
 
 		cl_command_queue_properties command_queue_properties;
 
-		device.GetInfo ( CL_DEVICE_QUEUE_PROPERTIES, &command_queue_properties );
+		error |= device.GetInfo ( CL_DEVICE_QUEUE_PROPERTIES, &command_queue_properties );
 
 		if ( command_queue_properties & CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE )
 			printf ( "CL_DEVICE_QUEUE_PROPERTIES:\t\t%s\n", "CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE" );  
@@ -180,7 +180,7 @@ namespace compute
 
 		cl_bool image_support;
 
-		device.GetInfo ( CL_DEVICE_IMAGE_SUPPORT, &image_support );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE_SUPPORT, &image_support );
 
 		printf ( "\nCL_DEVICE_IMAGE_SUPPORT:\t\t%s\n", image_support == CL_TRUE ? "Yes" : "No" );
 
@@ -188,7 +188,7 @@ namespace compute
 
 		cl_uint max_read_image_args;
 
-		device.GetInfo ( CL_DEVICE_MAX_READ_IMAGE_ARGS, &max_read_image_args );
+		error |= device.GetInfo ( CL_DEVICE_MAX_READ_IMAGE_ARGS, &max_read_image_args );
 
 		printf ( "CL_DEVICE_MAX_READ_IMAGE_ARGS:\t\t%u\n", max_read_image_args );
 
@@ -196,7 +196,7 @@ namespace compute
 
 		cl_uint max_write_image_args;
 
-		device.GetInfo ( CL_DEVICE_MAX_WRITE_IMAGE_ARGS, &max_write_image_args );
+		error |= device.GetInfo ( CL_DEVICE_MAX_WRITE_IMAGE_ARGS, &max_write_image_args );
 
 		printf ( "CL_DEVICE_MAX_WRITE_IMAGE_ARGS:\t\t%u\n", max_write_image_args );
 
@@ -206,29 +206,29 @@ namespace compute
 
 		printf ( "CL_DEVICE_IMAGE <DIM>" );
 
-		device.GetInfo ( CL_DEVICE_IMAGE2D_MAX_WIDTH, &image_max_dim [0] );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE2D_MAX_WIDTH, &image_max_dim [0] );
 
 		printf ( "\t\t\t2D_MAX_WIDTH\t%u\n", image_max_dim [0] );
 
-		device.GetInfo ( CL_DEVICE_IMAGE2D_MAX_HEIGHT, &image_max_dim [1] );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE2D_MAX_HEIGHT, &image_max_dim [1] );
 
 		printf ( "\t\t\t\t\t2D_MAX_HEIGHT\t%u\n", image_max_dim [1] );
 
-		device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_WIDTH, &image_max_dim [2] );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_WIDTH, &image_max_dim [2] );
 
 		printf ( "\t\t\t\t\t3D_MAX_WIDTH\t%u\n", image_max_dim [2] );
 
-		device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_HEIGHT, &image_max_dim [3] );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_HEIGHT, &image_max_dim [3] );
 
 		printf ( "\t\t\t\t\t3D_MAX_HEIGHT\t%u\n", image_max_dim [3] );
 
-		device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_DEPTH, &image_max_dim [4] );
+		error |= device.GetInfo ( CL_DEVICE_IMAGE3D_MAX_DEPTH, &image_max_dim [4] );
 
 		printf ( "\t\t\t\t\t3D_MAX_DEPTH\t%u\n", image_max_dim [4] );
 		
 		//-------------------------------------- CL_DEVICE_EXTENSIONS ---------------------------------------
 		
-		device.GetInfo ( CL_DEVICE_EXTENSIONS, &info );
+		error |= device.GetInfo ( CL_DEVICE_EXTENSIONS, &info );
 
 		printf ( "\nCL_DEVICE_EXTENSIONS:" );
 
@@ -257,17 +257,17 @@ namespace compute
 
 		cl_uint vector_width [6];
 		
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR, &vector_width [0] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR, &vector_width [0] );
 
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT, &vector_width [1] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT, &vector_width [1] );
 
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT, &vector_width [2] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT, &vector_width [2] );
 
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG, &vector_width [3] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG, &vector_width [3] );
 
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT, &vector_width [4] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT, &vector_width [4] );
 
-		device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE, &vector_width [5] );
+		error |= device.GetInfo ( CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE, &vector_width [5] );
 
 		printf ( "\nCL_DEVICE_PREFERRED_VECTOR_WIDTH:");
 
