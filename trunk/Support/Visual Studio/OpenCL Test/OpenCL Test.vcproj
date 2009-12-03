@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\Dependencies\OpenCL\AMD\Include"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\OpenCL\AMD\Include;&quot;..\..\..\Source\Base Libraries\Base Compute Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\..\Dependencies\OpenCL\AMD\Include"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\OpenCL\AMD\Include;&quot;..\..\..\Source\Base Libraries\Base Compute Library&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -171,36 +171,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="OpenCL Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
-			>
-			<Filter
-				Name="Platform"
-				>
-				<File
-					RelativePath=".\Platform.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Platform.hpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Device"
-				>
-				<File
-					RelativePath=".\Device.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Device.hpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
 		<Filter
 			Name="Source Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
