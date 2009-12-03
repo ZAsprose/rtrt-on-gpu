@@ -20,9 +20,7 @@
 #ifndef _CL_KERNEL_HPP_
 #define	_CL_KERNEL_HPP_
 
-#include <vector>
-
-#include <CL/cl.h>
+#include "Config.hpp"
 
 #include "Platform.hpp"
 

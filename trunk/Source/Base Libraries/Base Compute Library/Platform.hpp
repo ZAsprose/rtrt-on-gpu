@@ -20,9 +20,7 @@
 #ifndef _CL_PLATFORM_HPP_
 #define	_CL_PLATFORM_HPP_
 
-#include <CL/cl.h>
-
-#include <vector>
+#include "Config.hpp"
 
 using namespace std;
 

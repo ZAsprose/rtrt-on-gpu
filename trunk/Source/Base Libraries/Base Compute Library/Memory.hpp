@@ -20,6 +20,8 @@
 #ifndef _CL_MEMORY_HPP_
 #define	_CL_MEMORY_HPP_
 
+#include "Config.hpp"
+
 #include "Platform.hpp"
 
 using namespace std;
