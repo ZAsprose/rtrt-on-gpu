@@ -76,8 +76,10 @@ namespace compute
 			 *        \li \c CL_MEM_REFERENCE_COUNT,
 			 *        \li \c CL_MEM_CONTEXT.
 			 *
-			 * @param param pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
@@ -109,7 +111,8 @@ namespace compute
 			/**
 			 * Creates a buffer object.
 			 *
-			 * @param context valid OpenCL context used to create the buffer object.
+			 * @param context is a valid OpenCL context used to create the buffer
+			 *        object.
 			 *
 			 * @param flags is a bit-field that is used to specify allocation and
 			 *        usage information such as the memory arena that should be used
@@ -181,26 +184,25 @@ namespace compute
 			 * 
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
 			 * @retval CL_INVALID_VALUE if \a param is not valid.
 			 */
 			template <typename T>
-			cl_int GetImageInfo ( cl_image_info name, T * param ) const;
+			cl_int GetImageInfo ( cl_image_info name, T * param ) const
+			{
+				return clGetImageInfo ( memory         /* image */,
+										name           /* param_name */,
+										sizeof ( T )   /* param_value_size */,
+										param          /* param_value */,
+										NULL           /* param_value_size_ret */ );
+			}
 	};
-
-	template <typename T>
-	cl_int Image :: GetImageInfo ( cl_image_info name, T * param ) const
-	{
-		return clGetImageInfo ( memory         /* image */,
-			                    name           /* param_name */,
-								sizeof ( T )   /* param_value_size */,
-								param          /* param_value */,
-								NULL           /* param_value_size_ret */ );
-	}
 
 	/**
 	 * Interface for OpenCL 2D images.
@@ -227,7 +229,7 @@ namespace compute
 			 *        \li \c CL_MEM_READ_WRITE,
 			 *        \li \c CL_MEM_WRITE_ONLY,
  			 *        \li \c CL_MEM_READ_ONLY,
-			 *        \li \c CL_MEM_USE_HOST_PTR.
+			 *        \li \c CL_MEM_USE_HOST_PTR,
  			 *        \li \c CL_MEM_ALLOC_HOST_PTR,
 			 *        \li \c CL_MEM_COPY_HOST_PTR.
 			 *
@@ -240,17 +242,17 @@ namespace compute
 			 * @param height is the height of the image in pixels ( must be greater
 			 *        than or equal to 1 ).
 			 *
- 			 * @param line is the scan-line pitch in bytes. This must be 0 if \a
-			 *        pointer is NULL and can be either 0 or greater than or equal to
-			 *        \a width * size of element in bytes if \a pointer is not NULL.
-			 *        If \a pointer is not NULL and \a line is equal to 0, \a line
-			 *        is calculated as \a width * size of element in bytes. If \a
-			 *        line is not 0, it must be a multiple of the image element size
-			 *        in bytes.
+ 			 * @param row is the size in bytes of each line in the 2D image. This
+			 *        must be 0 if \a pointer is NULL and can be either 0 or greater
+			 *        than or equal to \a width * ( size of element in bytes ) if \a
+			 *        pointer is not NULL. If \a pointer is not NULL and \a row is
+			 *        equal to 0, \a row is calculated as \a width * ( size of element
+			 *        in bytes ). If \a row is not 0, it must be a multiple of the
+			 *        image element size in bytes.
 			 *
 			 * @param pointer is a pointer to the image data that may already be
 			 *        allocated by the application. The size of the buffer that \a
-			 *        pointer points to must be greater than or equal to \a pitch *
+			 *        pointer points to must be greater than or equal to \a row *
 			 *        \a height. The size of each element in bytes must be a power of
 			 *        2. The image data specified by \a pointer is stored as a linear
 			 *        sequence of adjacent scanlines. Each scanline is stored as a
@@ -271,7 +273,7 @@ namespace compute
 			 * @retval CL_INVALID_IMAGE_SIZE if \a width or \a height are 0 or if they
 			 *         exceed values specified in \c CL_DEVICE_IMAGE2D_MAX_WIDTH or \c
 			 *         CL_DEVICE_IMAGE2D_MAX_HEIGHT respectively for all devices in
-			 *         \a context or if values specified by \a pitch do not follow rules
+			 *         \a context or if values specified by \a row do not follow rules
 			 *         described in the argument description above.
 			 *
 			 * @retval CL_INVALID_HOST_PTR if \a pointer is NULL and \c CL_MEM_USE_HOST_PTR
@@ -295,7 +297,7 @@ namespace compute
 					  ImageFormat format,
 					  size_t width,
 					  size_t height,
-					  size_t line,
+					  size_t row,
 					  void * pointer = NULL,
 					  cl_int * error = NULL )
 			{
@@ -304,7 +306,7 @@ namespace compute
 										   &format   /* image_format */,
 										   width     /* image_width */,
 										   height    /* image_height */,
-										   line      /* image_row_pitch */,
+										   row       /* image_row_pitch */,
 										   pointer   /* host_ptr */,
 										   error     /* errcode_ret */ );
 			}
@@ -335,7 +337,7 @@ namespace compute
 			 *        \li \c CL_MEM_READ_WRITE,
 			 *        \li \c CL_MEM_WRITE_ONLY,
  			 *        \li \c CL_MEM_READ_ONLY,
-			 *        \li \c CL_MEM_USE_HOST_PTR.
+			 *        \li \c CL_MEM_USE_HOST_PTR,
  			 *        \li \c CL_MEM_ALLOC_HOST_PTR,
 			 *        \li \c CL_MEM_COPY_HOST_PTR.
 			 *
@@ -351,26 +353,26 @@ namespace compute
 			 * @param depth is the depth of the image in pixels ( must be greater
 			 *        than or equal to 1 ).
 			 *
-			 * @param line is the scan-line pitch in bytes. This must be 0 if \a
-			 *        pointer is NULL and can be either 0 or greater than or equal to
-			 *        \a width * size of element in bytes if \a pointer is not NULL.
-			 *        If \a pointer is not NULL and \a line is equal to 0, \a line
-			 *        is calculated as \a width * size of element in bytes. If \a
-			 *        line is not 0, it must be a multiple of the image element size
-			 *        in bytes.
+ 			 * @param row is the size in bytes of each line in the 2D image. This
+			 *        must be 0 if \a pointer is NULL and can be either 0 or greater
+			 *        than or equal to \a width * ( size of element in bytes ) if \a
+			 *        pointer is not NULL. If \a pointer is not NULL and \a row is
+			 *        equal to 0, \a row is calculated as \a width * ( size of element
+			 *        in bytes ). If \a row is not 0, it must be a multiple of the
+			 *        image element size in bytes.
 			 *
 			 * @param slice is the size in bytes of each 2D slice in the 3D image.
 			 *        This must be 0 if \a pointer is NULL and can be either 0 or
-			 *        greater than or equal to \a line * \a height if \a pointer is
-			 *        not NULL. If \a pointer is not NULL and \a slice = 0, \a slice
-			 *        is calculated as \a line * \a height. If \a slice is not 0,
-			 *        it must be a multiple of the \a line.
+			 *        greater than or equal to \a row * \a height if \a pointer is
+			 *        not NULL. If \a pointer is not NULL and \a row is 0, \a slice
+			 *        is calculated as \a row * \a height. If \a slice is not 0,
+			 *        it must be a multiple of the \a row.
 			 *
 			 * @param pointer is a pointer to the image data that may already be
 			 *        allocated by the application. The size of the buffer that \a
-			 *        pointer points to must be greater than or equal to \a line * \a
-			 *        depth. The size of each element in bytes must be a power of 2.
-			 *        The image data specified by \a pointer is stored as a linear
+			 *        pointer points to must be greater than or equal to \a slice *
+			 *        \a depth. The size of each element in bytes must be a power of
+			 *        2. The image data specified by \a pointer is stored as a linear
 			 *        sequence of adjacent 2D slices. Each 2D slice is a linear
 			 *        sequence of adjacent scanlines. Each scanline is a linear
 			 *        sequence of image elements.
@@ -387,11 +389,11 @@ namespace compute
 			 * @retval CL_INVALID_IMAGE_FORMAT_DESCRIPTOR if values specified in \a
 			 *         format are not valid.
  			 *
-			 * @retval CL_INVALID_IMAGE_SIZE if \a width, \a height are 0 or if \a
-			 *         depth less than or equal to 1 or if they exceed values specified
-			 *         in \c CL_DEVICE_IMAGE3D_MAX_WIDTH, \c CL_DEVICE_IMAGE3D_MAX_HEIGHT
-			 *         \c or CL_DEVICE_IMAGE3D_MAX_DEPTH respectively for all devices
-			 *         in \a context or if values specified by \a line and \a slice do
+			 * @retval CL_INVALID_IMAGE_SIZE if \a width, \a height are 0 or if \a depth
+			 *         less than or equal to 1 or if they exceed values specified in
+			 *         \c CL_DEVICE_IMAGE3D_MAX_WIDTH, \c CL_DEVICE_IMAGE3D_MAX_HEIGHT
+			 *         or \c CL_DEVICE_IMAGE3D_MAX_DEPTH respectively for all devices
+			 *         in \a context or if values specified by \a row and \a slice do
 			 *         not follow rules described in the argument description above.
 			 *
 			 * @retval CL_INVALID_HOST_PTR if \a pointer is NULL and \c CL_MEM_USE_HOST_PTR
@@ -416,7 +418,7 @@ namespace compute
 					  size_t width,
 					  size_t height,
 					  size_t depth,
-					  size_t line,
+					  size_t row,
 					  size_t slice,
 					  void * pointer = NULL,
 					  cl_int * error = NULL )
@@ -427,7 +429,7 @@ namespace compute
 										   width     /* image_width */,
 										   height    /* image_height */,
 										   depth     /* image_depth */,
-										   line      /* image_row_pitch */,
+										   row       /* image_row_pitch */,
 										   slice     /* image_slice_pitch */, 
 										   pointer   /* host_ptr */,
 										   error     /* errcode_ret */ );
@@ -459,8 +461,8 @@ namespace compute
 			 * @param context must be a valid OpenCL context.
 			 *
 			 * @param normalized determines if the image coordinates specified are
-			 *        normalized (if \a normalized is CL_TRUE) or not (if \a normalized
-			 *        is CL_FALSE).
+			 *        normalized ( if \a normalized is \c CL_TRUE ) or not ( if \a
+			 *        normalized is \c CL_FALSE ).
 			 *
 			 * @param addressing specifies how out-of-range image coordinates are
 			 *        handled when reading from an image. This can be set to:
@@ -506,8 +508,10 @@ namespace compute
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *

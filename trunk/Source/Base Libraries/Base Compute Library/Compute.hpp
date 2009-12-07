@@ -52,11 +52,10 @@ namespace compute
 			/**
 			 * Creates a kernel object.
 			 *
-			 * A kernel is a function declared in a program. A kernel is identified
-			 * by the \c __kernel qualifier applied to any function in a program. A
-			 * kernel object encapsulates the specific \c __kernel function declared
-			 * in a program and the argument values to be used when executing this \c
-			 * __kernel function.
+			 * A kernel is a function declared in \a program. A kernel is identified
+			 * by the \c __kernel qualifier applied to any function in \a program. A
+			 * kernel object encapsulates the specific \c __kernel function and the
+			 * argument values to be used when executing this \c __kernel function.
 			 *
 			 * @param program is a program object with a successfully built executable.
 			 *
@@ -114,8 +113,10 @@ namespace compute
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result
-			 *        being queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
@@ -149,8 +150,10 @@ namespace compute
 			 *        \li \c CL_KERNEL_COMPILE_WORK_GROUP_SIZE,
 			 *        \li \c CL_KERNEL_LOCAL_MEM_SIZE.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
@@ -162,16 +165,17 @@ namespace compute
 			 * @retval CL_INVALID_KERNEL if \a kernel is a not a valid kernel object.
 			 */
 			template <typename T>
-			cl_int GetWorkGroupInfo ( const Device & device,
+			cl_int GetWorkGroupInfo ( const Device * device,
 				                      cl_kernel_work_group_info name,
 									  T * param ) const
 			{
-				return clGetKernelWorkGroupInfo ( device         /* kernel */,
-												  kernel         /* device */,
-												  name           /* param_name */,
-												  sizeof ( T )   /* param_value_size */,
-												  param          /* param_value */,
-												  NULL           /* param_value_size_ret */ );
+				return clGetKernelWorkGroupInfo (
+					kernel                            /* kernel */,
+					device == NULL ? NULL : *device   /* device */,
+					name                              /* param_name */,
+					sizeof ( T )                      /* param_value_size */,
+					param                             /* param_value */,
+					NULL                              /* param_value_size_ret */ );
 			}
 
 			/**
@@ -180,15 +184,15 @@ namespace compute
 			 * To execute a kernel, the kernel arguments must be set.
 			 *
 			 * @param index is the argument index. Arguments to the kernel are referred
-			 *        by indices that go from 0 for the leftmost argument to n - 1,
-			 *        where n is the total number of arguments declared by a kernel.
+			 *        by indices that go from 0 for the leftmost argument to N - 1,
+			 *        where N is the total number of arguments declared by a kernel.
 			 *
 			 * @param value is a pointer to data that should be used as the argument
 			 *        value for argument specified by \a index. The argument data
 			 *        pointed to by \a value is copied and the \a value pointer can
 			 *        therefore be reused by the application. The argument value
-			 *        specified is the value used by all API calls that enqueue kernel
-			 *        until the argument value is changed.
+			 *        specified is the \a value used by all API calls that enqueue
+			 *        kernel until the argument value is changed.
 			 *
 			 * @retval CL_SUCCESS if the function was executed successfully.
 			 *
@@ -208,17 +212,17 @@ namespace compute
 			 *         object.
 			 */
 			template <typename T>
-			cl_int SetArgument ( cl_uint index, T value )
+			cl_int SetArgument ( cl_uint index, T * value )
 			{
 				return clSetKernelArg ( kernel             /* kernel */,
 					                    index              /* arg_index */,
 										sizeof ( value )   /* arg_size */,
-										&value             /* arg_value */ );
+										value              /* arg_value */ );
 			}
 	};
 
 	/**
-	 * Program interface that implements cl_program.
+	 * Interface for OpenCL program object.
 	 */
 	class Program
 	{
@@ -234,12 +238,12 @@ namespace compute
 			/**
 			 * Represents sources of the OpenCL program.
 			 */
-			typedef vector <pair <const char*, size_t>> Sources;
+			typedef VECTOR <pair <const char*, size_t>> Sources;
 
 			/**
 			 * Represents binaries of the OpenCL program.
 			 */
-			typedef vector <pair <const void*, size_t>> Binaries;
+			typedef VECTOR <pair <const void*, size_t>> Binaries;
 
 			/**
 			 * Default constructor ( program is not valid at this point ).
@@ -247,8 +251,8 @@ namespace compute
 			Program ( void ) { }
 			
 			/**
-			 * Creates a program object for a context, and loads the source code
-			 * specified by the text strings in the strings array into the program
+			 * Creates a program object for a \a context, and loads the source code
+			 * specified by the text strings in the \a sources list into the program
 			 * object.
 			 *
 			 * @param context is a valid OpenCL context.
@@ -267,8 +271,8 @@ namespace compute
 			 * @retval CL_OUT_OF_HOST_MEMORY if there is a failure to allocate
 			 *         resources required by the runtime.
 			 */
-			Program ( const Context& context,
-				      const Sources& sources,
+			Program ( const Context & context,
+				      const Sources & sources,
 					  cl_int * error = NULL )
 			{
 				const int count = sources.size ( );
@@ -280,18 +284,20 @@ namespace compute
 				for ( int i = 0; i < count; i++ )
 				{
 					strings [i] = sources [i].first;
+
 					lengths [i] = sources [i].second;
 				}
 
-				program = clCreateProgramWithSource ( context             /* context */,
-					                                  ( cl_uint ) count   /* count */,
-													  strings             /* strings */,
-													  lengths             /* lengths */,
-													  error               /* errcode_ret */ );
+				program = clCreateProgramWithSource (
+					context             /* context */,
+					( cl_uint ) count   /* count */,
+					strings             /* strings */,
+					lengths             /* lengths */,
+					error               /* errcode_ret */ );
 			}
 
 			/**
-			 * Creates a program object for a context, and loads the binary images 
+			 * Creates a program object for a \a context, and loads the binary images
 			 * into the program object.
 			 *
 			 * @param context is a valid OpenCL context.
@@ -336,7 +342,7 @@ namespace compute
 			 *         required by the runtime.
 			 */
 			Program ( const Context & context,
-				      const vector <Device> & devices,
+				      const VECTOR <Device> & devices,
 					  const Binaries & binaries,
 					  vector <cl_int> * status = NULL,
 					  cl_int * error = NULL )
@@ -394,7 +400,7 @@ namespace compute
 			 *
 			 * @param program is the program object.
 			 *
-			 * @param devices is a list of devices associated with \a program. The
+			 * @param devices is a list of devices associated with  a program. The
 			 *        program executable is built for devices specified in \a devices
 			 *        for which a source or binary has been loaded.
 			 *
@@ -406,29 +412,30 @@ namespace compute
 			 *        notification routine allows an application to register a callback
 			 *        function which will be called when the program executable has been
 			 *        built ( successfully or unsuccessfully ). If \a notify is not NULL,
-			 *        build does not need to wait for completion and can return immediately.
-			 *        If \a notify is NULL, its default value, build does not return until
-			 *        the build has completed. This callback function may be called
-			 *        asynchronously by the OpenCL implementation. It is the application's
-			 *        responsibility to ensure that the callback function is thread-safe.
+			 *        build does not need to wait for completion and can return
+			 *        immediately. If \a notify is NULL, its default value, build does
+			 *        not return until the build has completed. This callback function
+			 *        may be called asynchronously by the OpenCL implementation. It is
+			 *        the application's responsibility to ensure that the callback
+			 *        function is thread-safe.
 			 *
-			 * @param data will be passed as the argument when \a notify is called. \a data
-			 *        can be NULL and is its default value.
+			 * @param data will be passed as the argument when \a notify is called. \a
+			 *        data can be NULL and is its default value.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
-			 * @retval CL_INVALID_DEVICE if OpenCL devices listed in \a devices are not in
-			 *         the list of devices associated with \a program.
+			 * @retval CL_INVALID_DEVICE if OpenCL devices listed in \a devices are not
+			 *         in the list of devices associated with a program.
 			 *
-			 * @retval CL_INVALID_BINARY if \a program is created with binary and devices
+			 * @retval CL_INVALID_BINARY if a program is created with binary and devices
 			 *         listed in \a devices do not have a valid program binary loaded.
 			 *
-			 * @retval CL_INVALID_BUILD_OPTIONS if the build options specified by \a options
-			 *         are invalid.
+			 * @retval CL_INVALID_BUILD_OPTIONS if the build options specified by \a
+			 *         options are invalid.
 			 *
-			 * @retval CL_INVALID_OPERATION if the build of a program executable for any of
-			 *         the devices listed in \a devices by a previous call to build for
-			 *         \a program has not completed.
+			 * @retval CL_INVALID_OPERATION if the build of a program executable for any
+			 *         of the devices listed in \a devices by a previous call to build
+			 *         for a program has not completed.
 			 *
 			 * @retval CL_OUT_OF_HOST_MEMORY if there is a failure to allocate resources
 			 *         required by the runtime.
@@ -451,14 +458,16 @@ namespace compute
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
 			 * @retval CL_INVALID_VALUE if \a name is not valid.
 			 *
-			 * @retval CL_INVALID_PROGRAM if \a program is a not a valid program object.
+			 * @retval CL_INVALID_PROGRAM if a program object is not valid.
 			 */
 			template <typename T>
 			cl_int GetInfo ( cl_program_info name, T * param ) const
@@ -474,24 +483,26 @@ namespace compute
 			 * Returns build information for each device in the program object.
 			 *
 			 * @param device specifies the device for which build information is being
-			 *        queried. \a device must be a valid device associated with \a program.
+			 *        queried. It must be a valid device associated with a program.
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param_value is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
 			 * @retval CL_INVALID_DEVICE if \a device is not in the list of devices
-			 *         associated with \a program.
+			 *         associated with a program.
 			 *
 			 * @retval CL_INVALID_VALUE if \a name is not valid.
 			 *
-			 * @retval CL_INVALID_PROGRAM if \a program is a not a valid program object.
+			 * @retval CL_INVALID_PROGRAM if a program object is not valid.
 			 */
 			template <typename T>
-			cl_int GetBuildInfo ( const Device& device,
+			cl_int GetBuildInfo ( const Device & device,
 				                  cl_program_build_info name,
 								  T * param ) const
 			{
@@ -504,39 +515,39 @@ namespace compute
 			}
 
 			/**
-			 * Creates kernel objects for all kernel functions in program.
+			 * Creates kernel objects for all kernel functions in a program.
 			 *
 			 * Kernel objects may not be created for any kernel functions in program that
 			 * do not have the same function definition across all devices for which a
 			 * program executable has been successfully built.
 			 *
 			 * @param kernels is the vector where the kernel objects for kernels in
-			 *        \a program will be returned. If \a kernels is NULL, it is ignored.
+			 *        a program will be returned. If \a kernels is NULL, it is ignored.
 			 *
 			 * @retval CL_SUCCESS if the kernel objects were successfully allocated.
 			 *
 			 * @retval CL_INVALID_PROGRAM_EXECUTABLE if there is no successfully built
-			 *         executable for any device in \a program.
+			 *         executable for any device in a program.
 			 *
 			 * @retval CL_INVALID_VALUE if \a kernels is not NULL and its size is less
-			 *         than the number of kernels in program.
+			 *         than the number of kernels in a program.
 			 *
 			 * @retval CL_OUT_OF_HOST_MEMORY if there is a failure to allocate resources
 			 *         required by the runtime.
 			 *
-			 * @note Kernel objects can only be created once you have a program object with
-			 *       a valid program source or binary loaded into the program object and the
-			 *       program executable has been successfully built for one or more devices
-			 *       associated with \a program. No changes to the program executable are
-			 *       allowed while there are kernel objects associated with a program object.
-			 *       This means that calls to \a build return CL_INVALID_OPERATION if there
-			 *       are kernel objects attached to a program object. The OpenCL context
-			 *       associated with program will be the context associated with kernel.
-			 *       Devices associated with a program object for which a valid program
-			 *       executable has been built can be used to execute kernels declared in the
-			 *       program object.
+			 * @note Kernel objects can only be created once you have a program object
+			 *       with a valid program source or binary loaded into the program object
+			 *       and the program executable has been successfully built for one or
+			 *       more devices associated with a program. No changes to the program
+			 *       executable are allowed while there are kernel objects associated
+			 *       with a program object. This means that calls to \c Build return \c
+			 *       CL_INVALID_OPERATION if there are kernel objects attached to a
+			 *       program object. The OpenCL context associated with program will be
+			 *       the context associated with kernel. Devices associated with a
+			 *       program object for which a valid program executable has been built
+			 *       can be used to execute kernels declared in the program object.
 			 */
-			cl_int CreateKernels ( vector <Kernel> * kernels )
+			cl_int CreateKernels ( VECTOR <Kernel> * kernels )
 			{
 				cl_uint count = 0;
 
@@ -556,27 +567,30 @@ namespace compute
 
 				if ( error != CL_SUCCESS ) return error;
 
-				kernels->assign ( &values [0], &values [count] );
+				kernels->assign ( values, values + count );
 				
 				return CL_SUCCESS;
 			}
 	};
 
 	Kernel :: Kernel ( const Program & program,
-				     const char * name,
-					 cl_int * error )
+		               const char * name,
+					   cl_int * error )
 	{
 		kernel = clCreateKernel ( program   /* program */,
 					              name      /* kernel_name */,
 								  error     /* errcode_ret */ );
 	}
 
+	/**
+	 * Interface for OpenCL event object.
+	 */
 	class Event
 	{
 		private:
 
 			/**
-			 * Identifier of a specific OpenCL event.
+			 * OpenCL event object.
 			 */
 			cl_event event;
 
@@ -592,45 +606,66 @@ namespace compute
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
 			 * @retval CL_INVALID_VALUE if \a name is not valid.
 			 *
-			 * @note Using method to determine if a command identified by event has
-			 *       finished execution (i.e. CL_EVENT_COMMAND_EXECUTION_STATUS returns
-			 *       CL_COMPLETE) is not a synchronization point i.e. there are no
-			 *       guarantees that the memory objects being modified by command
+			 * @note Using this method to determine if a command identified by event
+			 *       has finished execution ( \c CL_EVENT_COMMAND_EXECUTION_STATUS
+			 *       returns \c CL_COMPLETE ) is not a synchronization point i.e. there
+			 *       are no guarantees that the memory objects being modified by command
 			 *       associated with event will be visible to other enqueued commands.
 			 */
 			template <typename T>
-			cl_int GetInfo ( cl_event_info name, T * param ) const;
+			cl_int GetInfo ( cl_event_info name, T * param ) const
+			{
+				return clGetEventInfo ( event          /* event */,
+										name           /* param_name */,
+										sizeof ( T )   /* param_value_size */,
+										param          /* param_value */,
+										NULL           /* param_value_size_ret */ );
+			}
 
 			/**
 			 * Returns profiling information for the command associated with event.
 			 *
 			 * @param name specifies the profiling data to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result being
-			 *        queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
-			 *  \return One of the following values:
-			 *  - CL_SUCCESS if the function is executed successfully and the profiling
-			 *    information has been recorded
-			 *  - CL_PROFILING_INFO_NOT_AVAILABLE if the profiling information is currently
-			 *    not available (because the command identified by event has not completed)
-			 *  - CL_INVALID_VALUE if \a param_name is not valid.
+			 * @retval CL_SUCCESS if the function is executed successfully and the
+			 *         profiling information has been recorded.
+			 *
+			 * @retval CL_PROFILING_INFO_NOT_AVAILABLE if the profiling information is
+			 *         currently not available ( because the command identified by event
+			 *         has not completed ).
+			 *
+			 * @retval CL_INVALID_VALUE if \a name is not valid.
 			 *
 			 * @note The unsigned 64-bit values returned can be used to measure the time
-			 *       in nano-seconds consumed by OpenCL commands. OpenCL devices are required
-			 *       to correctly track time across changes in frequency and p-states. The
-			 *       CL_DEVICE_PROFILING_TIMER_RESOLUTION specifies the resolution of the timer
-			 *       i.e. the number of nanoseconds elapsed before the timer is incremented.
+			 *       in nano-seconds consumed by OpenCL commands. OpenCL devices are
+			 *       required to correctly track time across changes in frequency and
+			 *       p-states. The \c CL_DEVICE_PROFILING_TIMER_RESOLUTION specifies the
+			 *       resolution of the timer i.e. the number of nano-seconds elapsed
+			 *       before the timer is incremented.
 			 */
 			template <typename T>
-			cl_int GetProfilingInfo ( cl_profiling_info name, T * param ) const;
+			cl_int GetProfilingInfo ( cl_profiling_info name, T * param ) const
+			{
+				return clGetEventProfilingInfo ( event          /* event */,
+												 name           /* param_name */,
+												 sizeof ( T )   /* param_value_size */,
+												 param          /* param_value */,
+												 NULL           /* param_value_size_ret */ );
+			}
 
 			/**
 			 * Waits on the host thread for command identified by event to complete.
@@ -639,11 +674,15 @@ namespace compute
 			 *
 			 * @retval CL_INVALID_EVENT if an event is not valid.
 			 *
- 			 * @note A command is considered complete if its execution status is
-			 *       CL_COMPLETE or a negative value. The events specified in \a
-			 *       events list act as synchronization points.
+ 			 * @note A command is considered complete if its execution status is \c
+			 *       CL_COMPLETE or a negative value. The event acts as synchronization
+			 *       point.
 			 */
-			cl_int Wait ( void ) const;
+			cl_int Wait ( void ) const
+			{
+				return clWaitForEvents ( 1        /* num_events */,
+										 &event   /* event_list */ );
+			}
 
 			/**
 			 * Waits on the host thread for commands identified by event objects in
@@ -657,44 +696,16 @@ namespace compute
 			 *
 			 * @retval CL_INVALID_EVENT if an event in \a events list is not valid.
 			 *
-			 * @note A command is considered complete if its execution status is
+			 * @note A command is considered complete if its execution status is \c
 			 *       CL_COMPLETE or a negative value. The events specified in \a
 			 *       events list act as synchronization points.
 			 */
-			static cl_int Wait ( const vector <Event>& events );
+			static cl_int Wait ( const VECTOR <Event>& events )
+			{
+				return clWaitForEvents ( ( cl_uint ) events.size ( )        /* num_events */,
+										 ( cl_event * ) &events.front ( )   /* event_list */ );
+			}
 	};
-
-	template <typename T>
-	cl_int Event :: GetInfo ( cl_event_info name, T * param ) const
-	{
-		return clGetEventInfo ( event          /* event */,
-			                    name           /* param_name */,
-								sizeof ( T )   /* param_value_size */,
-								param          /* param_value */,
-								NULL           /* param_value_size_ret */ );
-	}
-
-	template <typename T>
-	cl_int Event :: GetProfilingInfo ( cl_profiling_info name, T * param ) const
-	{
-		return clGetEventProfilingInfo ( event          /* event */,
-			                             name           /* param_name */,
-										 sizeof ( T )   /* param_value_size */,
-										 param          /* param_value */,
-										 NULL           /* param_value_size_ret */ );
-	}
-
-	cl_int Event :: Wait ( void ) const
-	{
-		return clWaitForEvents ( 1        /* num_events */,
-			                     &event   /* event_list */ );
-	}
-
-	cl_int Event :: Wait ( const vector <Event>& events )
-	{
-		return clWaitForEvents ( ( cl_uint ) events.size ( )        /* num_events */,
-			                     ( cl_event * ) &events.front ( )   /* event_list */ );
-	}
 
 	class NDRange
 	{
@@ -753,7 +764,7 @@ namespace compute
 			/**
 			 * Default constructor ( command queue is not valid at this point ).
 			 */
-			CommandQueue() { }
+			CommandQueue ( void ) { }
 
 			/**
 			 * Creates a command-queue on a specific device.
@@ -798,9 +809,9 @@ namespace compute
 			}
 
 			/**
-			 * Conversion operator for casting to OpenCL program object.
+			 * Conversion operator for casting to OpenCL command-queue object.
 			 *
-			 * @return The OpenCL program object.
+			 * @return The OpenCL command-queue object.
 			 */
 			operator cl_command_queue ( void ) const
 			{
@@ -808,9 +819,9 @@ namespace compute
 			}
 
 			/**
-			 * Conversion operator for casting to OpenCL program object.
+			 * Conversion operator for casting to OpenCL command-queue object.
 			 *
-			 * @return Reference to OpenCL program object.
+			 * @return Reference to OpenCL command-queue object.
 			 */
 			operator cl_command_queue& ( void )
 			{
@@ -822,8 +833,10 @@ namespace compute
 			 *
 			 * @param name specifies the information to query.
 			 *
-			 * @param param is a pointer to memory where the appropriate result
-			 *        being queried is returned. If \a param is NULL, it is ignored.
+			 * @param param is a pointer to memory location where appropriate values
+			 *        for a given \a name will be returned. If value is NULL, it is
+			 *        ignored. If \a param returns array, it should be declared
+			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
 			 *
@@ -846,14 +859,14 @@ namespace compute
 			 *        applied to command-queue.
 			 *
 			 * @param enable determines whether the values specified by \a properties
-			 *        are enabled ( if enable is \c CL_TRUE ) or disabled ( if enable
-			 *        is \c  CL_FALSE ) for the command-queue.
+			 *        are enabled ( if \a enable is \c CL_TRUE ) or disabled ( if \a
+			 *        enable is \c CL_FALSE ) for the command-queue.
 			 *
 			 * @param previous returns the command-queue properties before they were
 			 *        changed. If \a previous is NULL, its default, it is ignored.
 			 *
 			 * @retval CL_SUCCESS if the command-queue properties are successfully
-			 *          updated.
+			 *         updated.
 			 *
 			 * @retval CL_INVALID_VALUE if the values specified in \a properties are
 			 *         not valid.
@@ -878,29 +891,29 @@ namespace compute
 			 *
 			 * @param blocking indicates if the read operation is blocking or
 			 *        non-blocking. If \a blocking is \c CL_TRUE i.e. the read command
-			 *        is blocking, EnqueueReadBuffer does not return until the buffer
+			 *        is blocking, \c EnqueueReadBuffer does not return until the buffer
 			 *        data has been read and copied into memory pointed to by \a
 			 *        pointer. If \a blocking is \c CL_FALSE i.e. the read command is
-			 *        non-blocking, EnqueueReadBuffer queues a non-blocking read command
-			 *        and returns. The contents of the buffer that \a pointer points to
-			 *        cannot be used until the read command has completed. The \a event
-			 *        argument returns an event object which can be used to query the
-			 *        execution status of the read command. When the read command has
-			 *        completed, the contents of the buffer that \a pointer points to
-			 *        can be used by the application.
+			 *        non-blocking, \c EnqueueReadBuffer queues a non-blocking read
+			 *        command and returns. The contents of the buffer that \a pointer
+			 *        points to cannot be used until the read command has completed.
+			 *        The \a event argument returns an event object which can be used
+			 *        to query the execution status of the read command. When the read
+			 *        command has completed, the contents of the buffer that \a pointer
+			 *        points to can be used by the application.
 			 *
-			 * @param offset is the offset in bytes in the buffer object to read from
-			 *        or write to.
+			 * @param offset is the offset in bytes in the buffer object to read from.
 			 *
-			 * @param size is the size in bytes of data being read or written.
+			 * @param size is the size in bytes of data being read.
 			 *
 			 * @param pointer is the pointer to buffer in host memory where data is to
-			 *        be read into or to be written from.
+			 *        be read into.
 			 *
-			 * @param events specifies events that need to complete before this particular
-			 *        command can be executed. If \a events is NULL, its default, then
-			 *        this particular command does not wait on any event to complete. The
-			 *        events specified in \a events act as synchronization points.
+			 * @param events specifies events that need to complete before this 
+			 *        particular command can be executed. If \a events is NULL, its
+			 *        default, then this particular command does not wait on any event
+			 *        to complete. The events specified in \a events act as
+			 *        synchronization points.
 			 *
 			 * @param event returns an event object that identifies this particular read
 			 *        command and can be used to query or queue a wait for this
@@ -914,10 +927,10 @@ namespace compute
 			 * @retval CL_INVALID_CONTEXT if the context associated with command-queue 
 			 *         and \a buffer are not the same.
 			 *
-			 * @retval CL_INVALID_MEM_OBJECT if \a buffer is not a valid buffer object.
+			 * @retval CL_INVALID_MEM_OBJECT if \a buffer is not valid.
 			 *
-			 * @retval CL_INVALID_VALUE if the region being read or written specified by
-			 *         ( offset, size ) is out of bounds or if \a pointer is a NULL.
+			 * @retval CL_INVALID_VALUE if the region being read specified by ( offset,
+			 *         size ) is out of bounds or if \a pointer is a NULL.
 			 *
 			 * @retval CL_INVALID_EVENT_WAIT_LIST if event objects in \a events are not
 			 *         valid events.
@@ -946,38 +959,40 @@ namespace compute
 			}
 
 			/**
-			 * Enqueue a command to write to a buffer object from host memory.
+			 * Enqueues a command to write to a buffer object from host memory.
 			 *
 			 * @param buffer refers to a valid buffer object.
 			 *
-			 * @param blocking indicates if the write operation is blocking or non-blocking.
-			 *        If \a blocking is \c CL_TRUE, the OpenCL implementation copies
-			 *        the data referred to by \a pointer and enqueues the write operation
-			 *        in the command-queue. The memory pointed to by \a pointer can be
-			 *        reused by the application after the EnqueueWriteBuffer call returns.
-			 *        If \a blocking is \c CL_FALSE, the OpenCL implementation will use \a
-			 *        pointer to perform a non-blocking write. As the write is non-blocking
-			 *        the implementation can return immediately. The memory pointed to by
-			 *        \a pointer cannot be reused by the application after the call returns.
+			 * @param blocking indicates if the write operation is blocking or
+			 *        non-blocking. If \a blocking is \c CL_TRUE, the OpenCL
+			 *        implementation copies the data referred to by \a pointer and
+			 *        enqueues the write operation in the command-queue. The memory
+			 *        pointed to by \a pointer can be reused by the application after
+			 *        the \c EnqueueWriteBuffer call returns. If \a blocking is \c
+			 *        CL_FALSE, the OpenCL implementation will use \a pointer to perform
+			 *        a non-blocking write. As the write is non-blocking the
+			 *        implementation can return immediately. The memory pointed to by \a
+			 *        pointer cannot be reused by the application after the call returns.
 			 *        The \a event argument returns an event object which can be used to
 			 *        query the execution status of the write command. When the write
-			 *        command has completed, the memory pointed to by \a pointer can then be
-			 *        reused by the application
+			 *        command has completed, the memory pointed to by \a pointer can then
+			 *        be reused by the application.
 			 *
 			 * @param offset is the offset in bytes in the buffer object to write to.
 			 *
-			 * @param size is the size in bytes of data being read or written.
+			 * @param size is the size in bytes of data being written.
 			 *
-			 * @param pointer is the pointer to buffer in host memory where data is to be
-			 *        read into or to be written from.
+			 * @param pointer is the pointer to buffer in host memory where data is to
+			 *        be written from.
 			 *
-			 * @param events specifies events that need to complete before this particular
-			 *        command can be executed. If \a events is NULL, its default, then
-			 *        this particular command does not wait on any event to complete. The
-			 *        events specified in \a events act as synchronization points.
+			 * @param events specifies events that need to complete before this
+			 *        particular command can be executed. If \a events is NULL, its
+			 *        default, then this particular command does not wait on any event
+			 *        to complete. The events specified in \a events act as
+			 *        synchronization points.
 			 *
-			 * @param event returns an event object that identifies this particular write
-			 *        command and can be used to query or queue a wait for this
+			 * @param event returns an event object that identifies this particular 
+			 *        write command and can be used to query or queue a wait for this
 			 *        particular command to complete. \a event can be NULL in which case
 			 *        it will not be possible for the application to query the status of
 			 *        this command or queue a wait for this command to complete.

@@ -156,7 +156,7 @@ namespace compute
 			 *
 			 * @param param is a pointer to memory location where appropriate values
 			 *        for a given \a name will be returned. If value is NULL, it is
-			 *        ignored. If \a param returns array, it should be to be declared
+			 *        ignored. If \a param returns array, it should be declared
 			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
@@ -256,7 +256,7 @@ namespace compute
 			 *
 			 * @param param is a pointer to memory location where appropriate values
 			 *        for a given \a name will be returned. If value is NULL, it is
-			 *        ignored. If \a param returns array, it should be to be declared
+			 *        ignored. If \a param returns array, it should be declared
 			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
@@ -300,7 +300,7 @@ namespace compute
 			 * @note The application can query specific capabilities of the OpenCL
 			 *       device to determine which device to use.
 			 */
-			cl_int GetDevices ( cl_device_type type, vector <Device> * devices ) const
+			cl_int GetDevices ( cl_device_type type, VECTOR <Device> * devices ) const
 			{
 				cl_uint count = 0;
 
@@ -339,7 +339,7 @@ namespace compute
 			 * @note The application can query specific capabilities of the OpenCL
 			 *       platform to determine which platform to use.
 			 */
-			static cl_int GetPlatforms ( vector <Platform> * platforms )
+			static cl_int GetPlatforms ( VECTOR <Platform> * platforms )
 			{
 				cl_uint count = 0;
 
@@ -374,8 +374,8 @@ namespace compute
 		 * @param order number of channels and the memory layout in which
 		 *        channels are stored in the image.
 		 *
-		 * @param type size of the channel data type ( number of bits
-		 *        per element ).
+		 * @param type size of the channel data type ( number of bits per
+		 *        element ).
 		 */
 		ImageFormat ( cl_channel_order order = CL_RGBA,
 			          cl_channel_type type = CL_FLOAT )
@@ -458,7 +458,7 @@ namespace compute
 			 * @retval CL_OUT_OF_HOST_MEMORY if there is a failure to allocate resources
 			 *         required by the OpenCL implementation on the host.
 			 */
-			Context ( const vector <Device> & devices,
+			Context ( const VECTOR <Device> & devices,
 				      cl_context_properties * properties = NULL,
 					  void ( *notify ) ( const char *,
 					                     const void *,
@@ -486,14 +486,17 @@ namespace compute
 			 *        \li \c CL_DEVICE_TYPE_ACCELERATOR,
 			 *        \li \c CL_DEVICE_TYPE_DEFAULT.
 			 *
-			 * @param properties described in previous definition of \c Context
+			 * @param properties is described in previous definition of \c Context
 			 *        constructor.
 			 *
-			 * @param notify described in previous definition of \c Context constructor.
+			 * @param notify is described in previous definition of \c Context
+			 *        constructor.
 			 *
-			 * @param data described in previous definition of \c Context constructor.
+			 * @param data is described in previous definition of \c Contex
+			 *        constructor.
 			 *  
-			 * @param error described in previous definition of \c Context constructor.
+			 * @param error is described in previous definition of \c Context
+			 *        constructor.
 			 *
 			 * @retval CL_SUCCESS if the context is created successfully.
 			 *
@@ -567,7 +570,7 @@ namespace compute
 			 *
 			 * @param param is a pointer to memory location where appropriate values
 			 *        for a given \a name will be returned. If value is NULL, it is
-			 *        ignored. If \a param returns array, it should be to be declared
+			 *        ignored. If \a param returns array, it should be declared
 			 *        statically.
 			 *
 			 * @retval CL_SUCCESS if the function is executed successfully.
@@ -604,7 +607,7 @@ namespace compute
 			 * @note The application can query specific capabilities of the OpenCL
 			 *       device to determine which device to use.
 			 */
-			cl_int GetDevices ( vector <Device> * devices ) const
+			cl_int GetDevices ( VECTOR <Device> * devices ) const
 			{
 				cl_uint size = 0;
 
@@ -662,7 +665,7 @@ namespace compute
 			 */
 			cl_int GetSupportedImageFormats ( cl_mem_flags flags,
 				                              cl_mem_object_type type,
-											  vector <ImageFormat> * formats )
+											  VECTOR <ImageFormat> * formats )
 			{
 				cl_uint count = 0;
 
