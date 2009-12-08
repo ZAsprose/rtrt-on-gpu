@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <ShaderManager.h>
+#include <ShaderManager.hpp>
+
+#include <Camera.hpp>
 
 #include <GL/glfw.h>
 

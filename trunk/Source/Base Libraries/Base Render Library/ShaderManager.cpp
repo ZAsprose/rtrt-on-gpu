@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-#include "ShaderManager.h"
+#include "ShaderManager.hpp"
 
 using namespace std;
 
