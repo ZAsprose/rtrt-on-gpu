@@ -290,8 +290,6 @@ cl_int PrintBaseInfo ( const Device &device )
 	return error;
 }
 
-
-
  void main ( void )
 {
 	// Problem size
@@ -340,9 +338,9 @@ cl_int PrintBaseInfo ( const Device &device )
 
 	Kernel kernel ( program, "add", &error );
 
-	error |= kernel.SetArgument ( 0, a_buff );
-	error |= kernel.SetArgument ( 1, b_buff );
-	error |= kernel.SetArgument ( 2, r_buff );
+	error |= kernel.SetArgument ( 0, &a_buff );
+	error |= kernel.SetArgument ( 1, &b_buff );
+	error |= kernel.SetArgument ( 2, &r_buff );
 	assert(error == CL_SUCCESS);
 
 
