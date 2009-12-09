@@ -120,7 +120,7 @@ namespace render
 			 * @param orientation is the initial orientation ( Euler angles ) of the
 			 *        camera.
 			 */
-			Camera ( const vec4& position, const vec4& orientation );
+			Camera ( const vec4 & position, const vec4 & orientation );
 
 			//---------------------------------------------------------------------------
 
@@ -129,7 +129,7 @@ namespace render
 			 *
 			 * @param position sets new position of the camera.
 			 */
-			void moveTo ( const vec4& position );
+			void moveTo ( const vec4 & position );
 
 			/**
 			 * Moves the camera \e by the given delta in \e local space.
@@ -141,7 +141,7 @@ namespace render
 			 *       \li \e Y - moving along the \e Up vector,
 			 *       \li \e Z - moving along the \e View vector.
 			 */						
-			void moveBy ( const vec4& delta );
+			void moveBy ( const vec4 & delta );
 			
 			/**
 			 * Sets orientation of the camera ( rotation angles around axes ) in \e
@@ -154,7 +154,7 @@ namespace render
 			 *       \li \e Y - rotation angle around the \e Y axis,
 			 *       \li \e Z - rotation angle around the \e Z axis,
 			 */	
-			void rotateTo ( const vec4& orientation );
+			void rotateTo ( const vec4 & orientation );
 			
 			/**
 			 * Rotates the camera by given angles around axes of the \e world space.
@@ -166,7 +166,7 @@ namespace render
 			 *       \li \e Y - rotation angle around the \e Y axis,
 			 *       \li \e Z - rotation angle around the \e Z axis,
 			 */	
-			void rotateBy ( const vec4& delta );
+			void rotateBy ( const vec4 & delta );
 			
 			//---------------------------------------------------------------------------
 

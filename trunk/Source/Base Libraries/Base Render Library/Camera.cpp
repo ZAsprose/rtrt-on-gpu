@@ -158,6 +158,8 @@ namespace render
 		this->width = width;
 
 		this->height = height;
+
+		aspect = width / ( float ) height;
 		
 		glViewport ( left, top, width, height );
 	}
