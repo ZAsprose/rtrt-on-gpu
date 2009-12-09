@@ -28,7 +28,7 @@
 
 #include "Camera.hpp"
 
-using namespace smath;
+using namespace math;
 
 using namespace std;
 

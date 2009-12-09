@@ -26,11 +26,9 @@
 
 #include "vector.hpp"
 
-#include "nvec.hpp"
-
 #include "ShaderManager.hpp"
 
-using namespace smath;
+using namespace math;
 
 namespace render
 {
