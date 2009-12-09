@@ -252,6 +252,63 @@ public:
 
 };
 
+template <>
+Matrix<float,4> RotateX ( float angle )
+{
+	Matrix<float,4> a;
+	a.one();
+
+	float _cos = cosf ( angle );
+	float _sin = sinf ( angle );
+
+	a(1,1) = _cos;
+	a(1,2) = _sin;
+	a(2,1) = -_sin;
+	a(2,2) = _cos;
+
+	return a;
+}
+
+template <>
+Matrix<float,4> RotateY ( float angle )
+{
+	Matrix<float,4> a;
+	a.one();
+
+	float _cos = cosf ( angle );
+	float _sin = sinf ( angle );
+
+	a(0,0) = _cos;
+	a(0,2) = -_sin;
+	a(2,0) = _sin;
+	a(2,2) = _cos;
+
+	return a;
+}
+
+template <>
+Matrix<float,4> RotateZ ( float angle )
+{
+	Matrix<float,4> a;
+	a.one();
+
+	float _cos = cosf ( angle );
+	float _sin = sinf ( angle );
+
+	a(0,0) = cosine;
+	a(0,1) = sine;
+	a(1,0) = -sine;
+	a(1,1) = cosine;
+
+	return a;
+}
+
+template <>
+Matrix<float,4> Rotate ( float yaw, float pitch, float roll )
+{
+    return RotateY ( yaw ) * RotateZ ( roll ) * RotateX ( pitch );
+}
+
 
 template <typename T, std::size_t M, std::size_t N>
 void Matrix<T,M,N>::transpose()

@@ -734,6 +734,26 @@ struct Vector<__m128, size>
 			data[i] = _mm_min_ps(data[i], max);
 		}
 	}
+
+	inline float x()
+	{
+		return operator ()(0);
+	}
+
+	inline float y()
+	{
+		return operator ()(1);
+	}
+
+	inline float z()
+	{
+		return operator ()(2);
+	}
+
+	inline float w()
+	{
+		return operator ()(3);
+	}
 };
 
 

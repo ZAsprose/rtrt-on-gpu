@@ -294,6 +294,7 @@ cl_int PrintBaseInfo ( const Device &device )
 {
 	// Problem size
 	int n = 32;
+	/*
 	
 	// Allocate some memory and a place for the results
 	float * a = new float [n];
@@ -321,24 +322,25 @@ cl_int PrintBaseInfo ( const Device &device )
 	
 	CommandQueue queue ( context, devices [0], 0, &error );
 
-	Program::Sources source ( 1, make_pair ( helloStr, strlen ( helloStr ) ) );	
+	Program::Sources source (1, make_pair ( helloStr, strlen ( helloStr ) ) );	
 	Program program ( context, source );	
 	error |= program.Build ( devices );
 	assert(error == CL_SUCCESS);
 
-	Buffer a_buff ( context, CL_MEM_READ_ONLY, sizeof ( float ) * n, NULL, NULL );
-	queue.EnqueueWriteBuffer ( a_buff, CL_TRUE, 0, sizeof ( float ) * n, a, NULL, NULL );
+	Buffer<float> a_buff ( context, CL_MEM_READ_ONLY, n);
+	queue.EnqueueWriteBuffer ( a_buff, CL_TRUE, 0, a, NULL, NULL );
 
-	Buffer b_buff ( context, CL_MEM_READ_ONLY, sizeof ( float ) * n, NULL, NULL );
+	Buffer b_buff ( a_buff );
 	queue.EnqueueWriteBuffer ( b_buff, CL_TRUE, 0, sizeof ( float ) * n, b, NULL, NULL );
 
-	Buffer r_buff ( context, CL_MEM_READ_WRITE, sizeof ( float ) * n, NULL, NULL );
+	Buffer r_buff ( b_buff );
 
-	queue.Finish ( );
+	queue.finish();
 
 	Kernel kernel ( program, "add", &error );
 
-	error |= kernel.SetArgument ( 0, &a_buff );
+	kernel.setArgument ( 0, &a_buff );
+
 	error |= kernel.SetArgument ( 1, &b_buff );
 	error |= kernel.SetArgument ( 2, &r_buff );
 	assert(error == CL_SUCCESS);
@@ -370,6 +372,6 @@ cl_int PrintBaseInfo ( const Device &device )
 	delete [] a;
 	delete [] b;
 	delete [] results;
-
+*/
 	getchar ( );
 }
