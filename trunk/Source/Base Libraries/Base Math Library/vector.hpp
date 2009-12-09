@@ -553,6 +553,11 @@ struct Vector
 		return data[i];
 	}
 
+	inline T& operator() (std::size_t i)
+	{
+		return data[i];
+	}
+
 	template<typename Left, typename Op, typename Right>
 	inline void operator+= (const X<T,Left,Op,Right,size>& expression)
 	{
@@ -639,9 +644,22 @@ struct Vector<__m128, size>
 			data[i] = data_a[i];
 	}
 
+	inline Vector ( float x, float y, float z, float w )
+	{
+		set(x,y,z,w);
+	}
+
 	inline const __m128& operator[] (std::size_t i) const
 	{
 		return data[i];
+	}
+
+	inline float operator() (std::size_t i)
+	{
+		_align_
+		float q[4];
+		_mm_storeu_ps(q, data[i/4]);
+		return q[i%4];
 	}
 
 	template<typename Left, typename Op, typename Right>
@@ -669,12 +687,12 @@ struct Vector<__m128, size>
 			data[i] += expression[i];
 	}
 
-	inline void DoZero()
+	inline void zero()
 	{
 		for (_uint32_t i=0; i<size; ++i) data[i] = _mm_setzero_ps();
 	}
 
-	inline Vector<__m128, size> Normalize()
+	inline Vector<__m128, size> normalize()
 	{
 		Vector<__m128, size> r;
 		__m128 a;
@@ -700,12 +718,12 @@ struct Vector<__m128, size>
 		return r;
 	}
 
-	inline void Set (float x, float y, float z, float w, _uint32_t pos = 0)
+	inline void set (float x, float y, float z, float w, _uint32_t pos = 0)
 	{
 		data[pos] = _mm_setr_ps(x, y, z, w);
 	}
 
-	inline void Clamp(float & _min, float & _max)
+	inline void clamp(float & _min, float & _max)
 	{
 		__m128 min = _mm_set1_ps(_min);
 		__m128 max = _mm_set1_ps(_max);
@@ -729,7 +747,7 @@ inline void Normalize(Vector<T, size>& a)
 
 
 template <typename T, _uint32_t size>
-inline T dot(const Vector<T, size> a, const Vector<T, size> b)
+inline T Dot(const Vector<T, size> a, const Vector<T, size> b)
 {
 	T r = 0;
 
@@ -740,7 +758,7 @@ inline T dot(const Vector<T, size> a, const Vector<T, size> b)
 }
 
 template <_uint32_t size>
-inline float dot (const Vector<__m128, size> a, const Vector<__m128, size> b)
+inline float Dot (const Vector<__m128, size> a, const Vector<__m128, size> b)
 {
 	float r = 0.0f;
 	float tmp;
@@ -765,21 +783,21 @@ inline float dot (const Vector<__m128, size> a, const Vector<__m128, size> b)
 }
 
 template <typename T, typename Left, typename Op, typename Right, _uint32_t size>
-inline precision_t dot(const Vector<T, size> a, const X<T,Left,Op,Right,size> b)
+inline precision_t Dot(const Vector<T, size> a, const X<T,Left,Op,Right,size> b)
 {
-		return dot(a, Vector<T,size>(b));
+		return Dot(a, Vector<T,size>(b));
 }
 
 template <typename T, typename Left, typename Op, typename Right, _uint32_t size>
-inline precision_t dot(const X<T,Left,Op,Right,size> a, const Vector<T, size> b)
+inline precision_t Dot(const X<T,Left,Op,Right,size> a, const Vector<T, size> b)
 {
-		return dot(Vector<T,size>(a), b);
+		return Dot(Vector<T,size>(a), b);
 }
 
 template <typename T, typename Left, typename Op, typename Right, _uint32_t size>
-inline precision_t dot(const X<T,Left,Op,Right,size> a, const X<T,Left,Op,Right,size> b)
+inline precision_t Dot(const X<T,Left,Op,Right,size> a, const X<T,Left,Op,Right,size> b)
 {
-		return dot(Vector<T,size>(a), Vector<T,size>(b));
+		return Dot(Vector<T,size>(a), Vector<T,size>(b));
 }
 
 template <typename T, _uint32_t size>
@@ -903,7 +921,8 @@ operator _OP_Z																					\
 
 
 
-	typedef Vector<__m128, 1> Vector4;
+typedef Vector<__m128, 1> Vector4;
+typedef Vector4 vec4;
 
 
 inline Vector4 Cross(const Vector4& v1, const Vector4& v2)

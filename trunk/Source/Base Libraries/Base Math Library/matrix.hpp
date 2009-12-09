@@ -502,3 +502,5 @@ inline std::ostream& operator << (std::ostream& out, const Matrix<T, M, N> & m)
 	return out;
 }
 
+typedef Matrix<float,4> mat4;
+
