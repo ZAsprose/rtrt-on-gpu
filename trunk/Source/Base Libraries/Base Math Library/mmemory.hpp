@@ -16,9 +16,10 @@
 
 #include <stdlib.h>
 #include <malloc.h>
+#include <cstddef>
 
 template <typename T>
-inline T* new_memory(std::size_t count, int aligned = 16)
+T* new_memory(std::size_t count, int aligned = 16)
 {
 	if (aligned == 0)
 	{
@@ -34,13 +35,6 @@ inline T* new_memory(std::size_t count, int aligned = 16)
 	}
 }
 
-inline void del_memory(void* p)
-{
-	#ifdef WIN32
-		_aligned_free(p);
-	#else
-		free(p);
-	#endif
-}
+void del_memory(void* p);
 
 #endif
