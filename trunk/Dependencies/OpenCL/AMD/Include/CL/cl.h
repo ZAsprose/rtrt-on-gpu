@@ -21,6 +21,8 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  ******************************************************************************/
 
+/* $Revision: 9612 $ on $Date: 2009-11-11 15:30:37 -0800 (Wed, 11 Nov 2009) $ */
+
 #ifndef __OPENCL_CL_H
 #define __OPENCL_CL_H
 
@@ -211,6 +213,9 @@ typedef struct _cl_image_format {
 #define CL_DEVICE_VERSION                           0x102F
 #define CL_DEVICE_EXTENSIONS                        0x1030
 #define CL_DEVICE_PLATFORM                          0x1031
+// 0x1032 reserved for CL_DEVICE_DOUBLE_FP_CONFIG
+// 0x1033 reserved for CL_DEVICE_HALF_FP_CONFIG
+
 	
 // cl_device_fp_config - bitfield
 #define CL_FP_DENORM                                (1 << 0)

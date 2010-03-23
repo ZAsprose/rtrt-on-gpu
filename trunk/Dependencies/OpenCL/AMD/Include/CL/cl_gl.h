@@ -21,7 +21,7 @@
  * MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
  **********************************************************************************/
 
-/* $Revision: 8407 $ on $Date: 2009-06-12 10:56:38 -0700 (Fri, 12 Jun 2009) $ */
+/* $Revision: 8748 $ on $Date: 2009-08-27 04:24:36 -0700 (Thu, 27 Aug 2009) $ */
 
 #ifndef __OPENCL_CL_GL_H
 #define __OPENCL_CL_GL_H
@@ -43,6 +43,7 @@ extern "C" {
 typedef cl_uint     cl_gl_object_type;
 typedef cl_uint     cl_gl_texture_info;
 typedef cl_uint     cl_gl_platform_info;
+typedef cl_uint     cl_gl_context_info;
 
 // cl_gl_object_type
 #define CL_GL_OBJECT_BUFFER             0x2000
@@ -54,12 +55,16 @@ typedef cl_uint     cl_gl_platform_info;
 #define CL_GL_TEXTURE_TARGET            0x2004
 #define CL_GL_MIPMAP_LEVEL              0x2005
 
-// CL_KHR_gl_sharing
+// cl_khr_gl_sharing
+#define CL_CURRENT_DEVICE_FOR_GL_CONTEXT_KHR    0x2006
+#define CL_DEVICES_FOR_GL_CONTEXT_KHR           0x2007
 #define CL_GL_CONTEXT_KHR               0x2008
 #define CL_EGL_DISPLAY_KHR              0x2009
 #define CL_GLX_DISPLAY_KHR              0x200A
 #define CL_WGL_HDC_KHR                  0x200B
 #define CL_CGL_SHAREGROUP_KHR           0x200C
+
+#define CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR      -1000
 
 extern CL_API_ENTRY cl_mem CL_API_CALL
 clCreateFromGLBuffer(cl_context     /* context */,
@@ -117,6 +122,12 @@ clEnqueueReleaseGLObjects(cl_command_queue      /* command_queue */,
                           const cl_event *      /* event_wait_list */,
                           cl_event *            /* event */) CL_API_SUFFIX__VERSION_1_0;
 
+extern CL_API_ENTRY cl_int CL_API_CALL
+clGetGLContextInfoKHR(const cl_context_properties *properties,
+                      cl_gl_context_info param_name,
+                      size_t param_value_size,
+                      void *param_value,
+                      size_t *param_value_size_ret) CL_API_SUFFIX__VERSION_1_0;
 #ifdef __cplusplus
 }
 #endif
