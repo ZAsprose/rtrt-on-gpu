@@ -28,6 +28,8 @@ namespace fastmath
 #define use_sse2
 //#define use_sse3
 
+typedef float basetype; 
+
 
 ////////// controls ///////////
 
@@ -55,8 +57,8 @@ namespace fastmath
 #ifndef WIN32
 	#define _align_ __attribute__((aligned(16)))
 #else
-	//#define _align_ __declspec(align(16))
-	#define _align_ 
+	#define _align_ __declspec(align(16))
+	//#define _align_ 
 #endif
 
 ///////////////////////////////
@@ -225,8 +227,10 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 		_align_
 		T data[size];
 
+		typedef T type;
+
 		template<typename Left, typename Op, typename Right >
-		vec<T, size > (const X<T, Left, Op, Right, size> expression)
+		vec<T, size > (const X<T, Left, Op, Right, size> & expression)
 		{
 			for (std::size_t i = 0; i < size; i++)
 				data[i] = expression[i];
@@ -323,17 +327,16 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 			for (std::size_t i = 0; i < size; ++i) data[i] = 1;
 		}
 
-		inline vec<T, size> normalize()
+		inline void normalize()
 		{
-			vec<T, size> r;
 			T max = 0;
-			for (std::size_t i = 0; i < size; ++i) max += data[i] * data[i];
+
+			max = dot<size, T, T>(data, data);
+
 			max = T(1) / sqrt(max);
 
-			for (std::size_t i = 0; i < size; ++i)
-				r[i] = max * data[i];
-
-			return r;
+			for (std::size_t i = 0; i < size; i++)
+				data[i] = max * data[i];
 		}
 
 		inline void set(T data, std::size_t pos = 0)
@@ -349,7 +352,27 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 			data[3] = w;
 		}
 
-		inline void clamp(T & min, T & max)
+		inline float x()
+		{
+			return data[0];
+		}
+
+		inline float y()
+		{
+			return data[1];
+		}
+
+		inline float z()
+		{
+			return data[2];
+		}
+
+		inline float w()
+		{
+			return data[3];
+		}
+
+		inline void clamp(T min, T max)
 		{
 			for (std::size_t i = 0; i < size; ++i)
 			{
@@ -364,10 +387,11 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	struct vec<__m128, size>
 	{
 		__m128 data[size];
+		typedef float type;
 
 		template<typename Left, typename Op, typename Right >
-		vec<__m128, size > (const X<__m128, Left, Op, Right, size> expression)
-		{
+		vec<__m128, size > (const X<__m128, Left, Op, Right, size> & expression)
+		{ 
 			for (std::size_t i = 0; i < size; i++)
 				data[i] = expression[i];
 		}
@@ -463,28 +487,23 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 		{
 			set(1.0f, 1.0f, 1.0f, 1.0f);
 		}
-		inline vec<__m128, size> normalize()
+
+
+
+		inline void normalize()
 		{
-			vec<__m128, size> r;
 			__m128 a;
 
-			float max = 0;
-
-			for (std::size_t i = 0; i < size; ++i)
-			{
-				vec<__m128, size> tt(data[i]);
-				max += Dot(tt, tt);
-			}
+			float max = dot<size, __m128, float>(data,data);
 
 			max = 1.0f / sqrt(max);
 			a = _mm_set1_ps(max);
 
 			for (std::size_t i = 0; i < size; ++i)
 			{
-				r[i] = _mm_mul_ps(data[i], a);
+				data[i] = _mm_mul_ps(data[i], a);
 			}
 
-			return r;
 		}
 
 		inline void set(float x, float y, float z, float w, std::size_t pos = 0)
@@ -492,7 +511,7 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 			data[pos] = _mm_setr_ps(x, y, z, w);
 		}
 
-		inline void clamp(float & _min, float & _max)
+		inline void clamp(float _min, float _max)
 		{
 			__m128 min = _mm_set1_ps(_min);
 			__m128 max = _mm_set1_ps(_max);
@@ -527,23 +546,59 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 
 	typedef vec<__m128, 1> vec4;
 #else
-	typedef vec<float, 4> vec4;
+	typedef vec< basetype , 4> vec4;
+	
 #endif
 
 
 
-//////////////////////////////////////////////////////////////
+///////////////////////////////////////////
 
-	template <typename T, std::size_t size>
-	inline void Normalize(vec<T, size>& a)
+///////////////////////////////////////////
+/// - - - - - - Normalize - - - - - - - ///
+///////////////////////////////////////////
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline vec<T,size> Normalize(const X<T, Left, Op, Right, size> a)
 	{
-		a = a.normalize();
+		return Normalize( vec<T, size>(a) );
 	}
 
 	template <typename T, std::size_t size>
-	inline T Dot(const vec<T, size> a, const vec<T, size> b)
+	inline vec<T,size> Normalize(vec<T, size> a)
 	{
-		T r = 0;
+		vec<T, size> ret = a;
+		ret.normalize();
+		return ret;
+	}
+
+
+///////////////////////////////////////////
+/// - - - - - - - - Dot - - - - - - - - ///
+///////////////////////////////////////////
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type Dot(const vec<T, size> a, const X<T, Left, Op, Right, size> b)
+	{
+		return Dot(a, vec<T, size > (b));
+	}
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type Dot(const X<T, Left, Op, Right, size> a, const vec<T, size> b)
+	{
+		return Dot(vec<T, size > (a), b);
+	}
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type Dot(const X<T, Left, Op, Right, size> a, const X<T, Left, Op, Right, size> b)
+	{
+		return Dot(vec<T, size > (a), vec<T, size > (b));
+	}
+
+	template <typename T, std::size_t size>
+	inline typename vec<T, size>::type Dot(const vec<T, size> a, const vec<T, size> b)
+	{
+		typename vec<T, size>::type r = 0;
 
 		for (std::size_t i = 0; i < size; ++i)
 			r += (a[i] * b[i]);
@@ -580,33 +635,10 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	}
 #endif
 
-	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
-	inline float Dot(const vec<T, size> a, const X<T, Left, Op, Right, size> b)
-	{
-		return Dot(a, vec<T, size > (b));
-	}
+/////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - ///
+/////////////////////////////////////////////
 
-	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
-	inline float Dot(const X<T, Left, Op, Right, size> a, const vec<T, size> b)
-	{
-		return Dot(vec<T, size > (a), b);
-	}
-
-	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
-	inline float Dot(const X<T, Left, Op, Right, size> a, const X<T, Left, Op, Right, size> b)
-	{
-		return Dot(vec<T, size > (a), vec<T, size > (b));
-	}
-
-	template <typename T, std::size_t size>
-	inline std::ostream & operator <<(std::ostream& out, const vec<T, size>& x)
-	{
-		for (std::size_t i = 0; i < size; ++i)
-			out << x.data[i] << ' ';
-		return out;
-	}
-
-	
 #ifdef use_sse2
 	template < std::size_t size>
 	inline std::ostream & operator << (std::ostream& out, const vec<__m128, size>& x)
@@ -621,47 +653,74 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 
 		return out;
 	}
-#endif
 
-	
+#else
+
 	template <typename T, std::size_t size>
-	inline float CalcDistance(const vec<T, size>& a, const vec<T, size>& b)
+	inline std::ostream & operator <<(std::ostream& out, const vec<T, size>& x)
 	{
-		return sqrt(Dot(a - b, a - b));
+		for (std::size_t i = 0; i < size; ++i)
+			out << x.data[i] << ' ';
+		return out;
 	}
 
-#ifndef use_sse2
-
-	inline float minim (float a, float b){ return (a > b) ? b : a; }
-
-	inline std::size_t ToColor(vec4& color)
-	{
-		std::size_t r = 
-			((std::size_t) (minim(color[0]*255.0f, 255.0f))*(1 << 16)) +
-			((std::size_t) (minim(color[1]*255.0f, 255.0f))*(1 << 8)) +
-			((std::size_t) (minim(color[2]*255.0f, 255.0f)));
-
-		return r;
-	}
 #endif
 
-	template <typename T>
-	inline vec<T, 4 > Cross(const vec<T, 4 > & v1, const vec<T, 4 > & v2)
+////////////////////////////////////////////
+/// - - - - - - CalcDistance - - - - - - ///
+////////////////////////////////////////////
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type  CalcDistance(const X<T, Left, Op, Right, size> a, const X<T, Left, Op, Right, size> b)
 	{
-		vec<T, 4 > temp;
-
-		temp[0] = v1[1] * v2[2] - v1[2] * v2[1];
-		temp[1] = v1[2] * v2[0] - v1[0] * v2[2];
-		temp[2] = v1[0] * v2[1] - v1[1] * v2[0];
-		temp[3] = 0;
-
-		return temp;
+		return CalcDistance(vec<T, size>(a), vec<T, size>(b));
 	}
 
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type  CalcDistance(const X<T, Left, Op, Right, size> a, const vec<T, size> b)
+	{
+		return CalcDistance(vec<T, size>(a), b);
+	}
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline typename vec<T, size>::type  CalcDistance(const vec<T, size> a, const X<T, Left, Op, Right, size> b)
+	{
+		return CalcDistance(a, vec<T, size>(b));
+	}
+
+	template <typename T, std::size_t size>
+	inline typename vec<T, size>::type  CalcDistance(const vec<T, size> a, const vec<T, size> b)
+	{
+		vec<T, size> c (a - b);
+		return sqrt(Dot(c, c));
+	}
+
+/////////////////////////////////////////////
+/// - - - - - - - - Cross - - - - - - - - ///
+/////////////////////////////////////////////
 
 #ifdef use_sse2
 
-	inline vec4 Cross(const vec4& v1, const vec4& v2)
+	template <typename Left, typename Op, typename Right, std::size_t size>
+	inline vec4 Cross(const X<__m128, Left, Op, Right, size> v1, const X<__m128, Left, Op, Right, size> v2)
+	{
+		return Cross(vec<__m128, size>(v1), vec<__m128, size>(v2));
+	}
+
+	template <typename Left, typename Op, typename Right, std::size_t size>
+	inline vec4 Cross(const vec<__m128, size> v1, const X<__m128, Left, Op, Right, size> v2)
+	{
+		return Cross(v1, vec<__m128, size>(v2));
+	}
+
+	template <typename Left, typename Op, typename Right, std::size_t size>
+	inline vec4 Cross(const X<__m128, Left, Op, Right, size> v1, const vec<__m128, size> v2)
+	{
+		return Cross(vec<__m128, size>(v1), v2);
+	}
+
+	template <std::size_t size>
+	inline vec4 Cross(const vec<__m128, size> v1, const vec<__m128, size> v2)
 	{
 		__m128 a, b, c;
 
@@ -677,6 +736,53 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 
 		return c;
 	}
+
+#else
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline vec<T, 4 > Cross(const X<T, Left, Op, Right, size> v1, const X<T, Left, Op, Right, size> v2)
+	{
+		return Cross(vec<T, size>(v1), vec<T, size>(v2));
+	}
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline vec<T, 4 > Cross(const X<T, Left, Op, Right, size> v1, const vec<T, size> v2)
+	{
+		return Cross(vec<T, size>(v1), v2);
+	}
+
+	template <typename T, typename Left, typename Op, typename Right, std::size_t size>
+	inline vec<T, 4 > Cross(const vec<T, size> v1, const X<T, Left, Op, Right, size> v2)
+	{
+		return Cross(v1, vec<T, size>(v2));
+	}
+
+	template <typename T, std::size_t size>
+	inline vec<T, 4 > Cross(const vec<T, size> v1, const vec<T, size> v2)
+	{
+		vec<T, 4 > temp;
+
+		temp[0] = v1[1] * v2[2] - v1[2] * v2[1];
+		temp[1] = v1[2] * v2[0] - v1[0] * v2[2];
+		temp[2] = v1[0] * v2[1] - v1[1] * v2[0];
+		temp[3] = 0;
+
+		return temp;
+	}
+
+
+#endif
+
+/////////////////////////////////////////////
+/// - - - - - - - - - - - - - - - - - - - ///
+/////////////////////////////////////////////
+	
+
+/////////////////////////////////////////////
+/// - - - - - - - ToColor - - - - - - - - ///
+/////////////////////////////////////////////
+
+#ifdef use_sse2
 
 	inline std::size_t ToColor(vec4& color)
 	{
@@ -700,6 +806,21 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 		return r;
 
 	}
+
+#else
+		
+	template < typename T > T minim (T a, T b) { return (a > b) ? b : a; }
+
+	inline std::size_t ToColor(vec4& color)
+	{
+		std::size_t r = 
+			((std::size_t) (minim<vec4::type>(color[0]*255.0f, 255.0f))*(1 << 16)) +
+			((std::size_t) (minim<vec4::type>(color[1]*255.0f, 255.0f))*(1 << 8)) +
+			((std::size_t) (minim<vec4::type>(color[2]*255.0f, 255.0f)));
+
+		return r;
+	}
+
 #endif
 
 	
@@ -723,7 +844,7 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	struct plus<__m128>
 	{
 
-		inline __m128 apply(const __m128 & a, const __m128 & b) const
+		inline __m128 apply(const __m128 a, const __m128 b) const
 		{
 			return _mm_add_ps(a, b);
 		}
@@ -746,7 +867,7 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	struct minus<__m128>
 	{
 
-		inline __m128 apply(const __m128& a, const __m128 & b) const
+		inline __m128 apply(const __m128 a, const __m128 b) const
 		{
 			return _mm_sub_ps(a, b);
 		}
@@ -769,7 +890,7 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	struct mul<__m128>
 	{
 
-		inline __m128 apply(const __m128& a, const __m128 & b) const
+		inline __m128 apply(const __m128 a, const __m128 b) const
 		{
 			return _mm_mul_ps(a, b);
 		}
@@ -792,7 +913,7 @@ inline returnT dot(T * a, T * b, std::size_t da = 1, std::size_t db = 1)
 	struct div<__m128>
 	{
 
-		inline __m128 apply(const __m128& a, const __m128 & b) const
+		inline __m128 apply(const __m128 a, const __m128 b) const
 		{
 			return _mm_div_ps(a, b);
 		}
@@ -1176,6 +1297,8 @@ private:
 
 public:
 
+	typedef T type;
+
 	mat()
 	{
 		for (std::size_t i = 0; i < M * N; ++i) d[i] = T(0);
@@ -1201,25 +1324,6 @@ public:
 	{
 		for (std::size_t i = 0; i < M * N; ++i) d[i] = m.d[i];
 	}
-
-	/*
-	template <typename T1, std::size_t M1, std::size_t N1 = M1>
-	void from (mat<T1, M1, N1> m, std::size_t x, std::size_t y)
-	{
-		//std::size_t h = 0;
-		//std::cout << "\nx: " << x << " y: " << y;
-		//std::cout << "\nM: " << M << "\nN: " << N;
-
-		for (std::size_t i = 0; i < M; ++i)
-			for (std::size_t j = 0; j < N; ++j) {
-						std::cout << "\nd["<< i << "," << j << "]: " << d[i*N+j];
-						std::cout << "\nI: " << (i+x)*N1+y;
-						std::cout << "\nJ: " << (i+x)*N1+y+j;
-						std::cout << "\nM(I,J): " << m((i+x)*N1+y,(i+x)*N1+y+j) << "\n";
-				d[i * N + j] = m(i + x, j + y);
-			}
-	}
-	*/
 
 	inline void operator =(const mat<T, M, N> & cm)
 	{
@@ -1313,7 +1417,7 @@ public:
 		return d[i * N + j];
 	}
 
-	float * get(std::size_t line)
+	T * get(std::size_t line)
 	{
 		return d + line*N;
 	}
@@ -1349,9 +1453,11 @@ void mat<T, M, N>::transpose()
 
 		_align_
 		__m128 d[4];
-		// by string 
+		// by string
 
 	public:
+
+		typedef float type;
 
 		mat()
 		{
@@ -1399,7 +1505,7 @@ void mat<T, M, N>::transpose()
 			for (std::size_t i = 0; i < 4; ++i) d[i] = cm.d[i];
 		}
 
-		inline mat<float, 4> operator * (mat<float, 4> & b)
+		inline mat<float, 4> operator * ( mat<float, 4> & b )
 		{
 			mat<float, 4> t;
 
@@ -1419,7 +1525,7 @@ void mat<T, M, N>::transpose()
 		}
 
 
-		inline mat<float, 4> operator +(mat<float, 4> & b)
+		inline mat<float, 4> operator + (mat<float, 4> & b)
 		{
 			mat<float, 4> t;
 
@@ -1437,7 +1543,7 @@ void mat<T, M, N>::transpose()
 			return t;
 		}
 
-		inline mat<float, 4> operator /(mat<float, 4> & b)
+		inline mat<float, 4> operator / (mat<float, 4> & b)
 		{
 			mat<float, 4> t;
 
@@ -1523,6 +1629,14 @@ mat<T, M, N> Zero()
 	return m;
 }
 
+template <typename T, std::size_t M>
+mat<T, M> One()
+{
+	mat<T,M> m;
+	m.one();
+	return m;
+}
+
 template <typename T, std::size_t M, std::size_t N>
 mat<T, N, M> Transpose(mat<T, M, N>& m)
 {
@@ -1604,7 +1718,8 @@ T Determinant(mat<T, N> &m)
 		for (std::size_t j = 0; j < N; j++) {
 			L(i, 0) = m(i, 0) / U(0, 0);
 			sum = 0;
-			for (std::size_t k = 0; k < i; k++) {
+			for (std::size_t k = 0; k < i; k++)
+			{
 				sum += L(i, k) * U(k, j);
 			}
 
@@ -1616,7 +1731,8 @@ T Determinant(mat<T, N> &m)
 			{
 				sum = 0;
 
-				for (std::size_t k = 0; k < i; k++) {
+				for (std::size_t k = 0; k < i; k++)
+				{
 					sum += L(j, k) * U(k, i);
 				}
 
@@ -1696,25 +1812,31 @@ inline std::ostream & operator <<(std::ostream& out, const mat<T, M, N> & m)
 	return out;
 }
 
-
-typedef mat<float,4> mat4;
-
+typedef mat<basetype, 4> mat4;
 
 vec4 operator * ( mat4 & m, vec4 & v);
 
 mat4 RotateX(float angle);
-
 mat4 RotateY(float angle);
-
 mat4 RotateZ(float angle);
 
+mat4 Rotate ( vec4 v );
+mat4 Rotate ( float angle, vec4 direction);
+
+mat4 MirrorX(void);
+mat4 MirrorY(void);
+mat4 MirrorZ(void);
+
+mat4 ScaleX ( float scale );
+mat4 ScaleY ( float scale );
+mat4 ScaleZ ( float scale );
+
+mat4 Scale ( vec4 v);
 
 ///////////////////////////////
 ///////////////////////////////
 ///////////////////////////////
 
-	//#undef use_sse2
-	//#undef use_sse3
 }
 
 #endif
