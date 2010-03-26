@@ -25,8 +25,8 @@ namespace fastmath
 /// configuration parametrs ///
 ///////////////////////////////
 
-//#define use_sse2
-#define use_sse3
+#define use_sse2
+//#define use_sse3
 
 typedef float basetype; 
 
@@ -1820,8 +1820,8 @@ mat4 RotateX(float angle);
 mat4 RotateY(float angle);
 mat4 RotateZ(float angle);
 
-//mat4 Rotate ( vec4 v );
-//mat4 Rotate ( float angle, vec4 direction );
+mat4 Rotate ( vec4 & v );
+mat4 Rotate ( float angle, vec4 & direction);
 
 mat4 MirrorX(void);
 mat4 MirrorY(void);
@@ -1831,7 +1831,7 @@ mat4 ScaleX ( float scale );
 mat4 ScaleY ( float scale );
 mat4 ScaleZ ( float scale );
 
-//mat4 Scale ( vec4 v );
+mat4 Scale ( vec4 & v );
 
 ///////////////////////////////
 ///////////////////////////////
