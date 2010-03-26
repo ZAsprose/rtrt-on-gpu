@@ -24,11 +24,11 @@
 
 #define _CAMERA_HPP_
 
-#include "vector.hpp"
+#include <fastmv.hpp>
 
 #include "ShaderManager.hpp"
 
-using namespace math;
+using namespace fastmath;
 
 namespace render
 {

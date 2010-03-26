@@ -109,7 +109,7 @@ namespace fastmath
 		return m;
 	}
 
-	mat4 Rotate( vec4 v )
+	/*mat4 Rotate( vec4 v )
 	{
 		mat4 mz, my, mx;
 		mz = RotateZ (v.z());
@@ -118,9 +118,9 @@ namespace fastmath
 		mz = mz * my;
 		mz = mz * mx;
 		return mz;
-	}
+	}*/
 
-	mat4 Rotate ( float angle, vec4 direction)
+	/*mat4 Rotate ( float angle, vec4 direction)
 	{
 		mat4 m;
 		m.one ();
@@ -173,7 +173,7 @@ namespace fastmath
 		m(1,1) = v.y();
 		m(2,2) = v.z();
 		return m;
-	}
+	}*/
 
 
 }
