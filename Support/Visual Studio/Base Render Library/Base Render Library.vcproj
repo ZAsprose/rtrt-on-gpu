@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9,00"
+	Name="Base Render Library"
+	ProjectGUID="{63184D42-634C-4CD5-BACC-BEFE2BD6A850}"
+	RootNamespace="BaseRenderLibrary"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="196613"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\GLee\Include;..\..\..\Dependencies\GLFW\Include;&quot;..\..\..\Source\Base Libraries\Base Math Library&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="4"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\..\Dependencies\GLee\Include;..\..\..\Dependencies\GLFW\Include;&quot;..\..\..\Source\Base Libraries\Base Math Library&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
+			<Filter
+				Name="Camera Control"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Offscreen Rendering"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Shader Manager"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Wrappers"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<Filter
+				Name="Camera Control"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Camera.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Keyboard.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Mouse.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Offscreen Rendering"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\FrameBuffer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\RenderBuffer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Texture Wrappers"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture1D.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture2D.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\Texture3D.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Shader Manager"
+				>
+				<File
+					RelativePath="..\..\..\Source\Base Libraries\Base Render Library\ShaderManager.hpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
