@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base Libraries", "Base Libraries", "{A9565D4A-9737-4D90-AF52-87619387E4E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test Suite", "Test Suite", "{AC0C90C1-9DAB-41EC-A9F3-EBC72BE5921B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL Test", "Source\Test Suite\OpenGL Test\OpenGL Test.vcproj", "{F302A002-4B9E-4470-9F04-DBFB59DCACD7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Graphics Library", "Source\Base Libraries\Base Graphics Library\Base Graphics Library.vcproj", "{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenCL Test", "Source\Test Suite\OpenCL Test\OpenCL Test.vcproj", "{48CCBD46-B9E2-4407-B64E-BC7773480B41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLSL Tutorial", "GLSL Tutorial", "{5062BAE9-B114-4D0F-A9F0-EF701DFD0769}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 2 - Implicit Surfaces", "Source\GLSL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Metaballs", "Source\GLSL Tutorial\Metaballs\Metaballs.vcproj", "{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 5 - N-Bodies Simulation", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F302A002-4B9E-4470-9F04-DBFB59DCACD7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F302A002-4B9E-4470-9F04-DBFB59DCACD7}.Debug|Win32.Build.0 = Debug|Win32
+		{F302A002-4B9E-4470-9F04-DBFB59DCACD7}.Release|Win32.ActiveCfg = Release|Win32
+		{F302A002-4B9E-4470-9F04-DBFB59DCACD7}.Release|Win32.Build.0 = Release|Win32
+		{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}.Debug|Win32.Build.0 = Debug|Win32
+		{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}.Release|Win32.ActiveCfg = Release|Win32
+		{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}.Release|Win32.Build.0 = Release|Win32
+		{48CCBD46-B9E2-4407-B64E-BC7773480B41}.Debug|Win32.ActiveCfg = Debug|Win32
+		{48CCBD46-B9E2-4407-B64E-BC7773480B41}.Debug|Win32.Build.0 = Debug|Win32
+		{48CCBD46-B9E2-4407-B64E-BC7773480B41}.Release|Win32.ActiveCfg = Release|Win32
+		{48CCBD46-B9E2-4407-B64E-BC7773480B41}.Release|Win32.Build.0 = Release|Win32
+		{7FF5798B-4B32-47F0-85F4-207B0C60921F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7FF5798B-4B32-47F0-85F4-207B0C60921F}.Debug|Win32.Build.0 = Debug|Win32
+		{7FF5798B-4B32-47F0-85F4-207B0C60921F}.Release|Win32.ActiveCfg = Release|Win32
+		{7FF5798B-4B32-47F0-85F4-207B0C60921F}.Release|Win32.Build.0 = Release|Win32
+		{E51C8C20-B005-4E20-8959-0E4BC6D607A6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E51C8C20-B005-4E20-8959-0E4BC6D607A6}.Debug|Win32.Build.0 = Debug|Win32
+		{E51C8C20-B005-4E20-8959-0E4BC6D607A6}.Release|Win32.ActiveCfg = Release|Win32
+		{E51C8C20-B005-4E20-8959-0E4BC6D607A6}.Release|Win32.Build.0 = Release|Win32
+		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Debug|Win32.Build.0 = Debug|Win32
+		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Release|Win32.ActiveCfg = Release|Win32
+		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867} = {A9565D4A-9737-4D90-AF52-87619387E4E6}
+		{F302A002-4B9E-4470-9F04-DBFB59DCACD7} = {AC0C90C1-9DAB-41EC-A9F3-EBC72BE5921B}
+		{48CCBD46-B9E2-4407-B64E-BC7773480B41} = {AC0C90C1-9DAB-41EC-A9F3-EBC72BE5921B}
+		{7FF5798B-4B32-47F0-85F4-207B0C60921F} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
+		{E51C8C20-B005-4E20-8959-0E4BC6D607A6} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
+		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
+	EndGlobalSection
+EndGlobal
