@@ -36,6 +36,11 @@ Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
                 Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// Position of light source
+
+Vector3f lightPosition ( 10.0F, 10.0F, 10.0F );
+
+/////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
 
 void MouseMoveHandler ( int x, int y )
@@ -214,11 +219,21 @@ int main ( void )
 
         //---------------------------------------------------------------------
 
+        /* Move light source */
+
+        lightPosition ( 0 ) = -10.0F;
+        lightPosition ( 1 ) = 10.0F + 4.0F * cosf ( time * 1.5F );
+        lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
+
+        //---------------------------------------------------------------------
+
         /* Draw dummy quad with custom fragment shader */
 
         program.Bind ( );
 
         camera.SetShaderData ( &program );
+        
+        program.SetUniformVector ( "LightPosition", lightPosition );
         
         glBegin ( GL_QUADS );
 

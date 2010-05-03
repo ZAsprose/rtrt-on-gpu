@@ -45,6 +45,15 @@ struct SRay
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+// Shader configuration
+
+/* Use these macros for switching between bounding box and sphere */
+
+#define USE_BOX_
+
+#define USE_SPHERE
+
+///////////////////////////////////////////////////////////////////////////////
 // Shader interface
 
 /* Camera position and orientation */
@@ -55,8 +64,12 @@ uniform SCamera Camera;
 
 uniform float Time;
 
+/* Current light position */
+
+uniform vec3 LightPosition;
+
 ///////////////////////////////////////////////////////////////////////////////
-// Shader Constants
+// Shader constants
 
 /* Minimum and maximum point of bounding box ( if we use box ) */
 
@@ -101,34 +114,9 @@ float CalcFunction ( vec3 point )
 
 	return 2.0 - cos ( X + T * Y ) - cos ( X - T * Y ) - cos ( Y + T * Z ) -
 		         cos ( Y - T * Z ) - cos ( Z - T * X ) - cos ( Z + T * X );
-	
-	/* Also try this:  
-	return ( 4.0 - ( X - 0.0 ) * ( X - 0.0 ) -
-	               ( Y - 0.0 ) * ( Y - 0.0 ) - 
-	               ( Z - 0.0 ) * ( Z - 0.0 ) ) *
-	       ( 1.0 - ( X - 3.0 ) * ( X - 3.0 ) -
-	               ( Y - 0.0 ) * ( Y - 0.0 ) - 
-	               ( Z - 0.0 ) * ( Z - 0.0 ) ) *
-	       ( 1.0 - ( X + 3.0 ) * ( X + 3.0 ) -
-	               ( Y - 0.0 ) * ( Y - 0.0 ) - 
-	               ( Z - 0.0 ) * ( Z - 0.0 ) ) *
-	       ( 1.0 - ( X - 0.0 ) * ( X - 0.0 ) -
-	               ( Y - 3.0 ) * ( Y - 3.0 ) - 
-	               ( Z - 0.0 ) * ( Z - 0.0 ) ) *
-	       ( 1.0 - ( X - 0.0 ) * ( X - 0.0 ) -
-	               ( Y + 3.0 ) * ( Y + 3.0 ) - 
-	               ( Z - 0.0 ) * ( Z - 0.0 ) ) *
-	       ( 1.0 - ( X - 0.0 ) * ( X - 0.0 ) -
-	               ( Y - 0.0 ) * ( Y - 0.0 ) - 
-	               ( Z - 3.0 ) * ( Z - 3.0 ) ) *
-	       ( 1.0 - ( X - 0.0 ) * ( X - 0.0 ) -
-	               ( Y - 0.0 ) * ( Y - 0.0 ) - 
-	               ( Z + 3.0 ) * ( Z + 3.0 ) );
-	*/	               
-
-	/* Also try this: 
-	return sin ( X ) + sin ( Y ) + sin ( Z );
-	*/
+	              
+	// Also try this: 
+	// return sin ( X ) + sin ( Y ) + sin ( Z );
 }
 
 #undef X
@@ -191,6 +179,23 @@ bool IntersectBox ( in SRay ray       /* ray origin and direction */,
 
 //-----------------------------------------------------------------------------
 
+/* Intersects ray with box ( special case: ray origin is in a box ) */
+
+float IntersectBox ( in SRay ray       /* ray origin and direction */,
+                     in vec3 minimum   /* minimum point of a box */,
+                     in vec3 maximum   /* maximum point of a box */ )
+{
+    vec3 OMIN = ( minimum - ray.Origin ) / ray.Direction;
+   
+    vec3 OMAX = ( maximum - ray.Origin ) / ray.Direction;
+    
+    vec3 MAX = max ( OMAX, OMIN );
+    
+    return min ( MAX.x, min ( MAX.y, MAX.z ) );
+}
+
+//-----------------------------------------------------------------------------
+
 /*
  * Intersects ray with sphere in coordinates origin.
  *
@@ -231,7 +236,7 @@ bool IntersectSphere ( in SRay ray       /* ray origin and direction */,
 
 //-----------------------------------------------------------------------------
 
-#define INTERVALS 80
+#define INTERVALS 200
 
 /*
  * Intersects ray with implicit surface.
@@ -309,13 +314,21 @@ SRay GenerateRay ( SCamera camera )
 
 /* Phong material of metaballs */
 
-#define AMBIENT 0.0
+#define AMBIENT 0.1
 
-#define DIFFUSE 0.0   /* if no reflection set it > 0 */
+#define DIFFUSE 1.0
 
 #define SPECULAR 1.0
 
 #define SHININESS 64.0
+
+/* Small value for moving origin of shadow ray ( see code ) */
+
+#define EPSILON 0.01
+
+/* Use these macro for enable / disable shadows */
+
+#define SHADOWS
 
 /* Computes lighting in an intersection point and its final color */
 
@@ -323,7 +336,7 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
              in vec3 normal   /* normal to the surface in this point */,
              in vec3 color    /* diffuse color in this point */ )
 {
-    vec3 light = normalize ( Camera.Position - point );
+    vec3 light = normalize ( LightPosition  - point );
     
     vec3 view = normalize ( Camera.Position - point );
     
@@ -335,6 +348,31 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
 
     float specular = pow ( max ( dot ( refl, light ), 0.0 ), SHININESS );
     
+    //--------------------------------------------------------------------
+    
+#ifdef SHADOWS
+    
+    SRay ray = SRay ( point + light * EPSILON, light );
+    
+	float start, final, time;
+
+#if defined ( USE_BOX )
+
+	if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
+
+#elif defined ( USE_SPHERE )
+
+	if ( IntersectSphere ( ray, SphereRadius, start, final ) )
+
+#endif
+    
+    if ( IntersectSurface ( ray, start, final, time ) )
+    {
+        diffuse *= 0.25;
+    }     
+    
+#endif 
+    
     return AMBIENT * Unit +
            DIFFUSE * diffuse * color +
            SPECULAR * specular * Unit;
@@ -342,10 +380,6 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
 
 ///////////////////////////////////////////////////////////////////////////////
 // Core ray tracing function
-
-#define USE_BOX_
-
-#define USE_SPHERE
 
 vec3 Raytrace ( SRay ray )
 {
@@ -362,6 +396,7 @@ vec3 Raytrace ( SRay ray )
 	if ( IntersectSphere ( ray, SphereRadius, start, final ) )
 
 #endif
+
 	{
 		if ( IntersectSurface ( ray, start, final, time ) )
 		{

@@ -74,7 +74,7 @@ uniform sampler2D TopTexture;
 uniform sampler2D DownTexture;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Shader Constants
+// Shader constants
 
 /* Minimum and maximum point of bounding box ( the scene is in this box ) */
 
@@ -285,7 +285,7 @@ SRay GenerateRay ( SCamera camera )
 
 #define ENVIRONMENT_MAPPING
 
-/* Small value for checking hitted face ( see code ) */
+/* Small value for checking hitted face of bounding box ( see code ) */
 
 #define EPSILON 0.01
 
