@@ -293,7 +293,7 @@ int main ( void )
 
         //---------------------------------------------------------------------
 
-        /* Moving metaballs */
+        /* Move metaballs */
 
         positions [0] (0) = sinf ( time ); 
         positions [0] (1) = cosf ( time );
