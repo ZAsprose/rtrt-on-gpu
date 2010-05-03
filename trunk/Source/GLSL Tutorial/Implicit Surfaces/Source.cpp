@@ -19,11 +19,9 @@
    with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Graphics.hpp>
-
 #include <iostream>
 
-#include "Config.h"
+#include <Graphics.hpp>
 
 using namespace graphics;
 
@@ -145,14 +143,12 @@ int main ( void )
 
     ShaderProgram program;
     
-    if ( !program.LoadVertexShader ( "Render.vs" ) )
+    if ( !program.LoadVertexShader ( "Vertex.glsl" ) )
     {
         std :: cout << "ERROR: failed to load vertex shader\n"; exit ( -1 );
     }
     
-    const char * fragment [] = { "Config.h", "Render.fs" };
-    
-    if ( !program.LoadFragmentShader ( fragment, 2 ) )
+    if ( !program.LoadFragmentShader ( "Fragment.glsl" ) )
     {
         std :: cout << "ERROR: failed to load fragment shader\n"; exit ( -1 );
     }
@@ -170,7 +166,10 @@ int main ( void )
 
     GLint frames = 0;
 
-    GLdouble fps, time, delta, start = glfwGetTime ( );
+    GLdouble fps = 0.0,
+             delta = 0.0,
+             time = 0.0,
+             start = glfwGetTime ( );
 
     //-------------------------------------------------------------------------
 
