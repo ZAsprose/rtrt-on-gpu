@@ -97,7 +97,7 @@ const vec3 AxisY = vec3 ( 0.0, 1.0, 0.0 );
 const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 ///////////////////////////////////////////////////////////////////////////////
-// Functions for compute implicit function value and normal in specific point
+// Compute implicit function value and normal in specific point
 
 #define THRESHOLD 2.5 /* You can modify this value for different effects */
 
@@ -207,7 +207,23 @@ float IntersectBox ( in SRay ray       /* ray origin and direction */,
 
 #define INTERVALS 80
 
-/* Intersects ray with implicit surface */
+/*
+ * Intersects ray with implicit surface.
+ *
+ * Function implements simple and computational expensive
+ * algorithm. We divide a ray interval into small segments
+ * and check each of them. The segment contains a root if
+ * function changes a sign on its end points. For root
+ * approximation linear interpolation is used. For more
+ * advanced methods see:
+ *
+ * John C. Hart. "Ray Tracing Implicit Surfaces".
+ * http://graphics.cs.uiuc.edu/~jch/papers/rtis-tr.pdf
+ *
+ * Jag Mohan Singh and P J Narayanan. "Real-Time Ray-Tracing
+ * of Implicit Surfaces on the GPU". Technical Report:
+ * IIIT/TR/2007/72
+ */
 
 bool IntersectSurface ( in SRay ray      /* ray origin and direction */,
                         in float start   /* time when a ray enters a box */,
@@ -295,18 +311,17 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
     
     vec3 refl = reflect ( -view, normal );
     
-    //----------------------------------------------------------    
+    //--------------------------------------------------------------------
    
     float diffuse = max ( dot ( light, normal ), 0.0 );
 
-    float specular = pow ( max ( dot ( refl, light ), 0.0 ),
-                           SHININESS );
+    float specular = pow ( max ( dot ( refl, light ), 0.0 ), SHININESS );
     
     vec3 result = AMBIENT * Unit +
                   DIFFUSE * diffuse * color +
                   SPECULAR * specular * Unit;
                   
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------
     
 #ifdef ENVIRONMENT_MAPPING
     
@@ -316,7 +331,7 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
     
     point = ray.Origin + ray.Direction * final;
     
-    //----------------------------------------------------------    
+    //--------------------------------------------------------------------
     
     if ( abs ( point.y - BoxMinimum.y ) < EPSILON )
     {
