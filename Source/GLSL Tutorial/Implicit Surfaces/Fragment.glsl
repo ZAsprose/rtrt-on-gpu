@@ -108,7 +108,7 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 #define Y point.y
 #define Z point.z
 
-float CalcFunction ( vec3 point )
+float CalcFunction ( in vec3 point )
 {
 	/* You can enter here any expression in the form F ( x, y, z ) */
 
@@ -127,7 +127,7 @@ float CalcFunction ( vec3 point )
 
 #define STEP 0.01 /* Step for numerical estimation of a gradient */
 
-vec3 CalcNormal ( vec3 point )
+vec3 CalcNormal ( in vec3 point )
 {
     /* We calculate normal by numerical estimation of a gradient */
     
@@ -299,7 +299,16 @@ bool IntersectSurface ( in SRay ray      /* ray origin and direction */,
 ///////////////////////////////////////////////////////////////////////////////
 // Support functions
 
-SRay GenerateRay ( SCamera camera )
+/*
+ * Generates primary ray for a current fragment.
+ *
+ * You can change camera state by setting function argument.
+ * It can be used for stereo rendering ( move camera left and
+ * right for each fragment and tracing two primary rays ) or
+ * anti-aliasing.
+ */
+
+SRay GenerateRay ( in SCamera camera /* current camera state */ )
 {
     vec2 coords = gl_TexCoord [0].xy * camera.Scale;
     
@@ -381,7 +390,7 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
 ///////////////////////////////////////////////////////////////////////////////
 // Core ray tracing function
 
-vec3 Raytrace ( SRay ray )
+vec3 Raytrace ( in SRay ray )
 {
 	vec3 result = Zero;
     

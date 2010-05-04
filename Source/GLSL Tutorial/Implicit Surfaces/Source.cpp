@@ -222,7 +222,7 @@ int main ( void )
         /* Move light source */
 
         lightPosition ( 0 ) = -10.0F;
-        lightPosition ( 1 ) = 10.0F + 4.0F * cosf ( time * 1.5F );
+        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
         lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
 
         //---------------------------------------------------------------------
