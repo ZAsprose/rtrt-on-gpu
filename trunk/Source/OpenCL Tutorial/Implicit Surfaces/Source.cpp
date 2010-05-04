@@ -1,6 +1,6 @@
 /*
    ---------------------------------------------------------------------------
-   |             Q U A T E R N I O N   F R A C T A L S   D E M O             |
+   |          I M P L I C I T   S U R F A C E S   D E M O   ( OCL )          |
    ---------------------------------------------------------------------------
                               
    Copyright (c) 2009 - 2010 Denis Bogolepov ( denisbogol @ gmail.com )
@@ -19,15 +19,22 @@
    with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define NOMINMAX
+
 #include <iostream>
+
+#include <logger.h>
 
 #include <Graphics.hpp>
 
+#define __NO_STD_VECTOR
+#define __NO_STD_STRING
+
+#include <CL/cl.hpp>
+
+using namespace cl;
+
 using namespace graphics;
-
-#define FRACT( value ) ( value - floorf ( value ) )
-
-#define LERP( A, B, value ) ( ( 1 - value ) * A + value * B )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Camera control with mouse ( orientation ) and keyboard ( position )
@@ -40,67 +47,20 @@ Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
                 Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// Support structure for storing parameters of 4D quaternion Julia set
+// OpenCL objects
 
-/*
- * For more info about quaternion Julia sets see:
- *
- * Paul Bourke. "Quaternion Julia Fractals", July 2001
- * http://local.wasp.uwa.edu.au/~pbourke/fractals/quatjulia
- *
- * See also:
- *
- * Keenan Crane. "Ray Tracing Quaternion Julia Sets on the GPU"
- * http://www.devmaster.net/forums/showthread.php?t=4448
- */
+Platform platform;    /* OpenCL platform */
 
-struct Fractal
-{
-    public:
+Context context;      /* OpenCL context for specified device type */
 
-        /* Center of quaternion Julia set */
-        Vector4f Center;    
+Device device;        /* OpenCL device ( CPU or GPU ) */
 
-        /* Maximum number of iterations ( higher -> better quality ) */
-        GLuint Iterations;
-
-        /* Accuracy of hit point calculation ( higher -> better quality ) */
-        GLfloat Epsilon;
-        
-        Fractal ( GLuint iterations = 100,
-                  GLfloat epsilon = 0.0025F )
-        {
-            Iterations = iterations;
-
-            Epsilon = epsilon;
-        }
-
-        void SetShaderData ( ShaderProgram * manager )
-        {
-            manager->SetUniformFloat ( "Fractal.Epsilon", Epsilon );
-
-            manager->SetUniformInteger ( "Fractal.Iterations", Iterations );
-
-            manager->SetUniformVector ( "Fractal.Center", Center );
-        }
-};
-
-Fractal fractal;
+CommandQueue queue;   /* OpenCL commandQueue for selected device */
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// Base points for interpolating fractal centers
+// Position of light source
 
-Vector4f centers [] = {
-    Vector4f ( -1.2F, 0.2F, 0.3F, 0.0F ),
-    Vector4f ( -0.2F, 0.5F, 0.3F, 0.0F ),
-    Vector4f ( -0.1F, 0.8F, 0.6F, 0.0F ),
-    Vector4f (  0.1F, 0.8F, 0.6F, 0.0F ),
-    Vector4f ( -1.1F, 0.2F, 0.1F, 0.0F ),
-    Vector4f ( -0.4F, 0.1F, 0.8F, 0.1F ) };
-
-GLint curr = 0;
-
-GLint next = 1;
+Vector3f lightPosition ( 10.0F, 10.0F, 10.0F );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
@@ -121,6 +81,133 @@ void KeyDownHandler ( int key, int state )
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+// OpenCL subroutines
+
+inline void CheckError ( cl_int error, const char * name )
+{
+    if ( error != CL_SUCCESS )
+    {
+        EZLOGGERSTREAM << "ERROR: " << name
+            << " (" << error << ")" << std :: endl;
+        
+        exit ( EXIT_FAILURE ); 
+    }
+}
+
+cl_int SetupOpenCL ( cl_device_type deviceType )
+{
+    /*
+     * Have a look at the available platforms and pick either
+     * the AMD/NVIDIA one if available or a reasonable default.
+     */
+
+    cl_int status = CL_SUCCESS;
+
+    vector <Platform> platforms;
+
+    Platform :: get ( &platforms );
+
+    CheckError ( platforms.size ( ) != 0 ? CL_SUCCESS : -1, "Get platforms" );
+
+    /* Now we select first available platform */
+
+    platform = platforms [0];
+
+    /* Print some info on selected platform */
+    {
+        string info;
+
+        platform.getInfo ( CL_PLATFORM_VENDOR, &info );
+        std :: cout << "CL_PLATFORM_VENDOR: " << info.c_str ( ) << std :: endl;
+
+        platform.getInfo ( CL_PLATFORM_NAME, &info );
+        std :: cout << "CL_PLATFORM_NAME: " << info.c_str ( ) << std :: endl;
+
+        platform.getInfo ( CL_PLATFORM_VERSION, &info );
+        std :: cout << "CL_PLATFORM_VERSION: " << info.c_str ( ) << std :: endl;
+
+        platform.getInfo ( CL_PLATFORM_PROFILE, &info );
+        std :: cout << "CL_PLATFORM_PROFILE: " << info.c_str ( ) << std :: endl;
+
+        std :: cout << std :: endl;
+    }
+
+    /*
+     * Now we can create context for all devices with
+     * specified type ( CPU or GPU ). Note that CPU is
+     * available only on AMD/ATI platform. Also we create
+     * compute context from OpenGL context. It can be
+     * useful for sharing textures.
+     */
+
+    cl_context_properties properties [] = {
+        CL_CONTEXT_PLATFORM, ( cl_context_properties ) ( platform ) ( ),
+        CL_GL_CONTEXT_KHR, ( cl_context_properties ) wglGetCurrentContext ( ),
+        CL_WGL_HDC_KHR, ( cl_context_properties ) wglGetCurrentDC ( ),
+        0
+    };
+    
+    Context context = Context ( CL_DEVICE_TYPE_GPU, 
+                                properties,
+                                NULL,
+                                NULL,
+                                &status );
+
+    CheckError ( status, "Create context" );
+
+    /*
+     * Get all devices in the given context.
+     */
+    
+    vector <Device> devices = context.getInfo <CL_CONTEXT_DEVICES> ( );
+    
+    CheckError ( devices.size ( ) > 0 ? CL_SUCCESS : -1, "No OpenCL devices");
+
+    /* Now we select first available device */
+
+    device = devices [0];
+
+    /* Print some info on selected platform */
+
+    {
+        string info;
+
+        device.getInfo ( CL_DEVICE_NAME, &info );
+        std :: cout << "CL_DEVICE_NAME: " << info.c_str ( ) << std :: endl;
+
+        device.getInfo ( CL_DEVICE_VENDOR, &info );
+        std :: cout << "CL_DEVICE_VENDOR: " << info.c_str ( ) << std :: endl;
+
+        device.getInfo ( CL_DRIVER_VERSION, &info );
+        std :: cout << "CL_DRIVER_VERSION: " << info.c_str ( ) << std :: endl;
+
+        device.getInfo ( CL_DEVICE_VERSION, &info );
+        std :: cout << "CL_DEVICE_VERSION: " << info.c_str ( ) << std :: endl;
+
+        cl_ulong temp;
+
+        device.getInfo ( CL_DEVICE_MAX_CLOCK_FREQUENCY, &temp );
+        std :: cout << "CL_DEVICE_MAX_CLOCK_FREQUENCY: " << temp << std :: endl;
+
+        device.getInfo ( CL_DEVICE_GLOBAL_MEM_SIZE, &temp );
+        std :: cout << "CL_DEVICE_GLOBAL_MEM_SIZE: " << temp << std :: endl;
+
+        device.getInfo ( CL_DEVICE_LOCAL_MEM_SIZE, &temp );
+        std :: cout << "CL_DEVICE_LOCAL_MEM_SIZE: " << temp << std :: endl;
+
+        cl_device_local_mem_type type;
+
+        device.getInfo ( CL_DEVICE_LOCAL_MEM_TYPE, &type );
+        std :: cout << "CL_DEVICE_LOCAL_MEM_TYPE: " << ( type == CL_LOCAL ? 
+            "CL_LOCAL" : "CL_GLOBAL" ) << std :: endl;
+        
+        std :: cout << std :: endl;
+    }
+
+    return status;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 // Entry point for program
 
 int main ( void )
@@ -137,7 +224,7 @@ int main ( void )
 
     int choice = getchar ( );
 
-    int width = 800, height = 600, mode = GLFW_WINDOW;
+    int width = 640, height = 640, mode = GLFW_WINDOW;
 
     //-------------------------------------------------------------------------
 
@@ -188,6 +275,10 @@ int main ( void )
 
     //-------------------------------------------------------------------------
 
+    SetupOpenCL ( CL_DEVICE_TYPE_GPU );
+
+    //-------------------------------------------------------------------------
+
     /* Set parallel projection for drawing dummy quad */
     
     glMatrixMode ( GL_PROJECTION );
@@ -205,27 +296,6 @@ int main ( void )
     camera.SetViewFrustum ( );
 
     //-------------------------------------------------------------------------
-
-    /* Load and compile shader files */
-
-    ShaderProgram program;
-    
-    if ( !program.LoadVertexShader ( "Vertex.glsl" ) )
-    {
-        std :: cout << "ERROR: failed to load vertex shader\n"; exit ( -1 );
-    }
-    
-    if ( !program.LoadFragmentShader ( "Fragment.glsl" ) )
-    {
-        std :: cout << "ERROR: failed to load fragment shader\n"; exit ( -1 );
-    }
-
-    if ( !program.Build ( ) )
-    {
-        std :: cout << "ERROR: failed to build shader program\n"; exit ( -1 );
-    }
-
-    //-------------------------------------------------------------------------
     
     GLboolean running = GL_TRUE;
 
@@ -233,7 +303,10 @@ int main ( void )
 
     GLint frames = 0;
 
-    GLdouble fps, time, delta, start = glfwGetTime ( );
+    GLdouble fps = 0.0,
+             delta = 0.0,
+             time = 0.0,
+             start = glfwGetTime ( );
 
     //-------------------------------------------------------------------------
 
@@ -245,7 +318,7 @@ int main ( void )
 
         delta = time - start;
 
-        if ( delta > 4.0 /* interval of FPS averaging */ )
+        if ( delta > 0.1 /* interval of FPS averaging */ )
         {
             fps = frames / delta;
 
@@ -256,10 +329,6 @@ int main ( void )
             start = time;
 
             frames = 0;
-
-            curr = next;
-
-            next = ( curr + 1 ) % 6;
         }
 
         frames++;
@@ -276,32 +345,21 @@ int main ( void )
 
         /* Set new camera position and orientation */
 
-        mouse.Apply ( &camera, ( GLfloat ) fps );
+        mouse.Apply ( &camera, fps );
 
-        keyboard.Apply ( &camera, ( GLfloat ) fps );
-
-        //---------------------------------------------------------------------
-
-        /* Set fractal center */
-        
-        fractal.Center = LERP (
-            centers [curr],
-            centers [next],
-            FRACT ( 0.25 * ( time - start ) ) );
+        keyboard.Apply ( &camera, fps );
 
         //---------------------------------------------------------------------
 
-        /* Draw dummy quad with custom fragment shader */
+        /* Move light source */
 
-        program.Bind ( );
+        lightPosition ( 0 ) = -10.0F;
+        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
+        lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
 
-        camera.SetShaderData ( &program );
+        //---------------------------------------------------------------------
 
-        fractal.SetShaderData ( &program );
-
-        program.SetUniformInteger ( "Width", width );
-
-        program.SetUniformInteger ( "Height", height );
+        /* Draw dummy quad with custom fragment shader */      
         
         glBegin ( GL_QUADS );
 
@@ -311,8 +369,6 @@ int main ( void )
             glVertex2f (  1.0F, -1.0F );
 
         glEnd ( );
-
-        program.Unbind ( );
 
         glfwSwapBuffers ( );
 

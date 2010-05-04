@@ -49,14 +49,10 @@ struct SRay
 struct SFractal
 {	
 	vec4 Center;
-
-	int MaximumIterations;
 	
 	float Epsilon;
-	
-	float Delta;
 
-	float EscapeThreshold;
+	int Iterations;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,6 +67,14 @@ uniform SCamera Camera;
 /* Julia fractal parameters */
 
 uniform SFractal Fractal;
+
+//-----------------------------------------------------------------------------
+
+/* Width and height of a viewport ( for anti-aliasing ) */
+
+uniform int Width;
+
+uniform int Height;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Shader constants
@@ -197,7 +201,7 @@ bool IntersectSphere ( SRay ray, float sqrradius, out float start )
 
 void Iterate ( inout vec4 quaternion, inout vec4 derivative )
 {
-	for ( int i = 0; i < Fractal.MaximumIterations; i++ )
+	for ( int i = 0; i < Fractal.Iterations; ++i )
 	{
 		derivative = 2.0 * QuaternionMult ( quaternion, derivative );
 	
@@ -272,7 +276,7 @@ float Intersect ( inout SRay ray )
  
 #define DELTA 1e-4
 
-/**/
+/* Number of iterations for normal estimation */
 
 #define NORMAL_ITERATIONS 10
 
@@ -289,7 +293,7 @@ vec3 NormEstimate ( in vec3 point )
    vec4 zLeft = quaternion - vec4 ( 0.0, 0.0, DELTA, 0.0 );
    vec4 zRight = quaternion + vec4 ( 0.0, 0.0, DELTA, 0.0 );
 
-   for ( int counter = 0; counter < NORMAL_ITERATIONS; ++counter )
+   for ( int i = 0; i < NORMAL_ITERATIONS; ++i )
    {
       xLeft = QuaternionSquare ( xLeft ) + Fractal.Center;
       xRight = QuaternionSquare ( xRight ) + Fractal.Center;
@@ -320,9 +324,10 @@ vec3 NormEstimate ( in vec3 point )
  * anti-aliasing.
  */
 
-SRay GenerateRay ( in SCamera camera /* current camera state */ )
+SRay GenerateRay ( in SCamera camera   /* current camera state */,
+                   in vec2 position    /* fragment position on the screen */ )
 {
-    vec2 coords = gl_TexCoord [0].xy * camera.Scale;
+    vec2 coords = position * camera.Scale;
     
     vec3 direction = camera.View -
                      camera.Side * coords.x +
@@ -332,14 +337,6 @@ SRay GenerateRay ( in SCamera camera /* current camera state */ )
 }
 
 //-----------------------------------------------------------------------------
-
-/* Use this macro to enable / disable environment mapping */
-
-#define ENVIRONMENT_MAPPING
-
-/* Small value for checking hitted face of bounding box ( see code ) */
-
-#define EPSILON 0.01
 
 /* Phong material of metaballs */
 
@@ -405,9 +402,52 @@ vec3 Raytrace ( in SRay ray )
 ///////////////////////////////////////////////////////////////////////////////
 // Shader entry point
 
+#define SUPER_SAMPLING_  /* Use only on fast GPUs such AMD Radeon 58xx */
+
 void main ( void )
 {
-    SRay ray = GenerateRay ( Camera );
+    vec2 position = gl_TexCoord [0].xy;
+    
+    SRay ray = GenerateRay ( Camera, position );
     
     gl_FragColor = vec4 ( Raytrace ( ray ), 1.0 );
+    
+#ifdef SUPER_SAMPLING
+
+    float dx = 1.0 / Width;  /* width of the fragment on image plane */
+    
+    float dy = 1.0 / Height; /* height of the fragment on image plane */
+    
+
+    position = vec2 ( gl_TexCoord [0].x, gl_TexCoord [0].y + dy );
+    
+    ray = GenerateRay ( Camera, position );
+    
+    gl_FragColor += vec4 ( Raytrace ( ray ), 1.0 );
+    
+    
+    position = vec2 ( gl_TexCoord [0].x, gl_TexCoord [0].y - dy );
+    
+    ray = GenerateRay ( Camera, position );
+    
+    gl_FragColor += vec4 ( Raytrace ( ray ), 1.0 );
+    
+    
+    position = vec2 ( gl_TexCoord [0].x + dx, gl_TexCoord [0].y );
+    
+    ray = GenerateRay ( Camera, position );
+    
+    gl_FragColor += vec4 ( Raytrace ( ray ), 1.0 );
+    
+    
+    position = vec2 ( gl_TexCoord [0].x - dx, gl_TexCoord [0].y );
+    
+    ray = GenerateRay ( Camera, position );
+    
+    gl_FragColor += vec4 ( Raytrace ( ray ), 1.0 );
+    
+    
+    gl_FragColor /= 5.0;
+
+#endif
 }

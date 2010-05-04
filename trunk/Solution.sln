@@ -13,13 +13,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenCL Test", "Source\Test 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GLSL Tutorial", "GLSL Tutorial", "{5062BAE9-B114-4D0F-A9F0-EF701DFD0769}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 2 - Implicit Surfaces", "Source\GLSL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 1 - Implicit Surfaces", "Source\GLSL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Metaballs", "Source\GLSL Tutorial\Metaballs\Metaballs.vcproj", "{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 2 - Metaballs", "Source\GLSL Tutorial\Metaballs\Metaballs.vcproj", "{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 5 - N-Bodies Simulation", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - N-Bodies Simulation", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - Quaternion Fractals", "Source\GLSL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Quaternion Fractals", "Source\GLSL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenCL Tutorial", "OpenCL Tutorial", "{A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 1 - Implicit Surfaces", "Source\OpenCL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{A042E930-8049-4173-BD0B-E605DFE5F4BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,10 @@ Global
 		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Debug|Win32.Build.0 = Debug|Win32
 		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Release|Win32.ActiveCfg = Release|Win32
 		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Release|Win32.Build.0 = Release|Win32
+		{A042E930-8049-4173-BD0B-E605DFE5F4BC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A042E930-8049-4173-BD0B-E605DFE5F4BC}.Debug|Win32.Build.0 = Debug|Win32
+		{A042E930-8049-4173-BD0B-E605DFE5F4BC}.Release|Win32.ActiveCfg = Release|Win32
+		{A042E930-8049-4173-BD0B-E605DFE5F4BC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +75,6 @@ Global
 		{E51C8C20-B005-4E20-8959-0E4BC6D607A6} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
 		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
 		{D2D4733A-6BB7-4B8A-8043-F873A123EE02} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
+		{A042E930-8049-4173-BD0B-E605DFE5F4BC} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 	EndGlobalSection
 EndGlobal
