@@ -268,7 +268,16 @@ bool IntersectSurface ( in SRay ray      /* ray origin and direction */,
 ///////////////////////////////////////////////////////////////////////////////
 // Support functions
 
-SRay GenerateRay ( SCamera camera )
+/*
+ * Generates primary ray for a current fragment.
+ *
+ * You can change camera state by setting function argument.
+ * It can be used for stereo rendering ( move camera left and
+ * right for each fragment and tracing two primary rays ) or
+ * anti-aliasing.
+ */
+
+SRay GenerateRay ( in SCamera camera /* current camera state */ )
 {
     vec2 coords = gl_TexCoord [0].xy * camera.Scale;
     
@@ -383,7 +392,7 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
 ///////////////////////////////////////////////////////////////////////////////
 // Core ray tracing function
 
-vec3 Raytrace ( SRay ray )
+vec3 Raytrace ( in SRay ray )
 {
     vec3 result = Zero;
     

@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Metaballs", "S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 5 - N-Bodies Simulation", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - Quaternion Fractals", "Source\GLSL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,10 @@ Global
 		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Debug|Win32.Build.0 = Debug|Win32
 		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Release|Win32.ActiveCfg = Release|Win32
 		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}.Release|Win32.Build.0 = Release|Win32
+		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Debug|Win32.Build.0 = Debug|Win32
+		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Release|Win32.ActiveCfg = Release|Win32
+		{D2D4733A-6BB7-4B8A-8043-F873A123EE02}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{7FF5798B-4B32-47F0-85F4-207B0C60921F} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
 		{E51C8C20-B005-4E20-8959-0E4BC6D607A6} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
 		{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
+		{D2D4733A-6BB7-4B8A-8043-F873A123EE02} = {5062BAE9-B114-4D0F-A9F0-EF701DFD0769}
 	EndGlobalSection
 EndGlobal
