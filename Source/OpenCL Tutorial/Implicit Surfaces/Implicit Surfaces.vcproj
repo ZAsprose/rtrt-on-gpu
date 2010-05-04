@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 2 - Metaballs"
-	ProjectGUID="{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
+	Name="Tutorial 1 - Implicit Surfaces"
+	ProjectGUID="{A042E930-8049-4173-BD0B-E605DFE5F4BC}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Include\Wrapper&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Include\AMD&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib kernel32.lib"
+				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Lib\AMD\Windows&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Include\Wrapper&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Include\AMD&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -140,9 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib kernel32.lib"
+				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenCL\Lib\AMD\Windows&quot;"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -187,18 +187,6 @@
 			>
 			<File
 				RelativePath=".\Source.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Shader Files"
-			>
-			<File
-				RelativePath=".\Fragment.glsl"
-				>
-			</File>
-			<File
-				RelativePath=".\Vertex.glsl"
 				>
 			</File>
 		</Filter>

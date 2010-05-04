@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 5 - N-Bodies Simulation"
+	Name="Tutorial 4 - N-Bodies Simulation"
 	ProjectGUID="{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
 	RootNamespace="NBodiesTest"
 	Keyword="Win32Proj"

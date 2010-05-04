@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 2 - Implicit Surfaces"
+	Name="Tutorial 1 - Implicit Surfaces"
 	ProjectGUID="{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"
