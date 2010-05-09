@@ -74,21 +74,43 @@ __constant float4 AxisZ = ( float4 ) ( 0.0F, 0.0F, 1.0F, 0.0F );
  * metaballs rendering.
  */
 
+#define X delta.x
+#define Y delta.y
+#define Z delta.z
+
 float CalcFunction ( __constant float4 * metaballs,
                      float4 point )
 {
-    float result = 0.0;
-    
-    for ( int i = 0; i < 8; ++i )
-    {
-        float4 delta = point - metaballs [i];
-        
-        result += metaballs [i].w /
-              ( delta.x * delta.x + delta.y * delta.y + delta.z * delta.z );
-    }
+    float4 delta = point - metaballs [0];    
+    float result = metaballs [0].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [1];    
+    result += metaballs [1].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [2];    
+    result += metaballs [2].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [3];    
+    result += metaballs [3].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [4];    
+    result += metaballs [4].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [5];    
+    result += metaballs [5].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [6];    
+    result += metaballs [6].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
+
+    delta = point - metaballs [7];    
+    result += metaballs [7].w / mad ( X, X, mad ( Y, Y, Z * Z ) );
     
     return THRESHOLD - result;
 }
+
+#undef X
+#undef Y
+#undef Z
 
 //-----------------------------------------------------------------------------
 
@@ -147,9 +169,9 @@ bool IntersectBox ( const PSRay ray   /* ray origin and direction */,
 
 //-----------------------------------------------------------------------------
 
-#define FULL_INTERVALS 200
+#define FULL_INTERVALS 80
 
-#define HALF_INTERVALS 100
+#define HALF_INTERVALS 40
 
 /*
  * Intersects ray with implicit surface.
