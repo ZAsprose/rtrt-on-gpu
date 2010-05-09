@@ -75,7 +75,7 @@ int main ( void )
 
     int choice = getchar ( );
 
-    int width = 640, height = 640, mode = GLFW_WINDOW;
+    int width = 512, height = 512, mode = GLFW_WINDOW;
 
     //-------------------------------------------------------------------------
 

@@ -19,33 +19,33 @@
    with this program. If not, see <http://www.gnu.org/licenses/>.
  */
  
- ///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // Specific data types
 
 struct SCamera
 {
-	vec3 Position;
-	
-	vec3 Side;
-	
-	vec3 Up;
-	
-	vec3 View;
-	
-	vec2 Scale;
+    vec3 Position;
+    
+    vec3 Side;
+    
+    vec3 Up;
+    
+    vec3 View;
+    
+    vec2 Scale;
 };
 
 //-----------------------------------------------------------------------------
 
 struct SRay
 {
-	vec3 Origin;
-	
-	vec3 Direction;
+    vec3 Origin;
+    
+    vec3 Direction;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Shader configuration
+// Bounding volume selection
 
 /* Use these macros for switching between bounding box and sphere */
 
@@ -73,15 +73,15 @@ uniform vec3 LightPosition;
 
 /* Minimum and maximum point of bounding box ( if we use box ) */
 
-const vec3 BoxMinimum = vec3 ( -5.0, -5.0, -5.0 );    
+const vec3 BoxMinimum = vec3 ( -6.28 );    
 
-const vec3 BoxMaximum = vec3 (  5.0,  5.0,  5.0 );
+const vec3 BoxMaximum = vec3 (  6.28 );
 
 //-----------------------------------------------------------------------------
 
 /* Radius of bounding sphere ( if we use sphere ) */
 
-const float SphereRadius = 5.5;				
+const float SphereRadius = 5.5;                
 
 //-----------------------------------------------------------------------------
 
@@ -110,13 +110,13 @@ const vec3 AxisZ = vec3 ( 0.0, 0.0, 1.0 );
 
 float CalcFunction ( in vec3 point )
 {
-	/* You can enter here any expression in the form F ( x, y, z ) */
+    /* You can enter here any expression in the form F ( x, y, z ) */
 
-	return 2.0 - cos ( X + T * Y ) - cos ( X - T * Y ) - cos ( Y + T * Z ) -
-		         cos ( Y - T * Z ) - cos ( Z - T * X ) - cos ( Z + T * X );
-	              
-	// Also try this: 
-	// return sin ( X ) + sin ( Y ) + sin ( Z );
+    return 2.0 - cos ( X + T * Y ) - cos ( X - T * Y ) - cos ( Y + T * Z ) -
+                 cos ( Y - T * Z ) - cos ( Z - T * X ) - cos ( Z + T * X );
+                  
+    // Also try this: 
+    //return cos ( X ) + cos ( Y ) + cos ( Z );
 }
 
 #undef X
@@ -179,23 +179,6 @@ bool IntersectBox ( in SRay ray       /* ray origin and direction */,
 
 //-----------------------------------------------------------------------------
 
-/* Intersects ray with box ( special case: ray origin is in a box ) */
-
-float IntersectBox ( in SRay ray       /* ray origin and direction */,
-                     in vec3 minimum   /* minimum point of a box */,
-                     in vec3 maximum   /* maximum point of a box */ )
-{
-    vec3 OMIN = ( minimum - ray.Origin ) / ray.Direction;
-   
-    vec3 OMAX = ( maximum - ray.Origin ) / ray.Direction;
-    
-    vec3 MAX = max ( OMAX, OMIN );
-    
-    return min ( MAX.x, min ( MAX.y, MAX.z ) );
-}
-
-//-----------------------------------------------------------------------------
-
 /*
  * Intersects ray with sphere in coordinates origin.
  *
@@ -212,26 +195,26 @@ bool IntersectSphere ( in SRay ray       /* ray origin and direction */,
                        out float start   /* time of 1st intersection */,
                        out float final   /* time of 2nd intersection */ )
 {
-	float A = dot ( ray.Direction, ray.Direction );
+    float A = dot ( ray.Direction, ray.Direction );
 
-	float B = dot ( ray.Direction, ray.Origin );
+    float B = dot ( ray.Direction, ray.Origin );
 
-	float C = dot ( ray.Origin, ray.Origin ) - radius * radius;
+    float C = dot ( ray.Origin, ray.Origin ) - radius * radius;
 
-	float D = B * B - A * C;
-	
-	if ( D > 0.0 )
-	{
-		D = sqrt ( D );
+    float D = B * B - A * C;
+    
+    if ( D > 0.0 )
+    {
+        D = sqrt ( D );
 
-		start = max ( 0.0, ( -B - D ) / A );
+        start = max ( 0.0, ( -B - D ) / A );
 
-		final = ( -B + D ) / A;
+        final = ( -B + D ) / A;
 
-		return final > 0.0;
-	}
+        return final > 0.0;
+    }
 
-	return false;
+    return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +304,7 @@ SRay GenerateRay ( in SCamera camera /* current camera state */ )
 
 //-----------------------------------------------------------------------------
 
-/* Phong material of metaballs */
+/* Phong material of surface */
 
 #define AMBIENT 0.1
 
@@ -363,15 +346,15 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
     
     SRay ray = SRay ( point + light * EPSILON, light );
     
-	float start, final, time;
+    float start, final, time;
 
 #if defined ( USE_BOX )
 
-	if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
+    if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
 
 #elif defined ( USE_SPHERE )
 
-	if ( IntersectSphere ( ray, SphereRadius, start, final ) )
+    if ( IntersectSphere ( ray, SphereRadius, start, final ) )
 
 #endif
     
@@ -392,35 +375,35 @@ vec3 Phong ( in vec3 point    /* intersection point with surface */,
 
 vec3 Raytrace ( in SRay ray )
 {
-	vec3 result = Zero;
+    vec3 result = Zero;
     
-	float start, final, time;
+    float start, final, time;
 
 #if defined ( USE_BOX )
 
-	if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
+    if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, start, final ) )
 
 #elif defined ( USE_SPHERE )
 
-	if ( IntersectSphere ( ray, SphereRadius, start, final ) )
+    if ( IntersectSphere ( ray, SphereRadius, start, final ) )
 
 #endif
 
-	{
-		if ( IntersectSurface ( ray, start, final, time ) )
-		{
-			vec3 point = ray.Origin + ray.Direction * time;
-					
-			vec3 normal = CalcNormal ( point );
+    {
+        if ( IntersectSurface ( ray, start, final, time ) )
+        {
+            vec3 point = ray.Origin + ray.Direction * time;
+                    
+            vec3 normal = CalcNormal ( point );
 
-			vec3 color = ( point - BoxMinimum ) /
-			    ( BoxMaximum - BoxMinimum );
+            vec3 color = ( point - BoxMinimum ) /
+                ( BoxMaximum - BoxMinimum );
 
-			result = Phong ( point, normal, color );
-		}
-	}
-	
-	return result;
+            result = Phong ( point, normal, color );
+        }
+    }
+    
+    return result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -429,6 +412,6 @@ vec3 Raytrace ( in SRay ray )
 void main ( void )
 {
     SRay ray = GenerateRay ( Camera );
-	
-	gl_FragColor = vec4 ( Raytrace ( ray ), 1.0 );
+    
+    gl_FragColor = vec4 ( Raytrace ( ray ), 1.0 );
 }
