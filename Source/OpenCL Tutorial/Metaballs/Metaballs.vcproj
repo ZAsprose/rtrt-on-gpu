@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 1 - Implicit Surfaces (OCL)"
-	ProjectGUID="{A042E930-8049-4173-BD0B-E605DFE5F4BC}"
+	Name="Tutorial 2 - Metaballs (OCL)"
+	ProjectGUID="{C09BE8B1-3AB1-41A5-9342-AFDD90C093E0}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"

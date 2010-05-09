@@ -1,6 +1,6 @@
 /*
    ---------------------------------------------------------------------------
-   |          I M P L I C I T   S U R F A C E S   D E M O   ( OCL )          |
+   |                  M E T A B A L L S   D E M O   ( OCL )                  |
    ---------------------------------------------------------------------------
                               
    Copyright (c) 2009 - 2010 Denis Bogolepov ( denisbogol @ gmail.com )
@@ -46,6 +46,23 @@ Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
                 Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
 
 /*
+ * Positions and radiuses of metaballs.
+ */
+
+const cl_int count = 8;
+
+cl_float positions [] = {
+    0.0F, 0.0F, 0.0F, 0.50F,
+    0.0F, 0.0F, 0.0F, 0.75F,
+    0.0F, 0.0F, 0.0F, 1.00F,
+    0.0F, 0.0F, 0.0F, 1.50F,
+    0.0F, 0.0F, 0.0F, 1.50F,
+    0.0F, 0.0F, 0.0F, 1.00F,
+    0.0F, 0.0F, 0.0F, 0.75F,
+    0.0F, 0.0F, 0.0F, 1.50F
+};
+
+/*
  * OpenCL objects.
  */
 
@@ -56,6 +73,8 @@ cl_program program;
 cl_kernel kernel;
 
 cl_mem image;
+
+cl_mem metaballs;
 
 cl_command_queue queue;
 
@@ -72,12 +91,6 @@ int height = 512;
  */
 
 Texture2D * texture = NULL;
-
-/*
- * Position of light source.
- */
-
-Vector3f lightPosition ( 10.0F, 10.0F, 10.0F );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
@@ -203,6 +216,30 @@ void SetupOpenCL ( void )
         0                   /* arg_index */,
         sizeof ( cl_mem )   /* arg_size */,
         &image              /* arg_value */ ) );
+
+    /*
+     * Create an OpenCL buffer object for array of
+     * ball positions.
+     */
+
+    metaballs = clCreateBuffer (
+        context                        /* context */,
+        CL_MEM_READ_ONLY               /* flags */,
+        count * sizeof ( cl_float4 )   /* size */,
+        NULL                           /* host_ptr */,
+        &error                         /* errcode_ret */ );
+
+    /*
+     * Set the argument value for ball positions.
+     */
+
+    CLT_CHECK_ERROR ( clSetKernelArg (
+        kernel              /* kernel */,
+        8                   /* arg_index */,
+        sizeof ( cl_mem )   /* arg_size */,
+        &metaballs          /* arg_value */ ) );
+
+    CLT_CHECK_ERROR ( error );
 }
 
 cl_int ReleaseOpenCL ( void )
@@ -306,15 +343,16 @@ void StartKernels ( void )
 
     //----------------------------------------------------------
 
-    float source [4] = { lightPosition.x ( ),
-                         lightPosition.y ( ),
-                         lightPosition.z ( ) };
-
-    CLT_CHECK_ERROR ( clSetKernelArg (
-        kernel              /* kernel */,
-        8                   /* arg_index */,
-        sizeof ( source )   /* arg_size */,
-        &source             /* arg_value */ ) );
+    CLT_CHECK_ERROR ( clEnqueueWriteBuffer (
+        queue                          /* command_queue */,
+        metaballs                      /* buffer */,
+        CL_TRUE                        /* blocking_write */,
+        0                              /* offset */,
+        count * sizeof ( cl_float4 )   /* cb */,
+        positions                      /* ptr */,
+        0                              /* num_events_in_wait_list */,
+        NULL                           /* event_wait_list */,
+        NULL                           /* event */ ) );
 
     //----------------------------------------------------------
 
@@ -406,7 +444,7 @@ int main ( void )
         width      /* width of the texture */,
         height     /* height of the texture */,
         4          /* channels for each texel */,
-        GL_TRUE   /* no texture data on CPU */ );
+        GL_TRUE    /* no texture data on CPU */ );
 
     texture->Setup ( );
 
@@ -492,11 +530,39 @@ int main ( void )
 
         //---------------------------------------------------------------------
 
-        /* Move light source */
+        /* Move metaballs */
 
-        lightPosition ( 0 ) = -10.0F;
-        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
-        lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
+        positions [0]  = sinf ( time ); 
+        positions [1]  = cosf ( time );
+        positions [2]  = 0.0F;
+
+        positions [4]  = 2.0F * sinf ( time ); 
+        positions [5]  = 0.0F;
+        positions [6]  = 2.0F * cosf ( time );
+
+        positions [8]  = 0.0F; 
+        positions [9]  = 2.0F * sinf ( time );
+        positions [10]  = 2.0F * cosf ( time );
+
+        positions [12] = 3.0F * sinf ( time ); 
+        positions [13] = 3.0F * sinf ( time );
+        positions [14] = 3.0F * cosf ( time );
+
+        positions [16] = 3.0F * cosf ( time );
+        positions [17] = 3.0F * sinf ( time );
+        positions [18] = 3.0F * cosf ( time );
+
+        positions [20] = 2.0F * sinf ( time ) * cosf ( time );
+        positions [21] = 2.0F * sinf ( time ) * cosf ( time );
+        positions [22] = 2.0F * cosf ( time );
+
+        positions [24] = 3.0F * sinf ( time ) * cosf ( time );
+        positions [25] = 4.0F * sinf ( time ) * cosf ( time );
+        positions [26] = 3.0F * cosf ( time );
+
+        positions [28] = 4.0F * cosf ( time ) * cosf ( time );
+        positions [29] = 3.0F * sinf ( time );
+        positions [30] = 4.0F * cosf ( time ) * cosf ( time );
 
         //---------------------------------------------------------------------
 
