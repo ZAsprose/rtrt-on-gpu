@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 1 - Implicit Surfaces (OCL)"
-	ProjectGUID="{A042E930-8049-4173-BD0B-E605DFE5F4BC}"
-	RootNamespace="ShaderTest"
+	Name="OpenCL Tools"
+	ProjectGUID="{9D2F121F-717A-4A96-AB28-7CD503F01413}"
+	RootNamespace="OpenCLTools"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -20,7 +20,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,15 +41,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\OpenCL Tutorial\OpenCL Tools&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -61,21 +60,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
-				LinkIncremental="0"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
-				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -87,9 +75,6 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -97,7 +82,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
+			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -120,14 +105,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\OpenCL Tutorial\OpenCL Tools&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -139,22 +123,10 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
-				IgnoreDefaultLibraryNames=""
-				GenerateDebugInformation="true"
-				SubSystem="1"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -166,22 +138,11 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 	</Configurations>
 	<References>
-		<ProjectReference
-			ReferencedProjectIdentifier="{2C0CBF48-F1EC-47B4-B49C-D8E8131BB867}"
-			RelativePathToProject=".\Source\Base Libraries\Base Graphics Library\Base Graphics Library.vcproj"
-		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{9D2F121F-717A-4A96-AB28-7CD503F01413}"
-			RelativePathToProject=".\Source\OpenCL Tutorial\OpenCL Tools\OpenCL Tools.vcproj"
-		/>
 	</References>
 	<Files>
 		<Filter
@@ -190,15 +151,17 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Source.cpp"
+				RelativePath=".\OpenCL.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="OpenCL Files"
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Render.cl"
+				RelativePath=".\OpenCL.h"
 				>
 			</File>
 		</Filter>
