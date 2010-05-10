@@ -31,6 +31,8 @@
 
 using namespace graphics;
 
+using namespace std;
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // Global variables
 
@@ -112,6 +114,48 @@ void KeyDownHandler ( int key, int state )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // OpenCL subroutines
+
+char * LoadFile(const char * path, long *outLength = NULL)
+{
+	ifstream file(path, ios_base::binary);
+
+	//-----------------------------------------------------------------
+
+	if(!file)
+	{
+		cout << "ERROR: Could not open file" << endl; exit(-1);
+	}
+
+	//-----------------------------------------------------------------
+
+	file.seekg(0, ios :: end);
+
+	unsigned long length = file.tellg();
+
+	if(outLength)
+	{
+		*outLength = static_cast<long>(length);
+	}
+
+	file.seekg(0, ios :: beg);
+
+	//-----------------------------------------------------------------
+
+	if(0 == length)
+	{
+		cout << "WARNING: File is empty" << endl;
+	}
+
+	//-----------------------------------------------------------------
+
+	char * source = new char [length + 1];
+
+	file.read(source, length);
+
+	source[ length ] = 0;
+
+	return source;
+}
 
 void SetupOpenCL ( void )
 {
@@ -360,8 +404,8 @@ void StartKernels ( void )
         kernel,
         width,
         height,
-        16,
-        16 ) );
+        8,
+        8 ) );
     
     cltCheckError ( clFinish ( queue ) );
 }
@@ -381,7 +425,7 @@ int main ( void )
 
     std :: cout << "Do you want to run program in fullscreen mode? [Y/N]\n";
 
-    int choice = getchar ( );
+    int choice = 0;//getchar ( );
 
     int mode = GLFW_WINDOW;
 

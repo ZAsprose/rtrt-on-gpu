@@ -42,31 +42,31 @@ SRay, *PSRay;
 ///////////////////////////////////////////////////////////////////////////////
 // Program constants
 
-/* Minimum and maximum point of bounding box ( if we use box ) */
+/* Radius of bounding sphere ( if we use sphere ) */
 
-__constant float4 BoxMinimum = ( float4 ) ( -6.28F );    
-
-__constant float4 BoxMaximum = ( float4 ) (  6.28F );
+#define SPHERE_RADIUS 5.5F
 
 //-----------------------------------------------------------------------------
 
-/* Radius of bounding sphere ( if we use sphere ) */
+/* Minimum and maximum point of bounding box ( if we use box ) */
 
-__constant float SphereRadius = 5.5F;                
+#define BOX_MINIMUM ( float4 ) ( -6.28F )  
+
+#define BOX_MAXIMUM ( float4 ) (  6.28F )
 
 //-----------------------------------------------------------------------------
 
 /* Some useful vector constants */
 
-__constant float4 Zero  = ( float4 ) ( 0.0F, 0.0F, 0.0F, 0.0F );
+#define ZERO ( float4 ) ( 0.0F, 0.0F, 0.0F, 0.0F )
 
-__constant float4 Unit  = ( float4 ) ( 1.0F, 1.0F, 1.0F, 0.0F );
+#define UNIT ( float4 ) ( 1.0F, 1.0F, 1.0F, 0.0F )
 
-__constant float4 AxisX = ( float4 ) ( 1.0F, 0.0F, 0.0F, 0.0F );
+#define AXIS_X ( float4 ) ( 1.0F, 0.0F, 0.0F, 0.0F )
 
-__constant float4 AxisY = ( float4 ) ( 0.0F, 1.0F, 0.0F, 0.0F );
+#define AXIS_Y ( float4 ) ( 0.0F, 1.0F, 0.0F, 0.0F )
 
-__constant float4 AxisZ = ( float4 ) ( 0.0F, 0.0F, 1.0F, 0.0F );
+#define AXIS_Z ( float4 ) ( 0.0F, 0.0F, 1.0F, 0.0F )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compute implicit function value and normal in specific point
@@ -103,14 +103,14 @@ float4 CalcNormal ( float4 point )
 {
     /* We calculate normal by numerical estimation of a gradient */
     
-    float A = CalcFunction ( point + AxisX * STEP ) - 
-              CalcFunction ( point - AxisX * STEP );
+    float A = CalcFunction ( point + AXIS_X * STEP ) - 
+              CalcFunction ( point - AXIS_X * STEP );
 
-    float B = CalcFunction ( point + AxisY * STEP ) -
-              CalcFunction ( point - AxisY * STEP );
+    float B = CalcFunction ( point + AXIS_Y * STEP ) -
+              CalcFunction ( point - AXIS_Y * STEP );
 
-    float C = CalcFunction ( point + AxisZ * STEP ) -
-              CalcFunction ( point - AxisZ * STEP );
+    float C = CalcFunction ( point + AXIS_Z * STEP ) -
+              CalcFunction ( point - AXIS_Z * STEP );
 
     return fast_normalize ( ( float4 ) ( A, B, C, 0.0F ) );
 }
@@ -382,11 +382,11 @@ float4 Phong ( float4 source,   /* position of light the source */
 
 #if defined ( USE_BOX )
 
-    if ( IntersectBox ( &ray, BoxMinimum, BoxMaximum, &start, &final ) )
+    if ( IntersectBox ( &ray, BOX_MINIMUM, BOX_MAXIMUM, &start, &final ) )
 
 #elif defined ( USE_SPHERE )
 
-    if ( IntersectSphere ( &ray, SphereRadius, &start, &final ) )
+    if ( IntersectSphere ( &ray, SPHERE_RADIUS, &start, &final ) )
 
 #endif
     
@@ -397,9 +397,9 @@ float4 Phong ( float4 source,   /* position of light the source */
     
 #endif 
     
-    return AMBIENT * Unit +
+    return AMBIENT * UNIT +
            DIFFUSE * diffuse * color +
-           SPECULAR * specular * Unit;
+           SPECULAR * specular * UNIT;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -409,17 +409,17 @@ float4 Raytrace ( const PSRay ray,
                   const float4 position,
                   const float4 source )
 {
-    float4 result = Zero;
+    float4 result = ZERO;
     
     float start, final, time;
 
 #if defined ( USE_BOX )
 
-    if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, &start, &final ) )
+    if ( IntersectBox ( ray, BOX_MINIMUM, BOX_MAXIMUM, &start, &final ) )
 
 #elif defined ( USE_SPHERE )
 
-    if ( IntersectSphere ( ray, SphereRadius, &start, &final ) )
+    if ( IntersectSphere ( ray, SPHERE_RADIUS, &start, &final ) )
 
 #endif
 
@@ -430,8 +430,8 @@ float4 Raytrace ( const PSRay ray,
                     
             float4 normal = CalcNormal ( point );
 
-            float4 color = ( point - BoxMinimum ) /
-                ( BoxMaximum - BoxMinimum );
+            float4 color = ( point - BOX_MINIMUM ) /
+                ( BOX_MAXIMUM - BOX_MINIMUM );
 
             result = Phong ( source, position, point, normal, color );
         }

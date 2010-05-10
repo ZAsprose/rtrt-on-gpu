@@ -35,23 +35,23 @@ SRay, *PSRay;
 
 /* Minimum and maximum point of bounding box ( if we use box ) */
 
-__constant float4 BoxMinimum = ( float4 ) ( -5.0F );    
+#define BOX_MINIMUM ( float4 ) ( -5.0F )  
 
-__constant float4 BoxMaximum = ( float4 ) (  5.0F );        
+#define BOX_MAXIMUM ( float4 ) (  5.0F )
 
 //-----------------------------------------------------------------------------
 
 /* Some useful vector constants */
 
-__constant float4 Zero  = ( float4 ) ( 0.0F, 0.0F, 0.0F, 0.0F );
+#define ZERO ( float4 ) ( 0.0F, 0.0F, 0.0F, 0.0F )
 
-__constant float4 Unit  = ( float4 ) ( 1.0F, 1.0F, 1.0F, 0.0F );
+#define UNIT ( float4 ) ( 1.0F, 1.0F, 1.0F, 0.0F )
 
-__constant float4 AxisX = ( float4 ) ( 1.0F, 0.0F, 0.0F, 0.0F );
+#define AXIS_X ( float4 ) ( 1.0F, 0.0F, 0.0F, 0.0F )
 
-__constant float4 AxisY = ( float4 ) ( 0.0F, 1.0F, 0.0F, 0.0F );
+#define AXIS_Y ( float4 ) ( 0.0F, 1.0F, 0.0F, 0.0F )
 
-__constant float4 AxisZ = ( float4 ) ( 0.0F, 0.0F, 1.0F, 0.0F );
+#define AXIS_Z ( float4 ) ( 0.0F, 0.0F, 1.0F, 0.0F )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Compute implicit function value and normal in specific point
@@ -121,14 +121,14 @@ float4 CalcNormal ( __constant float4 * metaballs,
 {
     /* We calculate normal by numerical estimation of a gradient */
     
-    float A = CalcFunction ( metaballs, point + AxisX * STEP ) - 
-              CalcFunction ( metaballs, point - AxisX * STEP );
+    float A = CalcFunction ( metaballs, point + AXIS_X * STEP ) - 
+              CalcFunction ( metaballs, point - AXIS_X * STEP );
 
-    float B = CalcFunction ( metaballs, point + AxisY * STEP ) -
-              CalcFunction ( metaballs, point - AxisY * STEP );
+    float B = CalcFunction ( metaballs, point + AXIS_Y * STEP ) -
+              CalcFunction ( metaballs, point - AXIS_Y * STEP );
 
-    float C = CalcFunction ( metaballs, point + AxisZ * STEP ) -
-              CalcFunction ( metaballs, point - AxisZ * STEP );
+    float C = CalcFunction ( metaballs, point + AXIS_Z * STEP ) -
+              CalcFunction ( metaballs, point - AXIS_Z * STEP );
 
     return fast_normalize ( ( float4 ) ( A, B, C, 0.0F ) );
 }
@@ -346,9 +346,9 @@ float4 Phong ( float4 source,   /* position of light the source */
     
     //--------------------------------------------------------------------
     
-    return AMBIENT * Unit +
+    return AMBIENT * UNIT +
            DIFFUSE * diffuse * color +
-           SPECULAR * specular * Unit;
+           SPECULAR * specular * UNIT;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -359,11 +359,11 @@ float4 Raytrace (
     const PSRay ray                 /* ray origin and direction */,
     const float4 position           /* camera position */ )
 {
-    float4 result = Zero;
+    float4 result = ZERO;
     
     float start, final, time;
     
-    if ( IntersectBox ( ray, BoxMinimum, BoxMaximum, &start, &final ) )
+    if ( IntersectBox ( ray, BOX_MINIMUM, BOX_MAXIMUM, &start, &final ) )
     {
         if ( IntersectSurface ( metaballs, ray, start, final, &time ) )
         {
@@ -371,8 +371,8 @@ float4 Raytrace (
                     
             float4 normal = CalcNormal ( metaballs, point );
 
-            float4 color = ( point - BoxMinimum ) /
-                ( BoxMaximum - BoxMinimum );
+            float4 color = ( point - BOX_MINIMUM ) /
+                ( BOX_MAXIMUM - BOX_MINIMUM );
 
             result = Phong ( position,
                              position,
@@ -381,7 +381,7 @@ float4 Raytrace (
                              color );
         }
     }
-    
+
     return result;
 }
 

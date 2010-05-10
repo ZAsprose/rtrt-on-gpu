@@ -322,8 +322,8 @@ void StartKernels ( void )
         kernel,
         width,
         height,
-        16,
-        16 ) );
+        8,
+        8 ) );
     
     cltCheckError ( clFinish ( queue ) );
 }
