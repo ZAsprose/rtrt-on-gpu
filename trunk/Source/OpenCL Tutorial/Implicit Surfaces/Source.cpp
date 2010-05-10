@@ -405,7 +405,7 @@ int main ( void )
         width      /* width of the texture */,
         height     /* height of the texture */,
         4          /* channels for each texel */,
-        GL_TRUE   /* no texture data on CPU */ );
+        GL_TRUE    /* no texture data on CPU */ );
 
     texture->Setup ( );
 
