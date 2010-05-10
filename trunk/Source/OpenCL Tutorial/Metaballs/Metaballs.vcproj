@@ -17,7 +17,7 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="Debug (AMD)|Win32"
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\OpenCL Tutorial\OpenCL Tools&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Compute Library&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -49,7 +49,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
+				AdditionalDependencies="glee.lib soil.lib glfw.lib glu32.lib opengl32.lib user32.lib opencl.lib"
 				LinkIncremental="0"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;;&quot;$(ATISTREAMSDKROOT)\lib\x86&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -94,7 +94,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
+			Name="Release (AMD)|Win32"
 			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
@@ -120,14 +120,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\OpenCL Tutorial\OpenCL Tools&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Compute Library&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996"
+				DisableSpecificWarnings="4996;4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -140,9 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glee.lib glfw.lib opengl32.lib glu32.lib soil.lib opencl.lib kernel32.lib"
+				AdditionalDependencies="glee.lib soil.lib glfw.lib glu32.lib opengl32.lib user32.lib opencl.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Dependencies\SOIL\Lib\Windows&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Lib\Windows&quot;;&quot;$(ATISTREAMSDKROOT)\lib\x86&quot;"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -180,7 +180,7 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{9D2F121F-717A-4A96-AB28-7CD503F01413}"
-			RelativePathToProject=".\Source\OpenCL Tutorial\OpenCL Tools\OpenCL Tools.vcproj"
+			RelativePathToProject=".\Source\Base Libraries\Base Compute Library\Base Compute Library.vcproj"
 		/>
 	</References>
 	<Files>
