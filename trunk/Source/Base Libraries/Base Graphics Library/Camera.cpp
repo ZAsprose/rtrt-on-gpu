@@ -44,15 +44,20 @@ namespace graphics
     {
         Matrix3f rotation;
         
-        rotation = AngleAxisf ( fOrientation.z ( ), Vector3f :: UnitZ ( ) ) *
-                   AngleAxisf ( fOrientation.y ( ), Vector3f :: UnitY ( ) ) *
-                   AngleAxisf ( fOrientation.x ( ), Vector3f :: UnitX ( ) );
+        rotation =
+            AngleAxisf ( fOrientation.z ( ), Vector3f :: UnitZ ( ) ) *
+            AngleAxisf ( fOrientation.y ( ), Vector3f :: UnitY ( ) ) *
+            AngleAxisf ( fOrientation.x ( ), Vector3f :: UnitX ( ) );
+
+        //----------------------------------------------------------------
 
         fView = rotation * Vector3f :: UnitZ ( );
 
         fUp = rotation * Vector3f :: UnitY ( );
 
         fSide = rotation * Vector3f :: UnitX ( );
+
+        //----------------------------------------------------------------
 
         fView.normalize ( );
 
@@ -77,7 +82,7 @@ namespace graphics
             fNearPlane,
             fFarPlane );
         
-        //---------------------------------------
+        //-------------------------------------------------
 
         glMatrixMode ( GL_MODELVIEW );
 
@@ -128,6 +133,15 @@ namespace graphics
     Vector3f Camera :: Side ( void ) const
     {
         return fSide;
+    }
+
+    /************************************************************************/
+    
+    Vector2f Camera :: Scale ( void ) const
+    {
+        float tangent = tanf ( fFieldOfView / 2.0F );
+        
+        return Vector2f ( fAspect * tangent, tangent );
     }
 
     /************************************************************************/
@@ -219,7 +233,7 @@ namespace graphics
 
         fAspect = width / ( GLfloat ) height;
 
-        //---------------------------------------
+        //-------------------------------------------------
 
         glViewport (
             fLeft,
@@ -253,7 +267,6 @@ namespace graphics
 
         program->SetUniformVector ( "Camera.View", fView );
 
-        program->SetUniformVector ( "Camera.Scale", Vector2f (
-            fAspect * tanf ( fFieldOfView / 2.0F ), tanf ( fFieldOfView / 2.0F ) ) );
+        program->SetUniformVector ( "Camera.Scale", Scale ( ) );
     }
 }
