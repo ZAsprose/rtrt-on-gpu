@@ -55,6 +55,8 @@ namespace graphics
             Vector3f Up ( void ) const;
             
             Vector3f Side ( void ) const;
+
+            Vector2f Scale ( void ) const;
             
             //------------------------------------------------------------------------
             
@@ -108,7 +110,7 @@ namespace graphics
              *   Side - side vector ( left or right ) of the camera,
              *   Up - up vector of the camera,
              *   View - view vector of the camera,
-             *   Size - size of a screen plane on unit distance from camera.
+             *   Scale - size of a screen plane on unit distance from camera.
              *
              * In the shader source the camera object should be described by the
              * following structure ( structure name is not important ):
@@ -119,7 +121,7 @@ namespace graphics
              *     vec3 Side;
              *     vec3 Up;
              *     vec3 View;
-             *     vec2 Size;
+             *     vec2 Scale;
              * };
              *
              * In the shader interface there should be a following declaration:
