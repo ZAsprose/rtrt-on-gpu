@@ -111,7 +111,7 @@ void SetupOpenCL ( void )
 
     VECTOR < cl_platform_id > platforms;
 
-    CLT_CHECK_ERROR ( cltGetPlatforms ( &platforms ) );
+    cltCheckError ( cltGetPlatforms ( &platforms ) );
 
     /*
      * Create an OpenCL context from a device type based on
@@ -122,7 +122,7 @@ void SetupOpenCL ( void )
                                            CL_DEVICE_TYPE_GPU,
                                            error );
 
-    CLT_CHECK_ERROR ( error );
+    cltCheckError ( error );
 
     /*
      * Obtain the list of devices available on a platform ( CPUs / GPUs ).
@@ -131,7 +131,7 @@ void SetupOpenCL ( void )
     
     VECTOR < cl_device_id > devices;
 
-    CLT_CHECK_ERROR ( cltGetDevices ( context, &devices ) );
+    cltCheckError ( cltGetDevices ( context, &devices ) );
 
     /*
      * Load and build a program object for a context.
@@ -142,9 +142,9 @@ void SetupOpenCL ( void )
         "Render.cl",
         error );
 
-    CLT_CHECK_ERROR ( error );
+    cltCheckError ( error );
     
-    CLT_CHECK_ERROR ( cltBuildProgram (
+    cltCheckError ( cltBuildProgram (
         program,
         devices ) );
 
@@ -157,7 +157,7 @@ void SetupOpenCL ( void )
         "Main"    /* kernel_name */,
         &error    /* errcode_ret */ );
 
-    CLT_CHECK_ERROR ( error );
+    cltCheckError ( error );
 
     /*
      * Create a command-queue on a specific device.
@@ -169,7 +169,7 @@ void SetupOpenCL ( void )
         0             /* properties */,
         &error        /* errcode_ret */ );
 
-    CLT_CHECK_ERROR ( error );
+    cltCheckError ( error );
 
     /*
      * Create an OpenCL 2D image object from an OpenGL 2D texture
@@ -184,9 +184,9 @@ void SetupOpenCL ( void )
         texture->Handle ( )        /* texture */,
         &error                     /* errcode_ret */ );
 
-    CLT_CHECK_ERROR ( error );
+    cltCheckError ( error );
 
-    CLT_CHECK_ERROR ( clEnqueueAcquireGLObjects (
+    cltCheckError ( clEnqueueAcquireGLObjects (
         queue    /* command_queue */,
         1        /* num_objects */,
         &image   /* mem_objects */,
@@ -198,7 +198,7 @@ void SetupOpenCL ( void )
      * Set the argument value for output image.
      */
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel              /* kernel */,
         0                   /* arg_index */,
         sizeof ( cl_mem )   /* arg_size */,
@@ -207,11 +207,11 @@ void SetupOpenCL ( void )
 
 cl_int ReleaseOpenCL ( void )
 {
-    CLT_CHECK_ERROR ( clReleaseKernel ( kernel ) );
+    cltCheckError ( clReleaseKernel ( kernel ) );
 
-    CLT_CHECK_ERROR ( clReleaseProgram ( program ) );
+    cltCheckError ( clReleaseProgram ( program ) );
 
-    CLT_CHECK_ERROR ( clEnqueueReleaseGLObjects ( 
+    cltCheckError ( clEnqueueReleaseGLObjects ( 
         queue    /* command_queue */,
         1        /* num_objects */,
         &image   /* mem_objects */,
@@ -219,11 +219,11 @@ cl_int ReleaseOpenCL ( void )
         NULL     /* event_wait_list */,
         NULL     /* event */ ) );
 
-    CLT_CHECK_ERROR ( clReleaseMemObject ( image ) );
+    cltCheckError ( clReleaseMemObject ( image ) );
 
-    CLT_CHECK_ERROR ( clReleaseCommandQueue ( queue ) );
+    cltCheckError ( clReleaseCommandQueue ( queue ) );
 
-    CLT_CHECK_ERROR ( clReleaseContext ( context ) );
+    cltCheckError ( clReleaseContext ( context ) );
 
     return CL_SUCCESS;
 }
@@ -234,7 +234,7 @@ void StartKernels ( void )
                        camera.View ( ).y ( ),
                        camera.View ( ).z ( ) };
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel            /* kernel */,
         1                 /* arg_index */,
         sizeof ( view )   /* arg_size */,
@@ -246,7 +246,7 @@ void StartKernels ( void )
                      camera.Up ( ).y ( ),
                      camera.Up ( ).z ( ) };
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel          /* kernel */,
         2               /* arg_index */,
         sizeof ( up )   /* arg_size */,
@@ -258,7 +258,7 @@ void StartKernels ( void )
                        camera.Side ( ).y ( ),
                        camera.Side ( ).z ( ) };
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel            /* kernel */,
         3                 /* arg_index */,
         sizeof ( side )   /* arg_size */,
@@ -270,19 +270,18 @@ void StartKernels ( void )
                            camera.Position ( ).y ( ),
                            camera.Position ( ).z ( ) };
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel                /* kernel */,
         4                     /* arg_index */,
         sizeof ( position )   /* arg_size */,
         &position             /* arg_value */ ) );
 
     //----------------------------------------------------------
+    
+    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
+                        2.0F * camera.Scale ( ).x ( ) };
 
-    float scale [2] = {
-        2.0F * camera.Aspect ( ) * tanf ( camera.FieldOfView ( ) / 2.0F ),
-        2.0F * tanf ( camera.FieldOfView ( ) / 2.0F ) };
-
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel             /* kernel */,
         5                  /* arg_index */,
         sizeof ( scale )   /* arg_size */,
@@ -290,7 +289,7 @@ void StartKernels ( void )
 
     //----------------------------------------------------------
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel           /* kernel */,
         6                /* arg_index */,
         sizeof ( int )   /* arg_size */,
@@ -298,7 +297,7 @@ void StartKernels ( void )
 
     //----------------------------------------------------------
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel           /* kernel */,
         7                /* arg_index */,
         sizeof ( int )   /* arg_size */,
@@ -310,7 +309,7 @@ void StartKernels ( void )
                          lightPosition.y ( ),
                          lightPosition.z ( ) };
 
-    CLT_CHECK_ERROR ( clSetKernelArg (
+    cltCheckError ( clSetKernelArg (
         kernel              /* kernel */,
         8                   /* arg_index */,
         sizeof ( source )   /* arg_size */,
@@ -318,7 +317,7 @@ void StartKernels ( void )
 
     //----------------------------------------------------------
 
-    CLT_CHECK_ERROR ( cltRunKernel2D (
+    cltCheckError ( cltRunKernel2D (
         queue,
         kernel,
         width,
@@ -326,7 +325,7 @@ void StartKernels ( void )
         16,
         16 ) );
     
-    CLT_CHECK_ERROR ( clFinish ( queue ) );
+    cltCheckError ( clFinish ( queue ) );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -495,13 +494,13 @@ int main ( void )
         /* Move light source */
 
         lightPosition ( 0 ) = -10.0F;
-        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
+        lightPosition ( 1 ) = 10.0F + 4.0F * cosf ( time * 1.5F );
         lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
 
         //---------------------------------------------------------------------
 
         /* Compute ray traced image using OpenCL kernel */
-        
+
         StartKernels ( );
 
         /* Draw dummy quad with custom fragment shader */      
