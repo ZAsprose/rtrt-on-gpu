@@ -31,8 +31,6 @@
 
 using namespace graphics;
 
-using namespace std;
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // Global variables
 
@@ -97,17 +95,17 @@ Texture2D * texture = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
 
-void MouseMoveHandler ( int x, int y )
+void MouseMoveHandler ( GLint x, GLint y )
 {
     mouse.MouseMoveHandler ( x, y );
 }
         
-void MouseDownHandler ( int button, int state )
+void MouseDownHandler ( GLint button, GLint state )
 {
     mouse.MouseDownHandler ( button, state );
 }
 
-void KeyDownHandler ( int key, int state )
+void KeyDownHandler ( GLint key, GLint state )
 {
     keyboard.KeyDownHandler ( key, state );
 }
@@ -127,12 +125,15 @@ void SetupOpenCL ( void )
     /*
      * Create an OpenCL context from a device type based on
      * current OpenGL context.
+     *
+     * NOTE: You can create OpenCL context from OpenGL only
+     * for GPU device.
      */
 
     context = cltCreateContextFromOpenGL ( platforms [0] );
 
     /*
-     * Obtain the list of devices available on a platform ( CPUs / GPUs ).
+     * Obtain the list of devices available on a platform.
      * In this tutorial we use only first device available.
      */
     
@@ -166,34 +167,17 @@ void SetupKernels ( void )
      * object for output rendered scene.
      */
 
-    image = cltCreateFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
-
-    /*
-     * Set the argument value for output image.
-     */
-
+    image = cltCreateImageFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
+    
     cltSetArgument < cl_mem > ( kernel, 0, &image );
 
     /*
-     * Create an OpenCL buffer object for array of
-     * ball positions.
+     * Create an OpenCL buffer object for array of ball positions.
      */
 
-    metaballs = clCreateBuffer (
-        context                        /* context */,
-        CL_MEM_READ_ONLY               /* flags */,
-        count * sizeof ( cl_float4 )   /* size */,
-        NULL                           /* host_ptr */,
-        NULL                           /* errcode_ret */ );
-
-    /*
-     * Set the argument value for ball positions.
-     */
+    metaballs = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_ONLY, count );
     
-    cltSetArgument < cl_mem > (
-        kernel              /* kernel */,
-        8                   /* arg_index */,
-        &metaballs          /* arg_value */ );
+    cltSetArgument < cl_mem > ( kernel, 8, &metaballs );
 }
 
 void StartKernels ( void )
@@ -201,88 +185,50 @@ void StartKernels ( void )
     float view [4] = { camera.View ( ).x ( ),
                        camera.View ( ).y ( ),
                        camera.View ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel            /* kernel */,
-        1                 /* arg_index */,
-        sizeof ( view )   /* arg_size */,
-        &view             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
+    
     float up [4] = { camera.Up ( ).x ( ),
                      camera.Up ( ).y ( ),
                      camera.Up ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel          /* kernel */,
-        2               /* arg_index */,
-        sizeof ( up )   /* arg_size */,
-        &up             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
+    
     float side [4] = { camera.Side ( ).x ( ),
                        camera.Side ( ).y ( ),
                        camera.Side ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel            /* kernel */,
-        3                 /* arg_index */,
-        sizeof ( side )   /* arg_size */,
-        &side             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
+    
     float position [4] = { camera.Position ( ).x ( ),
                            camera.Position ( ).y ( ),
                            camera.Position ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel                /* kernel */,
-        4                     /* arg_index */,
-        sizeof ( position )   /* arg_size */,
-        &position             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
+    
     float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
                         2.0F * camera.Scale ( ).x ( ) };
 
-    cltCheckError ( clSetKernelArg (
-        kernel             /* kernel */,
-        5                  /* arg_index */,
-        sizeof ( scale )   /* arg_size */,
-        &scale             /* arg_value */ ) );
-
     //----------------------------------------------------------
 
-    cltCheckError ( clSetKernelArg (
-        kernel           /* kernel */,
-        6                /* arg_index */,
-        sizeof ( int )   /* arg_size */,
-        &width           /* arg_value */ ) );
+    cltSetArgument < float [4] > ( kernel, 1, &view );
 
-    //----------------------------------------------------------
+    cltSetArgument < float [4] > ( kernel, 2, &up );
 
-    cltCheckError ( clSetKernelArg (
-        kernel           /* kernel */,
-        7                /* arg_index */,
-        sizeof ( int )   /* arg_size */,
-        &height          /* arg_value */ ) );
+    cltSetArgument < float [4] > ( kernel, 3, &side );
+
+    cltSetArgument < float [4] > ( kernel, 4, &position );
+
+    cltSetArgument < float [2] > ( kernel, 5, &scale );
+    
+    cltSetArgument < int > ( kernel, 6, &width );
+    
+    cltSetArgument < int > ( kernel, 7, &height );
 
     //----------------------------------------------------------
 
     cltCheckError ( clEnqueueWriteBuffer (
-        queue                          /* command_queue */,
-        metaballs                      /* buffer */,
-        CL_TRUE                        /* blocking_write */,
-        0                              /* offset */,
-        count * sizeof ( cl_float4 )   /* cb */,
-        positions                      /* ptr */,
-        0                              /* num_events_in_wait_list */,
-        NULL                           /* event_wait_list */,
-        NULL                           /* event */ ) );
+        queue,
+        metaballs,
+        CL_TRUE,
+        0,
+        count * sizeof ( cl_float4 ),
+        positions,
+        0,
+        NULL,
+        NULL ) );
 
     //----------------------------------------------------------
     
@@ -291,11 +237,13 @@ void StartKernels ( void )
         kernel,
         width, height,
         8, 8 );
+
+    //----------------------------------------------------------
     
-    clFinish ( queue );
+    cltCheckError ( clFinish ( queue ) );
 }
 
-cl_int ReleaseOpenCL ( void )
+void ReleaseOpenCL ( void )
 {
     cltCheckError ( clReleaseKernel ( kernel ) );
 
@@ -308,8 +256,6 @@ cl_int ReleaseOpenCL ( void )
     cltCheckError ( clReleaseCommandQueue ( queue ) );
 
     cltCheckError ( clReleaseContext ( context ) );
-
-    return CL_SUCCESS;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -327,7 +273,7 @@ int main ( void )
 
     std :: cout << "Do you want to run program in fullscreen mode? [Y/N]\n";
 
-    int choice = 0;//getchar ( );
+    int choice = getchar ( );
 
     int mode = GLFW_WINDOW;
 
@@ -383,8 +329,6 @@ int main ( void )
     /* Setup OpenCL compute environment */
 
     SetupOpenCL ( );
-
-    //-------------------------------------------------------------------------
 
     /*
      * NOTE: From ATI Stream SDK v2.1 Developer Release Notes
@@ -466,7 +410,7 @@ int main ( void )
         {
             fps = frames / delta;
 
-            sprintf ( caption, "Implicit Surfaces Demo - %.1f FPS", fps );
+            sprintf ( caption, "Metaballs Demo ( OCL ) - %.1f FPS", fps );
 
             glfwSetWindowTitle ( caption );
 
@@ -564,5 +508,7 @@ int main ( void )
 
     ReleaseOpenCL ( );
 
-    glfwTerminate ( ); exit ( 0 );
+    glfwTerminate ( );
+    
+    exit ( EXIT_SUCCESS );
 }

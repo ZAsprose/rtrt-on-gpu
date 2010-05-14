@@ -599,9 +599,9 @@ void cltBuildProgram ( cl_program program,
 /*
  * Create an OpenCL 2D image object from an OpenGL 2D texture object.
  */
-cl_mem cltCreateFromTexture ( cl_context context,
-                              cl_mem_flags flags,
-                              graphics :: Texture2D * texture )
+cl_mem cltCreateImageFromTexture ( cl_context context,
+                                   cl_mem_flags flags,
+                                   graphics :: Texture2D * texture )
 {
     cl_int error = CL_SUCCESS;
 
@@ -629,7 +629,7 @@ cl_mem cltCreateFromTexture ( cl_context context,
                 EZLOGGERSTREAM << "CL_INVALID_GL_OBJECT" << std :: endl; break;    
 
             case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:
-                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT" << std :: endl; break;
+                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR" << std :: endl; break;
 
             case CL_OUT_OF_HOST_MEMORY:
                 EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
@@ -647,9 +647,9 @@ cl_mem cltCreateFromTexture ( cl_context context,
 /*
  * Create an OpenCL 3D image object from an OpenGL 3D texture object.
  */
-cl_mem cltCreateFromTexture ( cl_context context,
-                              cl_mem_flags flags,
-                              graphics :: Texture3D * texture )
+cl_mem cltCreateImageFromTexture ( cl_context context,
+                                   cl_mem_flags flags,
+                                   graphics :: Texture3D * texture )
 {
     cl_int error = CL_SUCCESS;
 
@@ -677,7 +677,7 @@ cl_mem cltCreateFromTexture ( cl_context context,
                 EZLOGGERSTREAM << "CL_INVALID_GL_OBJECT" << std :: endl; break;    
 
             case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:
-                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT" << std :: endl; break;
+                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR" << std :: endl; break;
 
             case CL_OUT_OF_HOST_MEMORY:
                 EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
@@ -695,9 +695,9 @@ cl_mem cltCreateFromTexture ( cl_context context,
 /*
  * Create an OpenCL 2D image object from an OpenGL renderbuffer object.
  */
-cl_mem cltCreateFromRenderbuffer ( cl_context context,
-                                   cl_mem_flags flags,
-                                   graphics :: RenderBuffer * buffer )
+cl_mem cltCreateImageFromRenderbuffer ( cl_context context,
+                                        cl_mem_flags flags,
+                                        graphics :: RenderBuffer * buffer )
 {
     cl_int error = CL_SUCCESS;
 
@@ -723,7 +723,7 @@ cl_mem cltCreateFromRenderbuffer ( cl_context context,
                 EZLOGGERSTREAM << "CL_INVALID_GL_OBJECT" << std :: endl; break;    
 
             case CL_INVALID_IMAGE_FORMAT_DESCRIPTOR:
-                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT" << std :: endl; break;
+                EZLOGGERSTREAM << "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR" << std :: endl; break;
 
             case CL_OUT_OF_HOST_MEMORY:
                 EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
@@ -737,6 +737,8 @@ cl_mem cltCreateFromRenderbuffer ( cl_context context,
 
     return image;
 }
+
+/***************************************************************************************/
 
 /*
  * Acquire OpenCL memory object that has been created from OpenGL

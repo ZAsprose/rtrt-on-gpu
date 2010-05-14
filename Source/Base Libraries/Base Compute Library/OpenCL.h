@@ -121,25 +121,80 @@ void cltBuildProgram ( cl_program program,
 /***************************************************************************************/
 
 /*
+ * Create an OpenCL buffer object with specified data type.
+ * ( template function must be implemented in header file ).
+ */
+template < class T >
+cl_mem cltCreateBuffer ( cl_context context,
+                         cl_mem_flags flags,
+                         size_t count,
+                         T * data = NULL )
+{
+    cl_int error = CL_SUCCESS;
+
+    cl_mem buffer = clCreateBuffer (
+        context                /* context */,
+        flags                  /* flags */,
+        count * sizeof ( T )   /* size */,
+        data                   /* host_ptr */,
+        &error                 /* errcode_ret */ );
+
+    if ( error != CL_SUCCESS )
+    {
+        EZLOGGERSTREAM << "ERROR: clCreateBuffer failed" << std :: endl;
+
+        switch ( error )
+        {
+            case CL_INVALID_CONTEXT:
+                EZLOGGERSTREAM << "CL_INVALID_CONTEXT" << std :: endl; break;
+
+            case CL_INVALID_VALUE:
+                EZLOGGERSTREAM << "CL_INVALID_VALUE" << std :: endl; break;
+
+            case CL_INVALID_BUFFER_SIZE:
+                EZLOGGERSTREAM << "CL_INVALID_BUFFER_SIZE" << std :: endl; break;    
+
+            case CL_INVALID_HOST_PTR:
+                EZLOGGERSTREAM << "CL_INVALID_HOST_PTR" << std :: endl; break;
+
+            case CL_MEM_OBJECT_ALLOCATION_FAILURE:
+                EZLOGGERSTREAM << "CL_MEM_OBJECT_ALLOCATION_FAILURE" << std :: endl; break;
+
+            case CL_OUT_OF_HOST_MEMORY:
+                EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
+
+            default:
+                EZLOGGERSTREAM << "UNKNOWN_ERROR" << std :: endl;
+        }
+
+        exit ( EXIT_FAILURE );
+    }
+
+    return buffer;
+}
+
+/*
  * Create an OpenCL 2D image object from an OpenGL 2D texture object.
  */
-cl_mem cltCreateFromTexture ( cl_context context,
-                              cl_mem_flags flags,
-                              graphics :: Texture2D * texture );
+cl_mem cltCreateImageFromTexture ( cl_context context,
+                                   cl_mem_flags flags,
+                                   graphics :: Texture2D * texture );
 
 /*
  * Create an OpenCL 3D image object from an OpenGL 3D texture object.
  */
-cl_mem cltCreateFromTexture ( cl_context context,
-                              cl_mem_flags flags,
-                              graphics :: Texture3D * texture );
+cl_mem cltCreateImageFromTexture ( cl_context context,
+                                   cl_mem_flags flags,
+                                   graphics :: Texture3D * texture );
 
 /*
  * Create an OpenCL 2D image object from an OpenGL renderbuffer object.
  */
-cl_mem cltCreateFromRenderbuffer ( cl_context context,
-                                   cl_mem_flags flags,
-                                   graphics :: RenderBuffer * buffer );
+cl_mem cltCreateImageFromRenderbuffer ( cl_context context,
+                                        cl_mem_flags flags,
+                                        graphics :: RenderBuffer * buffer );
+
+/***************************************************************************************/
 
 /*
  * NOTE: How we can share textures with OpenCL
