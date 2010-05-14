@@ -82,17 +82,17 @@ Vector3f lightPosition ( 10.0F, 10.0F, 10.0F );
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
 
-void MouseMoveHandler ( int x, int y )
+void MouseMoveHandler ( GLint x, GLint y )
 {
     mouse.MouseMoveHandler ( x, y );
 }
-        
-void MouseDownHandler ( int button, int state )
+
+void MouseDownHandler ( GLint button, GLint state )
 {
     mouse.MouseDownHandler ( button, state );
 }
 
-void KeyDownHandler ( int key, int state )
+void KeyDownHandler ( GLint key, GLint state )
 {
     keyboard.KeyDownHandler ( key, state );
 }
@@ -112,12 +112,15 @@ void SetupOpenCL ( void )
     /*
      * Create an OpenCL context from a device type based on
      * current OpenGL context.
+     *
+     * NOTE: You can create OpenCL context from OpenGL only
+     * for GPU device.
      */
 
     context = cltCreateContextFromOpenGL ( platforms [0] );
 
     /*
-     * Obtain the list of devices available on a platform ( CPUs / GPUs ).
+     * Obtain the list of devices available on a platform.
      * In this tutorial we use only first device available.
      */
     
@@ -151,11 +154,7 @@ void SetupKernels ( void )
      * object for output rendered scene.
      */
 
-    image = cltCreateFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
-
-    /*
-     * Set the argument value for output image.
-     */
+    image = cltCreateImageFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
 
     cltSetArgument < cl_mem > ( kernel, 0, &image );
 }
@@ -166,53 +165,41 @@ void StartKernels ( void )
                        camera.View ( ).y ( ),
                        camera.View ( ).z ( ) };
 
-    cltSetArgument < float [4] > ( kernel, 1, &view );
-
-    //----------------------------------------------------------
-
     float up [4] = { camera.Up ( ).x ( ),
                      camera.Up ( ).y ( ),
                      camera.Up ( ).z ( ) };
-
-    cltSetArgument < float [4] > ( kernel, 2, &up );
-
-    //----------------------------------------------------------
 
     float side [4] = { camera.Side ( ).x ( ),
                        camera.Side ( ).y ( ),
                        camera.Side ( ).z ( ) };
 
-    cltSetArgument < float [4] > ( kernel, 3, &side );
-
-    //----------------------------------------------------------
-
     float position [4] = { camera.Position ( ).x ( ),
                            camera.Position ( ).y ( ),
                            camera.Position ( ).z ( ) };
 
-    cltSetArgument < float [4] > ( kernel, 4, &position );
-
-    //----------------------------------------------------------
-    
     float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
                         2.0F * camera.Scale ( ).x ( ) };
-
-    cltSetArgument < float [2] > ( kernel, 5, &scale );
-
-    //----------------------------------------------------------
-
-    cltSetArgument < int > ( kernel, 6, &width );
-
-    //----------------------------------------------------------
-
-    cltSetArgument < int > ( kernel, 7, &height );
-
-    //----------------------------------------------------------
 
     float source [4] = { lightPosition.x ( ),
                          lightPosition.y ( ),
                          lightPosition.z ( ) };
 
+    //----------------------------------------------------------
+    
+    cltSetArgument < float [4] > ( kernel, 1, &view );
+    
+    cltSetArgument < float [4] > ( kernel, 2, &up );
+    
+    cltSetArgument < float [4] > ( kernel, 3, &side );
+    
+    cltSetArgument < float [4] > ( kernel, 4, &position );
+    
+    cltSetArgument < float [2] > ( kernel, 5, &scale );
+    
+    cltSetArgument < int > ( kernel, 6, &width );
+    
+    cltSetArgument < int > ( kernel, 7, &height );
+    
     cltSetArgument < float [4] > ( kernel, 8, &source );
 
     //----------------------------------------------------------
@@ -221,12 +208,14 @@ void StartKernels ( void )
         queue,
         kernel,
         width, height,
-        8, 8 );
+        16, 16 );
+
+    //----------------------------------------------------------
     
-    clFinish ( queue );
+    cltCheckError ( clFinish ( queue ) );
 }
 
-cl_int ReleaseOpenCL ( void )
+void ReleaseOpenCL ( void )
 {
     cltCheckError ( clReleaseKernel ( kernel ) );
 
@@ -237,8 +226,6 @@ cl_int ReleaseOpenCL ( void )
     cltCheckError ( clReleaseCommandQueue ( queue ) );
 
     cltCheckError ( clReleaseContext ( context ) );
-
-    return CL_SUCCESS;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -247,7 +234,6 @@ cl_int ReleaseOpenCL ( void )
 int main ( void )
 {
     /* We use GLFW for window management and OpenGL output */
-
 
     glfwInit ( );
 
@@ -313,8 +299,6 @@ int main ( void )
     /* Setup OpenCL compute environment */
 
     SetupOpenCL ( );
-
-    //-------------------------------------------------------------------------
 
     /*
      * NOTE: From ATI Stream SDK v2.1 Developer Release Notes
@@ -396,7 +380,8 @@ int main ( void )
         {
             fps = frames / delta;
 
-            sprintf ( caption, "Implicit Surfaces Demo - %.1f FPS", fps );
+            sprintf (
+                caption, "Implicit Surfaces Demo ( OCL ) - %.1f FPS", fps );
 
             glfwSetWindowTitle ( caption );
 
@@ -466,5 +451,7 @@ int main ( void )
 
     ReleaseOpenCL ( );
 
-    glfwTerminate ( ); exit ( EXIT_SUCCESS );
+    glfwTerminate ( );
+    
+    exit ( EXIT_SUCCESS );
 }
