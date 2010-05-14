@@ -115,151 +115,64 @@ void KeyDownHandler ( int key, int state )
 /////////////////////////////////////////////////////////////////////////////////////////
 // OpenCL subroutines
 
-char * LoadFile(const char * path, long *outLength = NULL)
-{
-	ifstream file(path, ios_base::binary);
-
-	//-----------------------------------------------------------------
-
-	if(!file)
-	{
-		cout << "ERROR: Could not open file" << endl; exit(-1);
-	}
-
-	//-----------------------------------------------------------------
-
-	file.seekg(0, ios :: end);
-
-	unsigned long length = file.tellg();
-
-	if(outLength)
-	{
-		*outLength = static_cast<long>(length);
-	}
-
-	file.seekg(0, ios :: beg);
-
-	//-----------------------------------------------------------------
-
-	if(0 == length)
-	{
-		cout << "WARNING: File is empty" << endl;
-	}
-
-	//-----------------------------------------------------------------
-
-	char * source = new char [length + 1];
-
-	file.read(source, length);
-
-	source[ length ] = 0;
-
-	return source;
-}
-
 void SetupOpenCL ( void )
 {
-    cl_int error = CL_SUCCESS;
-
     /*
      * Obtain the list of platforms available ( AMD / NVIDIA ).
      * In this tutorial we use only first platform available.
      */
 
-    VECTOR < cl_platform_id > platforms;
-
-    cltCheckError ( cltGetPlatforms ( &platforms ) );
+    VECTOR < cl_platform_id > platforms = cltGetPlatforms ( );
 
     /*
      * Create an OpenCL context from a device type based on
      * current OpenGL context.
      */
 
-    context = cltCreateContextFromOpenGL ( platforms [0],
-                                           CL_DEVICE_TYPE_GPU,
-                                           error );
-
-    cltCheckError ( error );
+    context = cltCreateContextFromOpenGL ( platforms [0] );
 
     /*
      * Obtain the list of devices available on a platform ( CPUs / GPUs ).
      * In this tutorial we use only first device available.
      */
     
-    VECTOR < cl_device_id > devices;
-
-    cltCheckError ( cltGetDevices ( context, &devices ) );
+    VECTOR < cl_device_id > devices = cltGetDevices ( context );
 
     /*
      * Load and build a program object for a context.
      */
 
-    program = cltLoadProgram (
-        context,
-        "Render.cl",
-        error );
-
-    cltCheckError ( error );
+    program = cltLoadProgram ( context, "Render.cl" );
     
-    cltCheckError ( cltBuildProgram (
-        program,
-        devices ) );
-
-    /*
-     * Create a kernel object for a function declared in a program.
-     */
-
-    kernel = clCreateKernel (
-        program   /* program */,
-        "Main"    /* kernel_name */,
-        &error    /* errcode_ret */ );
-
-    cltCheckError ( error );
+    cltBuildProgram ( program, devices );
 
     /*
      * Create a command-queue on a specific device.
      */
     
-    queue = clCreateCommandQueue (
-        context       /* context */,
-        devices [0]   /* device */,
-        0             /* properties */,
-        &error        /* errcode_ret */ );
+    queue = cltCreateQueue ( context, devices [0] );
+}
 
-    cltCheckError ( error );
+void SetupKernels ( void )
+{
+    /*
+     * Create a kernel object for a function declared in a program.
+     */
+
+    kernel = cltCreateKernel ( program, "Main" );
 
     /*
      * Create an OpenCL 2D image object from an OpenGL 2D texture
      * object for output rendered scene.
      */
 
-    image = clCreateFromGLTexture2D (
-        context                    /* context */,
-        CL_MEM_WRITE_ONLY          /* flags */,
-        GL_TEXTURE_RECTANGLE_ARB   /* target */,
-        0                          /* miplevel */,
-        texture->Handle ( )        /* texture */,
-        &error                     /* errcode_ret */ );
-
-    cltCheckError ( error );
-
-    cltCheckError ( clEnqueueAcquireGLObjects (
-        queue    /* command_queue */,
-        1        /* num_objects */,
-        &image   /* mem_objects */,
-        0        /* num_events_in_wait_list */,
-        NULL     /* event_wait_list */,
-        NULL     /* event */ ) );
+    image = cltCreateFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
 
     /*
      * Set the argument value for output image.
      */
 
-    cltCheckError ( clSetKernelArg (
-        kernel              /* kernel */,
-        0                   /* arg_index */,
-        sizeof ( cl_mem )   /* arg_size */,
-        &image              /* arg_value */ ) );
+    cltSetArgument < cl_mem > ( kernel, 0, &image );
 
     /*
      * Create an OpenCL buffer object for array of
@@ -271,42 +184,16 @@ void SetupOpenCL ( void )
         CL_MEM_READ_ONLY               /* flags */,
         count * sizeof ( cl_float4 )   /* size */,
         NULL                           /* host_ptr */,
-        &error                         /* errcode_ret */ );
+        NULL                           /* errcode_ret */ );
 
     /*
      * Set the argument value for ball positions.
      */
-
-    cltCheckError ( clSetKernelArg (
+    
+    cltSetArgument < cl_mem > (
         kernel              /* kernel */,
         8                   /* arg_index */,
-        sizeof ( cl_mem )   /* arg_size */,
-        &metaballs          /* arg_value */ ) );
-
-    cltCheckError ( error );
-}
-
-cl_int ReleaseOpenCL ( void )
-{
-    cltCheckError ( clReleaseKernel ( kernel ) );
-
-    cltCheckError ( clReleaseProgram ( program ) );
-
-    cltCheckError ( clEnqueueReleaseGLObjects ( 
-        queue    /* command_queue */,
-        1        /* num_objects */,
-        &image   /* mem_objects */,
-        0        /* num_events_in_wait_list */,
-        NULL     /* event_wait_list */,
-        NULL     /* event */ ) );
-
-    cltCheckError ( clReleaseMemObject ( image ) );
-
-    cltCheckError ( clReleaseCommandQueue ( queue ) );
-
-    cltCheckError ( clReleaseContext ( context ) );
-
-    return CL_SUCCESS;
+        &metaballs          /* arg_value */ );
 }
 
 void StartKernels ( void )
@@ -398,16 +285,31 @@ void StartKernels ( void )
         NULL                           /* event */ ) );
 
     //----------------------------------------------------------
-
-    cltCheckError ( cltRunKernel2D (
+    
+    cltRunKernel2D (
         queue,
         kernel,
-        width,
-        height,
-        8,
-        8 ) );
+        width, height,
+        8, 8 );
     
-    cltCheckError ( clFinish ( queue ) );
+    clFinish ( queue );
+}
+
+cl_int ReleaseOpenCL ( void )
+{
+    cltCheckError ( clReleaseKernel ( kernel ) );
+
+    cltCheckError ( clReleaseProgram ( program ) );
+
+    cltCheckError ( clReleaseMemObject ( image ) );
+
+    cltCheckError ( clReleaseMemObject ( metaballs ) );
+
+    cltCheckError ( clReleaseCommandQueue ( queue ) );
+
+    cltCheckError ( clReleaseContext ( context ) );
+
+    return CL_SUCCESS;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -476,6 +378,28 @@ int main ( void )
 
     glfwSetKeyCallback ( KeyDownHandler );
 
+    //-------------------------------------------------------------------------
+
+    /* Setup OpenCL compute environment */
+
+    SetupOpenCL ( );
+
+    //-------------------------------------------------------------------------
+
+    /*
+     * NOTE: From ATI Stream SDK v2.1 Developer Release Notes
+     *
+     * For OpenGL interoperability with OpenCL, there currently is a
+     * requirement on when the OpenCL context is created and when
+     * texture / buffer shared allocations can be made. To use shared
+     * resources, the OpenGL application must create an OpenGL context
+     * and then an OpenCL context. All resources ( GL buffers and
+     * textures ) created after creation of the OpenCL context can be
+     * shared between OpenGL and OpenCL. If resources are allocated before
+     * the OpenCL context creation, they cannot be shared between OpenGL
+     * and OpenCL.
+     */
+
     /* Create OpenGL texture object */
 
     texture = new Texture2D (
@@ -491,11 +415,9 @@ int main ( void )
 
     texture->Setup ( );
 
-    //-------------------------------------------------------------------------
+    /* Now we can work with the texture */
 
-    /* Setup OpenCL compute environment */
-
-    SetupOpenCL ( );
+    SetupKernels ( );
 
     //-------------------------------------------------------------------------
 
@@ -611,7 +533,15 @@ int main ( void )
 
         /* Compute ray traced image using OpenCL kernel */
         
+        cltAcquireGraphicsObject ( queue, image );
+
+        clFinish ( queue );
+
         StartKernels ( );
+
+        cltReleaseGraphicsObject ( queue, image );
+
+        clFinish ( queue );
 
         /* Draw dummy quad with custom fragment shader */      
         

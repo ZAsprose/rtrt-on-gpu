@@ -102,107 +102,128 @@ void KeyDownHandler ( int key, int state )
 
 void SetupOpenCL ( void )
 {
-    cl_int error = CL_SUCCESS;
-
     /*
      * Obtain the list of platforms available ( AMD / NVIDIA ).
      * In this tutorial we use only first platform available.
      */
 
-    VECTOR < cl_platform_id > platforms;
-
-    cltCheckError ( cltGetPlatforms ( &platforms ) );
+    VECTOR < cl_platform_id > platforms = cltGetPlatforms ( );
 
     /*
      * Create an OpenCL context from a device type based on
      * current OpenGL context.
      */
 
-    context = cltCreateContextFromOpenGL ( platforms [0],
-                                           CL_DEVICE_TYPE_GPU,
-                                           error );
-
-    cltCheckError ( error );
+    context = cltCreateContextFromOpenGL ( platforms [0] );
 
     /*
      * Obtain the list of devices available on a platform ( CPUs / GPUs ).
      * In this tutorial we use only first device available.
      */
     
-    VECTOR < cl_device_id > devices;
-
-    cltCheckError ( cltGetDevices ( context, &devices ) );
+    VECTOR < cl_device_id > devices = cltGetDevices ( context );
 
     /*
      * Load and build a program object for a context.
      */
 
-    program = cltLoadProgram (
-        context,
-        "Render.cl",
-        error );
-
-    cltCheckError ( error );
+    program = cltLoadProgram ( context, "Render.cl" );
     
-    cltCheckError ( cltBuildProgram (
-        program,
-        devices ) );
-
-    /*
-     * Create a kernel object for a function declared in a program.
-     */
-
-    kernel = clCreateKernel (
-        program   /* program */,
-        "Main"    /* kernel_name */,
-        &error    /* errcode_ret */ );
-
-    cltCheckError ( error );
+    cltBuildProgram ( program, devices );
 
     /*
      * Create a command-queue on a specific device.
      */
     
-    queue = clCreateCommandQueue (
-        context       /* context */,
-        devices [0]   /* device */,
-        0             /* properties */,
-        &error        /* errcode_ret */ );
+    queue = cltCreateQueue ( context, devices [0] );
+}
 
-    cltCheckError ( error );
+void SetupKernels ( void )
+{
+    /*
+     * Create a kernel object for a function declared in a program.
+     */
+
+    kernel = cltCreateKernel ( program, "Main" );
 
     /*
      * Create an OpenCL 2D image object from an OpenGL 2D texture
      * object for output rendered scene.
      */
 
-    image = clCreateFromGLTexture2D (
-        context                    /* context */,
-        CL_MEM_WRITE_ONLY          /* flags */,
-        GL_TEXTURE_RECTANGLE_ARB   /* target */,
-        0                          /* miplevel */,
-        texture->Handle ( )        /* texture */,
-        &error                     /* errcode_ret */ );
-
-    cltCheckError ( error );
-
-    cltCheckError ( clEnqueueAcquireGLObjects (
-        queue    /* command_queue */,
-        1        /* num_objects */,
-        &image   /* mem_objects */,
-        0        /* num_events_in_wait_list */,
-        NULL     /* event_wait_list */,
-        NULL     /* event */ ) );
+    image = cltCreateFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
 
     /*
      * Set the argument value for output image.
      */
 
-    cltCheckError ( clSetKernelArg (
-        kernel              /* kernel */,
-        0                   /* arg_index */,
-        sizeof ( cl_mem )   /* arg_size */,
-        &image              /* arg_value */ ) );
+    cltSetArgument < cl_mem > ( kernel, 0, &image );
+}
+
+void StartKernels ( void )
+{
+    float view [4] = { camera.View ( ).x ( ),
+                       camera.View ( ).y ( ),
+                       camera.View ( ).z ( ) };
+
+    cltSetArgument < float [4] > ( kernel, 1, &view );
+
+    //----------------------------------------------------------
+
+    float up [4] = { camera.Up ( ).x ( ),
+                     camera.Up ( ).y ( ),
+                     camera.Up ( ).z ( ) };
+
+    cltSetArgument < float [4] > ( kernel, 2, &up );
+
+    //----------------------------------------------------------
+
+    float side [4] = { camera.Side ( ).x ( ),
+                       camera.Side ( ).y ( ),
+                       camera.Side ( ).z ( ) };
+
+    cltSetArgument < float [4] > ( kernel, 3, &side );
+
+    //----------------------------------------------------------
+
+    float position [4] = { camera.Position ( ).x ( ),
+                           camera.Position ( ).y ( ),
+                           camera.Position ( ).z ( ) };
+
+    cltSetArgument < float [4] > ( kernel, 4, &position );
+
+    //----------------------------------------------------------
+    
+    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
+                        2.0F * camera.Scale ( ).x ( ) };
+
+    cltSetArgument < float [2] > ( kernel, 5, &scale );
+
+    //----------------------------------------------------------
+
+    cltSetArgument < int > ( kernel, 6, &width );
+
+    //----------------------------------------------------------
+
+    cltSetArgument < int > ( kernel, 7, &height );
+
+    //----------------------------------------------------------
+
+    float source [4] = { lightPosition.x ( ),
+                         lightPosition.y ( ),
+                         lightPosition.z ( ) };
+
+    cltSetArgument < float [4] > ( kernel, 8, &source );
+
+    //----------------------------------------------------------
+
+    cltRunKernel2D (
+        queue,
+        kernel,
+        width, height,
+        8, 8 );
+    
+    clFinish ( queue );
 }
 
 cl_int ReleaseOpenCL ( void )
@@ -210,14 +231,6 @@ cl_int ReleaseOpenCL ( void )
     cltCheckError ( clReleaseKernel ( kernel ) );
 
     cltCheckError ( clReleaseProgram ( program ) );
-
-    cltCheckError ( clEnqueueReleaseGLObjects ( 
-        queue    /* command_queue */,
-        1        /* num_objects */,
-        &image   /* mem_objects */,
-        0        /* num_events_in_wait_list */,
-        NULL     /* event_wait_list */,
-        NULL     /* event */ ) );
 
     cltCheckError ( clReleaseMemObject ( image ) );
 
@@ -228,112 +241,13 @@ cl_int ReleaseOpenCL ( void )
     return CL_SUCCESS;
 }
 
-void StartKernels ( void )
-{
-    float view [4] = { camera.View ( ).x ( ),
-                       camera.View ( ).y ( ),
-                       camera.View ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel            /* kernel */,
-        1                 /* arg_index */,
-        sizeof ( view )   /* arg_size */,
-        &view             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    float up [4] = { camera.Up ( ).x ( ),
-                     camera.Up ( ).y ( ),
-                     camera.Up ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel          /* kernel */,
-        2               /* arg_index */,
-        sizeof ( up )   /* arg_size */,
-        &up             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    float side [4] = { camera.Side ( ).x ( ),
-                       camera.Side ( ).y ( ),
-                       camera.Side ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel            /* kernel */,
-        3                 /* arg_index */,
-        sizeof ( side )   /* arg_size */,
-        &side             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    float position [4] = { camera.Position ( ).x ( ),
-                           camera.Position ( ).y ( ),
-                           camera.Position ( ).z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel                /* kernel */,
-        4                     /* arg_index */,
-        sizeof ( position )   /* arg_size */,
-        &position             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-    
-    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
-                        2.0F * camera.Scale ( ).x ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel             /* kernel */,
-        5                  /* arg_index */,
-        sizeof ( scale )   /* arg_size */,
-        &scale             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    cltCheckError ( clSetKernelArg (
-        kernel           /* kernel */,
-        6                /* arg_index */,
-        sizeof ( int )   /* arg_size */,
-        &width           /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    cltCheckError ( clSetKernelArg (
-        kernel           /* kernel */,
-        7                /* arg_index */,
-        sizeof ( int )   /* arg_size */,
-        &height          /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    float source [4] = { lightPosition.x ( ),
-                         lightPosition.y ( ),
-                         lightPosition.z ( ) };
-
-    cltCheckError ( clSetKernelArg (
-        kernel              /* kernel */,
-        8                   /* arg_index */,
-        sizeof ( source )   /* arg_size */,
-        &source             /* arg_value */ ) );
-
-    //----------------------------------------------------------
-
-    cltCheckError ( cltRunKernel2D (
-        queue,
-        kernel,
-        width,
-        height,
-        8,
-        8 ) );
-    
-    cltCheckError ( clFinish ( queue ) );
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // Entry point for program
 
 int main ( void )
 {
     /* We use GLFW for window management and OpenGL output */
+
 
     glfwInit ( );
 
@@ -379,7 +293,7 @@ int main ( void )
             0        /* bits for stencil buffer ( not used ) */,
             mode     /* windows mode ( fullscreen or window ) */ ) )
     {
-        glfwTerminate ( ); exit ( 0 );
+        glfwTerminate ( ); exit ( EXIT_FAILURE );
     }
 
     //-------------------------------------------------------------------------
@@ -393,6 +307,28 @@ int main ( void )
     glfwSetMouseButtonCallback ( MouseDownHandler );
 
     glfwSetKeyCallback ( KeyDownHandler );
+
+    //-------------------------------------------------------------------------
+
+    /* Setup OpenCL compute environment */
+
+    SetupOpenCL ( );
+
+    //-------------------------------------------------------------------------
+
+    /*
+     * NOTE: From ATI Stream SDK v2.1 Developer Release Notes
+     *
+     * For OpenGL interoperability with OpenCL, there currently is a
+     * requirement on when the OpenCL context is created and when
+     * texture / buffer shared allocations can be made. To use shared
+     * resources, the OpenGL application must create an OpenGL context
+     * and then an OpenCL context. All resources ( GL buffers and
+     * textures ) created after creation of the OpenCL context can be
+     * shared between OpenGL and OpenCL. If resources are allocated before
+     * the OpenCL context creation, they cannot be shared between OpenGL
+     * and OpenCL.
+     */
 
     /* Create OpenGL texture object */
 
@@ -409,11 +345,9 @@ int main ( void )
 
     texture->Setup ( );
 
-    //-------------------------------------------------------------------------
+    /* Now we can work with the texture */
 
-    /* Setup OpenCL compute environment */
-
-    SetupOpenCL ( );
+    SetupKernels ( );
 
     //-------------------------------------------------------------------------
 
@@ -494,14 +428,22 @@ int main ( void )
         /* Move light source */
 
         lightPosition ( 0 ) = -10.0F;
-        lightPosition ( 1 ) = 10.0F + 4.0F * cosf ( time * 1.5F );
+        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
         lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
 
         //---------------------------------------------------------------------
 
         /* Compute ray traced image using OpenCL kernel */
 
+        cltAcquireGraphicsObject ( queue, image );
+
+        clFinish ( queue );
+
         StartKernels ( );
+
+        cltReleaseGraphicsObject ( queue, image );
+
+        clFinish ( queue );
 
         /* Draw dummy quad with custom fragment shader */      
         
@@ -524,5 +466,5 @@ int main ( void )
 
     ReleaseOpenCL ( );
 
-    glfwTerminate ( ); exit ( 0 );
+    glfwTerminate ( ); exit ( EXIT_SUCCESS );
 }
