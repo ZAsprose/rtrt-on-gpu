@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -49,6 +49,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -105,13 +106,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(ATISTREAMSDKROOT)\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -166,7 +168,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(CUDA_INC_PATH)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(CUDA_INC_PATH)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -174,6 +176,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -230,13 +233,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(CUDA_INC_PATH)&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\Dependencies\Eigen\Include&quot;;&quot;$(SolutionDir)\Dependencies\SOIL\Include&quot;;&quot;$(SolutionDir)\Dependencies\Logger\Include&quot;;&quot;$(SolutionDir)\Dependencies\OpenGL\Include&quot;;&quot;$(SolutionDir)\Source\Base Libraries\Base Graphics Library&quot;;&quot;$(CUDA_INC_PATH)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
