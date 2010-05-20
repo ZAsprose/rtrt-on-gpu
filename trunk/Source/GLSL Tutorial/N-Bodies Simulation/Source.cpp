@@ -23,24 +23,33 @@
 
 using namespace graphics;
 
+#define RAND( ) ( 2.0F * rand ( ) / ( ( float ) RAND_MAX + 1.0F ) - 1.0F )
+
 /////////////////////////////////////////////////////////////////////////////////////////
-// Camera control with mouse ( orientation ) and keyboard ( position )
+// Global variables
+
+/*
+ * Camera control with mouse ( orientation ) and keyboard ( position ).
+ */
 
 Mouse mouse;
 
 Keyboard keyboard;
 
-Camera * camera;
+Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F )   /* position */,
+                Vector3f ( 0.0F, 0.0F, 0.0F )     /* orientation ( Euler angles ) */ );
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Number or particles ( N = COUNT_X * COUNT_Y )
+/*
+ * Number or particles ( N = CountX x CountY ).
+ */
 
-int countX = 64;
+GLint countX = 128;
 
-int countY = 64;
+GLint countY = 128;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Parameters for generating initial data
+/*
+ * Parameters for generating initial data.
+ */
 
 Vector4f positionAverage ( 0.0F, 0.0F, 0.0F, 20.0F );
 
@@ -54,8 +63,9 @@ Vector3f colorAverage ( 0.75F, 0.75F, 0.75F );
 
 Vector3f colorDispersion ( 0.25F, 0.25F, 0.25F );
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Texture data for storing positions, velocities and colors of particles
+/*
+ * Texture data for storing positions, velocities and colors of particles.
+ */
 
 TextureData2D * positions = NULL;
 
@@ -63,8 +73,9 @@ TextureData2D * velocities = NULL;
 
 TextureData2D * colors = NULL;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Textures for representing input and output data
+/*
+ * Textures for representing input and output data.
+ */
 
 Texture2D * currentPositionTexture = NULL;
 
@@ -74,8 +85,9 @@ Texture2D * nextPositionTexture = NULL;
 
 Texture2D * nextVelocityTexture = NULL;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Shader programs for updating particle states and visualization
+/*
+ * Shader programs for updating particle states and visualization.
+ */
 
 ShaderProgram * firstProgram = NULL;
 
@@ -83,27 +95,24 @@ ShaderProgram * secondProgram = NULL;
 
 ShaderProgram * renderProgram = NULL;
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Frame buffers for rendering to textures
+/*
+ * Frame buffers for rendering to textures.
+ */
 
 FrameBuffer * firstFrameBuffer = NULL;
 
 FrameBuffer * secondFrameBuffer = NULL;
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// Генерирует случайное число в диапазоне [-1, +1]
+// N-Bodies subroutines
 
-float RandDouble ( void )
-{
-	return ( rand ( ) / ( ( float ) ( RAND_MAX ) + 1.0F ) ) * 2.0F - 1.0F;
-}
+/*
+ * Generates initial data of particles in a random way.
+ */
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Генерирует случайным образом начальные состояния частиц
+#define INIT_RANDOM_
 
-#define INIT_RANDOM
-
-#define INIT_SHELL_
+#define INIT_SHELL
 
 void SetupParticles ( void )
 {
@@ -115,27 +124,25 @@ void SetupParticles ( void )
 
 #if defined ( INIT_RANDOM )
 
-	for ( int i = 0; i < countX; i++ )
+	for ( int x = 0; x < countX; x++ )
 	{
-		for ( int j = 0; j < countY; j++ )
+		for ( int y = 0; y < countY; y++ )
 		{
-			float * pos = positions->Pixel ( i, j );
+			positions->Pixel < Vector4f > ( x, y ) = Vector4f (
+                positionAverage.x ( ) + positionDispersion.x ( ) * RAND ( ),
+                positionAverage.y ( ) + positionDispersion.y ( ) * RAND ( ),
+                positionAverage.z ( ) + positionDispersion.z ( ) * RAND ( ),
+                positionAverage.w ( ) + positionDispersion.w ( ) * RAND ( ) );
+            
+            velocities->Pixel < Vector3f > ( x, y ) = Vector3f (
+                velocityAverage.x ( ) + velocityDispersion.x ( ) * RAND ( ),
+                velocityAverage.y ( ) + velocityDispersion.y ( ) * RAND ( ),
+                velocityAverage.z ( ) + velocityDispersion.z ( ) * RAND ( ) );
 
-            pos [0] = positionAverage.x ( ) + positionDispersion.x ( ) * RandDouble ( );
-			pos [1] = positionAverage.y ( ) + positionDispersion.y ( ) * RandDouble ( );
-			pos [2] = positionAverage.z ( ) + positionDispersion.z ( ) * RandDouble ( );
-			pos [3] = positionAverage.w ( ) + positionDispersion.w ( ) * RandDouble ( );
-
-			float * vel = velocities->Pixel ( i, j );
-
-			vel [0] = velocityAverage.x ( ) + velocityDispersion.x ( ) * RandDouble ( );
-            vel [1] = velocityAverage.y ( ) + velocityDispersion.y ( ) * RandDouble ( );
-            vel [2] = velocityAverage.z ( ) + velocityDispersion.z ( ) * RandDouble ( );
-
-			float * col = colors->Pixel ( i, j );
-			col [0] = colorAverage.x ( ) + colorDispersion.x ( ) * RandDouble ( );
-            col [1] = colorAverage.y ( ) + colorDispersion.y ( ) * RandDouble ( );
-			col [2] = colorAverage.z ( ) + colorDispersion.z ( ) * RandDouble ( );
+            colors->Pixel < Vector3f > ( x, y ) = Vector3f (
+                colorAverage.x ( ) + colorDispersion.x ( ) * RAND ( ),
+                colorAverage.y ( ) + colorDispersion.y ( ) * RAND ( ),
+                colorAverage.z ( ) + colorDispersion.z ( ) * RAND ( ) );
 		}
 	}
 
@@ -149,24 +156,24 @@ void SetupParticles ( void )
 	
 	float outer = 4.0F * size;
 
-	for ( int i = 0; i < countX; i++ )
+	for ( int x = 0; x < countX; x++ )
 	{
-		for ( int j = 0; j < countY; j++ )
+		for ( int y = 0; y < countY; y++ )
 		{
-			Vector3f point = Vector3f ( RandDouble ( ), RandDouble ( ), RandDouble ( ) );
+			Vector3f point = Vector3f ( RAND ( ), RAND ( ), RAND ( ) );
 			
-			float length = point.length();
+			float length = point.norm ( );
 
 			while ( length > 1.0F )
 			{
-				point = Vector3D ( RandDouble ( ), RandDouble ( ), RandDouble ( ) );
+				point = Vector3f ( RAND ( ), RAND ( ), RAND ( ) );
 				
-				length = Length ( point );
+				length = point.norm ( );
 			}
 			
 			point /= length;
 
-			positions->Pixel<Vector4D> ( i, j ) = Vector4D (
+			positions->Pixel < Vector4f > ( x, y ) = Vector4f (
 				point.x ( ) * ( inner + ( outer - inner ) * rand ( ) / ( float ) RAND_MAX ),
 				point.y ( ) * ( inner + ( outer - inner ) * rand ( ) / ( float ) RAND_MAX ),
 				point.z ( ) * ( inner + ( outer - inner ) * rand ( ) / ( float ) RAND_MAX ),
@@ -174,140 +181,191 @@ void SetupParticles ( void )
 
 			Vector3f axis = Vector3f :: UnitZ ( );
 				
-			if ( 1.0 - Dot ( point, axis ) < 1e-6 )
+			if ( 1.0F - axis.dot ( point ) < 1e-6F )
 			{
 				axis ( 0 ) = point.y ( );
 				axis ( 1 ) = point.x ( );
-				Normalize ( axis );
+
+                axis.normalize ( );
 			}
 			
-			velocities->Pixel<Vector3D> ( i, j ) = scale *
-				Cross ( positions->Pixel<Vector3D> ( i, j ), axis );
+			velocities->Pixel < Vector3f > ( x, y ) = scale *
+                positions->Pixel < Vector3f > ( x, y ).cross ( axis );
 
-			colors->Pixel<Vector3D> ( i, j ) =
-				Vector3D ( colorAverage.X + colorDispersion.X * RandDouble ( ),
-				           colorAverage.Y + colorDispersion.Y * RandDouble ( ),
-						   colorAverage.Z + colorDispersion.Z * RandDouble ( ) );
+			colors->Pixel < Vector3f > ( x, y ) =
+				Vector3f ( colorAverage.x ( ) + colorDispersion.x ( ) * RAND ( ),
+				           colorAverage.y ( ) + colorDispersion.y ( ) * RAND ( ),
+						   colorAverage.z ( ) + colorDispersion.z ( ) * RAND ( ) );
 		}
 	}
 
 #endif
+    
+    currentPositionTexture = new Texture2D (
+        0                          /* texture unit */,
+        positions                  /* texture data */,
+        GL_TEXTURE_RECTANGLE_ARB   /* texture target */ );		
+
+    currentVelocityTexture = new Texture2D (
+        1                          /* texture unit */,
+        velocities                 /* texture data */,
+        GL_TEXTURE_RECTANGLE_ARB   /* texture target */ );
+    
+    nextPositionTexture = new Texture2D (
+        2                          /* texture unit */,
+        positions                  /* texture data */,
+        GL_TEXTURE_RECTANGLE_ARB   /* texture target */ );
+
+    nextVelocityTexture = new Texture2D (
+        3                          /* texture unit */,
+        velocities                 /* texture data */,
+        GL_TEXTURE_RECTANGLE_ARB   /* texture target */ );
+    
+    currentPositionTexture->Setup ( );
+    currentVelocityTexture->Setup ( );
+
+    nextPositionTexture->Setup ( );
+    nextVelocityTexture->Setup ( );
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Загружает и настраивает шейдеры (вычислительные ядра)
+/*
+ * Loads shaders for computing and efficient rendering of n-bodies system.
+ */
 
 void SetupKernels ( void )
 {
-	{
-		currentPositionTexture = new Texture2D ( 0, positions, GL_TEXTURE_RECTANGLE_ARB );				
-		currentVelocityTexture = new Texture2D ( 1, velocities, GL_TEXTURE_RECTANGLE_ARB );
-		nextPositionTexture = new Texture2D ( 2, positions, GL_TEXTURE_RECTANGLE_ARB );				
-		nextVelocityTexture = new Texture2D ( 3, velocities, GL_TEXTURE_RECTANGLE_ARB );
+    /*
+     * Load and compile compute shaders for even iterations ( ping-pong ).
+     */
 
-		currentPositionTexture->Setup ( );				
-		currentVelocityTexture->Setup ( );				
-		nextPositionTexture->Setup ( );		
-		nextVelocityTexture->Setup ( );					
-	}
-	
 	{
 		firstProgram = new ShaderProgram ( );
 		
 		if ( !firstProgram->LoadVertexShader ( "Compute.vs" ) )
 		{
-            std :: cout << "ERROR! Failed to load compute vertex shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load compute vertex shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !firstProgram->LoadFragmentShader ( "Compute.fs" ) )
 		{
-            std :: cout << "ERROR! Failed to load compute fragment shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load compute fragment shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !firstProgram->Build ( ) )
 		{
-            std :: cout << "ERROR! Failed to build compute shader program!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to build compute shader program!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}	
 		
 		firstProgram->Bind ( );		
-		    firstProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );		
-		    firstProgram->SetTexture ( "CurrentVelocityTexture", currentVelocityTexture );		
+
+		    firstProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );	
+
+		    firstProgram->SetTexture ( "CurrentVelocityTexture", currentVelocityTexture );	
+
 		firstProgram->Unbind ( );
-	}
-	
+    }
+
+    /*
+     * Load and compile compute shaders for odd iterations ( ping-pong ).
+     */
+
 	{
 		secondProgram = new ShaderProgram ( );
 
 		if ( !secondProgram->LoadVertexShader ( "Compute.vs" ) )
 		{
-            std :: cout << "ERROR! Failed to load compute vertex shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load compute vertex shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !secondProgram->LoadFragmentShader ( "Compute.fs" ) )
 		{
-            std :: cout << "ERROR! Failed to load compute fragment shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load compute fragment shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !secondProgram->Build ( ) )
 		{
-            std :: cout << "ERROR! Failed to build compute shader program!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to build compute shader program!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		        
-		secondProgram->Bind ( );		
-		    secondProgram->SetTexture ( "CurrentPositionTexture", nextPositionTexture );		
-		    secondProgram->SetTexture ( "CurrentVelocityTexture", nextVelocityTexture );		
+		secondProgram->Bind ( );
+
+		    secondProgram->SetTexture ( "CurrentPositionTexture", nextPositionTexture );
+
+		    secondProgram->SetTexture ( "CurrentVelocityTexture", nextVelocityTexture );
+
 		secondProgram->Unbind ( );
-	}
-	
+    }
+
+    /*
+     * Load and compile shaders for rendering of particles.
+     */
+
 	{
 		renderProgram = new ShaderProgram ( );
 
 		if ( !renderProgram->LoadVertexShader ( "Render.vs" ) )
 		{
-            std :: cout << "ERROR! Failed to load render vertex shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load render vertex shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !renderProgram->LoadFragmentShader ( "Render.fs" ) )
 		{
-            std :: cout << "ERROR! Failed to load render fragment shader!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to load render fragment shader!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		
 		if ( !renderProgram->Build ( ) )
 		{
-            std :: cout << "ERROR! Failed to build render shader program!\n";
-            exit ( -1 );
+            std :: cout << "ERROR! Failed to build render shader program!" << std :: endl;
+            exit ( EXIT_FAILURE );
 		}
 		        
-		renderProgram->Bind ( );		
-		    renderProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );		
+		renderProgram->Bind ( );
+
+		    renderProgram->SetTexture ( "CurrentPositionTexture", currentPositionTexture );
+
 		renderProgram->Unbind ( );
-	}
+    }
+
+    /*
+     * Create framebuffer for rendering to textures with 'next' particle states.
+     */
 	
 	{
-		firstFrameBuffer = new FrameBuffer ( );		
+		firstFrameBuffer = new FrameBuffer ( );
+
 		firstFrameBuffer->ColorBuffers.push_back ( nextPositionTexture );
+
 		firstFrameBuffer->ColorBuffers.push_back ( nextVelocityTexture );
+
 		firstFrameBuffer->Setup ( );
-	}
+    }
+
+    /*
+     * Create framebuffer for rendering to textures with 'current' particle states.
+     */
 	
 	{
-		secondFrameBuffer = new FrameBuffer ( );		
-		secondFrameBuffer->ColorBuffers.push_back ( currentPositionTexture );		
+		secondFrameBuffer = new FrameBuffer ( );
+
+		secondFrameBuffer->ColorBuffers.push_back ( currentPositionTexture );
+
 		secondFrameBuffer->ColorBuffers.push_back ( currentVelocityTexture );
+
 		secondFrameBuffer->Setup ( );
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Генерирует двумерный поток фрагментов для обработки (фрагмент = частица)
+/*
+ * Generates stream of fragments for processing on GPU ( 1 fragment = 1 particle ).
+ */
 
 void GenerateStream ( int width, int height )
 {
@@ -339,14 +397,15 @@ void GenerateStream ( int width, int height )
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Запускает вычислительные ядра для обработки каждого элемента потока
+/*
+ * Starts compute shaders ( kernels ) on GPU with ping-pong technique.
+ */
 
-bool step = true;
+bool even = true;
 
 void StartKernels ( )
 {
-	if ( step = !step )
+	if ( even = !even )
 	{
 		firstFrameBuffer->Bind ( );
 
@@ -368,8 +427,9 @@ void StartKernels ( )
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Строит дисплейный список для эффективного рисования частиц
+/*
+ * Builds display list for efficient particle rendering.
+ */
 
 void BuildList ( void )
 {
@@ -377,13 +437,13 @@ void BuildList ( void )
 
 	glBegin ( GL_QUADS );
 
-	for ( int i = 0; i < countX; i++ )
+	for ( int x = 0; x < countX; x++ )
 	{
-		for ( int j = 0; j < countY; j++ )
-		{			
-			glColor3fv ( colors->Pixel ( i, j ) );
+		for ( int y = 0; y < countY; y++ )
+        {
+            glColor3fv ( colors->Pixel < Vector3f > ( x, y ).data ( ) );
 			
-			glTexCoord2f ( i, j );
+			glTexCoord2f ( x, y );
 
 			glVertex2f ( -1.0F, -1.0F );								
 			glVertex2f ( -1.0F,  1.0F );								
@@ -397,64 +457,66 @@ void BuildList ( void )
 	glEndList ( );
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Отрисовывает частицы
+/*
+ * Draws particles with custom shaders.
+ */
 
 void Draw ( int width, int height )
 {
-	mouse.Apply ( camera );
+	mouse.Apply ( &camera );
 
-	keyboard.Apply ( camera );
+	keyboard.Apply ( &camera );
 
-	camera->SetViewport ( width, height );
+	camera.SetViewport ( width, height );
             	
-	camera->Setup ( );
+	camera.Setup ( );
 
 	renderProgram->Bind ( );
 
-	renderProgram->SetUniformVector ( "UpDirection", camera->Up ( ) );
+	renderProgram->SetUniformVector ( "UpDirection", camera.Up ( ) );
 
-	renderProgram->SetUniformVector ( "RightDirection", camera->Side ( ) );
+	renderProgram->SetUniformVector ( "RightDirection", camera.Side ( ) );
 
 	glClear ( GL_COLOR_BUFFER_BIT );
 
 	glCallList ( 1 );
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Обработчики событий движения мыши и нажатия клавиш клавиатуры
+/*
+ * Event handlers for mouse and keyboard.
+ */
 
-void MouseMove ( int x, int y )
+void MouseMoveHandler ( int x, int y )
 {
 	mouse.MouseMoveHandler ( x, y );
 }
 
-void MouseButton ( int button, int state )
+void MouseDownHandler ( int button, int state )
 {
 	mouse.MouseDownHandler ( button, state );
 }
 
-void KeyButton ( int key, int state )
+void KeyDownHandler ( int key, int state )
 {
 	keyboard.KeyDownHandler ( key, state );
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// Точка входа в программу
+/////////////////////////////////////////////////////////////////////////////////////////
+// Entry point for program
 
 int main ( void )
 {
 	glfwInit ( );
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
     std :: cout << "Do you want to run program in fullscreen mode? [Y/N]\n";
 
 	int choice = getchar ( );
 
-	int width = 750, height = 750, mode = GLFW_WINDOW;
+	int width = 800, height = 600, mode = GLFW_WINDOW;
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
 	if ( choice == 'Y' || choice == 'y' )
 	{
@@ -469,24 +531,35 @@ int main ( void )
 		mode = GLFW_FULLSCREEN;
 	}
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
-    if( !glfwOpenWindow ( width, height, 0, 0, 0, 0, 0, 0, mode ) )
+    /* Try to open rendering window */
+
+    if ( !glfwOpenWindow (
+            width    /* window width */,
+            height   /* window height */,
+            0        /* bits for red channel ( default ) */,
+            0        /* bits for green channel ( default ) */,
+            0        /* bits for blue channel ( default ) */,
+            0        /* bits for alpha channel ( default ) */,
+            0        /* bits for depth buffer ( not used ) */,
+            0        /* bits for stencil buffer ( not used ) */,
+            mode     /* windows mode ( fullscreen or window ) */ ) )
     {
-        glfwTerminate ( ); exit ( 0 );
-	}
+        glfwTerminate ( ); exit ( EXIT_FAILURE );
+    }
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
     glfwSwapInterval ( 0 );
 
-	glfwSetMousePosCallback ( MouseMove );
+	glfwSetMousePosCallback ( MouseMoveHandler );
 
-	glfwSetMouseButtonCallback ( MouseButton );
+	glfwSetMouseButtonCallback ( MouseDownHandler );
 
-	glfwSetKeyCallback ( KeyButton );
+	glfwSetKeyCallback ( KeyDownHandler );
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	
 	glEnable ( GL_COLOR_MATERIAL );
 	
@@ -494,13 +567,9 @@ int main ( void )
 	
 	glBlendFunc ( GL_ONE, GL_ONE );	
 
-	//---------------------------------------------------------------------------------------------
+	camera.SetViewFrustum ( );
 
-	camera = new Camera ( Vector3f ( 0.0F, 0.0F, -18.0F ), Vector3f ( 0.0F, 0.0F, 0.0F ) );
-
-	camera->SetViewFrustum ( );
-
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	
 	SetupParticles ( );
 	
@@ -508,17 +577,17 @@ int main ( void )
 	
 	BuildList ( );
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	
-	bool running = GL_TRUE;
+	GLboolean running = GL_TRUE;
 
-	int frames = 0;
+	GLint frames = 0;
 
-	char caption [100];
+	GLchar caption [100];
 
-	double start = glfwGetTime ( );
+	GLdouble start = glfwGetTime ( );
 
-	//---------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 
     while ( running )
 	{
@@ -528,7 +597,7 @@ int main ( void )
         {
             double fps = frames / ( time - start );
 
-            sprintf_s ( caption, "N-Bodies Simulation - %.1f FPS", fps );
+            sprintf ( caption, "N-Bodies Simulation - %.1f FPS", fps );
 
             glfwSetWindowTitle ( caption );
 
@@ -539,23 +608,24 @@ int main ( void )
 
         frames++;
 
-		//-----------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------
 
         glfwGetWindowSize ( &width, &height );
-
-        //height = max ( height,  1 );
+        
+        height = height < 1 ? 1 : height;
 		
-		//-----------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------
 
 		StartKernels ( );
 		
 		Draw ( width, height );
 
-		//-----------------------------------------------------------------------------------------
+		//---------------------------------------------------------------------
 
         glfwSwapBuffers ( );		
 		
-		running = !glfwGetKey ( GLFW_KEY_ESC ) && glfwGetWindowParam ( GLFW_OPENED );
+		running = !glfwGetKey ( GLFW_KEY_ESC ) &&
+            glfwGetWindowParam ( GLFW_OPENED );
 	}
 
     glfwTerminate ( );

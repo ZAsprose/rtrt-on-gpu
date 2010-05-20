@@ -31,6 +31,8 @@
 
 using namespace graphics;
 
+#define frand( ) ( rand ( ) / ( cl_float ) RAND_MAX )
+
 /////////////////////////////////////////////////////////////////////////////////////////
 // Global variables
 
@@ -55,7 +57,11 @@ cl_program program;
 
 cl_kernel kernel;
 
-cl_mem image;
+cl_mem currPositions;
+
+cl_mem nextPositions;
+
+cl_mem velocities;
 
 cl_command_queue queue;
 
@@ -67,17 +73,17 @@ int width = 512;
 
 int height = 512;
 
-/*
- * OpenGL texture for output image from OpenCL.
- */
 
-Texture2D * texture = NULL;
+int count = 128 * 128; /* MUST be a nice power of two for simplicity */
 
-/*
- * Position of light source.
- */
+float dt = 0.0001F;
+float eps = 0.0001F;
 
-Vector3f lightPosition ( 10.0F, 10.0F, 10.0F );
+int nthread = 64; /* chosen for ATI Radeon HD 5870 */
+
+cl_float4 * pos;
+
+cl_float4 * vel;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
@@ -95,6 +101,37 @@ void MouseDownHandler ( GLint button, GLint state )
 void KeyDownHandler ( GLint key, GLint state )
 {
     keyboard.KeyDownHandler ( key, state );
+}
+
+float testal(Vector4f& xxx)
+{
+    return xxx.x();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// N-Bodies subroutines
+
+void NBodyInit ( void )
+{
+    pos = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+
+    vel  = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+
+    srand ( 2112 );
+
+    for ( int i = 0; i < count; i++ )
+    {
+        pos [i].s [0] = frand();
+        pos [i].s [1] = frand();
+        pos [i].s [2] = frand();
+        pos [i].s [3] = frand();
+
+        vel [i].s [0] = 0.0F;
+        vel [i].s [1] = 0.0F;
+        vel [i].s [2] = 0.0F;
+        vel [i].s [3] = 0.0F;
+    }
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -117,7 +154,7 @@ void SetupOpenCL ( void )
      * for GPU device.
      */
 
-    context = cltCreateContextFromOpenGL ( platforms [0] );
+    context = cltCreateContext ( platforms [0] );
 
     /*
      * Obtain the list of devices available on a platform.
@@ -130,7 +167,7 @@ void SetupOpenCL ( void )
      * Load and build a program object for a context.
      */
 
-    program = cltLoadProgram ( context, "Render.cl" );
+    program = cltLoadProgram ( context, "Compute.cl" );
     
     cltBuildProgram ( program, devices );
 
@@ -147,70 +184,92 @@ void SetupKernels ( void )
      * Create a kernel object for a function declared in a program.
      */
 
-    kernel = cltCreateKernel ( program, "Main" );
+    kernel = cltCreateKernel ( program, "nbody_kern" );
 
     /*
      * Create an OpenCL 2D image object from an OpenGL 2D texture
      * object for output rendered scene.
      */
 
-    image = cltCreateImageFromTexture ( context, CL_MEM_WRITE_ONLY, texture );
+    currPositions = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_ONLY, count );
 
-    cltSetArgument < cl_mem > ( kernel, 0, &image );
+    nextPositions = cltCreateBuffer < cl_float4 > ( context, CL_MEM_WRITE_ONLY, count );
+
+    velocities = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_WRITE, count );
+
+    cltSetArgument < cl_float > ( kernel, 0, &dt );
+
+    cltSetArgument < cl_float > ( kernel, 1, &eps );
+
+    cltSetArgument < cl_mem > ( kernel, 4, &velocities );
+
+    cltCheckError ( clSetKernelArg ( kernel, 5, nthread * sizeof ( cl_float4 ), NULL ) );
+
+
+    cl_int status = clEnqueueWriteBuffer (
+        queue                          /* command_queue */,
+        currPositions								  /* buffer */,
+        CL_TRUE                               /* blocking_read */,
+        0                                     /* offset */,
+        count * sizeof ( cl_float4 )   /* cb */,
+        pos                           /* ptr */,
+        0                                     /* num_events_in_wait_list */,
+        NULL                                  /* event_wait_list */,
+        NULL                           /* event */ );
+
+    status = clEnqueueWriteBuffer (
+        queue                          /* command_queue */,
+        velocities								  /* buffer */,
+        CL_TRUE                               /* blocking_read */,
+        0                                     /* offset */,
+        count * sizeof ( cl_float4 )   /* cb */,
+        vel                           /* ptr */,
+        0                                     /* num_events_in_wait_list */,
+        NULL                                  /* event_wait_list */,
+        NULL                           /* event */ );
 }
+
+bool iter = true;
 
 void StartKernels ( void )
 {
-    float view [4] = { camera.View ( ).x ( ),
-                       camera.View ( ).y ( ),
-                       camera.View ( ).z ( ) };
+    if (iter)
+    {
+        cltSetArgument < cl_mem > ( kernel, 2, &currPositions );
 
-    float up [4] = { camera.Up ( ).x ( ),
-                     camera.Up ( ).y ( ),
-                     camera.Up ( ).z ( ) };
+        cltSetArgument < cl_mem > ( kernel, 3, &nextPositions );
+    }
+    else
+    {
+        cltSetArgument < cl_mem > ( kernel, 3, &currPositions );
 
-    float side [4] = { camera.Side ( ).x ( ),
-                       camera.Side ( ).y ( ),
-                       camera.Side ( ).z ( ) };
+        cltSetArgument < cl_mem > ( kernel, 2, &nextPositions );
+    }
 
-    float position [4] = { camera.Position ( ).x ( ),
-                           camera.Position ( ).y ( ),
-                           camera.Position ( ).z ( ) };
-
-    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
-                        2.0F * camera.Scale ( ).x ( ) };
-
-    float source [4] = { lightPosition.x ( ),
-                         lightPosition.y ( ),
-                         lightPosition.z ( ) };
-
-    //----------------------------------------------------------
-    
-    cltSetArgument < float [4] > ( kernel, 1, &view );
-    
-    cltSetArgument < float [4] > ( kernel, 2, &up );
-    
-    cltSetArgument < float [4] > ( kernel, 3, &side );
-    
-    cltSetArgument < float [4] > ( kernel, 4, &position );
-    
-    cltSetArgument < float [2] > ( kernel, 5, &scale );
-    
-    cltSetArgument < int > ( kernel, 6, &width );
-    
-    cltSetArgument < int > ( kernel, 7, &height );
-    
-    cltSetArgument < float [4] > ( kernel, 8, &source );
+    iter = !iter;
 
     //----------------------------------------------------------
 
-    cltRunKernel2D (
+    cltRunKernel1D (
         queue,
         kernel,
-        width, height,
-        16, 16 );
+        count,
+        nthread );
+
+    cltCheckError ( clFinish ( queue ) );
 
     //----------------------------------------------------------
+
+    cl_int status = clEnqueueReadBuffer (
+        queue                          /* command_queue */,
+        currPositions								  /* buffer */,
+        CL_TRUE                               /* blocking_read */,
+        0                                     /* offset */,
+        count * sizeof ( cl_float4 )   /* cb */,
+        pos                           /* ptr */,
+        0                                     /* num_events_in_wait_list */,
+        NULL                                  /* event_wait_list */,
+        NULL                           /* event */ );
     
     cltCheckError ( clFinish ( queue ) );
 }
@@ -221,11 +280,38 @@ void ReleaseOpenCL ( void )
 
     cltCheckError ( clReleaseProgram ( program ) );
 
-    cltCheckError ( clReleaseMemObject ( image ) );
+    cltCheckError ( clReleaseMemObject ( currPositions ) );
+
+    cltCheckError ( clReleaseMemObject ( nextPositions ) );
+
+    cltCheckError ( clReleaseMemObject ( velocities ) );
 
     cltCheckError ( clReleaseCommandQueue ( queue ) );
 
     cltCheckError ( clReleaseContext ( context ) );
+}
+
+void DrawParticles ( int w, int h )
+{
+
+    camera.SetViewport ( w, h );
+
+    camera.Setup ( );
+
+    glPointSize(5);
+
+    glEnable(GL_POINT_SMOOTH);
+
+
+
+    glBegin ( GL_POINTS );
+
+    for ( int i = 0; i < count; ++i )
+    {
+        glVertex3fv ( pos [i].s );
+    }
+
+    glEnd ( );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -298,65 +384,21 @@ int main ( void )
 
     /* Setup OpenCL compute environment */
 
+    NBodyInit ( );
+
     SetupOpenCL ( );
-
-    /*
-     * NOTE: From ATI Stream SDK v2.1 Developer Release Notes
-     *
-     * For OpenGL interoperability with OpenCL, there currently is a
-     * requirement on when the OpenCL context is created and when
-     * texture / buffer shared allocations can be made. To use shared
-     * resources, the OpenGL application must create an OpenGL context
-     * and then an OpenCL context. All resources ( GL buffers and
-     * textures ) created after creation of the OpenCL context can be
-     * shared between OpenGL and OpenCL. If resources are allocated before
-     * the OpenCL context creation, they cannot be shared between OpenGL
-     * and OpenCL.
-     */
-
-    /* Create OpenGL texture object */
-
-    texture = new Texture2D (
-        0,
-        NULL,
-        GL_TEXTURE_RECTANGLE_ARB );
-
-    texture->Data = new TextureData2D (
-        width      /* width of the texture */,
-        height     /* height of the texture */,
-        4          /* channels for each texel */,
-        GL_FALSE    /* no texture data on CPU */ );
-
-    Vector4f v;
-    v = Vector4f(1,0,0,0);
-
-    texture->Data->Pixel <Vector4f> (100,100) = Vector4f(1,0,0,0);
-    texture->Data->Pixel <Vector4f> (10, 10) = Vector4f(0,1,0,1);
-        texture->Data->Pixel <Vector4f> (20, 20) = Vector4f(0,0,1,1);
-
-    texture->Setup ( );
-
-    /* Now we can work with the texture */
 
     SetupKernels ( );
 
     //-------------------------------------------------------------------------
 
-    /* Set parallel projection for drawing dummy quad */
-    
-    glMatrixMode ( GL_PROJECTION );
-    
-    glLoadIdentity ( );
-    
-    glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
-    
-    glMatrixMode ( GL_MODELVIEW );
-    
-    glLoadIdentity ( );
-
-    glEnable ( GL_TEXTURE_RECTANGLE_ARB );
-
     /* Set view frustum for camera ( we use default values ) */
+
+    glEnable ( GL_COLOR_MATERIAL );
+
+    glEnable ( GL_BLEND );
+
+    glBlendFunc ( GL_ONE, GL_ONE );	
 
     camera.SetViewFrustum ( );
 
@@ -388,7 +430,7 @@ int main ( void )
             fps = frames / delta;
 
             sprintf (
-                caption, "Implicit Surfaces Demo ( OCL ) - %.1f FPS", fps );
+                caption, "ZZZ ( OCL ) - %.1f FPS", fps );
 
             glfwSetWindowTitle ( caption );
 
@@ -417,36 +459,17 @@ int main ( void )
 
         //---------------------------------------------------------------------
 
-        /* Move light source */
-
-        lightPosition ( 0 ) = -10.0F;
-        lightPosition ( 1 ) =  10.0F + 4.0F * cosf ( time * 1.5F );
-        lightPosition ( 2 ) = -10.0F + 4.0F * sinf ( time * 1.5F ); 
-
-        //---------------------------------------------------------------------
-
         /* Compute ray traced image using OpenCL kernel */
 
-        //cltAcquireGraphicsObject ( queue, image );
-
-        //clFinish ( queue );
-
-        //StartKernels ( );
-
-        //cltReleaseGraphicsObject ( queue, image );
-
-        //clFinish ( queue );
+        StartKernels ( );
 
         /* Draw dummy quad with custom fragment shader */      
         
-        glBegin ( GL_QUADS );
+        camera.Setup ( );
 
-            glTexCoord2f (     0,      0 ); glVertex2f ( -1.0F, -1.0F );
-            glTexCoord2f (     0, height ); glVertex2f ( -1.0F,  1.0F );
-            glTexCoord2f ( width, height ); glVertex2f (  1.0F,  1.0F );
-            glTexCoord2f ( width,      0 ); glVertex2f (  1.0F, -1.0F );
+        glClear ( GL_COLOR_BUFFER_BIT );
 
-        glEnd ( );
+        DrawParticles ( width, height );
 
         glfwSwapBuffers ( );
 

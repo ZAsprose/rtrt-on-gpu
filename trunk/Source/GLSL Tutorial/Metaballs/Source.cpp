@@ -180,42 +180,42 @@ int main ( void )
 
    Texture2D downTexture (
        0,
-       TextureData2D :: LoadFromFile ( "Sea/negative_y.png" ),
+       TextureData2D :: LoadFromFile ( "Landscape/negative_y.png" ),
        GL_TEXTURE_2D );
     downTexture.FilterMode = FilterMode :: Linear;
     downTexture.Setup ( );
 
     Texture2D topTexture (
         1,
-        TextureData2D :: LoadFromFile ( "Sea/positive_y.png" ),
+        TextureData2D :: LoadFromFile ( "Landscape/positive_y.png" ),
         GL_TEXTURE_2D );
     topTexture.FilterMode = FilterMode :: Linear;
     topTexture.Setup ( );
 
     Texture2D leftTexture (
         2,
-        TextureData2D :: LoadFromFile ( "Sea/negative_x.png" ),
+        TextureData2D :: LoadFromFile ( "Landscape/negative_x.png" ),
         GL_TEXTURE_2D );
     leftTexture.FilterMode = FilterMode :: Linear;
     leftTexture.Setup ( );
 
     Texture2D rightTexture (
         3,
-        TextureData2D :: LoadFromFile ( "Sea/positive_x.png" ),
+        TextureData2D :: LoadFromFile ( "Landscape/positive_x.png" ),
         GL_TEXTURE_2D );
     rightTexture.FilterMode = FilterMode :: Linear;
     rightTexture.Setup ( );
 
     Texture2D backTexture (
         4,
-        TextureData2D :: LoadFromFile ( "Sea/negative_z.png" ),
+        TextureData2D :: LoadFromFile ( "Landscape/negative_z.png" ),
         GL_TEXTURE_2D );
     backTexture.FilterMode = FilterMode :: Linear;
     backTexture.Setup ( );
 
     Texture2D frontTexture (
         5,
-        TextureData2D :: LoadFromFile ( "Sea/positive_z.png" ),
+        TextureData2D :: LoadFromFile ( "Landscape/positive_z.png" ),
         GL_TEXTURE_2D );
     frontTexture.FilterMode = FilterMode :: Linear;
     frontTexture.Setup ( );

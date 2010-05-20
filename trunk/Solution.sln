@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Compute Library", "Sou
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 5 - Bitonic Sort (OCL)", "Source\OpenCL Tutorial\Bitonic Sort\Bitonic Sort.vcproj", "{42E11757-4E37-472B-AF23-7BF1BF65CA1F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - N-Bodies Simulation (OCL)", "Source\OpenCL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{905F317C-44B3-447F-9AB5-EDFF45C14906}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (AMD)|Win32 = Debug (AMD)|Win32
@@ -105,6 +107,14 @@ Global
 		{42E11757-4E37-472B-AF23-7BF1BF65CA1F}.Release (AMD)|Win32.Build.0 = Release (AMD)|Win32
 		{42E11757-4E37-472B-AF23-7BF1BF65CA1F}.Release (NVIDIA)|Win32.ActiveCfg = Release (NVIDIA)|Win32
 		{42E11757-4E37-472B-AF23-7BF1BF65CA1F}.Release (NVIDIA)|Win32.Build.0 = Release (NVIDIA)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Debug (AMD)|Win32.ActiveCfg = Debug (AMD)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Debug (AMD)|Win32.Build.0 = Debug (AMD)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Debug (NVIDIA)|Win32.ActiveCfg = Debug (NVIDIA)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Debug (NVIDIA)|Win32.Build.0 = Debug (NVIDIA)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release (AMD)|Win32.ActiveCfg = Release (AMD)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release (AMD)|Win32.Build.0 = Release (AMD)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release (NVIDIA)|Win32.ActiveCfg = Release (NVIDIA)|Win32
+		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release (NVIDIA)|Win32.Build.0 = Release (NVIDIA)|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,5 +129,6 @@ Global
 		{A042E930-8049-4173-BD0B-E605DFE5F4BC} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 		{C09BE8B1-3AB1-41A5-9342-AFDD90C093E0} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 		{42E11757-4E37-472B-AF23-7BF1BF65CA1F} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
+		{905F317C-44B3-447F-9AB5-EDFF45C14906} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 	EndGlobalSection
 EndGlobal
