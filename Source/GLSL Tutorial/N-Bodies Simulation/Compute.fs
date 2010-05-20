@@ -14,9 +14,9 @@ varying vec2 Particle;
 
 //-----------------------------------------------------------------------------------------------------------
 
-const int CountX = 64;
+const int CountX = 128;
 
-const int CountY = 64;
+const int CountY = 128;
 
 const float TimeStep = 1e-4;
 
