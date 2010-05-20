@@ -22,6 +22,8 @@
 
 #include <logger.h>
 
+#include <malloc.h>
+
 #include "TextureData2D.hpp"
 
 namespace graphics
@@ -47,7 +49,22 @@ namespace graphics
         }
         else
         {
-            fPixels = new float [width * height * components];
+            /*
+             * We use Eigen math library which use aligned data types.
+             * For compatibility reasons we must do aligned malloc too.
+             */
+
+#ifdef _WIN32
+
+            fPixels = ( float * ) _aligned_malloc (
+                width * height * components * sizeof ( float ), 16 );
+
+#else
+
+            fPixels = ( float * ) memalign (
+                16, width * height * components * sizeof ( float ) );
+
+#endif
         }
     }
 
@@ -55,7 +72,16 @@ namespace graphics
 
     TextureData2D :: ~TextureData2D ( void )
     {
-        delete [] fPixels;
+#ifdef _WIN32
+
+        _aligned_free ( fPixels );
+
+
+#else
+
+        free ( fPixels );
+
+#endif
     }
 
     /************************************************************************/
@@ -89,21 +115,7 @@ namespace graphics
             Type ( )             /* the data type of the pixel data */,
             fPixels              /* a pointer to the image data */ );
     }
-
-    /************************************************************************/
-
-    GLfloat * TextureData2D :: Pixel ( GLuint x )
-    {
-        return fPixels + x * fComponents;
-    }
-
-    /************************************************************************/
-
-    GLfloat * TextureData2D :: Pixel ( GLuint x, GLuint y )
-    {
-        return fPixels + ( x + y * fWidth ) * fComponents;
-    }
-
+    
     /************************************************************************/
 
     GLenum TextureData2D :: Type ( void ) const

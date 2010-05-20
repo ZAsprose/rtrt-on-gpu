@@ -53,9 +53,10 @@ namespace graphics
             /*                            PUBLIC METHODS                            */
             /************************************************************************/
 
-            /* For accessing to texture data as a 1D array */
+            /* For accessing to texture data as a 1D array of tuples */
 
-            GLfloat * Pixel ( GLuint x );
+            template < class TUPLE >
+            TUPLE & Pixel ( GLuint x );
 
             //------------------------------------------------------------------------
 
@@ -93,6 +94,14 @@ namespace graphics
 
             GLuint fComponents;
     };
+
+    /********************************************************************************/
+
+    template < class TUPLE >
+    TUPLE & TextureData1D :: Pixel ( GLuint x )
+    {
+        return ( TUPLE & ) *( fPixels + x * fComponents );
+    }
 }
 
 #endif

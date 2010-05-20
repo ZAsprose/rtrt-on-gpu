@@ -272,7 +272,7 @@ namespace graphics
 
     bool ShaderProgram :: Build ( void )
     {
-        //EZLOGGERSTREAM << "BUILDING PROGRAM OBJECT" << endl;
+        EZLOGGERSTREAM << "BUILDING PROGRAM OBJECT" << endl;
 
         glLinkProgram ( fProgramObject );
 
@@ -295,11 +295,11 @@ namespace graphics
 
         if ( 0 == strlen ( info ) )
         {
-            cout << "Information log is empty..." << endl;
+            EZLOGGERSTREAM << "Information log is empty..." << endl;
         }
         else
         {
-            cout << info << endl;
+            EZLOGGERSTREAM << info << endl;
         }
 
         delete [] info;
@@ -314,13 +314,13 @@ namespace graphics
 
         if ( 0 == status )
         {
-            cout << "ERROR: Could not link program" << endl;
+            EZLOGGERSTREAM << "ERROR: Could not link program" << endl;
 
             return false;
         }
         else
         {
-            cout << "SUCCESS!" << endl;
+            EZLOGGERSTREAM << "SUCCESS!" << endl;
 
             return true;
         }

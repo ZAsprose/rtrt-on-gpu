@@ -18,6 +18,8 @@
    this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <malloc.h>
+
 #include "TextureData3D.hpp"
 
 namespace graphics
@@ -46,7 +48,22 @@ namespace graphics
         }
         else
         {
-            fPixels = new float [width * height * depth * components];
+            /*
+             * We use Eigen math library which use aligned data types.
+             * For compatibility reasons we must do aligned malloc too.
+             */
+
+#ifdef _WIN32
+
+            fPixels = ( float * ) _aligned_malloc (
+                width * height * depth * components * sizeof ( float ), 16 );
+
+#else
+
+            fPixels = ( float * ) memalign (
+                16, width * height * depth * components * sizeof ( float ) );
+
+#endif
         }
     }
 
@@ -54,7 +71,16 @@ namespace graphics
 
     TextureData3D :: ~TextureData3D ( void )
     {
-        delete [] fPixels;
+#ifdef _WIN32
+
+        _aligned_free ( fPixels );
+
+
+#else
+
+        free ( fPixels );
+
+#endif
     }
 
     /************************************************************************/
@@ -88,20 +114,6 @@ namespace graphics
             PixelFormat ( )      /* the format of the pixel data */,
             Type ( )             /* the data type of the pixel data */,
             fPixels              /* a pointer to the image data */ );
-    }
-
-    /************************************************************************/
-
-    GLfloat * TextureData3D :: Pixel ( GLuint x )
-    {
-        return fPixels + x * fComponents;
-    }
-
-    /************************************************************************/
-
-    GLfloat * TextureData3D :: Pixel ( GLuint x, GLuint y, GLuint z )
-    {
-        return fPixels + ( x + ( y + z * fHeight ) * fWidth ) * fComponents;
     }
 
     /************************************************************************/
