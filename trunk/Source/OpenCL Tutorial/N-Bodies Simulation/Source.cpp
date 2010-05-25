@@ -1,6 +1,6 @@
 /*
    ---------------------------------------------------------------------------
-   |          I M P L I C I T   S U R F A C E S   D E M O   ( OCL )          |
+   |        N - B O D I E S   S I M U L A T I O N   D E M O   ( OCL )        |
    ---------------------------------------------------------------------------
                               
    Copyright (c) 2009 - 2010 Denis Bogolepov ( denisbogol @ gmail.com )
@@ -21,17 +21,15 @@
 
 #define NOMINMAX
 
-#include <iostream>
-
 #include <logger.h>
 
 #include <Graphics.hpp>
 
-#include <OpenCL.h>
+#include <Compute.hpp>
 
 using namespace graphics;
 
-#define frand( ) ( rand ( ) / ( cl_float ) RAND_MAX )
+#define RAND( ) ( rand ( ) / ( cl_float ) RAND_MAX )
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Global variables
@@ -48,6 +46,14 @@ Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
                 Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
 
 /*
+ * Width and height of the output window.
+ */
+
+int width = 512;
+
+int height = 512;
+
+/*
  * OpenCL objects.
  */
 
@@ -57,81 +63,79 @@ cl_program program;
 
 cl_kernel kernel;
 
-cl_mem currPositions;
+cl_mem oldBuffer;
 
-cl_mem nextPositions;
+cl_mem newBuffer;
 
-cl_mem velocities;
+cl_mem velBuffer;
 
 cl_command_queue queue;
 
 /*
- * Width and height of the output window.
+ * Number of particles ( MUST be a nice power of two for simplicity ).
  */
 
-int width = 512;
+int count = 128 * 128;
 
-int height = 512;
+/*
+ * Initial positions and velocities of particles.
+ */
 
+cl_float4 * positions = NULL;
 
-int count = 128 * 128; /* MUST be a nice power of two for simplicity */
+cl_float4 * velocities = NULL;
 
-float dt = 0.0001F;
-float eps = 0.0001F;
+/*
+ * Time step of simulation and smoothing factor.
+ */
 
-int nthread = 64; /* chosen for ATI Radeon HD 5870 */
+float timeStep = 0.0001F;
 
-cl_float4 * pos;
+float epsilon = 0.0001F;
 
-cl_float4 * vel;
+/*
+ * Local size ( for modern GPUs must be >= 64 ).
+ */
 
-/////////////////////////////////////////////////////////////////////////////////////////
-// Event handlers for mouse and keyboard
-
-void MouseMoveHandler ( GLint x, GLint y )
-{
-    mouse.MouseMoveHandler ( x, y );
-}
-
-void MouseDownHandler ( GLint button, GLint state )
-{
-    mouse.MouseDownHandler ( button, state );
-}
-
-void KeyDownHandler ( GLint key, GLint state )
-{
-    keyboard.KeyDownHandler ( key, state );
-}
-
-float testal(Vector4f& xxx)
-{
-    return xxx.x();
-}
+cl_int localSize = 64;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // N-Bodies subroutines
 
-void NBodyInit ( void )
+void SetupParticles ( void )
 {
-    pos = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+    /*
+     * In ATI/AMD Stream SDK only aligned memory is used.
+     */
 
-    vel  = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+#ifdef _WIN32
+
+    positions = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+
+    velocities = ( cl_float4 * ) _aligned_malloc ( count * sizeof ( cl_float4 ), 16 );
+
+#else
+
+    positions = ( cl_float4 * ) memalign ( 16, count * sizeof ( cl_float4 ) );
+
+    velocities = ( cl_float4 * ) memalign ( 16, count * sizeof ( cl_float4 ) );
+
+#endif
 
     srand ( 2112 );
 
     for ( int i = 0; i < count; i++ )
     {
-        pos [i].s [0] = frand();
-        pos [i].s [1] = frand();
-        pos [i].s [2] = frand();
-        pos [i].s [3] = frand();
+        positions [i].s [0] = RAND ( );
+        positions [i].s [1] = RAND ( );
+        positions [i].s [2] = RAND ( );
+        positions [i].s [3] = RAND ( );
 
-        vel [i].s [0] = 0.0F;
-        vel [i].s [1] = 0.0F;
-        vel [i].s [2] = 0.0F;
-        vel [i].s [3] = 0.0F;
+        velocities [i].s [0] = 0.0F;
+        velocities [i].s [1] = 0.0F;
+        velocities [i].s [2] = 0.0F;
+        velocities [i].s [3] = 0.0F;
     }
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -184,69 +188,79 @@ void SetupKernels ( void )
      * Create a kernel object for a function declared in a program.
      */
 
-    kernel = cltCreateKernel ( program, "nbody_kern" );
+    kernel = cltCreateKernel ( program, "Update" );
 
     /*
-     * Create an OpenCL 2D image object from an OpenGL 2D texture
-     * object for output rendered scene.
+     * Create OpenCL buffer objects for particle positions and velocities.
      */
 
-    currPositions = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_ONLY, count );
+    oldBuffer = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_ONLY, count );
 
-    nextPositions = cltCreateBuffer < cl_float4 > ( context, CL_MEM_WRITE_ONLY, count );
+    newBuffer = cltCreateBuffer < cl_float4 > ( context, CL_MEM_WRITE_ONLY, count );
 
-    velocities = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_WRITE, count );
+    velBuffer = cltCreateBuffer < cl_float4 > ( context, CL_MEM_READ_WRITE, count );
 
-    cltSetArgument < cl_float > ( kernel, 0, &dt );
+    /*
+     * Set arguments of an OpenCL kernel.
+     */
 
-    cltSetArgument < cl_float > ( kernel, 1, &eps );
+    cltSetArgument < cl_float > ( kernel, 0, &timeStep );
 
-    cltSetArgument < cl_mem > ( kernel, 4, &velocities );
+    cltSetArgument < cl_float > ( kernel, 1, &epsilon );
 
-    cltCheckError ( clSetKernelArg ( kernel, 5, nthread * sizeof ( cl_float4 ), NULL ) );
+    cltSetArgument < cl_mem > ( kernel, 4, &velBuffer );
 
+    cltCheckError ( clSetKernelArg ( kernel, 5, localSize * sizeof ( cl_float4 ), NULL ) );
 
-    cl_int status = clEnqueueWriteBuffer (
+    /*
+     * Write initial positions and velocities of particles.
+     */
+
+    cltCheckError ( clEnqueueWriteBuffer (
         queue                          /* command_queue */,
-        currPositions								  /* buffer */,
-        CL_TRUE                               /* blocking_read */,
-        0                                     /* offset */,
+        oldBuffer                      /* buffer */,
+        CL_TRUE                        /* blocking_read */,
+        0                              /* offset */,
         count * sizeof ( cl_float4 )   /* cb */,
-        pos                           /* ptr */,
-        0                                     /* num_events_in_wait_list */,
-        NULL                                  /* event_wait_list */,
-        NULL                           /* event */ );
+        positions                      /* ptr */,
+        0                              /* num_events_in_wait_list */,
+        NULL                           /* event_wait_list */,
+        NULL                           /* event */ ) );
 
-    status = clEnqueueWriteBuffer (
+    cltCheckError ( clEnqueueWriteBuffer (
         queue                          /* command_queue */,
-        velocities								  /* buffer */,
-        CL_TRUE                               /* blocking_read */,
-        0                                     /* offset */,
+        velBuffer                      /* buffer */,
+        CL_TRUE                        /* blocking_read */,
+        0                              /* offset */,
         count * sizeof ( cl_float4 )   /* cb */,
-        vel                           /* ptr */,
-        0                                     /* num_events_in_wait_list */,
-        NULL                                  /* event_wait_list */,
-        NULL                           /* event */ );
+        velocities                     /* ptr */,
+        0                              /* num_events_in_wait_list */,
+        NULL                           /* event_wait_list */,
+        NULL                           /* event */ ) );
 }
 
-bool iter = true;
+bool even = false;
 
 void StartKernels ( void )
 {
-    if (iter)
-    {
-        cltSetArgument < cl_mem > ( kernel, 2, &currPositions );
+    /*
+     * For modeling of process dynamics switching of the input
+     * and output position buffers is necessary ( or copy operation
+     * on each iteration ).
+     */
 
-        cltSetArgument < cl_mem > ( kernel, 3, &nextPositions );
+    if ( even = !even )
+    {
+        cltSetArgument < cl_mem > ( kernel, 2, &oldBuffer );
+
+        cltSetArgument < cl_mem > ( kernel, 3, &newBuffer );
     }
     else
     {
-        cltSetArgument < cl_mem > ( kernel, 3, &currPositions );
+        cltSetArgument < cl_mem > ( kernel, 3, &oldBuffer );
 
-        cltSetArgument < cl_mem > ( kernel, 2, &nextPositions );
+        cltSetArgument < cl_mem > ( kernel, 2, &newBuffer );
     }
-
-    iter = !iter;
 
     //----------------------------------------------------------
 
@@ -254,22 +268,22 @@ void StartKernels ( void )
         queue,
         kernel,
         count,
-        nthread );
+        localSize   /* set the best size for your GPU */ );
 
     cltCheckError ( clFinish ( queue ) );
 
     //----------------------------------------------------------
 
-    cl_int status = clEnqueueReadBuffer (
+    cltCheckError ( clEnqueueReadBuffer (
         queue                          /* command_queue */,
-        currPositions								  /* buffer */,
-        CL_TRUE                               /* blocking_read */,
-        0                                     /* offset */,
+        oldBuffer                      /* buffer */,
+        CL_TRUE                        /* blocking_read */,
+        0                              /* offset */,
         count * sizeof ( cl_float4 )   /* cb */,
-        pos                           /* ptr */,
-        0                                     /* num_events_in_wait_list */,
-        NULL                                  /* event_wait_list */,
-        NULL                           /* event */ );
+        positions                      /* ptr */,
+        0                              /* num_events_in_wait_list */,
+        NULL                           /* event_wait_list */,
+        NULL                           /* event */ ) );
     
     cltCheckError ( clFinish ( queue ) );
 }
@@ -280,16 +294,23 @@ void ReleaseOpenCL ( void )
 
     cltCheckError ( clReleaseProgram ( program ) );
 
-    cltCheckError ( clReleaseMemObject ( currPositions ) );
+    cltCheckError ( clReleaseMemObject ( oldBuffer ) );
 
-    cltCheckError ( clReleaseMemObject ( nextPositions ) );
+    cltCheckError ( clReleaseMemObject ( newBuffer ) );
 
-    cltCheckError ( clReleaseMemObject ( velocities ) );
+    cltCheckError ( clReleaseMemObject ( velBuffer ) );
 
     cltCheckError ( clReleaseCommandQueue ( queue ) );
 
     cltCheckError ( clReleaseContext ( context ) );
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// OpenGL subroutines
+
+/*
+ * Draws particles with custom shaders.
+ */
 
 void DrawParticles ( int w, int h )
 {
@@ -298,20 +319,38 @@ void DrawParticles ( int w, int h )
 
     camera.Setup ( );
 
-    glPointSize(5);
+    glPointSize ( 3.0F );
 
-    glEnable(GL_POINT_SMOOTH);
-
+    glEnable ( GL_POINT_SMOOTH );
 
 
     glBegin ( GL_POINTS );
 
     for ( int i = 0; i < count; ++i )
     {
-        glVertex3fv ( pos [i].s );
+        glVertex3fv ( positions [i].s );
     }
 
     glEnd ( );
+}
+
+/*
+ * Event handlers for mouse and keyboard.
+ */
+
+void MouseMoveHandler ( GLint x, GLint y )
+{
+    mouse.MouseMoveHandler ( x, y );
+}
+
+void MouseDownHandler ( GLint button, GLint state )
+{
+    mouse.MouseDownHandler ( button, state );
+}
+
+void KeyDownHandler ( GLint key, GLint state )
+{
+    keyboard.KeyDownHandler ( key, state );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -384,7 +423,7 @@ int main ( void )
 
     /* Setup OpenCL compute environment */
 
-    NBodyInit ( );
+    SetupParticles ( );
 
     SetupOpenCL ( );
 
@@ -400,7 +439,7 @@ int main ( void )
 
     glBlendFunc ( GL_ONE, GL_ONE );	
 
-    camera.SetViewFrustum ( );
+    camera.SetFrustum ( );
 
     //-------------------------------------------------------------------------
     

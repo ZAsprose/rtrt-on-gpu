@@ -27,7 +27,7 @@
 
 #include <Graphics.hpp>
 
-#include <OpenCL.h>
+#include <Compute.hpp>
 
 using namespace graphics;
 
@@ -44,23 +44,6 @@ Keyboard keyboard;
 
 Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
                 Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
-
-/*
- * Positions and radiuses of metaballs.
- */
-
-const cl_int count = 8;
-
-cl_float positions [] = {
-    0.0F, 0.0F, 0.0F, 0.50F,
-    0.0F, 0.0F, 0.0F, 0.75F,
-    0.0F, 0.0F, 0.0F, 1.00F,
-    0.0F, 0.0F, 0.0F, 1.50F,
-    0.0F, 0.0F, 0.0F, 1.50F,
-    0.0F, 0.0F, 0.0F, 1.00F,
-    0.0F, 0.0F, 0.0F, 0.75F,
-    0.0F, 0.0F, 0.0F, 1.50F
-};
 
 /*
  * OpenCL objects.
@@ -91,6 +74,23 @@ int height = 512;
  */
 
 Texture2D * texture = NULL;
+
+/*
+ * Positions and radiuses of metaballs.
+ */
+
+const cl_int count = 8;
+
+cl_float positions [] = {
+    0.0F, 0.0F, 0.0F, 0.50F,
+    0.0F, 0.0F, 0.0F, 0.75F,
+    0.0F, 0.0F, 0.0F, 1.00F,
+    0.0F, 0.0F, 0.0F, 1.50F,
+    0.0F, 0.0F, 0.0F, 1.50F,
+    0.0F, 0.0F, 0.0F, 1.00F,
+    0.0F, 0.0F, 0.0F, 0.75F,
+    0.0F, 0.0F, 0.0F, 1.50F
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers for mouse and keyboard
@@ -182,42 +182,49 @@ void SetupKernels ( void )
 
 void StartKernels ( void )
 {
-    float view [4] = { camera.View ( ).x ( ),
-                       camera.View ( ).y ( ),
-                       camera.View ( ).z ( ) };
+    /*
+     * Set dynamic kernel arguments.
+     */
+
+    cl_float4 view = cltFloat4 ( camera.View ( ) );
     
-    float up [4] = { camera.Up ( ).x ( ),
-                     camera.Up ( ).y ( ),
-                     camera.Up ( ).z ( ) };
-    
-    float side [4] = { camera.Side ( ).x ( ),
-                       camera.Side ( ).y ( ),
-                       camera.Side ( ).z ( ) };
-    
-    float position [4] = { camera.Position ( ).x ( ),
-                           camera.Position ( ).y ( ),
-                           camera.Position ( ).z ( ) };
-    
-    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
-                        2.0F * camera.Scale ( ).x ( ) };
+    cltSetArgument < cl_float4 > ( kernel, 1, &view );
 
     //----------------------------------------------------------
 
-    cltSetArgument < float [4] > ( kernel, 1, &view );
+    cl_float4 up = cltFloat4 ( camera.Up ( ) );
+    
+    cltSetArgument < cl_float4 > ( kernel, 2, &up );
 
-    cltSetArgument < float [4] > ( kernel, 2, &up );
+    //----------------------------------------------------------
 
-    cltSetArgument < float [4] > ( kernel, 3, &side );
+    cl_float4 side = cltFloat4 ( camera.Side ( ) );
+    
+    cltSetArgument < cl_float4 > ( kernel, 3, &side );
 
-    cltSetArgument < float [4] > ( kernel, 4, &position );
+    //----------------------------------------------------------
 
-    cltSetArgument < float [2] > ( kernel, 5, &scale );
+    cl_float4 position = cltFloat4 ( camera.Position ( ) );
+    
+    cltSetArgument < cl_float4 > ( kernel, 4, &position );
+
+    //----------------------------------------------------------
+
+    cl_float2 scale = cltFloat2 ( 2.0F * camera.Scale ( ) );
+    
+    cltSetArgument < cl_float2 > ( kernel, 5, &scale );
+
+    //----------------------------------------------------------
     
     cltSetArgument < int > ( kernel, 6, &width );
     
     cltSetArgument < int > ( kernel, 7, &height );
 
     //----------------------------------------------------------
+
+    /*
+     * Write new positions of metaballs.
+     */
 
     cltCheckError ( clEnqueueWriteBuffer (
         queue,
@@ -232,15 +239,23 @@ void StartKernels ( void )
 
     //----------------------------------------------------------
     
+    /*
+     * Run kernel on GPU.
+     */
+
     cltRunKernel2D (
         queue,
         kernel,
-        width, height,
-        8, 8 );
+        width, height   /* global size */,
+        8, 8            /* local size */ );
 
     //----------------------------------------------------------
+
+    /*
+     * Wait until the kernel is not completed.
+     */
     
-    cltCheckError ( clFinish ( queue ) );
+    cltFinish ( queue );
 }
 
 void ReleaseOpenCL ( void )
@@ -297,6 +312,8 @@ int main ( void )
     //-------------------------------------------------------------------------
 
     /* Try to open rendering window */
+    
+    glfwOpenWindowHint ( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
 
     if ( !glfwOpenWindow (
             width    /* window width */,
@@ -323,6 +340,28 @@ int main ( void )
     glfwSetMouseButtonCallback ( MouseDownHandler );
 
     glfwSetKeyCallback ( KeyDownHandler );
+
+    //-------------------------------------------------------------------------
+
+    /* Set parallel projection for drawing dummy quad */
+
+    glMatrixMode ( GL_PROJECTION );
+
+    glLoadIdentity ( );
+
+    glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
+
+    glMatrixMode ( GL_MODELVIEW );
+
+    glLoadIdentity ( );
+
+    glEnable ( GL_TEXTURE_RECTANGLE_ARB );
+
+    /* Set default view frustum and window size for the camera */
+
+    camera.SetFrustum ( );
+
+    camera.SetViewport ( width, height );
 
     //-------------------------------------------------------------------------
 
@@ -364,26 +403,6 @@ int main ( void )
     SetupKernels ( );
 
     //-------------------------------------------------------------------------
-
-    /* Set parallel projection for drawing dummy quad */
-    
-    glMatrixMode ( GL_PROJECTION );
-    
-    glLoadIdentity ( );
-    
-    glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
-    
-    glMatrixMode ( GL_MODELVIEW );
-    
-    glLoadIdentity ( );
-
-    glEnable ( GL_TEXTURE_RECTANGLE_ARB );
-
-    /* Set view frustum for camera ( we use default values ) */
-
-    camera.SetViewFrustum ( );
-
-    //-------------------------------------------------------------------------
     
     GLboolean running = GL_TRUE;
 
@@ -420,14 +439,6 @@ int main ( void )
         }
 
         frames++;
-
-        //---------------------------------------------------------------------
-
-        /* Set new window size */
-        
-        glfwGetWindowSize ( &width, &height );
-        
-        camera.SetViewport ( width, height );
         
         //---------------------------------------------------------------------
 
@@ -451,7 +462,7 @@ int main ( void )
 
         positions [8]  = 0.0F; 
         positions [9]  = 2.0F * sinf ( time );
-        positions [10]  = 2.0F * cosf ( time );
+        positions [10] = 2.0F * cosf ( time );
 
         positions [12] = 3.0F * sinf ( time ); 
         positions [13] = 3.0F * sinf ( time );
@@ -479,13 +490,13 @@ int main ( void )
         
         cltAcquireGraphicsObject ( queue, image );
 
-        clFinish ( queue );
+        cltFinish ( queue );
 
         StartKernels ( );
 
         cltReleaseGraphicsObject ( queue, image );
 
-        clFinish ( queue );
+        cltFinish ( queue );
 
         /* Draw dummy quad with custom fragment shader */      
         
@@ -507,6 +518,8 @@ int main ( void )
     }
 
     ReleaseOpenCL ( );
+
+    delete texture;
 
     glfwTerminate ( );
     

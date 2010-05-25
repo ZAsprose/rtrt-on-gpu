@@ -21,7 +21,7 @@
 
 /* nbody_kern.cl */
 
-__kernel void nbody_kern(
+__kernel void Update(
         float dt1, float eps,
         __global float4* pos_old,
         __global float4* pos_new,

@@ -1,6 +1,6 @@
 /*
    -----------------------------------------------------------------------------
-   |                  O P E N C L   T O O L S   L I B R A R Y                  |
+   |                  B A S E   C O M P U T E   L I B R A R Y                  |
    -----------------------------------------------------------------------------
                               
    Copyright (c) 2009 - 2010 Denis Bogolepov ( denisbogol @ gmail.com )
@@ -23,15 +23,11 @@
 
 #include <vector>
 
-#include <CL/cl.h>
-
-#include <Texture2D.hpp>
-
-#include <Texture3D.hpp>
-
-#include <RenderBuffer.hpp>
+#include <Graphics.hpp>
 
 #include <CL/cl_gl.h>
+
+#include "Util.hpp"
 
 /*
  * ------------------------------ NOTE -----------------------------
@@ -334,5 +330,19 @@ void cltRunKernel3D ( cl_command_queue queue,
                       size_t X, size_t Y, size_t Z,   /* global size */
                       size_t x, size_t y, size_t z,   /* local size */
                       cl_event * event = NULL );
+
+/***************************************************************************************/
+
+/*
+ * Issues all previously queued OpenCL commands in a command-queue to
+ * the device associated with the command-queue.
+ */
+void cltFlush ( cl_command_queue queue );
+
+/*
+ * Blocks until all previously queued OpenCL commands in a command-queue
+ * are issued to the associated device and have completed.
+ */
+void cltFinish ( cl_command_queue queue );
 
 #endif

@@ -244,7 +244,7 @@ namespace graphics
 
     /************************************************************************/
 
-    void Camera :: SetViewFrustum ( GLfloat fieldOfView,
+    void Camera :: SetFrustum ( GLfloat fieldOfView,
                                     GLfloat nearPlane,
                                     GLfloat farPlane )
     {

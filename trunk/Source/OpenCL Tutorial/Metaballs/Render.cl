@@ -303,6 +303,11 @@ void GenerateRay ( PSRay ray,
 
 //-----------------------------------------------------------------------------
 
+/*
+ * For the incident vector and surface normal, returns the
+ * reflection direction.
+ */
+
 float4 Reflect ( float4 incident, float4 normal )
 {
     return incident - normal * 2.0F * dot ( incident, normal );

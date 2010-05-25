@@ -567,7 +567,7 @@ int main ( void )
 	
 	glBlendFunc ( GL_ONE, GL_ONE );	
 
-	camera.SetViewFrustum ( );
+	camera.SetFrustum ( );
 
 	//-------------------------------------------------------------------------
 	
