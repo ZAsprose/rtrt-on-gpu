@@ -95,7 +95,7 @@ namespace graphics
             
             //------------------------------------------------------------------------
             
-            void SetViewFrustum ( GLfloat fieldOfView = 45.0F,
+            void SetFrustum ( GLfloat fieldOfView = 45.0F,
                                   GLfloat nearPlane = 1E-2F,
                                   GLfloat farPlane = 1E3F );
 

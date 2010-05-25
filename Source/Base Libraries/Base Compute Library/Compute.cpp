@@ -18,6 +18,8 @@
    this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define NOMINMAX
+
 #include <fstream>
 
 #include <iostream>
@@ -26,7 +28,7 @@
 
 #include <logger.h>
 
-#include "OpenCL.h"
+#include "Compute.hpp"
 
 /*
  * Use this function to check errors.
@@ -964,7 +966,7 @@ void cltRunKernel1D ( cl_command_queue queue,
 
     if ( error != CL_SUCCESS )
     {
-        EZLOGGERSTREAM << "ERROR: clSetKernelArg failed" << std :: endl;
+        EZLOGGERSTREAM << "ERROR: clEnqueueNDRangeKernel failed" << std :: endl;
 
         EZLOGGERVAR ( X );
 
@@ -1045,7 +1047,7 @@ void cltRunKernel2D ( cl_command_queue queue,
 
     if ( error != CL_SUCCESS )
     {
-        EZLOGGERSTREAM << "ERROR: clSetKernelArg failed" << std :: endl;
+        EZLOGGERSTREAM << "ERROR: clEnqueueNDRangeKernel failed" << std :: endl;
 
         EZLOGGERVAR ( X );  EZLOGGERVAR ( Y );
 
@@ -1126,7 +1128,7 @@ void cltRunKernel3D ( cl_command_queue queue,
 
     if ( error != CL_SUCCESS )
     {
-        EZLOGGERSTREAM << "ERROR: clSetKernelArg failed" << std :: endl;
+        EZLOGGERSTREAM << "ERROR: clEnqueueNDRangeKernel failed" << std :: endl;
 
         EZLOGGERVAR ( X );  EZLOGGERVAR ( Y );  EZLOGGERVAR ( Z );
 
@@ -1175,6 +1177,64 @@ void cltRunKernel3D ( cl_command_queue queue,
 
             default:
                 EZLOGGERSTREAM << "UNKNOWN_ERROR" << std :: endl;
+        }
+
+        exit ( EXIT_FAILURE );
+    }
+}
+
+/***************************************************************************************/
+
+/*
+ * Issues all previously queued OpenCL commands in a command-queue to
+ * the device associated with the command-queue.
+ */
+void cltFlush ( cl_command_queue queue )
+{
+    cl_int error = clFlush ( queue );
+
+    if ( error != CL_SUCCESS )
+    {
+        EZLOGGERSTREAM << "ERROR: clFlush failed" << std :: endl;
+
+        switch ( error )
+        {
+        case CL_INVALID_COMMAND_QUEUE:
+            EZLOGGERSTREAM << "CL_INVALID_COMMAND_QUEUE" << std :: endl; break;
+
+        case CL_OUT_OF_HOST_MEMORY:
+            EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
+
+        default:
+            EZLOGGERSTREAM << "UNKNOWN_ERROR" << std :: endl;
+        }
+
+        exit ( EXIT_FAILURE );
+    }
+}
+
+/*
+ * Blocks until all previously queued OpenCL commands in a command-queue
+ * are issued to the associated device and have completed.
+ */
+void cltFinish ( cl_command_queue queue )
+{
+    cl_int error = clFinish ( queue );
+
+    if ( error != CL_SUCCESS )
+    {
+        EZLOGGERSTREAM << "ERROR: clFinish failed" << std :: endl;
+
+        switch ( error )
+        {
+        case CL_INVALID_COMMAND_QUEUE:
+            EZLOGGERSTREAM << "CL_INVALID_COMMAND_QUEUE" << std :: endl; break;
+
+        case CL_OUT_OF_HOST_MEMORY:
+            EZLOGGERSTREAM << "CL_OUT_OF_HOST_MEMORY" << std :: endl; break;
+
+        default:
+            EZLOGGERSTREAM << "UNKNOWN_ERROR" << std :: endl;
         }
 
         exit ( EXIT_FAILURE );

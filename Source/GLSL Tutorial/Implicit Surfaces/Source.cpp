@@ -140,7 +140,7 @@ int main ( void )
 
     /* Set view frustum for camera ( we use default values ) */
 
-    camera.SetViewFrustum ( );
+    camera.SetFrustum ( );
 
     //-------------------------------------------------------------------------
 

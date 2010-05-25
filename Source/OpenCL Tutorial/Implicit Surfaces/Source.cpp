@@ -27,7 +27,7 @@
 
 #include <Graphics.hpp>
 
-#include <OpenCL.h>
+#include <Compute.hpp>
 
 using namespace graphics;
 
@@ -161,58 +161,69 @@ void SetupKernels ( void )
 
 void StartKernels ( void )
 {
-    float view [4] = { camera.View ( ).x ( ),
-                       camera.View ( ).y ( ),
-                       camera.View ( ).z ( ) };
+    /*
+     * Set dynamic kernel arguments.
+     */
 
-    float up [4] = { camera.Up ( ).x ( ),
-                     camera.Up ( ).y ( ),
-                     camera.Up ( ).z ( ) };
-
-    float side [4] = { camera.Side ( ).x ( ),
-                       camera.Side ( ).y ( ),
-                       camera.Side ( ).z ( ) };
-
-    float position [4] = { camera.Position ( ).x ( ),
-                           camera.Position ( ).y ( ),
-                           camera.Position ( ).z ( ) };
-
-    float scale [2] = { 2.0F * camera.Scale ( ).x ( ),
-                        2.0F * camera.Scale ( ).x ( ) };
-
-    float source [4] = { lightPosition.x ( ),
-                         lightPosition.y ( ),
-                         lightPosition.z ( ) };
+    cl_float4 view = cltFloat4 ( camera.View ( ) );
+    
+    cltSetArgument < cl_float4 > ( kernel, 1, &view );
 
     //----------------------------------------------------------
+
+    cl_float4 up = cltFloat4 ( camera.Up ( ) );
     
-    cltSetArgument < float [4] > ( kernel, 1, &view );
+    cltSetArgument < cl_float4 > ( kernel, 2, &up );
+
+    //----------------------------------------------------------
+
+    cl_float4 side = cltFloat4 ( camera.Side ( ) );
     
-    cltSetArgument < float [4] > ( kernel, 2, &up );
+    cltSetArgument < cl_float4 > ( kernel, 3, &side );
+
+    //----------------------------------------------------------
+
+    cl_float4 position = cltFloat4 ( camera.Position ( ) );
     
-    cltSetArgument < float [4] > ( kernel, 3, &side );
+    cltSetArgument < cl_float4 > ( kernel, 4, &position );
+
+    //----------------------------------------------------------
+
+    cl_float2 scale = cltFloat2 ( 2.0F * camera.Scale ( ) );
     
-    cltSetArgument < float [4] > ( kernel, 4, &position );
-    
-    cltSetArgument < float [2] > ( kernel, 5, &scale );
+    cltSetArgument < cl_float2 > ( kernel, 5, &scale );
+
+    //----------------------------------------------------------
     
     cltSetArgument < int > ( kernel, 6, &width );
     
     cltSetArgument < int > ( kernel, 7, &height );
-    
-    cltSetArgument < float [4] > ( kernel, 8, &source );
 
     //----------------------------------------------------------
+
+    cl_float4 source = cltFloat4 ( lightPosition );
+    
+    cltSetArgument < cl_float4 > ( kernel, 8, &source );
+
+    //----------------------------------------------------------
+
+    /*
+     * Run kernel on GPU.
+     */
 
     cltRunKernel2D (
         queue,
         kernel,
-        width, height,
-        16, 16 );
+        width, height   /* global size */,
+        16, 16          /* local size */ );
 
     //----------------------------------------------------------
+
+    /*
+     * Wait until the kernel is not completed.
+     */
     
-    cltCheckError ( clFinish ( queue ) );
+    cltFinish ( queue );
 }
 
 void ReleaseOpenCL ( void )
@@ -268,6 +279,8 @@ int main ( void )
 
     /* Try to open rendering window */
 
+    glfwOpenWindowHint ( GLFW_WINDOW_NO_RESIZE, GL_TRUE );
+
     if ( !glfwOpenWindow (
             width    /* window width */,
             height   /* window height */,
@@ -293,6 +306,28 @@ int main ( void )
     glfwSetMouseButtonCallback ( MouseDownHandler );
 
     glfwSetKeyCallback ( KeyDownHandler );
+
+    //-------------------------------------------------------------------------
+
+    /* Set parallel projection for drawing dummy quad */
+
+    glMatrixMode ( GL_PROJECTION );
+
+    glLoadIdentity ( );
+
+    glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
+
+    glMatrixMode ( GL_MODELVIEW );
+
+    glLoadIdentity ( );
+
+    glEnable ( GL_TEXTURE_RECTANGLE_ARB );
+
+    /* Set default view frustum and window size for the camera */
+
+    camera.SetFrustum ( );
+
+    camera.SetViewport ( width, height );
 
     //-------------------------------------------------------------------------
 
@@ -325,40 +360,13 @@ int main ( void )
         width      /* width of the texture */,
         height     /* height of the texture */,
         4          /* channels for each texel */,
-        GL_FALSE    /* no texture data on CPU */ );
-
-    Vector4f v;
-    v = Vector4f(1,0,0,0);
-
-    texture->Data->Pixel <Vector4f> (100,100) = Vector4f(1,0,0,0);
-    texture->Data->Pixel <Vector4f> (10, 10) = Vector4f(0,1,0,1);
-        texture->Data->Pixel <Vector4f> (20, 20) = Vector4f(0,0,1,1);
+        GL_TRUE    /* no texture data on CPU */ );
 
     texture->Setup ( );
 
     /* Now we can work with the texture */
 
     SetupKernels ( );
-
-    //-------------------------------------------------------------------------
-
-    /* Set parallel projection for drawing dummy quad */
-    
-    glMatrixMode ( GL_PROJECTION );
-    
-    glLoadIdentity ( );
-    
-    glOrtho ( -1.0F, 1.0F, -1.0F, 1.0F, -1.0F, 1.0F );
-    
-    glMatrixMode ( GL_MODELVIEW );
-    
-    glLoadIdentity ( );
-
-    glEnable ( GL_TEXTURE_RECTANGLE_ARB );
-
-    /* Set view frustum for camera ( we use default values ) */
-
-    camera.SetViewFrustum ( );
 
     //-------------------------------------------------------------------------
     
@@ -398,14 +406,6 @@ int main ( void )
         }
 
         frames++;
-
-        //---------------------------------------------------------------------
-
-        /* Set new window size */
-        
-        glfwGetWindowSize ( &width, &height );
-        
-        camera.SetViewport ( width, height );
         
         //---------------------------------------------------------------------
 
@@ -427,15 +427,15 @@ int main ( void )
 
         /* Compute ray traced image using OpenCL kernel */
 
-        //cltAcquireGraphicsObject ( queue, image );
+        cltAcquireGraphicsObject ( queue, image );
 
-        //clFinish ( queue );
+        cltFinish ( queue );
 
-        //StartKernels ( );
+        StartKernels ( );
 
-        //cltReleaseGraphicsObject ( queue, image );
+        cltReleaseGraphicsObject ( queue, image );
 
-        //clFinish ( queue );
+        cltFinish ( queue );
 
         /* Draw dummy quad with custom fragment shader */      
         
@@ -457,6 +457,8 @@ int main ( void )
     }
 
     ReleaseOpenCL ( );
+
+    delete texture;
 
     glfwTerminate ( );
     
