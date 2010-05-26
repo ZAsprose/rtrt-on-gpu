@@ -112,7 +112,7 @@ vec4 QuaternionMult ( vec4 left, vec4 right )
            right.x * left.yzw +
            cross ( left.yzw, right.yzw );
 
-   return r;
+    return r;
 }
 
 vec4 QuaternionSquare ( vec4 quaternion )
@@ -251,7 +251,7 @@ float Intersect ( inout SRay ray )
 		ray.Origin += ray.Direction * distance;
 		
 		if ( distance < Fractal.Epsilon ||
-		     length ( ray.Origin ) > SQUARE_RADIUS )
+		     dot ( ray.Origin, ray.Origin ) > SQUARE_RADIUS )
 		{
 			break;
 		}
@@ -402,7 +402,7 @@ vec3 Raytrace ( in SRay ray )
 ///////////////////////////////////////////////////////////////////////////////
 // Shader entry point
 
-#define SUPER_SAMPLING_  /* Use only on fast GPUs such AMD Radeon 58xx */
+#define SUPER_SAMPLING_  /* Use only on fast GPUs such as AMD Radeon 58xx */
 
 void main ( void )
 {

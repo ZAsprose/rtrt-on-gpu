@@ -1,6 +1,6 @@
 /*
    ---------------------------------------------------------------------------
-   |             Q U A T E R N I O N   F R A C T A L S   D E M O             |
+   |             Q U A T E R N I O N   F R A C T A L S   ( OGL )             |
    ---------------------------------------------------------------------------
                               
    Copyright (c) 2009 - 2010 Denis Bogolepov ( denisbogol @ gmail.com )
@@ -25,6 +25,9 @@
 
 using namespace graphics;
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// Useful macros
+
 #define FRACT( value ) ( value - floorf ( value ) )
 
 #define LERP( A, B, value ) ( ( 1 - value ) * A + value * B )
@@ -36,8 +39,8 @@ Mouse mouse;
 
 Keyboard keyboard;
 
-Camera camera ( Vector3f ( 0.0F, 0.0F, -18.0F ) /* position */,
-                Vector3f ( 0.0F, 0.0F, 0.0F )   /* orientation ( Euler angles ) */ );
+Camera camera ( Vector3f ( 0.0F, 0.0F, -5.0F )   /* position */,
+                Vector3f ( 0.0F, 0.0F,  0.0F )   /* orientation ( Euler angles ) */ );
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Support structure for storing parameters of 4D quaternion Julia set
@@ -137,7 +140,7 @@ int main ( void )
 
     int choice = getchar ( );
 
-    int width = 800, height = 600, mode = GLFW_WINDOW;
+    int width = 512, height = 512, mode = GLFW_WINDOW;
 
     //-------------------------------------------------------------------------
 
@@ -249,7 +252,7 @@ int main ( void )
         {
             fps = frames / delta;
 
-            sprintf ( caption, "Implicit Surfaces Demo - %.1f FPS", fps );
+            sprintf ( caption, "Quaternion Fractals ( OGL ) - %.1f FPS", fps );
 
             glfwSetWindowTitle ( caption );
 
@@ -276,9 +279,9 @@ int main ( void )
 
         /* Set new camera position and orientation */
 
-        mouse.Apply ( &camera, ( GLfloat ) fps );
+        mouse.Apply ( &camera );
 
-        keyboard.Apply ( &camera, ( GLfloat ) fps );
+        keyboard.Apply ( &camera );
 
         //---------------------------------------------------------------------
 

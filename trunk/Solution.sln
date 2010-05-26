@@ -7,13 +7,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Graphics Library", "So
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenGL Tutorial", "OpenGL Tutorial", "{5062BAE9-B114-4D0F-A9F0-EF701DFD0769}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 1 - Implicit Surfaces", "Source\GLSL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 1 - Implicit Surfaces (OGL)", "Source\GLSL Tutorial\Implicit Surfaces\Implicit Surfaces.vcproj", "{7FF5798B-4B32-47F0-85F4-207B0C60921F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 2 - Metaballs", "Source\GLSL Tutorial\Metaballs\Metaballs.vcproj", "{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 2 - Metaballs (OGL)", "Source\GLSL Tutorial\Metaballs\Metaballs.vcproj", "{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - N-Bodies Simulation", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - N-Bodies Simulation (OGL)", "Source\GLSL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{2121A13B-9E9D-49E3-8E54-AFB7C9CF318A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Quaternion Fractals", "Source\GLSL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Quaternion Fractals (OGL)", "Source\GLSL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenCL Tutorial", "OpenCL Tutorial", "{A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Base Compute Library", "Source\Base Libraries\Base Compute Library\Base Compute Library.vcproj", "{9D2F121F-717A-4A96-AB28-7CD503F01413}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 4 - N-Bodies Simulation (OCL)", "Source\OpenCL Tutorial\N-Bodies Simulation\N-Bodies Simulation.vcproj", "{905F317C-44B3-447F-9AB5-EDFF45C14906}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tutorial 3 - Quaternion Fractals (OCL)", "Source\OpenCL Tutorial\Quaternion Fractals\Quaternion Fractals.vcproj", "{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -143,6 +145,18 @@ Global
 		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release (NVIDIA)|Win32.Build.0 = Release (NVIDIA)|Win32
 		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release|Win32.ActiveCfg = Release (NVIDIA)|Win32
 		{905F317C-44B3-447F-9AB5-EDFF45C14906}.Release|Win32.Build.0 = Release (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug (AMD)|Win32.ActiveCfg = Debug (AMD)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug (AMD)|Win32.Build.0 = Debug (AMD)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug (NVIDIA)|Win32.ActiveCfg = Debug (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug (NVIDIA)|Win32.Build.0 = Debug (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug|Win32.ActiveCfg = Debug (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Debug|Win32.Build.0 = Debug (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release (AMD)|Win32.ActiveCfg = Release (AMD)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release (AMD)|Win32.Build.0 = Release (AMD)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release (NVIDIA)|Win32.ActiveCfg = Release (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release (NVIDIA)|Win32.Build.0 = Release (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release|Win32.ActiveCfg = Release (NVIDIA)|Win32
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93}.Release|Win32.Build.0 = Release (NVIDIA)|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -157,5 +171,6 @@ Global
 		{A042E930-8049-4173-BD0B-E605DFE5F4BC} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 		{C09BE8B1-3AB1-41A5-9342-AFDD90C093E0} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 		{905F317C-44B3-447F-9AB5-EDFF45C14906} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
+		{D85DFC01-C1D3-43C5-9ACF-66C4C10EBF93} = {A8703A77-0135-4131-B8AE-A9E2B0D8DAAA}
 	EndGlobalSection
 EndGlobal
