@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 2 - Metaballs"
+	Name="Tutorial 2 - Metaballs (OGL)"
 	ProjectGUID="{E51C8C20-B005-4E20-8959-0E4BC6D607A6}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"

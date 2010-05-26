@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 3 - Quaternion Fractals"
+	Name="Tutorial 3 - Quaternion Fractals (OGL)"
 	ProjectGUID="{D2D4733A-6BB7-4B8A-8043-F873A123EE02}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"
