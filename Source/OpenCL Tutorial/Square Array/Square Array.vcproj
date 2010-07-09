@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Tutorial 2 - Implicit Surfaces (OCL)"
-	ProjectGUID="{A042E930-8049-4173-BD0B-E605DFE5F4BC}"
+	Name="Tutorial 1 - Square Array (OCL)"
+	ProjectGUID="{6800AC0F-6EEB-4C8A-A594-21FED97FCCA3}"
 	RootNamespace="ShaderTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -354,7 +354,7 @@
 			Name="OpenCL Files"
 			>
 			<File
-				RelativePath=".\Render.cl"
+				RelativePath=".\Compute.cl"
 				>
 			</File>
 		</Filter>

@@ -230,7 +230,7 @@ float Intersect ( PSRay ray        /* ray origin and direction */,
 		
 		distance = 0.5F * norm * native_log ( norm ) / fast_length ( derivative );
 		
-		ray->Origin = mad ( ray->Direction, distance, ray->Origin );
+		ray->Origin = mad ( ray->Direction, ( float4 ) ( distance ), ray->Origin );
 		
 		if ( distance < epsilon || dot ( ray->Origin, ray->Origin ) > SQUARE_RADIUS )
 		{
@@ -392,7 +392,7 @@ float4 Raytrace ( PSRay ray               /* ray origin and direction */,
     
     if ( IntersectSphere ( ray, SQUARE_RADIUS, &time, &final ) )
     {
-		ray->Origin = mad ( ray->Direction, time, ray->Origin );
+		ray->Origin = mad ( ray->Direction, ( float4 ) ( time ), ray->Origin );
 			
 		time = Intersect ( ray, center, iterations, epsilon );
 			

@@ -337,7 +337,7 @@ float4 Reflect ( float4 incident, float4 normal )
 
 /* Phong material of surface */
 
-#define AMBIENT 0.1F
+#define AMBIENT 0.15F
 
 #define DIFFUSE 1.0F
 
@@ -438,7 +438,7 @@ float4 Raytrace ( const PSRay ray,
             float4 color = ( point - BOX_MINIMUM ) /
                 ( BOX_MAXIMUM - BOX_MINIMUM );
 
-            result = Phong ( source, position, point, normal, color );
+            result = Phong ( position, position, point, normal, color );
         }
     }
     

@@ -290,7 +290,7 @@ void StartKernels ( void )
         queue,
         kernel,
         width, height   /* global size */,
-        16, 16          /* local size */ );
+        8, 8            /* local size */ );
 
     //---------------------------------------------------------------
 
