@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{c4c28afc-4c1e-4ec1-98a6-774eb203683e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Camera Control">
+      <UniqueIdentifier>{84c9fdce-4228-48c8-bd2e-362aa6484eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Offscreen Rendering">
+      <UniqueIdentifier>{4e2cb27f-6c6a-41c5-9b9a-614ac1149a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shader Wrappers">
+      <UniqueIdentifier>{8a991cac-4267-4185-89d8-09c5da8bed23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Texture Wrappers">
+      <UniqueIdentifier>{7f75dc7e-175b-4bff-9bd8-2cffb18ed97c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Texture Wrappers\Data">
+      <UniqueIdentifier>{346d8fe0-e86a-469c-9eea-063cf58b9a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Texture Wrappers\Param">
+      <UniqueIdentifier>{ad28cf23-b7a7-49a8-baef-17d525ccf78b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Texture Wrappers\Texture">
+      <UniqueIdentifier>{9cbe59d4-6d5c-4cd6-8197-df69ee693689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1f4cd54f-f3cf-4d9c-847d-5b1b91a772fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera Control">
+      <UniqueIdentifier>{fecbe148-ca03-4d4a-941b-09aac4670257}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Texture Wrappers">
+      <UniqueIdentifier>{0ddfda1c-781e-4dfd-9fef-9de8e50ab0d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Texture Wrappers\Data">
+      <UniqueIdentifier>{b448657b-d2bd-4a7c-a3ae-9d726a7af30a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Texture Wrappers\Param">
+      <UniqueIdentifier>{738e4d40-eaaf-4c70-b21f-6454b2033392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Texture Wrappers\Texture">
+      <UniqueIdentifier>{3d4434c7-1c94-495a-be1e-59790e71a20c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Offscreen Rendering">
+      <UniqueIdentifier>{dc0bb5e8-f147-4769-9280-4a5b026204aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shader Wrappers">
+      <UniqueIdentifier>{9845ecbf-4b3f-4ba9-84a3-058e5bfc7f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base Header">
+      <UniqueIdentifier>{ce11ff24-5006-44ee-a63c-a108fa3e8cbf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.hpp">
+      <Filter>Header Files\Camera Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.hpp">
+      <Filter>Header Files\Camera Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.hpp">
+      <Filter>Header Files\Camera Control</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.hpp">
+      <Filter>Header Files\Offscreen Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderBuffer.hpp">
+      <Filter>Header Files\Offscreen Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.hpp">
+      <Filter>Header Files\Shader Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureData1D.hpp">
+      <Filter>Header Files\Texture Wrappers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureData2D.hpp">
+      <Filter>Header Files\Texture Wrappers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureData3D.hpp">
+      <Filter>Header Files\Texture Wrappers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterMode.hpp">
+      <Filter>Header Files\Texture Wrappers\Param</Filter>
+    </ClInclude>
+    <ClInclude Include="WrapMode.hpp">
+      <Filter>Header Files\Texture Wrappers\Param</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture1D.hpp">
+      <Filter>Header Files\Texture Wrappers\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.hpp">
+      <Filter>Header Files\Texture Wrappers\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture3D.hpp">
+      <Filter>Header Files\Texture Wrappers\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.hpp">
+      <Filter>Base Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Camera Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Source Files\Camera Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\Camera Control</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData1D.cpp">
+      <Filter>Source Files\Texture Wrappers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData2D.cpp">
+      <Filter>Source Files\Texture Wrappers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureData3D.cpp">
+      <Filter>Source Files\Texture Wrappers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterMode.cpp">
+      <Filter>Source Files\Texture Wrappers\Param</Filter>
+    </ClCompile>
+    <ClCompile Include="WrapMode.cpp">
+      <Filter>Source Files\Texture Wrappers\Param</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture1D.cpp">
+      <Filter>Source Files\Texture Wrappers\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Source Files\Texture Wrappers\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture3D.cpp">
+      <Filter>Source Files\Texture Wrappers\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source Files\Offscreen Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderBuffer.cpp">
+      <Filter>Source Files\Offscreen Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source Files\Shader Wrappers</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
