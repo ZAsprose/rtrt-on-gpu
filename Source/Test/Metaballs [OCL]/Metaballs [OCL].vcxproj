@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>Tutorial - Metaballs (OCL)</ProjectName>
+    <ProjectName>Tutorial - Metaballs [OCL]</ProjectName>
     <ProjectGuid>{C09BE8B1-3AB1-41A5-9342-AFDD90C093E0}</ProjectGuid>
     <RootNamespace>ShaderTest</RootNamespace>
     <Keyword>Win32Proj</Keyword>
@@ -62,16 +62,16 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'">$(ProjectDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'">$(ProjectDir)$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'" />
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (AMD)|Win32'">$(ProjectDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (AMD)|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (AMD)|Win32'">$(ProjectDir)$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (AMD)|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug (NVIDIA)|Win32'">$(ProjectDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (NVIDIA)|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug (NVIDIA)|Win32'">$(ProjectDir)$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug (NVIDIA)|Win32'" />
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release (NVIDIA)|Win32'">$(ProjectDir)$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (NVIDIA)|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release (NVIDIA)|Win32'">$(ProjectDir)$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release (NVIDIA)|Win32'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'" />
@@ -89,7 +89,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (AMD)|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Dependencies\SOIL\Include;$(ATISTREAMSDKROOT)\include;$(SolutionDir)\Source\Base Libraries\Base Graphics Library;$(SolutionDir)\Source\Base Libraries\Base Compute Library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\SOIL\Include;$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Source\Base\Base Graphics Library;$(SolutionDir)\Source\Base\Base Compute Library;$(ATISTREAMSDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -114,7 +114,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Dependencies\SOIL\Include;$(ATISTREAMSDKROOT)\include;$(SolutionDir)\Source\Base Libraries\Base Graphics Library;$(SolutionDir)\Source\Base Libraries\Base Compute Library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\SOIL\Include;$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Source\Base\Base Graphics Library;$(SolutionDir)\Source\Base\Base Compute Library;$(ATISTREAMSDKROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -138,7 +138,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug (NVIDIA)|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Dependencies\SOIL\Include;$(CUDA_INC_PATH);$(SolutionDir)\Source\Base Libraries\Base Graphics Library;$(SolutionDir)\Source\Base Libraries\Base Compute Library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\SOIL\Include;$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Source\Base\Base Graphics Library;$(SolutionDir)\Source\Base\Base Compute Library;$(CUDA_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -163,7 +163,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Dependencies\SOIL\Include;$(CUDA_INC_PATH);$(SolutionDir)\Source\Base Libraries\Base Graphics Library;$(SolutionDir)\Source\Base Libraries\Base Compute Library;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Dependencies\SOIL\Include;$(SolutionDir)\Dependencies\Eigen\Include;$(SolutionDir)\Dependencies\Logger\Include;$(SolutionDir)\Dependencies\OpenGL\Include;$(SolutionDir)\Source\Base\Base Graphics Library;$(SolutionDir)\Source\Base\Base Compute Library;$(CUDA_INC_PATH);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -185,22 +185,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Base Libraries\Base Graphics Library\Base Graphics Library.vcxproj">
-      <Project>{2c0cbf48-f1ec-47b4-b49c-d8e8131bb867}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Base Libraries\Base Compute Library\Base Compute Library.vcxproj">
-      <Project>{9d2f121f-717a-4a96-ab28-7cd503f01413}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Render.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Base Compute Library\Base Compute Library.vcxproj">
+      <Project>{9d2f121f-717a-4a96-ab28-7cd503f01413}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Base\Base Graphics Library\Base Graphics Library.vcxproj">
+      <Project>{2c0cbf48-f1ec-47b4-b49c-d8e8131bb867}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
